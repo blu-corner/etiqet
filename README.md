@@ -1,4 +1,5 @@
-# Introduction
+# Etiqet
+[![Build Status](https://travis-ci.org/blu-corner/etiqet.svg?branch=master)](https://travis-ci.org/blu-corner/etiqet)
 
 ## What is Etiqet
 Etiqet is a testing framework that allows your to run test interfaces with a generic client, message and protocol. The
