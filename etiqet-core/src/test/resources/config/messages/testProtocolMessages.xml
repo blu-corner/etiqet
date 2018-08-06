@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages xmlns="http://www.neueda.com/etiqet">
+    <message name="OtherTestMsg">
+        <implementation>java.lang.String</implementation>
+        <fields>
+            <field name="testField" type="string">testValue</field>
+            <field name="testInt" type="integer">1</field>
+            <field name="testBool" type="boolean">true</field>
+            <field name="testDouble" type="double">1.1</field>
+            <field name="testUtilClass" utilclass="com.neueda.etiqet.core.testing.util.TestUtils"
+                   method="defaultValue" type="string"/>
+        </fields>
+    </message>
+</messages>

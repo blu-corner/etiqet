@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="FIX">
+	<client impl = "com.neueda.etiqet.fix.client.FixClient">
+		<delegates>
+			<delegate key="default" impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate"></delegate>
+			<delegate key="logger" impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"></delegate>
+			<delegate key="fix-logger" impl="com.neueda.etiqet.core.client.delegate.QuickFixLoggerClientDelegate"></delegate>
+			<delegate key="ordering" impl="com.neueda.etiqet.fix.client.delegate.OrderParamFixClientDelegate"></delegate>
+			<delegate key="replacement" impl="com.neueda.etiqet.fix.client.delegate.ReplaceParamFixClientDelegate"></delegate>
+		</delegates>
+	</client>
+	<server>
+	</server>
+	<dictionary handler="com.neueda.etiqet.fix.message.dictionary.FixDictionary"></dictionary>
+	<components_package>quickfix.fix50sp2.component</components_package>
+	<messageType impl="com.neueda.etiqet.fix.message.FixMsg"/>
+	<messages>
+		<message name="NewOrderSingle" admin="N">
+			<implementation>quickfix.fix50sp2.NewOrderSingle</implementation>
+			<fields>
+				<field name="OrigClOrdID" type="string"
+					utilclass="com.neueda.etiqet.msgs.fix.FIXUtils" method="genClientOrderID">1,23</field>
+				<field name="ClOrdID" type="string"
+					utilclass="com.neueda.etiqet.msgs.fix.FIXUtils" method="genClientOrderID" />
+				<field name="AccountType" type="integer">1</field>
+				<field name="Symbol" type="string">CSCO</field>
+				<field name="Side" type="integer">1</field>
+				<field name="OrderQty" type="integer">100</field>
+				<field name="OrdType" type="string">2</field>
+				<field name="ReceivedDeptID" type="string">2</field>
+				<field name="TransactTime" type="string"
+					utilclass="com.neueda.etiqet.msgs.fix.FIXUtils" method="getDateTime" />
+			</fields>
+		</message>
+		<message name="OrderCancelReplaceRequest" admin="N" msgtype="G">
+			<implementation>quickfix.fix50sp2.OrderCancelReplaceRequest
+			</implementation>
+			<fields>
+				<field name="OrderID"></field>
+				<field name="TradeOriginationDate"></field>
+				<field name="TradeDate"></field>
+				<field name="OrigClOrdID"></field>
+				<field name="ClOrdID" type="string"
+					utilclass="com.neueda.etiqet.msgs.fix.FIXUtils" method="genClientOrderID">1,23</field>
+				<field name="SecondaryClOrdID"></field>
+				<field name="ClOrdLinkID"></field>
+				<field name="ListID"></field>
+				<field name="OrigOrdModTime" type="string" />
+				<field name="Account" type="string" />
+				<field name="AcctIDSource" type="string" />
+				<field name="AccountType" type="string" />
+				<field name="DayBookingInst" type="string" />
+				<field name="BookingUnit" type="string" />
+				<field name="PreallocMethod" type="string" />
+				<field name="AllocID" type="string" />
+				<field name="SettlType" type="string" />
+				<field name="SettlDate" type="string" />
+				<field name="CashMargin" type="string" />
+				<field name="ClearingFeeIndicator" type="string" />
+				<field name="HandlInst" type="string" />
+				<field name="ExecInst" type="string" />
+				<field name="MinQty" type="string" />
+				<field name="MaxFloor" type="string" />
+				<field name="ExDestination" type="string" />
+				<field name="Side" required="Y" />
+				<field name="TransactTime" required="Y" />
+				<field name="QtyType" type="string" />
+				<field name="OrdType" required="Y" />
+				<field name="PriceType" type="string" />
+				<field name="Price" type="string" />
+				<field name="StopPx" type="string" />
+				<field name="TargetStrategy" type="string" />
+				<field name="TargetStrategyParameters" type="string" />
+				<field name="ParticipationRate" type="string" />
+				<field name="ComplianceID" type="string" />
+				<field name="SolicitedFlag" type="string" />
+				<field name="Currency" type="string" />
+				<field name="TimeInForce" type="string" />
+				<field name="EffectiveTime" type="string" />
+				<field name="ExpireDate" type="string" />
+				<field name="ExpireTime" type="string" />
+				<field name="GTBookingInst" type="string" />
+				<field name="OrderCapacity" type="string" />
+				<field name="OrderRestrictions" type="string" />
+				<field name="CustOrderCapacity" type="string" />
+				<field name="ForexReq" type="string" />
+				<field name="SettlCurrency" type="string" />
+				<field name="BookingType" type="string" />
+				<field name="Text" type="string" />
+				<field name="EncodedTextLen" type="string" />
+				<field name="EncodedText" type="string" />
+				<field name="SettlDate2" type="string" />
+				<field name="OrderQty2" type="string" />
+				<field name="Price2" type="string" />
+				<field name="PositionEffect" type="string" />
+				<field name="CoveredOrUncovered" type="string" />
+				<field name="MaxShow" type="string" />
+				<field name="LocateReqd" type="string" />
+				<field name="CancellationRights" type="string" />
+				<field name="MoneyLaunderingStatus" type="string" />
+				<field name="RegistID" type="string" />
+				<field name="Designation" type="string" />
+				<field name="ManualOrderIndicator" type="string" />
+				<field name="CustDirectedOrder" type="string" />
+				<field name="ReceivedDeptID" type="string" />
+				<field name="CustOrderHandlingInst" type="string" />
+				<field name="OrderHandlingInstSource" type="string" />
+				<field name="MatchIncrement" type="string" />
+				<field name="MaxPriceLevels" type="string" />
+				<field name="PriceProtectionScope" type="string" />
+				<field name="PreTradeAnonymity" type="string" />
+				<field name="ExDestinationIDSource" type="string" />
+			</fields>
+		</message>
+		<message name="OrderCancelRequest" admin="N">
+			<implementation>quickfix.fix50sp2.OrderCancelRequest</implementation>
+			<fields>
+				<field name="OrigClOrdID" type="string"
+					utilclass="com.neueda.etiqet.msgs.fix.FIXUtils" method="genClientOrderID" />
+				<field name="ClOrdID" type="integer"
+					utilclass="com.neueda.etiqet.msgs.fix.FIXUtils" method="genClientOrderID" />
+				<field name="Symbol" type="string">CSCO</field>
+				<field name="Side" type="integer">1</field>
+				<field name="TransactTime" type="string"
+					utilclass="com.neueda.etiqet.msgs.fix.FIXUtils" method="getDateTime" />
+			</fields>
+		</message>
+		<message name="ExecutionReport" admin="N">
+			<implementation>quickfix.fix50sp2.ExecutionReport</implementation>
+			<fields>
+				<field name="SendingTime" type="date"
+					utilclass="com.neueda.etiqet.msgs.fix.FIXUtils" method="getDateTime" />
+				<field name="MsgSeqNum" type="integer">0</field>
+				<field name="CumQty" type="integer">0</field>
+				<field name="ExecID" type="integer">0</field>
+				<field name="OrderID" type="integer">1</field>
+				<field name="OrdStatus" type="string">A</field>
+				<field name="ExecType" type="string">A</field>
+				<field name="LeavesQty" type="integer">0</field>
+			</fields>
+		</message>
+	</messages>
+</protocol>

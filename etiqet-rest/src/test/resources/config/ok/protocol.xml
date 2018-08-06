@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="rest"
+		  xmlns="http://www.neueda.com/etiqet">
+	<client impl="com.neueda.etiqet.rest.client.RestClient"
+			defaultConfig="${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/client.cfg"/>
+	<dictionary handler="com.neueda.etiqet.rest.message.RestDictionary"/>
+	<components_package>com.neueda.etiqet.rest.message.impl</components_package>
+	<messageClass>com.neueda.etiqet.rest.message.RestMsg</messageClass>
+	<messages>
+		<message name="GET">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<fields>
+				<field name="$httpVerb" type="string">GET</field>
+			</fields>
+		</message>
+		<message name="POST">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<fields>
+				<field name="$httpVerb" type="string">POST</field>
+			</fields>
+		</message>
+		<message name="PUT">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<fields>
+				<field name="$httpVerb" type="string">PUT</field>
+			</fields>
+		</message>
+		<message name="DELETE">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<fields>
+				<field name="$httpVerb" type="string">DELETE</field>
+			</fields>
+		</message>
+		<message name="400">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<fields>
+				<field name="errorCode">CLOSEOUT_POSITION_DOESNT_EXIST</field>
+			</fields>
+		</message>
+		<message name="404">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<fields>
+				<field name="errorMessage" type="string">default</field>
+			</fields>
+		</message>
+		<message name="200">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<fields>
+				<field name="prices" type="integer">0</field>
+				<field name="instrument" type="string">default</field>
+			</fields>
+		</message>
+		<message name="201">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<fields>
+				<field name="prices" type="integer">0</field>
+			</fields>
+		</message>
+	</messages>
+</protocol>

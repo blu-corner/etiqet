@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol xmlns="http://www.neueda.com/etiqet" name="test">
+	<client impl="com.neueda.etiqet.core.testing.client.TestClient"
+            defaultConfig="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties">
+		<delegates>
+			<delegate key="logger" impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"/>
+			<delegate key="sink" impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate"/>
+		</delegates>
+	</client>
+	<dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
+	<components_package>quickfix.fix44.component</components_package>
+	<messageClass>com.neueda.etiqet.core.testing.message.TestMessage</messageClass>
+	<messages>
+		<message name="TestMsg">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="testField" type="string">testValue</field>
+				<field name="testInt" type="integer">1</field>
+				<field name="testBool" type="boolean">true</field>
+				<field name="testDouble" type="double">1.1</field>
+				<field name="testDate" type="string">20010101</field>
+				<field name="testDatetime" type="string">20010101-00:01:02.1</field>
+				<field name="testUtilClass" utilclass="com.neueda.etiqet.core.testing.util.TestUtils"
+					   method="defaultValue" type="string"/>
+			</fields>
+		</message>
+		<message name="testResponse">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="test" type="string" required="Y" allowedValues="null,value,otherValue">default</field>
+				<field name="messageId" type="string" allowedValues="123,234,3,2">default</field>
+				<field name="sent" type="integer">1</field>
+			</fields>
+		</message>
+		<message name="testMessage">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="test" type="string">default</field>
+			</fields>
+		</message>
+		<message name="toFilter">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="test" type="string">default</field>
+			</fields>
+		</message>
+		<message name="addFilter">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="test" type="string">default</field>
+			</fields>
+		</message>
+	</messages>
+</protocol>

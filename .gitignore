@@ -1,0 +1,13 @@
+**/target
+**/lib
+**/log
+**/store
+.settings/org.eclipse.m2e.core.prefs
+**/.classpath
+**/.project
+**/.idea
+/.settings/
+/bin/
+*.iml
+/.idea/
+

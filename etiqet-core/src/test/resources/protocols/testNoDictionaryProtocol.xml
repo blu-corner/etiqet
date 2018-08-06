@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="test"
+		  xmlns="http://www.neueda.com/etiqet">
+	<client impl="com.neueda.etiqet.core.testing.client.TestClient"
+			defaultConfig="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"/>
+	<components_package>quickfix.fix44.component</components_package>
+	<messageClass>com.neueda.etiqet.core.testing.message.TestMessage</messageClass>
+	<messages>
+		<message name="TestMsg">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="testField" type="string">testValue</field>
+				<field name="testInt" type="integer">1</field>
+			</fields>
+		</message>
+		<message name="testResponse">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="test" type="string" allowedValues="value,">default</field>
+				<field name="messageId" type="string" allowedValues="234,3,2">default</field>
+				<field name="sent" type="integer">0</field>
+			</fields>
+		</message>
+		<message name="testMessage">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="test" type="string">default</field>
+			</fields>
+		</message>
+		<message name="toFilter">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="test" type="string">default</field>
+			</fields>
+		</message>
+		<message name="addFilter">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="test" type="string">default</field>
+			</fields>
+		</message>
+	</messages>
+</protocol>

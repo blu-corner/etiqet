@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
+    <protocols>
+        <protocol name="rest" ref="${etiqet.directory}/etiqet-rest/src/test/resources/ok/protocol.xml"/>
+        <protocol name="fix" ref="${etiqet.directory}/etiqet-fix/src/test/resources/config/etiqet-fix-messages.xml"/>
+    </protocols>
+</etiqetConfiguration>
+

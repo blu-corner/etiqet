@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol xmlns="http://www.neueda.com/etiqet" name="test">
+	<client impl="com.neueda.etiqet.core.testing.client.TestClient"
+			defaultConfig="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties">
+		<delegates>
+			<delegate key="sink" impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate"/>
+		</delegates>
+	</client>
+	<dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
+	<components_package>quickfix.fix44.component</components_package>
+	<messageClass>com.neueda.etiqet.core.testing.message.TestMessage</messageClass>
+	<messages>
+		<message name="TestMsg">
+			<implementation>java.lang.String</implementation>
+			<fields>
+				<field name="testField" type="string">testValue</field>
+				<field name="testInt" type="integer">test</field>
+				<field name="testBool" type="boolean">12</field>
+				<field name="testDouble" type="double">false</field>
+				<field name="testBool1" type="boolean">false</field>
+				<field name="testBool2" type="boolean">N</field>
+				<field name="testBool3" type="boolean">0</field>
+				<field name="testBool4" type="boolean">true</field>
+				<field name="testBool5" type="boolean">Y</field>
+				<field name="testBool6" type="boolean">1</field>
+				<field name="testUtilClass" utilclass="com.neueda.etiqet.core.testing.util.TestUtils"
+					   method="defaultValue"/>
+			</fields>
+		</message>
+	</messages>
+</protocol>

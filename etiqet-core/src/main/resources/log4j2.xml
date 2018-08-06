@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Properties>
+		<Property name="log-path">./log</Property>
+	</Properties>
+
+	<Appenders>
+		<RollingFile name="file-log" fileName="${log-path}/etiqetTraces.log"
+			filePattern="${log-path}/${log-path}/traces.log-%d{yyyy-MM-dd}.log">
+			<PatternLayout>
+				<ScriptPatternSelector defaultPattern="">
+					<Script name="LevelSelector" language="javascript"><![CDATA[
+                            result=null;
+                            switch (logEvent.getLevel())
+                            {
+                                case org.apache.logging.log4j.Level.ERROR:
+                                case org.apache.logging.log4j.Level.WARN:
+                                case org.apache.logging.log4j.Level.FATAL:
+                                case org.apache.logging.log4j.Level.TRACE:
+                                case org.apache.logging.log4j.Level.DEBUG:
+                                case org.apache.logging.log4j.Level.INFO:result=logEvent.getLevel();
+                                                                         break;
+                                default:result=null;                                            
+                            }
+                            result;
+                            ]]>
+					</Script>
+					<PatternMatch key="DEBUG"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %c{1}:%M:%L - %m%n" />
+					<PatternMatch key="INFO"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+					<PatternMatch key="WARN"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+					<PatternMatch key="FATAL"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+					<PatternMatch key="TRACE"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+					<PatternMatch key="ERROR"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+				</ScriptPatternSelector>
+
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+			</Policies>
+		</RollingFile>
+
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout>
+				<ScriptPatternSelector defaultPattern="">
+					<Script name="LevelSelector" language="javascript"><![CDATA[
+                            result=null;
+                            switch (logEvent.getLevel())
+                            {
+                                case org.apache.logging.log4j.Level.ERROR:
+                                case org.apache.logging.log4j.Level.WARN:
+                                case org.apache.logging.log4j.Level.FATAL:
+                                case org.apache.logging.log4j.Level.TRACE:
+                                case org.apache.logging.log4j.Level.DEBUG:
+                                case org.apache.logging.log4j.Level.INFO:result=logEvent.getLevel();
+                                                                         break;
+                                default:result=null;                                            
+                            }
+                            result;
+                            ]]>
+					</Script>
+					<PatternMatch key="DEBUG"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %C{1}:%M:%L - %m%n" />
+					<PatternMatch key="INFO"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+					<PatternMatch key="WARN"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+					<PatternMatch key="FATAL"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+					<PatternMatch key="TRACE"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+					<PatternMatch key="ERROR"
+						pattern="[%5p] - %d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+				</ScriptPatternSelector>
+
+			</PatternLayout>
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="debug">
+			<appender-ref ref="console" />
+			<appender-ref ref="file-log" />
+		</Root>
+	</Loggers>
+</Configuration>

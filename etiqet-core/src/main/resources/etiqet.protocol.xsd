@@ -1,0 +1,388 @@
+<?xml version="1.0"?>
+<xs:schema  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:e="http://www.neueda.com/etiqet"
+            xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+            targetNamespace="http://www.neueda.com/etiqet"
+            xmlns="http://www.neueda.com/etiqet"
+            elementFormDefault="qualified"
+            vc:minVersion="1.1">
+
+    <xs:element name="protocol" type="Protocol"/>
+
+    <xs:element name="etiqetConfiguration" type="Configuration">
+        <xs:unique name="clientName">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Enforces a unique client name</xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="./e:clients/e:client"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:key name="protocolNameKey">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Enforces a unique protocol name</xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="./e:protocols/e:protocol"/>
+            <xs:field xpath="@name"/>
+        </xs:key>
+        <xs:keyref name="client" refer="protocolNameKey" id="clientKey">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Makes the client impl attribute reference a
+                    protocol name</xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="./e:clients/e:client"/>
+            <xs:field xpath="@impl"/>
+        </xs:keyref>
+    </xs:element>
+    
+    <xs:element name="messages" type="Messages"/>
+
+    <xs:complexType name="Configuration">
+        <xs:sequence>
+            <xs:element name="protocols">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">List of protocols to be included in Etiqet</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                        <xs:element ref="protocol"/>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="clients" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">List of pre-defined clients available to be used in Etiqet
+                        test steps</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="client" type="ClientDef" minOccurs="1" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="servers" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">List of pre-defined servers available to be used in Etiqet
+                        test steps</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="server" minOccurs="1" type="Server"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ClientDef">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Pre-defined client definition available to be used in Etiqet
+                test steps</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="dictionaryDefinition" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:attribute name="path" use="required">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Provides path to the dictionary definition</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="primary" type="ClientConfig" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Provides path to the primary configuration</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="secondary" type="ClientConfig" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Provides path to the primary configuration</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the client to be used in test steps</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="impl" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the client to be used in test steps</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="extensionsUrl" type="httpUri">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Neueda Simulator URL for the extensions</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    
+    <xs:simpleType name="httpUri">
+        <xs:restriction base="xs:anyURI">
+            <xs:pattern value="http(s?)://.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="ClientConfig">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Provides the path to configure the client</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="configPath" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Path to the configuration file</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    
+    <xs:complexType name="Server">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Pre-defined server definition available to be used in Etiqet
+                test steps</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the server to be referenced in test steps</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="impl" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Fully qualified class name of the server class</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="config" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default configuration file for the server</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="Protocol">
+        <xs:sequence minOccurs="0">
+            <xs:element name="client" type="Client"/>
+            <xs:element name="dictionary" type="Dictionary"/>
+            <xs:element name="components_package" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Fully qualified package of message components</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="messageClass" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Fully qualified class name of the message class</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="messages"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name to give the protocol</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ref" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Reference to an external file containing a
+                    protocol definition</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:assert test="(./@ref and (count(./*) eq 0)) or (not(@ref) and (count(./*) gt 0))">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Test that we either have a reference to a protocol, or a definition of
+                    a protocol</xs:documentation>
+            </xs:annotation>
+        </xs:assert>
+    </xs:complexType>
+    
+    <xs:complexType name="Messages">
+        <xs:annotation>
+            <xs:documentation>List of messages used in the protocol with
+                optional default field values</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="message" type="Message" minOccurs="0"
+                maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="ref" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Reference to an external file containing a
+                    message definitions</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:assert test="(./@ref and (count(./*) eq 0)) or (not(@ref) and (count(./*) gt 0))">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Test that we either have a reference to a list of messages,
+                    or a list of messages</xs:documentation>
+            </xs:annotation>
+        </xs:assert>
+    </xs:complexType>
+
+    <xs:complexType name="Client">
+        <xs:annotation>
+            <xs:documentation>Describes the Client</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="delegates" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>List of delegates for the client to use.
+                        Executed in order provided</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="delegate" maxOccurs="unbounded" type="Delegate"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="impl" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Fully qualified class name of the Client
+                    to be implemented</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="defaultConfig" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Path to the default configuration for this client</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="extensionsUrl" type="httpUri">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Neueda Simulator URL for the extensions</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="Delegate">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Describes a message delegate that performs a task before or after receiving
+                or sending a message via the client</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="key" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the delegate</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="impl" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Fully qualified class name of the Delegate class</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="Dictionary">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Describes the dictionary class of message types.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="handler" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Fully qualified class name of the dictionary class</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="Message">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Describes a message to be used in the protocol</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="implementation" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Fully qualified class name of the message</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="fields">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">List of default field values</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="field" type="Field"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the message to be used in test steps</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="admin">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Whether or not the message is an admin message</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Y"/>
+                    <xs:enumeration value="N"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="msgtype" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Message type</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="Field">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Name of the field</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="type">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Type of the field</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="string"/>
+                            <xs:enumeration value="integer"/>
+                            <xs:enumeration value="boolean"/>
+                            <xs:enumeration value="double"/>
+                            <xs:enumeration value="date"/>
+                            <xs:enumeration value="datetime"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="utilclass" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Fully qualified class name of the util class</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="method" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Static method belonging to @utilclass</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Is the field required or not</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Y"/>
+                            <xs:enumeration value="N"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="allowedValues" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Comma separated list of allowed values</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:assert test="(@utilclass and @method and string-length(text()) eq 0)
+                                    or (not(@utilclass) and not(@method) and string-length(text()) gt 0)">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Assert that either utilclass and method are specified or a
+                            value is specified</xs:documentation>
+                    </xs:annotation>
+                </xs:assert>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+</xs:schema>
