@@ -1,1 +1,11 @@
 language: java
+
+notifications:
+  webhooks: $TEAMS_WEBHOOK
+
+deploy:
+  - provider: script
+    script: "mvn deploy"
+    skip_cleanup: true
+    on:
+      tags: true
