@@ -3,9 +3,9 @@ package com.neueda.etiqet.fix.client.delegate;
 import com.neueda.etiqet.core.client.delegate.BaseClientDelegate;
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.StopEncodingException;
+import com.neueda.etiqet.core.util.StringUtils;
 import quickfix.Message;
-import quickfix.StringField;
-import quickfix.field.DefaultCstmApplVerID;
+import quickfix.field.Password;
 import quickfix.field.SenderSubID;
 import quickfix.field.TargetSubID;
 
@@ -58,13 +58,14 @@ public class FixClientDelegate extends BaseClientDelegate<Message, String> {
 
     @Override
     public Message transformBeforeEncoding(Message msg) throws StopEncodingException {
-        msg.getHeader().setField(new TargetSubID(targetSubID));
-        msg.getHeader().setField(new SenderSubID(senderSubID));
-        if(msg.isAdmin()) {
-            if(password != null) {
-                msg.setField(new StringField(554, password));
-            }
-            msg.setField(new DefaultCstmApplVerID("T4.0"));
+        if(!StringUtils.isNullOrEmpty(targetSubID)) {
+            msg.getHeader().setField(new TargetSubID(targetSubID));
+        }
+        if(!StringUtils.isNullOrEmpty(senderSubID)) {
+            msg.getHeader().setField(new SenderSubID(senderSubID));
+        }
+        if(msg.isAdmin() && !StringUtils.isNullOrEmpty(password)) {
+            msg.setField(new Password(password));
         }
         return (next != null)? next.transformBeforeEncoding(msg): msg;
     }
