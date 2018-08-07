@@ -11,48 +11,64 @@
 	<name>Etiqet Parent Project</name>
 
 	<properties>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<log.version>2.9.1</log.version>
+	  <maven.compiler.target>1.8</maven.compiler.target>
+	  <maven.compiler.source>1.8</maven.compiler.source>
+	  <log.version>2.9.1</log.version>
 	</properties>
 
 	<modules>
-		<module>etiqet-core</module>
-		<module>etiqet-fix</module>
-		<module>etiqet-rest</module>
+	  <module>etiqet-core</module>
+	  <module>etiqet-fix</module>
+	  <module>etiqet-rest</module>
 	</modules>
 
 	<profiles>
-		<profile>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<id>default</id>
-			<properties>
-				<etiqet.directory>${project.basedir}</etiqet.directory>
-				<etiqet.global.config>${etiqet.directory}/config/etiqet.config.xml</etiqet.global.config>
-			</properties>
-		</profile>
+	  <profile>
+	    <activation>
+	      <activeByDefault>true</activeByDefault>
+	    </activation>
+	    <id>default</id>
+	    <properties>
+	      <etiqet.directory>${project.basedir}</etiqet.directory>
+	      <etiqet.global.config>${etiqet.directory}/config/etiqet.config.xml</etiqet.global.config>
+	    </properties>
+	  </profile>
 	</profiles>
 
-	<build>
-		<plugins>
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-dependency-plugin</artifactId> 
-				<executions> <execution> <id>copy-dependencies</id> <phase>prepare-package</phase> 
-				<goals> <goal>copy-dependencies</goal> </goals> <configuration> <outputDirectory> 
-				${project.build.directory}/libs </outputDirectory> </configuration> </execution> 
-				</executions> </plugin> -->
-			<!--plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
-				<configuration> <archive> <manifest> <addClasspath>true</addClasspath> <classpathPrefix>libs/</classpathPrefix> 
-				<mainClass>com.neueda.etiqet.App</mainClass> </manifest> </archive> </configuration> 
-				</plugin -->
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-assembly-plugin</artifactId> 
-				<executions> <execution> <phase>package</phase> <goals> <goal>single</goal> 
-				</goals> <configuration> <archive> <manifest> <mainClass> com.neueda.etiqet.App 
-				</mainClass> </manifest> </archive> <descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> 
-				</descriptorRefs> </configuration> </execution> </executions> </plugin> -->
-		</plugins>
+	<pluginRepositories>
+	  <pluginRepository>
+	    <id>cloudsmith-api</id>
+	    <name>Cloudsmith API Releases</name>
+	    <url>https://dl.cloudsmith.io/public/cloudsmith/api/maven</url>
+	  </pluginRepository>
+	</pluginRepositories>
 
+	<repositories>
+	  <repository>
+	    <id>cloudsmith-api</id>
+	    <name>Cloudsmith API Releases</name>
+	    <url>https://dl.cloudsmith.io/public/cloudsmith/api/maven</url>
+	  </repository>
+	</repositories>
+
+	<build>
+	  <extensions>
+	    <extension>
+	      <groupId>io.cloudsmith.maven.wagon</groupId>
+	      <artifactId>cloudsmith-maven-wagon</artifactId>
+	      <version>0.3.1</version>
+	    </extension>
+	  </extensions>
 	</build>
 
+	<distributionManagement>
+	  <snapshotRepository>
+	    <id>cloudsmith-snapshots</id>
+	    <url>cloudsmith+https://api.cloudsmith.io/neueda/etiqet</url>
+	  </snapshotRepository>
+	  <repository>
+	    <id>cloudsmith-releases</id>
+	    <url>cloudsmith+https://api.cloudsmith.io/neueda/etiqet</url>
+	  </repository>
+	</distributionManagement>
 </project>
