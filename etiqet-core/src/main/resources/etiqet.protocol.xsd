@@ -33,7 +33,7 @@
             <xs:field xpath="@impl"/>
         </xs:keyref>
     </xs:element>
-
+    
     <xs:element name="messages" type="Messages"/>
 
     <xs:complexType name="Configuration">
@@ -109,7 +109,18 @@
                 <xs:documentation xml:lang="en">Name of the client to be used in test steps</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="extensionsUrl" type="httpUri">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Neueda Simulator URL for the extensions</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
+    
+    <xs:simpleType name="httpUri">
+        <xs:restriction base="xs:anyURI">
+            <xs:pattern value="http(s?)://.*"/>
+        </xs:restriction>
+    </xs:simpleType>
     
     <xs:complexType name="ClientConfig">
         <xs:annotation>
@@ -218,18 +229,7 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="urlExtensions" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>List of Api extensions for the client to use.</xs:documentation>
-                </xs:annotation>
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="urlExtension" maxOccurs="unbounded" type="UrlExtension"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
         </xs:sequence>
-
         <xs:attribute name="impl" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Fully qualified class name of the Client
@@ -242,26 +242,9 @@
             </xs:annotation>
         </xs:attribute>
 
-    </xs:complexType>
-
-    <xs:simpleType name="httpUri">
-        <xs:restriction base="xs:anyURI">
-            <xs:pattern value="http(s?)://.*"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:complexType name="UrlExtension">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">URL extensions used to launch/stop/interact with additional services</xs:documentation>
-        </xs:annotation>
-        <xs:attribute name="name" type="xs:string">
+        <xs:attribute name="extensionsUrl" type="httpUri">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Api Name</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="uri" type="httpUri">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Fully qualified uri</xs:documentation>
+                <xs:documentation xml:lang="en">Neueda Simulator URL for the extensions</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
@@ -308,7 +291,7 @@
                     <xs:documentation xml:lang="en">Fully qualified class name of the message</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="fields">
+            <xs:element name="fields" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">List of default field values</xs:documentation>
                 </xs:annotation>

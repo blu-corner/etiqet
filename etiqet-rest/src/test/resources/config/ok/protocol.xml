@@ -7,54 +7,11 @@
 	<components_package>com.neueda.etiqet.rest.message.impl</components_package>
 	<messageClass>com.neueda.etiqet.rest.message.RestMsg</messageClass>
 	<messages>
-		<message name="GET">
+		<message name="test_type_01">
 			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="$httpVerb" type="string">GET</field>
-			</fields>
 		</message>
-		<message name="POST">
+		<message name="test_type_fields">
 			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="$httpVerb" type="string">POST</field>
-			</fields>
-		</message>
-		<message name="PUT">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="$httpVerb" type="string">PUT</field>
-			</fields>
-		</message>
-		<message name="DELETE">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="$httpVerb" type="string">DELETE</field>
-			</fields>
-		</message>
-		<message name="400">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="errorCode">CLOSEOUT_POSITION_DOESNT_EXIST</field>
-			</fields>
-		</message>
-		<message name="404">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="errorMessage" type="string">default</field>
-			</fields>
-		</message>
-		<message name="200">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="prices" type="integer">0</field>
-				<field name="instrument" type="string">default</field>
-			</fields>
-		</message>
-		<message name="201">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="prices" type="integer">0</field>
-			</fields>
 		</message>
 	</messages>
 </protocol>

@@ -98,7 +98,7 @@ public class RestClientTest {
 
     @Test
     public void testSendMessage() throws EtiqetException {
-        Cdr data = new Cdr("GET");
+        Cdr data = new Cdr("test_type_01");
         data.set("$httpEndpoint", "/test/api");
         data.set("$httpVerb", "GET");
         data.set("$header.responsecode", "200");
