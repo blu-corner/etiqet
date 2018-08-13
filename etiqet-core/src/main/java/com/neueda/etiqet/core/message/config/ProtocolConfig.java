@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProtocolConfig implements Serializable {
@@ -125,6 +126,10 @@ public class ProtocolConfig implements Serializable {
 
 	public Delegates getClientDelegates() {
 		return getProtocol().getClient().getDelegates();
+	}
+
+	public List<UrlExtension> getClientUrlExtensions(){
+		return getProtocol().getClient().getUrlExtensions();
 	}
 
 	public Client getClient() {

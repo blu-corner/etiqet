@@ -4,7 +4,7 @@
         <protocol name="testProtocol" ref="${etiqet.directory}/etiqet-core/src/test/resources/protocols/testProtocol.xml"/>
         <protocol name="otherTestProtocol">
             <client impl="com.neueda.etiqet.core.testing.client.TestClient"
-                    defaultConfig="${user.dir}/src/test/resources/fix-config/LLVE/client.cfg"/>
+                    defaultConfig="${user.dir}/src/test/resources/fix-config/client.cfg"/>
             <dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
             <components_package>quickfix.fix44.component</components_package>
             <messageClass>com.neueda.etiqet.core.testing.message.TestMessage</messageClass>
@@ -13,7 +13,7 @@
     </protocols>
     <clients>
     	<!-- pre-defined clients that can be referenced in tests without being explicitly created -->
-        <client name="testClient1" impl="testProtocol" extensionsUrl="http://localhost:5000">
+        <client name="testClient1" impl="testProtocol">
             <primary configPath="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"/>
         </client>
         <client name="testClient2" impl="otherTestProtocol">

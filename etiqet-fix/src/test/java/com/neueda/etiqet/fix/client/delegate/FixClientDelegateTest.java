@@ -16,51 +16,6 @@ import static org.junit.Assert.*;
 public class FixClientDelegateTest {
 
     @Test
-    public void testTransformBeforEncodingEmptyValues() {
-        FixClientDelegate delegate = new FixClientDelegate();
-        delegate.init(null, null);
-        Message msg = Mockito.spy(Message.class);
-
-        // Need to mock this using a Message class rather than concrete implementation
-        Mockito.when(msg.isAdmin()).thenReturn(Boolean.TRUE);
-
-        try {
-            delegate.transformBeforeEncoding(msg);
-        } catch (StopEncodingException e) {
-            fail("StopEncodingException was thrown during transformation: " + e.getMessage());
-        }
-
-        testEmptySubIDs(msg);
-
-        delegate = new FixClientDelegate();
-        delegate.init("", "");
-
-        try {
-            delegate.transformBeforeEncoding(msg);
-        } catch (StopEncodingException e) {
-            fail("StopEncodingException was thrown during transformation: " + e.getMessage());
-        }
-
-        testEmptySubIDs(msg);
-    }
-
-    private void testEmptySubIDs(Message msg) {
-        assertTrue(msg.isAdmin());
-        try {
-            msg.getHeader().getField(new TargetSubID()).getValue();
-            fail("TargetSubID shouldn't have been set, so this should cause a FieldNotFound error");
-        } catch (Exception e) {
-            assertTrue(e instanceof FieldNotFound);
-        }
-        try {
-            msg.getHeader().getField(new SenderSubID()).getValue();
-            fail("SenderSubID shouldn't have been set, so this should cause a FieldNotFound error");
-        } catch (Exception e) {
-            assertTrue(e instanceof FieldNotFound);
-        }
-    }
-
-    @Test
     public void testTransformBeforeEncoding() {
         final String targetSub = "targetSub";
         final String senderSub = "senderSub";
@@ -83,6 +38,7 @@ public class FixClientDelegateTest {
         try {
             assertEquals(targetSub, msg.getHeader().getField(new TargetSubID()).getValue());
             assertEquals(senderSub, msg.getHeader().getField(new SenderSubID()).getValue());
+            assertEquals("T4.0", msg.getField(new DefaultCstmApplVerID()).getValue());
         } catch (FieldNotFound e) {
             fail("FieldNotFound exception was thrown while checking for TargetSubID / SenderSubID / Password: "
                     + e.getMessage());
@@ -100,6 +56,7 @@ public class FixClientDelegateTest {
         testSubs(msg, targetSub, senderSub);
         try {
             assertEquals(password, msg.getField(new Password()).getValue());
+            assertEquals("T4.0", msg.getField(new DefaultCstmApplVerID()).getValue());
         } catch (FieldNotFound e) {
             fail("FieldNotFound exception was thrown while checking for TargetSubID / SenderSubID / Password: "
                 + e.getMessage());
