@@ -1,6 +1,6 @@
 Feature: FIX Simulator test
 
-  Scenario: Check that config can be updated when llve is enabled
+  Scenario: Check that neueda and test is enabled
     Given a "fix" client
     When client is logged on
     And "neueda" extensions enabled
