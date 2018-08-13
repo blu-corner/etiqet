@@ -158,7 +158,7 @@ public class EtiqetFixtures {
 	}
 
 	@Then("^failover$")
-	public void failover() throws EtiqetException{
+	public void failover() throws EtiqetException {
 		handlers.failover(EtiqetHandlers.DEFAULT_CLIENT_NAME);
 	}
 
@@ -684,6 +684,11 @@ public class EtiqetFixtures {
 		handlers.compareValuesEqual(firstField, firstMessageAlias, secondField, secondMessageAlias);
 	}
 
+	@Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is not equal to \"([^\"]*)\" in \"([^\"]*)\"$")
+	public void checkThatInIsNotEqualToIn(String firstField, String firstMessageAlias, String secondField, String secondMessageAlias) {
+		handlers.compareValuesNotEqual(firstField, firstMessageAlias, secondField, secondMessageAlias);
+	}
+
 	@Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is greater than \"([^\"]*)\" in \"([^\"]*)\"$")
     public void checkThatInIsGreaterThanIn(String firstField, String firstMessageAlias, String secondField, String secondMessageAlias) {
         handlers.compareValues(firstField, firstMessageAlias, secondField, secondMessageAlias, null);
@@ -714,49 +719,49 @@ public class EtiqetFixtures {
         handlers.compareValues(secondField, secondMessageAlias, firstField, firstMessageAlias, (Long.parseLong(seconds)*1000));
     }
 
-	@And("^Neueda extensions enabled for \"([^\"]*)\"$")
-	public void checkThatNeuedaExtensionsAreEnabled(String clientName) throws EtiqetException {
-		handlers.checkExtensionsEnabled(clientName);
+	@And("^\"([^\"]*)\"extensions enabled for \"([^\"]*)\"$")
+	public void checkThatNeuedaExtensionsAreEnabled(String extensionsName, String clientName) throws EtiqetException {
+		handlers.checkExtensionsEnabled(extensionsName, clientName);
 	}
 
 	@And("^\"([^\"]*)\" order book is purged for \"([^\"]*)\"$")
 	public void checkThatOrderBookIsPurged(String exchange, String clientName) throws EtiqetException, IOException {
-		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, null), EtiqetHandlers.PURGE_ORDERS, clientName);
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, null), EtiqetHandlers.PURGE_ORDERS, handlers.getExtension(clientName, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 	}
 
 	@And("^\"([^\"]*)\" phase is \"([^\"]*)\" for  \"([^\"]*)\"$")
 	public void checkThatPhaseIsOfType(String exchange, String auctionPhase, String clientName) throws EtiqetException, IOException {
-		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE,clientName);
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE, handlers.getExtension(clientName, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 	}
 
 	@Then("^\"([^\"]*)\" change trading phase to \"([^\"]*)\" for  \"([^\"]*)\"$")
 	public void changeTradingPhaseToOpeningAuction(String exchange, String auctionPhase, String clientName) throws EtiqetException, IOException {
-		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE,clientName);
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE, handlers.getExtension(clientName, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 	}
 
-	@And("^Neueda extensions enabled$")
-	public void checkThatNeuedaExtensionsAreEnabled() throws EtiqetException {
-		handlers.checkExtensionsEnabled(EtiqetHandlers.DEFAULT_CLIENT_NAME);
+	@And("^\"([^\"]*)\" extensions enabled$")
+	public void checkThatNeuedaExtensionsAreEnabled(String extensionName) throws EtiqetException {
+		handlers.checkExtensionsEnabled(extensionName, EtiqetHandlers.DEFAULT_CLIENT_NAME);
 	}
 
-	@And("^fail to assert Neueda extensions enabled$")
-	public void checkThatNeuedaExtensionsAreDisabled() {
+	@And("^fail to assert \"([^\"]*)\" extensions enabled$")
+	public void checkThatNeuedaExtensionsAreDisabled(String extensionsName) {
 		try {
-			handlers.checkExtensionsEnabled(EtiqetHandlers.DEFAULT_CLIENT_NAME);
-		} catch (EtiqetException e) {
+			handlers.checkExtensionsEnabled(extensionsName, EtiqetHandlers.DEFAULT_CLIENT_NAME);
+		} catch (AssertionError e) {
 			handlers.addException( new RuntimeException(e), EtiqetHandlers.DEFAULT_EXCEPTION);
 		}
 	}
 
 	@And("^\"([^\"]*)\" order book is purged$")
 	public void checkThatOrderBookIsPurged(String exchange) throws EtiqetException, IOException {
-		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(),handlers.getJson(exchange, null),EtiqetHandlers.PURGE_ORDERS,EtiqetHandlers.DEFAULT_CLIENT_NAME);
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(),handlers.getJson(exchange, null),EtiqetHandlers.PURGE_ORDERS,handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME,EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 	}
 
 	@And("^fail to purge a \"([^\"]*)\" order book$")
 	public void youFailToPurge(String exchange) {
 		try {
-			handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(),handlers.getJson(exchange, null),EtiqetHandlers.PURGE_ORDERS,EtiqetHandlers.DEFAULT_CLIENT_NAME);
+			handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(),handlers.getJson(exchange, null),EtiqetHandlers.PURGE_ORDERS, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME,EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 		} catch (EtiqetException | IOException e) {
 			handlers.addException( new RuntimeException(e), EtiqetHandlers.DEFAULT_EXCEPTION);
 		}
@@ -764,18 +769,18 @@ public class EtiqetFixtures {
 
 	@And("^\"([^\"]*)\" phase is \"([^\"]*)\"$")
 	public void checkThatPhaseIsOfType(String exchange, String auctionPhase) throws IOException, EtiqetException {
-		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE,EtiqetHandlers.DEFAULT_CLIENT_NAME);
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME,EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 	}
 
 	@Then("^change \"([^\"]*)\" trading phase to \"([^\"]*)\"$")
 	public void changeTradingPhaseToOpeningAuction(String exchange, String auctionPhase) throws IOException, EtiqetException {
-		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST,  handlers.getDefaultHeader(),handlers.getJson(exchange, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE,EtiqetHandlers.DEFAULT_CLIENT_NAME);
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST,  handlers.getDefaultHeader(),handlers.getJson(exchange, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME,EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 	}
 
 	@Then("^attempt to change \"([^\"]*)\" trading phase$")
 	public void attemptToChangeTradingPhaseToOpeningAuction(String exchange) {
 		try {
-			handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, null), EtiqetHandlers.SET_TRADE_PHASE, EtiqetHandlers.DEFAULT_CLIENT_NAME);
+			handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, null), EtiqetHandlers.SET_TRADE_PHASE, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME,EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 		} catch (EtiqetException | IOException e) {
 			handlers.addException(new RuntimeException(e), EtiqetHandlers.DEFAULT_EXCEPTION);
 		}
@@ -784,7 +789,7 @@ public class EtiqetFixtures {
 	@Then("^attempt to change trading phase to \"([^\"]*)\"$")
 	public void attemptToChangeTradingPhase(String auctionPhase) {
 		try {
-			handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(null, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE,EtiqetHandlers.DEFAULT_CLIENT_NAME);
+			handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(null, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME,EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 		} catch (EtiqetException | IOException e) {
 			handlers.addException( new RuntimeException(e), EtiqetHandlers.DEFAULT_EXCEPTION);
 		}

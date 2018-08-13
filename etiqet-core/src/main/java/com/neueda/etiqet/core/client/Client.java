@@ -12,6 +12,7 @@ import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.config.dtos.UrlExtension;
 import com.neueda.etiqet.core.message.Codec;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.Config;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +49,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
      */
     protected String secondaryConfig;
 
-    private String extensionsUrl;
+    private List<UrlExtension> urlExtensions;
 
     /** The name of the protocol used by this client */
     private String protocolName;
@@ -406,12 +408,13 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
         return !StringUtils.isNullOrEmpty(this.secondaryConfig);
     }
 
-    public String getExtensionsUrl() {
-        return extensionsUrl;
+    public List<UrlExtension> getUrlExtensions() {
+        return urlExtensions;
     }
 
-    public void setExtensionsUrl(String extensionsUrl) {
-        this.extensionsUrl = extensionsUrl;
+
+    public void setUrlExtensions(List<UrlExtension> urlExtensions) {
+        this.urlExtensions = urlExtensions;
     }
 
     public ProtocolConfig getProtocolConfig() {

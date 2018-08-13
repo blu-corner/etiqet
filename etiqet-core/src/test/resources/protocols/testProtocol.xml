@@ -6,6 +6,9 @@
 			<delegate key="logger" impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"/>
 			<delegate key="sink" impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate"/>
 		</delegates>
+		<urlExtensions>
+			<urlExtension name="neueda" uri="http://localhost:5000"/>
+		</urlExtensions>
 	</client>
 	<dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
 	<components_package>quickfix.fix44.component</components_package>

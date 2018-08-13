@@ -1,5 +1,12 @@
 Feature: FIX Simulator test
 
+  Scenario: Check that config can be updated when llve is enabled
+    Given a "fix" client
+    When client is logged on
+    And "neueda" extensions enabled
+    And "test" extensions enabled
+    And stop client
+
   Scenario: Check that a fix message value is greater than another fix message value
     Given a "fix" client
     When client is logged on
@@ -14,6 +21,9 @@ Feature: FIX Simulator test
     Then wait for an "ExecutionReport" message as "FillBuy"
     Then wait for an "ExecutionReport" message as "PartialFillSell"
     Then check that "OrderQty" in "ackSell" is equal to "OrderQty" in "PartialFillSell"
+    Then check that "OrderID" in "ackSell" is not equal to "OrderID" in "FillBuy"
+    Then check that "SendingTime" in "ackSell" is not equal to "SendingTime" in "FillBuy"
+    Then check that "OrderQty" in "ackSell" is not equal to "OrderQty" in "FillBuy"
     Then check that "OrderQty" in "ackSell" is greater than "OrderQty" in "ackBuy"
     Then check that "OrderQty" in "ackBuy" is less than "OrderQty" in "ackSell"
     Then check that "OrderQty" in "ackBuy" is greater than "5"
@@ -168,7 +178,7 @@ Scenario: Test Execution Report is accepted with Side set to 2
   Scenario: Can change the trading phase for matchingengine
     Given a "fix" client
     And filter out "Logon" message
-    And Neueda extensions enabled
+    And "neueda" extensions enabled
     When client is logged on
     And "BME" order book is purged
     And "BME" phase is "preopening"
@@ -183,7 +193,7 @@ Scenario: Test Execution Report is accepted with Side set to 2
   Scenario: Can input order on preopening phase
     Given a "fix" client
     And filter out "Logon" message
-    And Neueda extensions enabled
+    And "neueda" extensions enabled
     And "BME" order book is purged
     And "BME" phase is "preopening"
     When client is logged on
@@ -194,7 +204,7 @@ Scenario: Test Execution Report is accepted with Side set to 2
   Scenario: Can input order on preopening phase AND change to opening auction
     Given a "fix" client
     And filter out "Logon" message
-    And Neueda extensions enabled
+    And "neueda" extensions enabled
     And "BME" order book is purged
     And "BME" phase is "preopening"
     When client is logged on
@@ -208,7 +218,7 @@ Scenario: Test Execution Report is accepted with Side set to 2
     Given a "fix-wrongvalue" client
     And filter out "Logon" message
     Given a failure is expected
-    And fail to assert Neueda extensions enabled
+    And fail to assert "neueda" extensions enabled
     And check if failure had occurred
     And stop client
 
@@ -232,7 +242,7 @@ Scenario: Test Execution Report is accepted with Side set to 2
   Scenario: Can't purge with wrong endpoint
     Given a "fix-wrongfield" client
     And filter out "Logon" message
-    And Neueda extensions enabled
+    And "neueda" extensions enabled
     Given a failure is expected
     And fail to purge a "BME" order book
     And check if failure had occurred
