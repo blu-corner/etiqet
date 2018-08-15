@@ -13,7 +13,8 @@ import quickfix.Message;
 import quickfix.StringField;
 import quickfix.field.MsgType;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.Random;
@@ -24,9 +25,9 @@ public class FIXUtils {
 
 	public static String getDateTime() {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
-		LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
 
-		return dtf.format(now);
+		return dtf.format(utc);
 	}
 
 	public static String genClientOrderID() {
