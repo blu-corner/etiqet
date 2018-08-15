@@ -7,11 +7,38 @@
 	<components_package>com.neueda.etiqet.rest.message.impl</components_package>
 	<messageClass>com.neueda.etiqet.rest.message.RestMsg</messageClass>
 	<messages>
-		<message name="test_type_01">
+		<message name="test_01">
 			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
 		</message>
-		<message name="test_type_fields">
+		<message name="test_02">
 			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+            <headers>
+                <field name="Authorization">None</field>
+            </headers>
+		</message>
+		<message name="test_03">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<headers>
+				<field name="Authorization">Bearer 11df0fdd9c1d739d5f1151bd2200345e-09de019613becf13954f93a5b3d95693</field>
+			</headers>
+			<fields>
+				<field name="longUnits">ALL</field>
+			</fields>
+		</message>
+		<message name="test_04">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<headers>
+				<field name="Authorization">Bearer 11df0fdd9c1d739d5f1151bd2200345e-09de019613becf13954f93a5b3d95693</field>
+			</headers>
+			<fields>
+				<field name="instrument">GBP_USD</field>
+			</fields>
+		</message>
+		<message name="response_01">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<fields>
+				<field name="time" required="Y" />
+			</fields>
 		</message>
 	</messages>
 </protocol>

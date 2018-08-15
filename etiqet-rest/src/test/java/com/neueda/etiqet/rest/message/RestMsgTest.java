@@ -14,11 +14,11 @@ import static org.mockito.Mockito.when;
 public class RestMsgTest {
 
     @Test
-    public void testSerializMessage() throws EtiqetException {
+    public void testSerializeMessage() throws EtiqetException {
         String verb = "POST";
         String endpoint = "/api/test";
         String authHeader = "Bearer 12345";
-        String messageName = "test_type_01";
+        String messageName = "test_01";
 
         Cdr cdr = new Cdr(verb);
         cdr.set("$httpVerb", verb);

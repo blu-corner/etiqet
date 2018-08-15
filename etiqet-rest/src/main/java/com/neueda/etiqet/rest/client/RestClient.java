@@ -87,6 +87,9 @@ public class RestClient extends Client<HttpRequestMsg, String> {
 
             HttpResponse httpResponse = request.execute();
             Cdr responseData = JsonUtils.jsonToCdr(httpResponse.parseAsString());
+            if(responseData == null)
+                responseData = new Cdr(Cdr.class.getName());
+
             for(Map.Entry<String, Object> header : httpResponse.getHeaders().entrySet()) {
                 responseData.set("$header." + header.getKey(), String.valueOf(header.getValue()));
             }

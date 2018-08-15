@@ -2,6 +2,7 @@ package com.neueda.etiqet.fixture;
 
 import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.util.ParserUtils;
 import com.neueda.etiqet.core.util.StringUtils;
 import cucumber.api.java.en.Then;
@@ -24,7 +25,7 @@ public class RestFixtures {
         if(StringUtils.isNullOrEmpty(endpoint))
             throw new EtiqetException("Cannot send REST request without an endpoint");
 
-        Cdr restMsg = ParserUtils.stringToCdr(testName, payload);
+        Cdr restMsg = ParserUtils.stringToCdr(testName, handlers.preTreatParams(payload));
         if(!StringUtils.isNullOrEmpty(headers)) {
             String[] splitHeaders = headers.split(";");
             for (String headerKVPair : splitHeaders) {
@@ -36,8 +37,12 @@ public class RestFixtures {
 
         responseName = StringUtils.isNullOrEmpty(responseName) ? DEFAULT_MESSAGE_NAME : responseName;
 
+        Message protocolMsg = handlers.getClient(DEFAULT_CLIENT_NAME).getProtocolConfig().getMessage(testName);
         restMsg.set("$httpEndpoint", endpoint);
         restMsg.set("$httpVerb", httpVerb);
+
+        ParserUtils.fillDefaultHeaders(protocolMsg, restMsg);
+        ParserUtils.fillDefault(protocolMsg, restMsg);
         handlers.addMessage(responseName, restMsg);
         handlers.sendMessage(responseName, DEFAULT_CLIENT_NAME);
     }
@@ -45,8 +50,14 @@ public class RestFixtures {
     @Then("check that ?\"?([^\"]*)?\"? (?:has )?status code \"(\\d+)\"")
     public void checkHttpResponse(String responseName, Integer statusCode) throws EtiqetException {
         responseName = StringUtils.isNullOrEmpty(responseName) ? DEFAULT_MESSAGE_NAME : responseName;
-        handlers.waitForResponseOfType(responseName, DEFAULT_CLIENT_NAME, statusCode.toString());
+        handlers.waitForResponseOfType(responseName, DEFAULT_CLIENT_NAME, String.valueOf(statusCode));
         handlers.removeDefaultSentMessage();
+    }
+
+    @Then("check that ?\"?([^\"]*)?\"? matches \"(\\S+)\"")
+    public void checkHttpResponseMatchesMessage(String responseName, String messageType) throws EtiqetException {
+        responseName = StringUtils.isNullOrEmpty(responseName) ? DEFAULT_MESSAGE_NAME : responseName;
+        handlers.validateMessage(responseName, DEFAULT_CLIENT_NAME, messageType);
     }
 
     @Then("check that ?\"?([^\"]*)?\"? contains \"(\\S+)\"")
