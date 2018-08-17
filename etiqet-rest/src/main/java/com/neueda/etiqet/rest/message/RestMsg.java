@@ -13,8 +13,6 @@ import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-
 public class RestMsg extends Cdr {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestMsg.class);
@@ -41,13 +39,7 @@ public class RestMsg extends Cdr {
             }
 
             instance = (HttpRequestMsg) Class.forName(messageConfig.getImplementation()).getConstructor().newInstance();
-
-            if(Arrays.asList("GET", "POST", "PUT", "DELETE").contains(msgType)) {
-                handleHttpRequest();
-            } else {
-                LOG.error("Message type {} not recognised", msgType);
-                throw new EtiqetException("Message type " + msgType + " not recognised");
-            }
+            handleHttpRequest();
         } catch (EtiqetException e) {
             LOG.error("Exception thrown serializing RestMsg", e);
             throw e;
@@ -74,7 +66,8 @@ public class RestMsg extends Cdr {
      */
     private void handleHttpRequest() {
         HttpRequestMsg request = instance;
-        request.setVerb(msgType);
+        String verb = getItem("$httpVerb").getStrval();
+        request.setVerb(verb);
 
         getItems().entrySet().stream()
             .filter(entry -> entry.getKey().startsWith("$header."))
@@ -88,7 +81,7 @@ public class RestMsg extends Cdr {
                   .forEach(entry -> payloadCdr.setItem(entry.getKey(), entry.getValue()));
 
         String payload = JsonUtils.cdrToJson(payloadCdr);
-        if(!"GET".equals(msgType) && !StringUtils.isNullOrEmpty(payload) && !"{}".equals(payload)) {
+        if(!"GET".equals(verb) && !StringUtils.isNullOrEmpty(payload) && !"{}".equals(payload)) {
             request.setPayload(payload);
         }
     }

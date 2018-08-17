@@ -7,53 +7,37 @@
 	<components_package>com.neueda.etiqet.rest.message.impl</components_package>
 	<messageClass>com.neueda.etiqet.rest.message.RestMsg</messageClass>
 	<messages>
-		<message name="GET">
+		<message name="test_01">
 			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+		</message>
+		<message name="test_02">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+            <headers>
+                <field name="Authorization">None</field>
+            </headers>
+		</message>
+		<message name="test_03">
+			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<headers>
+				<field name="Authorization">Bearer 11df0fdd9c1d739d5f1151bd2200345e-09de019613becf13954f93a5b3d95693</field>
+			</headers>
 			<fields>
-				<field name="$httpVerb" type="string">GET</field>
+				<field name="longUnits">ALL</field>
 			</fields>
 		</message>
-		<message name="POST">
+		<message name="test_04">
 			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+			<headers>
+				<field name="Authorization">Bearer 11df0fdd9c1d739d5f1151bd2200345e-09de019613becf13954f93a5b3d95693</field>
+			</headers>
 			<fields>
-				<field name="$httpVerb" type="string">POST</field>
+				<field name="instrument">GBP_USD</field>
 			</fields>
 		</message>
-		<message name="PUT">
+		<message name="response_01">
 			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
 			<fields>
-				<field name="$httpVerb" type="string">PUT</field>
-			</fields>
-		</message>
-		<message name="DELETE">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="$httpVerb" type="string">DELETE</field>
-			</fields>
-		</message>
-		<message name="400">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="errorCode">CLOSEOUT_POSITION_DOESNT_EXIST</field>
-			</fields>
-		</message>
-		<message name="404">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="errorMessage" type="string">default</field>
-			</fields>
-		</message>
-		<message name="200">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="prices" type="integer">0</field>
-				<field name="instrument" type="string">default</field>
-			</fields>
-		</message>
-		<message name="201">
-			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
-			<fields>
-				<field name="prices" type="integer">0</field>
+				<field name="time" required="Y" />
 			</fields>
 		</message>
 	</messages>
