@@ -9,7 +9,6 @@ import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Delegate;
 import com.neueda.etiqet.core.config.dtos.Delegates;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
-import com.neueda.etiqet.core.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,9 +45,7 @@ public class ClientFactory {
 
 			client.setProtocolConfig(protocolConfig);
 			client.setProtocolName(clientType);
-			if(!StringUtils.isNullOrEmpty(protocolConfig.getClient().getExtensionsUrl())) {
-			    client.setExtensionsUrl(protocolConfig.getClient().getExtensionsUrl());
-            }
+			client.setUrlExtensions(protocolConfig.getClientUrlExtensions());
             setClientDelegates(client, protocolConfig);
 			return client;
         } catch (Exception e) {
@@ -74,10 +71,7 @@ public class ClientFactory {
 			Client client = (Client) Class.forName(classUri).getConstructor(String.class).newInstance(config);
             client.setProtocolConfig(protocolConfig);
             client.setProtocolName(clientType);
-
-            if(!StringUtils.isNullOrEmpty(protocolConfig.getClient().getExtensionsUrl())) {
-                client.setExtensionsUrl(protocolConfig.getClient().getExtensionsUrl());
-            }
+            client.setUrlExtensions(protocolConfig.getClientUrlExtensions());
             setClientDelegates(client, protocolConfig);
             return client;
         } catch (Exception e) {
@@ -107,9 +101,7 @@ public class ClientFactory {
 
 			client.setProtocolConfig(protocolConfig);
             client.setProtocolName(clientType);
-            if(!StringUtils.isNullOrEmpty(protocolConfig.getClient().getExtensionsUrl())) {
-                client.setExtensionsUrl(protocolConfig.getClient().getExtensionsUrl());
-            }
+            client.setUrlExtensions(protocolConfig.getClientUrlExtensions());
             setClientDelegates(client, protocolConfig);
 			return client;
 		} catch (Exception e) {

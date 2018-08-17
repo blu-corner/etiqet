@@ -6,6 +6,7 @@ import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.cdr.CdrItem;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.config.dtos.UrlExtension;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.server.Server;
 import com.neueda.etiqet.core.server.ServerFactory;
@@ -46,6 +47,8 @@ public class EtiqetHandlers {
     public static final int NOT_SET = -999999999;
     public static final int MILLI_NANO_CONVERSION = 1000000;
 
+
+    public static final String DEFAULT_EXTENSIONS_NAME = "neueda";
     public static final String HTTP_POST = "POST";
     public static final String PURGE_ORDERS = "requests/purge_orders";
     public static final String SET_TRADE_PHASE = "requests/set_trading_phase";
@@ -183,7 +186,7 @@ public class EtiqetHandlers {
      * @param secondaryConfig
      * @return
      */
-    public Client createClientWithFailover(String clientType, String clientName, String primaryConfig, String secondaryConfig)throws EtiqetException{
+    public Client createClientWithFailover(String clientType, String clientName, String primaryConfig, String secondaryConfig)throws EtiqetException {
         if(StringUtils.isNullOrEmpty(secondaryConfig)){
             throw new EtiqetException( "Secondary Config must be provided when trying to create a client with failover capabilities");
         }
@@ -197,7 +200,7 @@ public class EtiqetHandlers {
      * @param clientName
      * @throws EtiqetException
      */
-    public void failover(String clientName)throws EtiqetException{
+    public void failover(String clientName)throws EtiqetException {
         Client client = clientMap.get(clientName);
         if (client.canFailover()){
             client.failover();
@@ -416,9 +419,17 @@ public class EtiqetHandlers {
     public void compareValuesEqual(String firstField, String firstMessageAlias, String secondField, String secondMessageAlias){
         String sFirstValue = getValueFromField(firstMessageAlias,firstField);
         String sSecondValue = getValueFromField(secondMessageAlias,secondField);
-        assertTrue(firstField +" in " + firstMessageAlias +
-                " is " + sFirstValue +" in " + secondMessageAlias +
-                " it is " + sSecondValue, sFirstValue.equals(sFirstValue));
+        assertTrue("Test for equality: " + firstField +" in " + firstMessageAlias +
+                " is " + sFirstValue +", in " + secondMessageAlias +
+                " it is " + sSecondValue, sFirstValue.equals(sSecondValue));
+    }
+
+    public void compareValuesNotEqual(String firstField, String firstMessageAlias, String secondField, String secondMessageAlias){
+        String sFirstValue = getValueFromField(firstMessageAlias,firstField);
+        String sSecondValue = getValueFromField(secondMessageAlias,secondField);
+        assertFalse("Test for inequality: " + firstField +" in " + firstMessageAlias +
+                " is " + sFirstValue +", in " + secondMessageAlias +
+                " it is " + sSecondValue, sFirstValue.equals(sSecondValue));
     }
 
     public void compareValues(String firstField, String firstMessageAlias, String secondField, String secondMessageAlias, Long millis){
@@ -1143,10 +1154,9 @@ public class EtiqetHandlers {
         getClient(clientName).setActions(new String[]{});
     }
 
-    public void checkExtensionsEnabled(String clientName) throws EtiqetException{
-        if (StringUtils.isNullOrEmpty(getClient(clientName).getExtensionsUrl())){
-            throw new EtiqetException("Extensions are not enabled - please enable to use this function");
-        }
+    public void checkExtensionsEnabled(String extensionsName, String clientName){
+         assertNotNull("Extensions are not enabled - please enable to use this function",
+                 getNamedExtension(getClient(clientName).getUrlExtensions(),extensionsName));
     }
 
     String getJson(String exchange, String auctionPhase){
@@ -1157,23 +1167,44 @@ public class EtiqetHandlers {
         return gson.toJson(map);
     }
 
-    Map<String,String> getDefaultHeader(){
+    public Map<String,String> getDefaultHeader(){
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
         return map;
     }
+    public UrlExtension getNamedExtension(List<UrlExtension> urlExtensions, String name) {
+        assertFalse("No url extensions specified in client", ArrayUtils.isNullOrEmpty(urlExtensions));
+        assertFalse("Client name required to elicit urlExtension", StringUtils.isNullOrEmpty(name));
+
+        UrlExtension ext = urlExtensions.stream().
+                           filter(x -> x.getName().equalsIgnoreCase(name)).
+                           findFirst().orElse(null);
+        assertNotNull(String.format("Extension: %s Not found", name),ext);
+
+        return ext;
+    }
+
+    public UrlExtension getExtension(String clientName, String uri) {
+        assertFalse( "Must provide client name to acquire URL", StringUtils.isNullOrEmpty(clientName));
+        assertFalse( "Must provide extensions name to acquire URL", StringUtils.isNullOrEmpty(uri));
+        Client client = getClient(clientName);
+        assertFalse("Client not found: "+clientName,client==null);
+        List<UrlExtension> extensions = client.getUrlExtensions();
+        assertFalse("No Extensions URL found in client " + clientName, (extensions.isEmpty()));
+        UrlExtension extensionsUrl = getNamedExtension(extensions, uri);
+
+        return extensionsUrl;
+
+    }
 
     public void sendNamedRestMessageWithPayloadHeaders
-            (String httpVerb, Map<String, String> headers, String payload, String endpoint, String clientName)
+            (String httpVerb, Map<String, String> headers, String payload, String endpoint, UrlExtension extensionsUrl)
     throws EtiqetException, IOException {
         if(endpoint == null) {
             throw new EtiqetException("Cannot send REST request without an endpoint");
         }
 
-        String extensionsUrl = getClient(clientName).getExtensionsUrl();
-        assertFalse("No Extensions URL found in client " + clientName, StringUtils.isNullOrEmpty(extensionsUrl));
-
-        URL url = getFullExtensionsUrl(extensionsUrl, endpoint);
+        URL url = getFullExtensionsUrl(extensionsUrl.getUri(), endpoint);
         HttpURLConnection con;
         if(url.toString().startsWith("https")){
             con = (HttpsURLConnection) url.openConnection();
@@ -1207,7 +1238,7 @@ public class EtiqetHandlers {
      * @return fully qualified URL
      * @throws MalformedURLException when URL is malformed
      */
-    URL getFullExtensionsUrl(String extensionsUrl, String endpoint) throws MalformedURLException {
+    public URL getFullExtensionsUrl(String extensionsUrl, String endpoint) throws MalformedURLException {
         return new URL(String.format("%s%s", extensionsUrl, endpoint));
     }
 

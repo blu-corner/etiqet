@@ -74,10 +74,6 @@ public class GlobalConfig {
                     protocolConfig
                 );
 
-                if(!StringUtils.isNullOrEmpty(clientImpl.getExtensionsUrl())) {
-                    client.setExtensionsUrl(clientImpl.getExtensionsUrl());
-                }
-
                 clients.put(clientImpl.getName(), client);
             }
 
