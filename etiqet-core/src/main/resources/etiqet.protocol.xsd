@@ -308,13 +308,24 @@
                     <xs:documentation xml:lang="en">Fully qualified class name of the message</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="fields">
+            <xs:element name="headers" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">List of header field values</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="field" type="Field"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="fields" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">List of default field values</xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                        <xs:element name="field" type="Field"/>
+                        <xs:element name="field" type="Field">
+                        </xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -391,7 +402,7 @@
                         <xs:documentation xml:lang="en">Comma separated list of allowed values</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:assert test="(@utilclass and @method and string-length(text()) eq 0)
+                <xs:assert test="((@utilclass and @method) or (@required) and string-length(text()) eq 0)
                                     or (not(@utilclass) and not(@method) and string-length(text()) gt 0)">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">Assert that either utilclass and method are specified or a

@@ -311,5 +311,4 @@ public class ParserUtilsTest {
         assertEquals("4", ParserUtils.getFullTagValueFromCdr("list->item4", cdr));
         assertEquals("5", ParserUtils.getFullTagValueFromCdr("list->item5", cdr));
     }
-
 }

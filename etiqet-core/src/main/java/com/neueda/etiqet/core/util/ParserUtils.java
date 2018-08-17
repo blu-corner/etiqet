@@ -230,6 +230,24 @@ public class ParserUtils {
 	}
 
 	/**
+	 * This method is used to build a message generating default values for required header params
+	 * @param message message type defaults from the ProtocolConfig
+	 * @param cdr message to populate with default values
+	 * @throws EtiqetException when a utility method cannot be used to populate the field
+	 */
+	public static void fillDefaultHeaders(Message message, Cdr cdr) throws EtiqetException {
+		if (message != null && message.getHeaders() != null && message.getHeaders().getField() != null) {
+			for(Field field : message.getHeaders().getField()) {
+				if(!field.getName().startsWith("$header."))
+					field.setName("$header." + field.getName());
+				if(!cdr.containsKey(field.getName())) {
+					handleDefaultField(field, cdr);
+				}
+			}
+		}
+	}
+
+	/**
 	 * This method is used to build a message generating default values for required params
 	 * @param message message type defaults from the ProtocolConfig
 	 * @param cdr message to populate with default values

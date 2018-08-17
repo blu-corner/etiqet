@@ -712,6 +712,15 @@ public class EtiqetHandlers {
         waitForNoResponse(messageName, clientName, messageType, 5000);
     }
 
+    public void validateMessage(String messageName, String clientName, String messageType)
+            throws EtiqetException {
+        Client client = getClient(clientName);
+        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
+
+        Cdr rsp = getResponse(messageName);
+        client.validateMsg(messageType, rsp);
+    }
+
     public void validateMessageTypeExistInResponseMap(String messageName) {
         assertNotNull(getResponse(messageName));
     }
