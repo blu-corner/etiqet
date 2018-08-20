@@ -86,7 +86,9 @@ public class RestClient extends Client<HttpRequestMsg, String> {
             HttpRequest request = httpRequestMsg.createHttpRequest(requestFactory, baseUrl);
 
             HttpResponse httpResponse = request.execute();
-            Cdr responseData = JsonUtils.jsonToCdr(httpResponse.parseAsString());
+            Cdr responseData = null;
+            if (httpResponse.getStatusCode() != 404)
+                responseData = JsonUtils.jsonToCdr(httpResponse.parseAsString());
             if(responseData == null)
                 responseData = new Cdr(Cdr.class.getName());
 
