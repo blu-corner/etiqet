@@ -37,7 +37,7 @@ public class JsonUtils {
      * @return Cdr representation of the JSON object
      */
     public static Cdr jsonToCdr(String json) {
-        return getGson().fromJson(json, Cdr.class);
+        return getGson().fromJson(json.trim(), Cdr.class);
     }
 
     /**

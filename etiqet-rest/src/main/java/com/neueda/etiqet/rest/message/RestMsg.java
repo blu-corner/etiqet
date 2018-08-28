@@ -77,8 +77,8 @@ public class RestMsg extends Cdr {
 
         Cdr payloadCdr = new Cdr(msgType);
         getItems().entrySet().stream()
-                  .filter(entry -> !entry.getKey().startsWith("$"))
-                  .forEach(entry -> payloadCdr.setItem(entry.getKey(), entry.getValue()));
+                .filter(entry -> !entry.getKey().startsWith("$"))
+                .forEach(entry -> payloadCdr.setItem(entry.getKey(), entry.getValue()));
 
         String payload = JsonUtils.cdrToJson(payloadCdr);
         if(!"GET".equals(verb) && !StringUtils.isNullOrEmpty(payload) && !"{}".equals(payload)) {

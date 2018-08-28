@@ -25,7 +25,14 @@ public class RestFixtures {
         if(StringUtils.isNullOrEmpty(endpoint))
             throw new EtiqetException("Cannot send REST request without an endpoint");
 
-        Cdr restMsg = ParserUtils.stringToCdr(testName, handlers.preTreatParams(payload));
+        Message protocolMsg = handlers.getClient(DEFAULT_CLIENT_NAME).getProtocolConfig().getMessage(testName);
+
+        Cdr restMsg = new Cdr(testName);
+        ParserUtils.fillDefaultHeaders(protocolMsg, restMsg);
+
+        ParserUtils.fillDefaultWithParams(protocolMsg, restMsg);
+        restMsg = ParserUtils.stringToCdr(restMsg, handlers.preTreatParams(payload));
+
         if(!StringUtils.isNullOrEmpty(headers)) {
             String[] splitHeaders = headers.split(";");
             for (String headerKVPair : splitHeaders) {
@@ -35,14 +42,10 @@ public class RestFixtures {
             }
         }
 
-        responseName = StringUtils.isNullOrEmpty(responseName) ? DEFAULT_MESSAGE_NAME : responseName;
-
-        Message protocolMsg = handlers.getClient(DEFAULT_CLIENT_NAME).getProtocolConfig().getMessage(testName);
         restMsg.set("$httpEndpoint", endpoint);
         restMsg.set("$httpVerb", httpVerb);
 
-        ParserUtils.fillDefaultHeaders(protocolMsg, restMsg);
-        ParserUtils.fillDefault(protocolMsg, restMsg);
+        responseName = StringUtils.isNullOrEmpty(responseName) ? DEFAULT_MESSAGE_NAME : responseName;
         handlers.addMessage(responseName, restMsg);
         handlers.sendMessage(responseName, DEFAULT_CLIENT_NAME);
     }

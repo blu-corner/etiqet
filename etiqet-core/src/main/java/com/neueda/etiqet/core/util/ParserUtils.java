@@ -104,24 +104,45 @@ public class ParserUtils {
 	}
 
 	/**
-	 * Method to convert a string witch pattern attr1.attr12=value,attr2=value...
-     * @param mType message type
+	 * Overload helper method that invoke stringToCdr with a new Cdr object
+	 * @param mType message type
 	 * @param params String containing a list of comma separated key values.
 	 * @return CDR message containing the parsed parameters.
 	 */
 	public static Cdr stringToCdr(String mType, String params) {
 		Cdr cdr = new Cdr(mType);
+		return stringToCdr(cdr, params, null);
+	}
+
+	/**
+	 * Overloaded helper method that invoke stringToCdr with existing Cdr object
+	 * @param cdr Cdr object to populate
+	 * @param params String containing a list of comma separated key values.
+	 * @return CDR message containing the parsed parameters.
+	 */
+	public static Cdr stringToCdr(Cdr cdr, String params) {
+		return stringToCdr(cdr, params, null);
+	}
+
+	/**
+	 * Method to convert a string witch pattern attr1.attr12=value,attr2=value...
+	 * @param params String containing a list of comma separated key values.
+	 * @param values Optional list of values to populate attributes with, will override values in params.
+	 * @return CDR message containing the parsed parameters.
+	 */
+	private static Cdr stringToCdr(Cdr cdr, String params, List<String> values) {
 		if (!StringUtils.isNullOrEmpty(params)) {
 			String[] param = params.trim().split(Separators.PARAM_SEPARATOR);
-			for (String index: param) {
-				String[] keyValue = index.split(Separators.KEY_VALUE_SEPARATOR);
+
+			for(int i = 0; i < param.length; i++) {
+				String[] keyValue = param[i].split(Separators.KEY_VALUE_SEPARATOR);
 				// Skip parameters without value
-				if(keyValue.length != 2) {
-					LOG.warn("Skipping parameter [" + index + "]. No value or separator found");
+				if(keyValue.length != 2 && values == null) {
+					LOG.warn("Skipping parameter [" + param[i] + "]. No value or separator found");
 					continue;
 				}
 				String key = keyValue[0].trim();
-				String value = keyValue[1];
+				String value = values != null ? values.get(i) : keyValue[1];
 				String[] tag = key.split(Separators.LEVEL_SEPARATOR);
 				String restTags = null;
 				if (tag.length > 1) {
@@ -243,6 +264,20 @@ public class ParserUtils {
 				if(!cdr.containsKey(field.getName())) {
 					handleDefaultField(field, cdr);
 				}
+			}
+		}
+	}
+
+	/**
+	 * This method is used to build a nested message generating default values for required params
+	 * @param message message type defaults from the ProtocolConfig
+	 * @param cdr message to populate with default values
+	 * @throws EtiqetException when a utility method cannot be used to populate the field
+	 */
+	public static void fillDefaultWithParams(Message message, Cdr cdr) throws EtiqetException {
+		if (message != null && message.getFields() != null && message.getFields().getField() != null) {
+			for(Field field : message.getFields().getField()) {
+				stringToCdr(cdr, field.getName(), Arrays.asList(field.getValue()));
 			}
 		}
 	}

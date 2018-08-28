@@ -102,7 +102,7 @@ public class RestClientTest {
         data.set("$httpEndpoint", "/test/api");
         data.set("$httpVerb", "GET");
         data.set("$header.responsecode", "200");
-        data.set("$header.responsebody", "{ text : \"Everything OK\" }");
+        data.set("$header.responsebody", "{ \"text\" : \"Everything OK\" }");
 
         client.launchClient();
         client.send(data);
