@@ -1223,9 +1223,8 @@ public class EtiqetHandlers {
         assertFalse("Client not found: "+clientName,client==null);
         List<UrlExtension> extensions = client.getUrlExtensions();
         assertFalse("No Extensions URL found in client " + clientName, (extensions.isEmpty()));
-        UrlExtension extensionsUrl = getNamedExtension(extensions, uri);
 
-        return extensionsUrl;
+        return getNamedExtension(extensions, uri);
 
     }
 

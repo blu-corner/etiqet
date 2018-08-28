@@ -43,8 +43,6 @@
                 <version>0.8.1</version>
                 <configuration>
                     <output>file</output>
-                    <destFile>${project.build.directory}/jacoco-ut.exec</destFile>
-                    <dataFile>${project.build.directory}/jacoco-ut.exec</dataFile>
                 </configuration>
                 <executions>
                     <execution>

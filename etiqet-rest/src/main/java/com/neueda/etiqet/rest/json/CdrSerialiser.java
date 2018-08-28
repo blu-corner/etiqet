@@ -33,8 +33,7 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
         return isObj ? serializeObject(src) : serializeArray(src);
     }
 
-    private JsonElement serializeArray(Cdr src)
-    {
+    private JsonElement serializeArray(Cdr src) {
         JsonArray jsonArray  = new JsonArray();
         for(Map.Entry<String, CdrItem> cdrEntry : src.getItems().entrySet()) {
             CdrItem cdrItem = cdrEntry.getValue();
@@ -44,8 +43,7 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
         return jsonArray;
     }
 
-    private JsonElement serializeObject(Cdr src)
-    {
+    private JsonElement serializeObject(Cdr src) {
         JsonObject jsonObject = new JsonObject();
         for(Map.Entry<String, CdrItem> cdrEntry : src.getItems().entrySet()) {
             String cdrKey = cdrEntry.getKey();
