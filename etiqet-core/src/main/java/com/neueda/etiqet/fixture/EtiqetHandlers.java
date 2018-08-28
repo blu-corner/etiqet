@@ -6,6 +6,8 @@ import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.cdr.CdrItem;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.config.dtos.Field;
+import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.config.dtos.UrlExtension;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.server.Server;
@@ -308,8 +310,15 @@ public class EtiqetHandlers {
     String preTreatParams(String params) {
         StringBuilder preTreatedParams = new StringBuilder();
 
-        if (StringUtils.isNullOrEmpty(params) || params.length() < 3) // minimum 3 characters (e.g. x=y)
-            return preTreatedParams.toString();
+        if (StringUtils.isNullOrEmpty(params) || params.length() < 3) {
+            // minimum 3 characters (e.g. x=y)
+            try {
+                Integer.parseInt(params);
+                preTreatedParams.append(params); // Array index
+            } finally {
+                return preTreatedParams.toString();
+            }
+        }
 
         String[] parameList = params.trim().split(Separators.PARAM_SEPARATOR);
         for (String param : parameList) {
@@ -717,8 +726,15 @@ public class EtiqetHandlers {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
 
-        Cdr rsp = getResponse(messageName);
-        client.validateMsg(messageType, rsp);
+        Message message = client.getProtocolConfig().getMessage(messageType);
+        if(message != null && message.getFields() != null && message.getFields().getField() != null) {
+            for (Field field: message.getFields().getField()){
+                if(field != null && (field.getRequired()!= null )
+                                && (field.getRequired().equalsIgnoreCase("Y"))) {
+                    checkResponseKeyPresenceAndValue(messageName, field.getName());
+                }
+            }
+        }
     }
 
     public void validateMessageTypeExistInResponseMap(String messageName) {
@@ -759,7 +775,7 @@ public class EtiqetHandlers {
         LOG.info("Exception caught: " + e);
     }
 
-    public void checkResponseKeyPresenceAndValue(String messageName, String params) {
+    public void checkResponseKeyPresenceAndValue(String messageName, String params, List<String> values) {
         // Check if there are some params to check
         assertTrue("checkResponseKeyPresenceAndValue: Nothing to match", !StringUtils.isNullOrEmpty(params));
 
@@ -769,11 +785,16 @@ public class EtiqetHandlers {
         assertNotNull("checkResponseKeyPresenceAndValue: response for " + messageName + " not found", response);
 
         // Check if all params are into response message
-        Map<String,String> notMatched = checkMsgContainsKeysAndValues(response, preTreatedParams);
+        Map<String,String> notMatched = checkMsgContainsKeysAndValues(response, preTreatedParams, values);
         for(Map.Entry<String, String> entry : notMatched.entrySet()) {
             assertTrue("checkResponseKeyPresenceAndValue: "+ messageName + " Msg: '"  + entry.getKey() + "' found, expected: '" + entry.getValue() +"'", StringUtils.isNullOrEmpty(entry.getKey()));
         }
     }
+
+    public void checkResponseKeyPresenceAndValue(String messageName, String params) {
+        checkResponseKeyPresenceAndValue(messageName, params, null);
+    }
+
 
     public void checkFieldPresence(String messageName, String params) {
         // Check if there are some params to check
@@ -838,22 +859,24 @@ public class EtiqetHandlers {
      * Method to check if a list of param=value is into a message.
      *
      * @param msg    message to check.
-     * @param params list of params
+     * @param params list of params.
+     * @values params optional list of values, will override values in the params.
      * @return string with param_value that don't match.
      */
-    private Map<String, String> checkMsgContainsKeysAndValues(Cdr msg, String params) {
+    private Map<String, String> checkMsgContainsKeysAndValues(Cdr msg, String params, List<String> values) {
         Map<String,String> unmatched = new HashMap<>();
         String[] pairs = params.trim().split(Separators.PARAM_SEPARATOR);
         if (pairs.length > 0) {
-            for (String expected : pairs) {
-                String[] keyValue = expected.split(Separators.KEY_VALUE_SEPARATOR);
+            for(int i = 0; i < pairs.length; i++) {
+                String[] keyValue = pairs[i].split(Separators.KEY_VALUE_SEPARATOR);
 
                 String key = keyValue[0];
-                String value = keyValue[1];
+                String paramValue = keyValue.length == 2 ? keyValue[1] : null;
+                String value = values == null ? paramValue : values.get(i);
 
                 String msgValue = getValueFromTree(key, msg);
-                if (!value.equals(msgValue)) {
-                    unmatched.put(String.format("%s=%s", key,msgValue ),expected);
+                if (msgValue == null || (value != null && !value.equals(msgValue))) {
+                    unmatched.put(String.format("%s=%s", key,msgValue ), pairs[i]);
                 }
             }
         }
@@ -1200,9 +1223,8 @@ public class EtiqetHandlers {
         assertFalse("Client not found: "+clientName,client==null);
         List<UrlExtension> extensions = client.getUrlExtensions();
         assertFalse("No Extensions URL found in client " + clientName, (extensions.isEmpty()));
-        UrlExtension extensionsUrl = getNamedExtension(extensions, uri);
 
-        return extensionsUrl;
+        return getNamedExtension(extensions, uri);
 
     }
 

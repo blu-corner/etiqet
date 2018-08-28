@@ -38,6 +38,9 @@
 			<implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
 			<fields>
 				<field name="time" required="Y" />
+				<field name="prices" required="Y" />
+				<field name="prices->0->type" required="Y" />
+				<field name="prices->0->bids->0->price" required="Y" />
 			</fields>
 		</message>
 	</messages>

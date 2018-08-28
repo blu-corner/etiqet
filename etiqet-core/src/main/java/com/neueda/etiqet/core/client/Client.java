@@ -61,7 +61,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
 
     protected Config config;
 
-    private ProtocolConfig protocolConfig;
+    protected ProtocolConfig protocolConfig;
 
     /* Delegate for processing messages during encoding and decoding phases */
     protected ClientDelegate<U, M> delegate;

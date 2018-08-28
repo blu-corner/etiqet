@@ -6,6 +6,7 @@ import com.neueda.etiqet.core.common.cdr.CdrItem;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,15 +28,30 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
      */
     @Override
     public JsonElement serialize(Cdr src, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject jsonCdr = new JsonObject();
 
+        boolean isObj = src.getItem("0") == null;
+        return isObj ? serializeObject(src) : serializeArray(src);
+    }
+
+    private JsonElement serializeArray(Cdr src) {
+        JsonArray jsonArray  = new JsonArray();
+        for(Map.Entry<String, CdrItem> cdrEntry : src.getItems().entrySet()) {
+            CdrItem cdrItem = cdrEntry.getValue();
+            JsonElement element = cdrItemToJsonElement(cdrItem);
+            jsonArray.add(element);
+        }
+        return jsonArray;
+    }
+
+    private JsonElement serializeObject(Cdr src) {
+        JsonObject jsonObject = new JsonObject();
         for(Map.Entry<String, CdrItem> cdrEntry : src.getItems().entrySet()) {
             String cdrKey = cdrEntry.getKey();
             CdrItem cdrItem = cdrEntry.getValue();
-            jsonCdr.add(cdrKey, cdrItemToJsonElement(cdrItem));
+            JsonElement element = cdrItemToJsonElement(cdrItem);
+            jsonObject.add(cdrKey, element);
         }
-
-        return jsonCdr;
+        return jsonObject;
     }
 
     /**
@@ -121,8 +137,63 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
      */
     @Override
     public Cdr deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            {
+    {
         Cdr data = new Cdr(typeOfT.getTypeName());
+
+        if(json.isJsonArray())
+            data = deserializeArray(json, data, context);
+        else
+            data = deserializeObject(json, data, context);
+
+        return data;
+    }
+
+    private Cdr deserializeArray(JsonElement json, Cdr data, JsonDeserializationContext context)
+    {
+        Iterator<JsonElement> jsonIterator = json.getAsJsonArray().iterator();
+
+        int idx = 0;
+        while(jsonIterator.hasNext())
+        {
+            Cdr tmpCdr = new Cdr(Cdr.class.getTypeName());
+            JsonElement element = jsonIterator.next();
+            if(element.isJsonPrimitive())
+                data = deserializePrimitive(idx, element.getAsJsonPrimitive(), data);
+            else {
+                if(element.isJsonArray()) {
+                    tmpCdr = deserializeArray(element, tmpCdr, context);
+                } else {
+                    tmpCdr = deserializeObject(element, tmpCdr, context);
+                }
+                CdrItem item = new CdrItem();
+                item.setType(CdrItem.CdrItemType.CDR_ARRAY);
+                item.setCdrs(new ArrayList<>());
+                item.getCdrs().add(tmpCdr);
+                data.setItem(String.valueOf(idx), item);
+            }
+
+            idx++;
+        }
+
+        return data;
+    }
+
+    private Cdr deserializePrimitive(int key, JsonPrimitive json, Cdr data)
+    {
+        CdrItem item;
+        if(json.isNumber())
+            item = getCdrItem(json.getAsFloat());
+        else if(json.isBoolean())
+            item = getCdrItem(json.getAsBoolean());
+        else
+            item = getCdrItem(json.getAsString());
+
+        data.setItem(String.valueOf(key), item);
+        return data;
+    }
+
+    private Cdr deserializeObject(JsonElement json, Cdr data, JsonDeserializationContext context)
+    {
         Map<String, Object> map = context.deserialize(json, Map.class);
         for(Map.Entry<String, Object> entry : map.entrySet()) {
             CdrItem cdrItem = getCdrItem(entry.getValue());
@@ -180,6 +251,9 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
         } else if(value instanceof Double) {
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_DOUBLE);
             cdrValue.setDoubleval((Double) value);
+        } else if(value instanceof Boolean) {
+            cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_BOOLEAN);
+            cdrValue.setBoolVal((Boolean) value);
         } else {
             // treat it as a string otherwise
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_STRING);
