@@ -10,6 +10,7 @@ import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
@@ -138,13 +139,20 @@ public class RestClient extends Client<HttpRequestMsg, String> {
     public boolean isLoggedOn() { return false; }
 
     @Override
-    public String getMsgType(String messageName) {
-        return getProtocolConfig().getMsgType(messageName);
+    public String getMsgType(String messageType) {
+        return getMsgName(messageType);
     }
 
     @Override
-    public String getMsgName(String messageType) {
-        return getProtocolConfig().getMsgName(messageType);
+    public String getMsgName(String messageName) {
+        String msgName;
+        Message message = getProtocolConfig().getMessage(messageName);
+        if (message != null) {
+            msgName = message.getName();
+        } else {
+            msgName = messageName;
+        }
+        return msgName;
     }
 
     @Override
@@ -170,7 +178,15 @@ public class RestClient extends Client<HttpRequestMsg, String> {
     }
 
     @Override
-    public Cdr decode(HttpRequestMsg message) throws EtiqetException {
+    public Cdr decode(HttpRequestMsg message) {
         return msgQueue.iterator().next();
+    }
+
+    public String getPrimaryConfig() {
+        return primaryConfig;
+    }
+
+    public String getSecondaryConfig() {
+        return secondaryConfig;
     }
 }

@@ -274,7 +274,7 @@ public class ParserUtils {
 	 * @param cdr message to populate with default values
 	 * @throws EtiqetException when a utility method cannot be used to populate the field
 	 */
-	public static void fillDefaultWithParams(Message message, Cdr cdr) throws EtiqetException {
+	public static void fillDefaultWithParams(Message message, Cdr cdr) {
 		if (message != null && message.getFields() != null && message.getFields().getField() != null) {
 			for(Field field : message.getFields().getField()) {
 				stringToCdr(cdr, field.getName(), Arrays.asList(field.getValue()));

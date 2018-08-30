@@ -313,11 +313,13 @@ public class EtiqetHandlers {
         if (StringUtils.isNullOrEmpty(params) || params.length() < 3) {
             // minimum 3 characters (e.g. x=y)
             try {
-                Integer.parseInt(params);
-                preTreatedParams.append(params); // Array index
-            } finally {
-                return preTreatedParams.toString();
+                int index = Integer.parseInt(params);
+                preTreatedParams.append(index); // Array index
+            } catch (NumberFormatException e) {
+                // Ignored
             }
+
+            return preTreatedParams.toString();
         }
 
         String[] parameList = params.trim().split(Separators.PARAM_SEPARATOR);
@@ -721,8 +723,7 @@ public class EtiqetHandlers {
         waitForNoResponse(messageName, clientName, messageType, 5000);
     }
 
-    public void validateMessage(String messageName, String clientName, String messageType)
-            throws EtiqetException {
+    public void validateMessage(String messageName, String clientName, String messageType) {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
 
