@@ -720,7 +720,7 @@ public class EtiqetFixtures {
     }
 
 	@And("^\"([^\"]*)\"extensions enabled for \"([^\"]*)\"$")
-	public void checkThatNeuedaExtensionsAreEnabled(String extensionsName, String clientName) throws EtiqetException {
+	public void checkThatNeuedaExtensionsAreEnabled(String extensionsName, String clientName) {
 		handlers.checkExtensionsEnabled(extensionsName, clientName);
 	}
 

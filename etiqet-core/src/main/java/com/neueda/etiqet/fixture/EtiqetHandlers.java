@@ -301,6 +301,18 @@ public class EtiqetHandlers {
         return cdrItem == null ? null : cdrItem.toString();
     }
 
+    private boolean isArrayIndex(String param)
+    {
+        try {
+            int index = Integer.parseInt(param);
+            if(index > -1)
+                return true;
+        } catch (NumberFormatException e) {
+            // Ignored
+        }
+        return false;
+    }
+
     /**
      * Method to prepare params correctly before set them into message.
      *
@@ -312,12 +324,8 @@ public class EtiqetHandlers {
 
         if (StringUtils.isNullOrEmpty(params) || params.length() < 3) {
             // minimum 3 characters (e.g. x=y)
-            try {
-                int index = Integer.parseInt(params);
-                preTreatedParams.append(index); // Array index
-            } catch (NumberFormatException e) {
-                // Ignored
-            }
+            if(isArrayIndex(params))
+                preTreatedParams.append(params);
 
             return preTreatedParams.toString();
         }

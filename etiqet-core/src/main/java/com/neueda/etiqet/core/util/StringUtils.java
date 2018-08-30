@@ -1,6 +1,10 @@
 package com.neueda.etiqet.core.util;
 
-public class StringUtils {
+public final class StringUtils {
+
+	private StringUtils()
+	{
+	}
 
 	/**
 	 * Method to check if a string is null or empty.
