@@ -301,16 +301,17 @@ public class EtiqetHandlers {
         return cdrItem == null ? null : cdrItem.toString();
     }
 
-    private boolean isArrayIndex(String param)
+    private String checkArrayIndex(String param)
     {
+        String result = "";
         try {
             int index = Integer.parseInt(param);
             if(index > -1)
-                return true;
+                result = param;
         } catch (NumberFormatException e) {
             // Ignored
         }
-        return false;
+        return result;
     }
 
     /**
@@ -323,11 +324,8 @@ public class EtiqetHandlers {
         StringBuilder preTreatedParams = new StringBuilder();
 
         if (StringUtils.isNullOrEmpty(params) || params.length() < 3) {
-            // minimum 3 characters (e.g. x=y)
-            if(isArrayIndex(params))
-                preTreatedParams.append(params);
-
-            return preTreatedParams.toString();
+            // minimum 3 characters (e.g. x=y), or array index (e.g 0)
+            return checkArrayIndex(params);
         }
 
         String[] parameList = params.trim().split(Separators.PARAM_SEPARATOR);
