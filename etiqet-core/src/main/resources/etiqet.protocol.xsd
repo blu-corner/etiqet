@@ -147,7 +147,7 @@
     <xs:complexType name="Protocol">
         <xs:sequence minOccurs="0">
             <xs:element name="client" type="Client"/>
-            <xs:element name="dictionary" type="Dictionary"/>
+            <xs:element name="dictionary" type="Dictionary" minOccurs="0" />
             <xs:element name="components_package" type="xs:string">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Fully qualified package of message components</xs:documentation>

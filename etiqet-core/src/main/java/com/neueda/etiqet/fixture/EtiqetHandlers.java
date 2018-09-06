@@ -301,6 +301,19 @@ public class EtiqetHandlers {
         return cdrItem == null ? null : cdrItem.toString();
     }
 
+    private String checkArrayIndex(String param)
+    {
+        String result = "";
+        try {
+            int index = Integer.parseInt(param);
+            if(index > -1)
+                result = param;
+        } catch (NumberFormatException e) {
+            // Ignored
+        }
+        return result;
+    }
+
     /**
      * Method to prepare params correctly before set them into message.
      *
@@ -311,13 +324,8 @@ public class EtiqetHandlers {
         StringBuilder preTreatedParams = new StringBuilder();
 
         if (StringUtils.isNullOrEmpty(params) || params.length() < 3) {
-            // minimum 3 characters (e.g. x=y)
-            try {
-                Integer.parseInt(params);
-                preTreatedParams.append(params); // Array index
-            } finally {
-                return preTreatedParams.toString();
-            }
+            // minimum 3 characters (e.g. x=y), or array index (e.g 0)
+            return checkArrayIndex(params);
         }
 
         String[] parameList = params.trim().split(Separators.PARAM_SEPARATOR);
@@ -721,8 +729,7 @@ public class EtiqetHandlers {
         waitForNoResponse(messageName, clientName, messageType, 5000);
     }
 
-    public void validateMessage(String messageName, String clientName, String messageType)
-            throws EtiqetException {
+    public void validateMessage(String messageName, String clientName, String messageType) {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
 

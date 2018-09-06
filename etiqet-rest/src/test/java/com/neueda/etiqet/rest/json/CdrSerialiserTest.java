@@ -1,27 +1,33 @@
 package com.neueda.etiqet.rest.json;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.cdr.CdrItem;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CdrSerialiserTest {
 
-//    @Test
-    public void testSerialize() {
-        fail("Stub test method to be removed");
+    private Gson gson;
+
+    @Before
+    public void setUp() {
+        gson = new GsonBuilder().registerTypeAdapter(Map.class, new ObjectTypeAdapter())
+                .registerTypeAdapter(List.class, new ObjectTypeAdapter())
+                .registerTypeAdapter(Cdr.class, new CdrSerialiser())
+                .create();
     }
 
     @Test
     public void testCdrItemToJsonElementPrimitives() {
+
         CdrSerialiser cs = new CdrSerialiser();
 
         CdrItem booleanCdr = new CdrItem(CdrItem.CdrItemType.CDR_BOOLEAN);
@@ -51,6 +57,7 @@ public class CdrSerialiserTest {
         JsonElement doubleElement = cs.cdrItemToJsonElement(doubleCdr);
         assertTrue(doubleElement instanceof JsonPrimitive);
         assertEquals(2.23, doubleElement.getAsDouble(), 0);
+
     }
 
     @Test
@@ -91,15 +98,5 @@ public class CdrSerialiserTest {
             assertTrue(castObject.has("test" + i));
             assertEquals("" + i, castObject.get("test" + i).getAsString());
         }
-    }
-
-//    @Test
-    public void testDeserialize() {
-        fail("Stub test method to be removed");
-    }
-
-    @Test
-    public void testGetCdrItem() {
-
     }
 }

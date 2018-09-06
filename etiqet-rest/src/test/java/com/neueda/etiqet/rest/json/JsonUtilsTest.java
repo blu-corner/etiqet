@@ -84,5 +84,14 @@ public class JsonUtilsTest {
         JsonElement reparsedJson = parser.parse(newJson);
 
         assertEquals(originalJson, reparsedJson);
+
+        String jsonList = "[ 1.0, [ 1, 2 ], true, \"test\", { test2: \"\", test3: [ \"abc\", true, null ], test4: 4.0, test5: 5 } ]";
+        Cdr cdrList = JsonUtils.jsonToCdr(jsonList);
+        String newJsonList = JsonUtils.cdrToJson(cdrList);
+
+        originalJson = parser.parse(jsonList);
+        reparsedJson = parser.parse(newJsonList);
+
+        assertEquals(originalJson, reparsedJson);
     }
 }

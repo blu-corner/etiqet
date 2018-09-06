@@ -19,7 +19,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.Random;
 
-public class FIXUtils {
+public final class FIXUtils {
+
+	private FIXUtils()
+	{
+
+	}
 
 	public static final Logger LOG = LogManager.getLogger(FIXUtils.class);
 

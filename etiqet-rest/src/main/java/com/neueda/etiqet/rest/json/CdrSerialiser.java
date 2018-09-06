@@ -141,9 +141,9 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
         Cdr data = new Cdr(typeOfT.getTypeName());
 
         if(json.isJsonArray())
-            data = deserializeArray(json, data, context);
+            deserializeArray(json, data, context);
         else
-            data = deserializeObject(json, data, context);
+            deserializeObject(json, data, context);
 
         return data;
     }
@@ -153,17 +153,16 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
         Iterator<JsonElement> jsonIterator = json.getAsJsonArray().iterator();
 
         int idx = 0;
-        while(jsonIterator.hasNext())
-        {
+        while(jsonIterator.hasNext()) {
             Cdr tmpCdr = new Cdr(Cdr.class.getTypeName());
             JsonElement element = jsonIterator.next();
             if(element.isJsonPrimitive())
-                data = deserializePrimitive(idx, element.getAsJsonPrimitive(), data);
+                deserializePrimitive(idx, element.getAsJsonPrimitive(), data);
             else {
                 if(element.isJsonArray()) {
-                    tmpCdr = deserializeArray(element, tmpCdr, context);
+                    deserializeArray(element, tmpCdr, context);
                 } else {
-                    tmpCdr = deserializeObject(element, tmpCdr, context);
+                    deserializeObject(element, tmpCdr, context);
                 }
                 CdrItem item = new CdrItem();
                 item.setType(CdrItem.CdrItemType.CDR_ARRAY);
@@ -182,7 +181,7 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
     {
         CdrItem item;
         if(json.isNumber())
-            item = getCdrItem(json.getAsFloat());
+            item = getCdrItem(json.getAsDouble());
         else if(json.isBoolean())
             item = getCdrItem(json.getAsBoolean());
         else
@@ -219,7 +218,9 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
         CdrItem cdrValue;
 
         // work out what the value is
-        if(value instanceof List) {
+        if(value == null) {
+            cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_NULL);
+        } else if (value instanceof List) {
             List<Object> listValue = (List) value;
             List<Cdr> cdrList = new ArrayList<>(listValue.size());
 

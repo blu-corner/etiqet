@@ -58,7 +58,7 @@ public class RestFixtures {
     }
 
     @Then("check that ?\"?([^\"]*)?\"? matches \"(\\S+)\"")
-    public void checkHttpResponseMatchesMessage(String responseName, String messageType) throws EtiqetException {
+    public void checkHttpResponseMatchesMessage(String responseName, String messageType) {
         responseName = StringUtils.isNullOrEmpty(responseName) ? DEFAULT_MESSAGE_NAME : responseName;
         handlers.validateMessage(responseName, DEFAULT_CLIENT_NAME, messageType);
     }
