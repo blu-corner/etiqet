@@ -689,7 +689,7 @@ public class EtiqetHandlers {
             assertNotNull("Dictionary does not contain a definition for received message type '" + rsp.getType() + "'",
                             receivedMsgType);
             if (!filteredMsgs.contains(receivedMsgType)) {
-                if (!DEFAULT_MESSAGE_NAME.equals(messageType)) {
+                if (!receivedMsgType.equals(messageType)) {
                     handleError("Expected message '" + messageType + "' but found message '" + rsp.getType() + "'.",
                             (receivedMsgType.equals(messageType)), "NoCorrectResponseException");
                 }
