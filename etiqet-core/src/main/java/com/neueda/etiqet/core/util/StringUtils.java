@@ -2,7 +2,7 @@ package com.neueda.etiqet.core.util;
 
 public final class StringUtils {
 
-	private StringUtils()
+	public StringUtils()
 	{
 	}
 
