@@ -21,7 +21,7 @@ import java.util.Random;
 
 public final class FIXUtils {
 
-	private FIXUtils()
+	public FIXUtils()
 	{
 
 	}
