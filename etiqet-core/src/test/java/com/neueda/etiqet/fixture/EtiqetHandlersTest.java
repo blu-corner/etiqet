@@ -908,7 +908,7 @@ public class EtiqetHandlersTest {
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
         handlers.sendMessage(messageName, clientName);
 
-        handlers.waitForResponse("testResponse", clientName);
+        handlers.waitForResponse(EtiqetHandlers.DEFAULT_MESSAGE_NAME, clientName);
         handlers.checkFieldPresence(EtiqetHandlers.DEFAULT_MESSAGE_NAME, "test,sent");
     }
 
