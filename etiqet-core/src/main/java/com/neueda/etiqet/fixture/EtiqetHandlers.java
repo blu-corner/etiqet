@@ -227,7 +227,7 @@ public class EtiqetHandlers {
      * @param clientName name of the client
      * @return Client object matching clientName, or null if not found
      */
-    Client getClient(String clientName) {
+    public Client getClient(String clientName) {
         return clientMap.get(clientName);
     }
 
