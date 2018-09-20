@@ -13,6 +13,7 @@ import quickfix.Message;
 import quickfix.StringField;
 import quickfix.field.MsgType;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -27,12 +28,17 @@ public final class FIXUtils {
 	}
 
 	public static final Logger LOG = LogManager.getLogger(FIXUtils.class);
+	private static DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
 
 	public static String getDateTime() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
+		return dateTimeFormat.format(utc);
+	}
 
-		return dtf.format(utc);
+	public static String getDateTime(String secondsOffset){
+		LocalDateTime local = LocalDateTime.parse(getDateTime(), dateTimeFormat);
+		local = local.plusSeconds(Long.parseLong(secondsOffset));
+		return dateTimeFormat.format(local);
 	}
 
 	public static String genClientOrderID() {
