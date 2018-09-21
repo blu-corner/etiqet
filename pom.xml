@@ -19,7 +19,8 @@
 	<modules>
 	  <module>etiqet-core</module>
 	  <module>etiqet-fix</module>
-	  <module>etiqet-rest</module>
+      <module>etiqet-rest</module>
+      <module>etiqet-websocket</module>
 	</modules>
 
 	<profiles>

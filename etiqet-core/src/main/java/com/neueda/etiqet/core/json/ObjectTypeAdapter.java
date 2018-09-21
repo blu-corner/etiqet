@@ -1,4 +1,4 @@
-package com.neueda.etiqet.rest.json;
+package com.neueda.etiqet.core.json;
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -75,7 +75,7 @@ public class ObjectTypeAdapter extends TypeAdapter<Object> {
             case NUMBER:
                 String n = in.nextString();
                 if(n.indexOf('.') == -1) {
-                    return Integer.parseInt(n);
+                    return Long.parseLong(n);
                 }
                 return Double.parseDouble(n);
 

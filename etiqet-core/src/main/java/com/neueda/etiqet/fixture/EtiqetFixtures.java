@@ -398,7 +398,7 @@ public class EtiqetFixtures {
             handlers.waitForResponse(EtiqetHandlers.DEFAULT_MESSAGE_NAME, EtiqetHandlers.DEFAULT_CLIENT_NAME, time);
         else
             handlers.waitForResponseOfType(EtiqetHandlers.DEFAULT_MESSAGE_NAME, EtiqetHandlers.DEFAULT_CLIENT_NAME, t,
-                    time);
+                    time, false);
     }
 
     @Then("^wait for \"([^\"]*)\" to receive an? \"([^\"]*)\\\" as \"([^\"]*)\"$")
