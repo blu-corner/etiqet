@@ -729,6 +729,11 @@ public class EtiqetFixtures {
 		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, null), EtiqetHandlers.PURGE_ORDERS, handlers.getExtension(clientName, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 	}
 
+	@And("^remove liquidity for \"([^\"]*)\" from \"([^\"]*)\"$")
+	public void removeLiquidityForSymbol(String symbol, String exchange) throws EtiqetException, IOException {
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getRemoveLiquidityJson(exchange, symbol), EtiqetHandlers.REMOVE_ORDERS, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
+	}
+
 	@And("^\"([^\"]*)\" phase is \"([^\"]*)\" for  \"([^\"]*)\"$")
 	public void checkThatPhaseIsOfType(String exchange, String auctionPhase, String clientName) throws EtiqetException, IOException {
 		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, auctionPhase), EtiqetHandlers.SET_TRADE_PHASE, handlers.getExtension(clientName, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
