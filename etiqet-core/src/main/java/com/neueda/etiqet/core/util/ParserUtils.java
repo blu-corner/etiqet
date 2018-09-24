@@ -92,6 +92,8 @@ public class ParserUtils {
 	private static void correctCdrItemType(CdrItem cdrItem) {
 		if(cdrItem.getIntval() != null) {
 			cdrItem.setType(CdrItem.CdrItemType.CDR_INTEGER);
+		} else if(cdrItem.getLongval() != null) {
+			cdrItem.setType(CdrItem.CdrItemType.CDR_LONG);
 		} else if(cdrItem.getDoubleval() != null) {
 			cdrItem.setType(CdrItem.CdrItemType.CDR_DOUBLE);
 		} else if(cdrItem.getCdrs() != null) {

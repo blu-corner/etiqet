@@ -1,9 +1,9 @@
-package com.neueda.etiqet.rest.json;
+package com.neueda.etiqet.core.json;
 
-import com.google.gson.*;
 import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.cdr.CdrItem;
 
+import com.google.gson.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -68,6 +68,8 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
                 return new JsonPrimitive(cdrItem.getStrval());
             case CDR_INTEGER:
                 return new JsonPrimitive(cdrItem.getIntval());
+            case CDR_LONG:
+                return new JsonPrimitive(cdrItem.getLongval());
             case CDR_DOUBLE:
                 return new JsonPrimitive(cdrItem.getDoubleval());
             case CDR_BOOLEAN:
@@ -249,6 +251,9 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
         } else if(value instanceof Integer) {
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_INTEGER);
             cdrValue.setIntval((Integer) value);
+        } else if(value instanceof Long) {
+            cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_LONG);
+            cdrValue.setLongval((Long) value);
         } else if(value instanceof Double) {
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_DOUBLE);
             cdrValue.setDoubleval((Double) value);

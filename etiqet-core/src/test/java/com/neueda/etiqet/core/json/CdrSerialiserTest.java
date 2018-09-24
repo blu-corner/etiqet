@@ -1,4 +1,4 @@
-package com.neueda.etiqet.rest.json;
+package com.neueda.etiqet.core.json;
 
 import com.google.gson.*;
 import com.neueda.etiqet.core.common.cdr.Cdr;

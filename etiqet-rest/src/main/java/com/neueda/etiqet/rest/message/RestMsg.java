@@ -8,7 +8,7 @@ import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.StringUtils;
 import com.neueda.etiqet.rest.config.RestConfigConstants;
-import com.neueda.etiqet.rest.json.JsonUtils;
+import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
