@@ -386,6 +386,11 @@
                         <xs:documentation xml:lang="en">Static method belonging to @utilclass</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="methodArg" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">String argument to call method with</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">Is the field required or not</xs:documentation>
