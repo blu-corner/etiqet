@@ -25,6 +25,8 @@ public class Field implements Serializable {
 
     private String allowedValues;
 
+    private String methodArg;
+
 	@XmlAttribute
 	public String getName() {
 		return name;
@@ -80,6 +82,15 @@ public class Field implements Serializable {
 	}
 
 	@XmlAttribute
+	public String getMethodArg() {
+		return methodArg;
+	}
+
+	public void setMethodArg(String methodArgs) {
+		this.methodArg = methodArgs;
+	}
+
+	@XmlAttribute
 	public String getRequired() {
 		return required;
 	}
@@ -95,7 +106,7 @@ public class Field implements Serializable {
 	@Override
     public String toString()
     {
-        return "Field [name = "+name+", utilclass = "+utilclass+", method = "+method+", type = "+type+", value= " + value+ ", required= " + required+ ", allowedValues= " + allowedValues+ "]";
+        return "Field [name = "+name+", utilclass = "+utilclass+", method = "+method+", methodArg = "+methodArg+" type = "+type+", value= " + value+ ", required= " + required+ ", allowedValues= " + allowedValues+ "]";
     }
 
 	@Override
@@ -106,6 +117,6 @@ public class Field implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, utilclass, method, type, value, required, allowedValues);
+		return Objects.hash(name, utilclass, method, methodArg, type, value, required, allowedValues);
 	}
 }

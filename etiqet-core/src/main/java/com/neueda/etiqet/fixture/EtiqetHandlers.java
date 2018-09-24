@@ -54,6 +54,7 @@ public class EtiqetHandlers {
     public static final String HTTP_POST = "POST";
     public static final String PURGE_ORDERS = "requests/purge_orders";
     public static final String SET_TRADE_PHASE = "requests/set_trading_phase";
+    public static final String REMOVE_ORDERS = "requests/remove_orders";
 
     public static final String SECONDS_NAME = "seconds";
     public static final String MILLI_TIME_NAME = "milli";
@@ -1202,6 +1203,14 @@ public class EtiqetHandlers {
         Map<String, String> map = new HashMap<>();
         map.put("exchange", exchange);
         map.put("phase", auctionPhase);
+        Gson gson = new Gson();
+        return gson.toJson(map);
+    }
+
+    String getRemoveLiquidityJson(String exchange, String symbol) {
+        Map<String, String> map = new HashMap<>();
+        map.put("exchange", exchange);
+        map.put("symbol", symbol);
         Gson gson = new Gson();
         return gson.toJson(map);
     }

@@ -361,9 +361,14 @@ public class ParserUtils {
 	    Object value;
         if(field.hasStaticMethod()) {
             try {
-                Class<?> utilClass = Class.forName(field.getUtilclass());
-                Method method = utilClass.getDeclaredMethod(field.getMethod());
-                value = method.invoke(utilClass.newInstance());
+				Class<?> utilClass = Class.forName(field.getUtilclass());
+				if (field.getMethodArg() == null){
+                	Method method = utilClass.getDeclaredMethod(field.getMethod());
+                	value = method.invoke(utilClass.newInstance());
+				} else {
+					Method method = utilClass.getDeclaredMethod(field.getMethod(), String.class);
+					value = method.invoke(utilClass.newInstance(), field.getMethodArg());
+				}
             } catch (Exception e) {
                 // need to throw this as a runtime exception because the function is called from a stream
                 throw new EtiqetException("Could not get Util Class for field " + field.toString(), e);
