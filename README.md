@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/blu-corner/etiqet.svg?branch=master)](https://travis-ci.org/blu-corner/etiqet)
 
 ## What is Etiqet
-Etiqet is a testing framework that allows your to run test interfaces with a generic client, message and protocol. The
+Etiqet is a testing framework that allows you to run test interfaces with a generic client, message and protocol. The
 aim of this is to allow end users to write tests in plain English, such as:
 
 ```
@@ -34,7 +34,7 @@ can perform actions before / after sending / receiving messages.
 
 ### Messages
 
-Etiqet allows you to define message types and default values for those messages.  
+Etiqet allows you to define message types and default values for those messages.
 
 ## Configuring Etiqet
 To run Etiqet, you will need to create an Etiqet Configuration file. This is an XML document that defines the protocols,
