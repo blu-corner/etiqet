@@ -11,16 +11,18 @@ import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
 import com.neueda.etiqet.websocket.config.WebSocketConfigConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class WebSocketClient extends Client<Message, String> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WebSocketClient.class);
+    private static final Logger LOG = LogManager.getLogger(WebSocketClient.class);
 
     private String activeConfig;
 
@@ -61,13 +63,11 @@ public class WebSocketClient extends Client<Message, String> {
             WebSocketSession instance = new WebSocketSession(msgQueue);
             client.start();
 
+            String socketUrl = this.config.getString("socketUrl");
             ClientUpgradeRequest request = new ClientUpgradeRequest();
-            client.connect(instance, new URI(this.config.getString("socketUrl")),request);
-
-            //WebSocketInstance socketInstance = new WebSocketInstance(this.config.getString("socketUrl"), this.msgQueue);
-           // Thread t1 = new Thread(socketInstance);
-           // t1.start()
-            instance.awaitConnect(5, TimeUnit.SECONDS);
+            LOG.info("Starting websocket client: " + socketUrl);
+            Future<Session> fut = client.connect(instance, new URI(socketUrl),request);
+            fut.get(5, TimeUnit.SECONDS);
         }
         catch (Throwable e)
         {
