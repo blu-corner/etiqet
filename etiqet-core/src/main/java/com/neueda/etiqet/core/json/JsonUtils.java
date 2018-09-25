@@ -1,4 +1,4 @@
-package com.neueda.etiqet.rest.json;
+package com.neueda.etiqet.core.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

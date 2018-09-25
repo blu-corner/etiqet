@@ -21,6 +21,12 @@ public class Cdr {
         setItem(key, i);
     }
 
+    public void set(String key, Long val) {
+        CdrItem i = new CdrItem(CdrItem.CdrItemType.CDR_LONG);
+        i.setLongval(val);
+        setItem(key, i);
+    }
+
     public void set(String key, String val) {
         CdrItem i = new CdrItem(CdrItem.CdrItemType.CDR_STRING);
         i.setStrval(val);

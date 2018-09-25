@@ -54,6 +54,7 @@ public class EtiqetHandlers {
     public static final String HTTP_POST = "POST";
     public static final String PURGE_ORDERS = "requests/purge_orders";
     public static final String SET_TRADE_PHASE = "requests/set_trading_phase";
+    public static final String REMOVE_ORDERS = "requests/remove_orders";
 
     public static final String SECONDS_NAME = "seconds";
     public static final String MILLI_TIME_NAME = "milli";
@@ -668,14 +669,14 @@ public class EtiqetHandlers {
     }
 
     public void waitForResponse(String messageType, String clientName, int milliseconds) throws EtiqetException {
-        waitForResponseOfType(DEFAULT_MESSAGE_NAME, clientName, messageType, milliseconds);
+        waitForResponseOfType(DEFAULT_MESSAGE_NAME, clientName, messageType, milliseconds, false);
     }
 
     public void waitForResponse(String messageName, String clientName) throws EtiqetException {
         waitForResponse(messageName, clientName, 5000);
     }
 
-    public void waitForResponseOfType(String messageName, String clientName, String messageType, int milliseconds)
+    public void waitForResponseOfType(String messageName, String clientName, String messageType, int milliseconds, boolean skipOther)
             throws EtiqetException {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
@@ -688,7 +689,7 @@ public class EtiqetHandlers {
 
             assertNotNull("Dictionary does not contain a definition for received message type '" + rsp.getType() + "'",
                             receivedMsgType);
-            if (!filteredMsgs.contains(receivedMsgType)) {
+            if (!filteredMsgs.contains(receivedMsgType) && (!skipOther || (skipOther && receivedMsgType.equals(messageType)))) {
                 if (!DEFAULT_MESSAGE_NAME.equals(messageType)) {
                     handleError("Expected message '" + messageType + "' but found message '" + rsp.getType() + "'.",
                             (receivedMsgType.equals(messageType)), "NoCorrectResponseException");
@@ -704,7 +705,7 @@ public class EtiqetHandlers {
     }
 
     public void waitForResponseOfType(String messageName, String clientName, String msgType) throws EtiqetException {
-        waitForResponseOfType(messageName, clientName, msgType, 5000);
+        waitForResponseOfType(messageName, clientName, msgType, 5000, false);
     }
 
     public void waitForNoResponse(String messageName, String clientName, String messageType, int milliseconds)
@@ -1202,6 +1203,14 @@ public class EtiqetHandlers {
         Map<String, String> map = new HashMap<>();
         map.put("exchange", exchange);
         map.put("phase", auctionPhase);
+        Gson gson = new Gson();
+        return gson.toJson(map);
+    }
+
+    String getRemoveLiquidityJson(String exchange, String symbol) {
+        Map<String, String> map = new HashMap<>();
+        map.put("exchange", exchange);
+        map.put("symbol", symbol);
         Gson gson = new Gson();
         return gson.toJson(map);
     }

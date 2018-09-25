@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="websocket"
+		  xmlns="http://www.neueda.com/etiqet">
+	<client impl="com.neueda.etiqet.websocket.client.WebSocketClient"
+			defaultConfig="${etiqet.directory}/etiqet-websocket/src/test/resources/config/client.cfg"/>
+	<components_package>com.neueda.etiqet.websocket</components_package>
+	<messageClass>com.neueda.etiqet.Message</messageClass>
+	<messages>
+		<message name="test_01">
+			<implementation>com.neueda.etiqet.Message</implementation>
+		</message>
+	</messages>
+</protocol>

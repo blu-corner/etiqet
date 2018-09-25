@@ -398,7 +398,7 @@ public class EtiqetFixtures {
             handlers.waitForResponse(EtiqetHandlers.DEFAULT_MESSAGE_NAME, EtiqetHandlers.DEFAULT_CLIENT_NAME, time);
         else
             handlers.waitForResponseOfType(EtiqetHandlers.DEFAULT_MESSAGE_NAME, EtiqetHandlers.DEFAULT_CLIENT_NAME, t,
-                    time);
+                    time, false);
     }
 
     @Then("^wait for \"([^\"]*)\" to receive an? \"([^\"]*)\\\" as \"([^\"]*)\"$")
@@ -727,6 +727,11 @@ public class EtiqetFixtures {
 	@And("^\"([^\"]*)\" order book is purged for \"([^\"]*)\"$")
 	public void checkThatOrderBookIsPurged(String exchange, String clientName) throws EtiqetException, IOException {
 		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getJson(exchange, null), EtiqetHandlers.PURGE_ORDERS, handlers.getExtension(clientName, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
+	}
+
+	@And("^remove liquidity for \"([^\"]*)\" from \"([^\"]*)\"$")
+	public void removeLiquidityForSymbol(String symbol, String exchange) throws EtiqetException, IOException {
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getRemoveLiquidityJson(exchange, symbol), EtiqetHandlers.REMOVE_ORDERS, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 	}
 
 	@And("^\"([^\"]*)\" phase is \"([^\"]*)\" for  \"([^\"]*)\"$")
