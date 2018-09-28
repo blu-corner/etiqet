@@ -5,9 +5,4 @@
 			defaultConfig="${etiqet.directory}/etiqet-websocket/src/test/resources/config/client.cfg"/>
 	<components_package>com.neueda.etiqet.websocket.message</components_package>
 	<messageClass>com.neueda.etiqet.websocket.message.WebSocketMsg</messageClass>
-	<messages>
-		<message name="test_01">
-			<implementation>com.neueda.etiqet.websocket.message.WebSocketMsg</implementation>
-		</message>
-	</messages>
 </protocol>
