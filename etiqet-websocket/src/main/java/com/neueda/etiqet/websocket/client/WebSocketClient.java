@@ -10,6 +10,7 @@ import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
+import com.neueda.etiqet.core.util.StringUtils;
 import com.neueda.etiqet.websocket.config.WebSocketConfigConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,6 +65,10 @@ public class WebSocketClient extends Client<Message, String> {
             client.start();
 
             String socketUrl = this.config.getString("socketUrl");
+            String messageFilter = this.config.getString("messageFilter");
+            if(!StringUtils.isNullOrEmpty(messageFilter)) {
+                socketUrl += "?filter=" + messageFilter;
+            }
             ClientUpgradeRequest request = new ClientUpgradeRequest();
             LOG.info("Starting websocket client: " + socketUrl);
             Future<Session> fut = client.connect(instance, new URI(socketUrl),request);
