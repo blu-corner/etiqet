@@ -5,6 +5,8 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.core.util.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -12,34 +14,34 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 
 @WebSocket(maxTextMessageSize = 64 * 1024)
 public class WebSocketSession
 {
+    private static final Logger LOG = LogManager.getLogger(WebSocketSession.class);
+
     private Session session;
 
-    private final CountDownLatch connectCountDownLatch;
+    private Boolean connected;
 
     private BlockingQueue<Cdr> msgQueue;
 
     public WebSocketSession(BlockingQueue<Cdr> msgQueue)
     {
-        this.connectCountDownLatch = new CountDownLatch(1);
+        this.connected = false;
         this.msgQueue = msgQueue;
-    }
-
-    public boolean awaitConnect(int duration, TimeUnit unit) throws InterruptedException
-    {
-        return this.connectCountDownLatch.await(duration,unit);
     }
 
     @OnWebSocketConnect
     public void onConnect(Session session)
-    {;
-        this.connectCountDownLatch.countDown();
+    {
+        this.session = session;
+        this.connected = true;
+    }
+
+    public boolean getConnected() {
+        return this.connected;
     }
 
     public void close() throws EtiqetException {
@@ -57,7 +59,7 @@ public class WebSocketSession
     @OnWebSocketMessage
     public void onMessage(String msg)
     {
-        System.out.println("Exchange message: " + msg);
+        LOG.info("Exchange message: " + msg);
         receiveMsg(this.msgQueue, msg);
     }
 

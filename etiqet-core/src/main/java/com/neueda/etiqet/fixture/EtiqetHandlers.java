@@ -676,6 +676,15 @@ public class EtiqetHandlers {
         waitForResponse(messageName, clientName, 5000);
     }
 
+    /**
+     * Method to send a message by name using a client.
+     *
+     * @param messageName the key to store the message as the response map.
+     * @param clientName  the key to find the client from client map.
+     * @param messageType the key to find the message from message map.
+     * @param milliseconds milliseconds to wait
+     * @param skipOther skip any other messages found in the queue, rather than stopping and failing the test.
+     */
     public void waitForResponseOfType(String messageName, String clientName, String messageType, int milliseconds, boolean skipOther)
             throws EtiqetException {
         Client client = getClient(clientName);

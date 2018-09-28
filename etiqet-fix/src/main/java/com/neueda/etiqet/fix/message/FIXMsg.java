@@ -25,6 +25,10 @@ public class FIXMsg {
 	public FIXMsg() {
 	}
 
+	public FIXMsg(FieldMap instance){
+		this.instance = instance;
+	}
+
 	public FIXMsg(Cdr d, FieldMap instance) {
 		this.instance = instance;
 		try {
@@ -45,6 +49,11 @@ public class FIXMsg {
 		if (messageConfig != null) {
 			ParserUtils.fillDefault(messageConfig, data);
 		}
+	}
+
+	public Message updateWithCdr(Cdr data) throws EtiqetException{
+		encode(data);
+		return (Message) instance;
 	}
 
 	public Message serialize(Cdr cdr) throws EtiqetException {
