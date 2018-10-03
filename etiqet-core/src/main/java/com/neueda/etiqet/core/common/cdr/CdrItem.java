@@ -7,11 +7,12 @@ import java.util.List;
 public class CdrItem {
 
     public enum CdrItemType {
-        CDR_STRING, CDR_INTEGER, CDR_DOUBLE, CDR_BOOLEAN, CDR_ARRAY, CDR_NULL
+        CDR_STRING, CDR_INTEGER, CDR_LONG, CDR_DOUBLE, CDR_BOOLEAN, CDR_ARRAY, CDR_NULL
     }
 
     private CdrItemType type;
     private Integer intval;
+    private Long longval;
     private String strval;
     private Double doubleval;
     private Boolean boolVal;
@@ -40,6 +41,15 @@ public class CdrItem {
     public void setIntval(Integer intval) {
         this.intval = intval;
         this.type = CdrItemType.CDR_INTEGER;
+    }
+
+    public Long getLongval() {
+        return longval;
+    }
+
+    public void setLongval(Long longval) {
+        this.longval = longval;
+        this.type = CdrItemType.CDR_LONG;
     }
 
     public String getStrval() {
@@ -82,6 +92,8 @@ public class CdrItem {
         switch (type) {
             case CDR_INTEGER:
                 return intval.toString();
+            case CDR_LONG:
+                return longval.toString();
             case CDR_DOUBLE:
                 return doubleval.toString();
             case CDR_BOOLEAN:

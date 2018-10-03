@@ -1,4 +1,4 @@
-package com.neueda.etiqet.rest.json;
+package com.neueda.etiqet.core.json;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -48,7 +48,7 @@ public class JsonUtilsTest {
         testCdrItem(testChildren.get(2).getItem("test4"), CdrItem.CdrItemType.CDR_DOUBLE, 4.0);
 
         assertTrue(testChildren.get(3).containsKey("test5"));
-        testCdrItem(testChildren.get(3).getItem("test5"), CdrItem.CdrItemType.CDR_INTEGER, 5);
+        testCdrItem(testChildren.get(3).getItem("test5"), CdrItem.CdrItemType.CDR_LONG, 5L);
     }
 
     private void testCdrItem(CdrItem cdrItem, CdrItem.CdrItemType expectedType, Object expectedValue) {
@@ -63,6 +63,9 @@ public class JsonUtilsTest {
                 break;
             case CDR_INTEGER:
                 assertEquals(expectedValue, cdrItem.getIntval());
+                break;
+            case CDR_LONG:
+                assertEquals(expectedValue, cdrItem.getLongval());
                 break;
             case CDR_DOUBLE:
                 assertEquals(expectedValue, cdrItem.getDoubleval());

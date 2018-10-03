@@ -47,8 +47,10 @@ public class ProtocolConfig implements Serializable {
 	private void commonInit() throws EtiqetException {
 		// Setup the ProtocolConfig based on the Protocol parsed from the XML
 		messageMap = new HashMap<>();
-		for (Message message: getProtocol().getMessages().getMessage()) {
-			messageMap.put(message.getName(), message);
+		if(getProtocol().getMessages() != null) {
+			for (Message message: getProtocol().getMessages().getMessage()) {
+				messageMap.put(message.getName(), message);
+			}
 		}
 		Dictionary protocolDictionary = getProtocol().getDictionary();
 		if (protocolDictionary != null) {

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
+    <protocols>
+        <protocol name="websocket" ref="${etiqet.directory}/etiqet-websocket/src/test/resources/config/protocol.xml"/>
+    </protocols>
+</etiqetConfiguration>

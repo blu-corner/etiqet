@@ -339,7 +339,7 @@ public class EtiqetHandlersTest {
         EtiqetHandlers handlers = new EtiqetHandlers();
         String clientName = "clientNotFound";
         try {
-            handlers.waitForResponseOfType("default", clientName, "MsgType", 100);
+            handlers.waitForResponseOfType("default", clientName, "MsgType", 100, false);
         } catch (AssertionError e) {
             assertEquals("Client " + clientName + " must exist", e.getMessage());
         }
