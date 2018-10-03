@@ -17,6 +17,6 @@ public class WebSocketFixtures {
         if (EtiqetHandlers.RESPONSE.equals(t))
             handlers.waitForResponse(responseName, clientName);
         else
-            handlers.waitForResponseOfType(responseName, clientName, t, 5000, true);
+            handlers.waitForResponseOfType(responseName, clientName, t, 10000, true);
     }
 }
