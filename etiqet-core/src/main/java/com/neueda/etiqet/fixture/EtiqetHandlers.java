@@ -1337,4 +1337,25 @@ public class EtiqetHandlers {
         assertNotNull(String.format("Couldn't find message: %s", messageName), response);
         checkPrecision(timePrecision, response.getItem(field).toString());
     }
+
+    /**
+     * @param messageName key of the CDR message in responseMap
+     * @param field Long field of CDR containing the bitmap to be checked
+     * @param value Expected value of bits at given indexes
+     * @param indexes Comma separated integers representing the indexes of the bitmap to check
+     */
+    void checkMessageNumericFieldBitValues(String messageName, String field, boolean value, String indexes){
+        long bitmap =  getResponse(messageName).getItem(field).getLongval();
+
+        List<Integer> parsedIndexs = new ArrayList<>();
+        for (String indexString: indexes.split(",")){
+            parsedIndexs.add(Integer.parseInt(indexString.trim()));
+        }
+
+        for (Integer index: parsedIndexs) {
+            assert (((1 << index & bitmap) != 0) == value): String.format(
+                    "bit %s of number '%s' is not %s ", index, bitmap, value
+            );
+        }
+    }
 }
