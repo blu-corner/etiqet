@@ -17,7 +17,7 @@ public class RestFixtures {
     public RestFixtures(EtiqetHandlers handlers) { this.handlers = handlers; }
 
     @Then("\"(GET|PUT|POST|DELETE)\" a \"(\\S+)\"(?: with headers \"?([^\"]*)\"??)?(?: (?:with|and) payload )?\"?([^\"]*)?\"? (?:to|from|at) \"(\\S+)\"(?: as )?\"?([^\"]*)?\"?")
-    public void testMethod(String httpVerb, String testName, String headers, String payload, String endpoint, String responseName) throws EtiqetException {
+    public void sendMessage(String httpVerb, String testName, String headers, String payload, String endpoint, String responseName) throws EtiqetException {
         if(StringUtils.isNullOrEmpty(httpVerb))
             throw new EtiqetException("Cannot send REST request without a HTTP verb");
         if(StringUtils.isNullOrEmpty(testName))
