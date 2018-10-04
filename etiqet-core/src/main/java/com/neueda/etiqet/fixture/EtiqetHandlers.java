@@ -55,6 +55,7 @@ public class EtiqetHandlers {
     public static final String PURGE_ORDERS = "requests/purge_orders";
     public static final String SET_TRADE_PHASE = "requests/set_trading_phase";
     public static final String REMOVE_ORDERS = "requests/remove_orders";
+    public static final String ADD_ORDER = "requests/add_order";
 
     public static final String SECONDS_NAME = "seconds";
     public static final String MILLI_TIME_NAME = "milli";
@@ -228,7 +229,7 @@ public class EtiqetHandlers {
      * @param clientName name of the client
      * @return Client object matching clientName, or null if not found
      */
-    Client getClient(String clientName) {
+    public Client getClient(String clientName) {
         return clientMap.get(clientName);
     }
 
@@ -1336,5 +1337,26 @@ public class EtiqetHandlers {
         Cdr response = getResponse(messageName);
         assertNotNull(String.format("Couldn't find message: %s", messageName), response);
         checkPrecision(timePrecision, response.getItem(field).toString());
+    }
+
+    /**
+     * @param messageName key of the CDR message in responseMap
+     * @param field Long field of CDR containing the bitmap to be checked
+     * @param value Expected value of bits at given indexes
+     * @param indexes Comma separated integers representing the indexes of the bitmap to check
+     */
+    void checkMessageNumericFieldBitValues(String messageName, String field, boolean value, String indexes){
+        long bitmap =  getResponse(messageName).getItem(field).getLongval();
+
+        List<Integer> parsedIndexs = new ArrayList<>();
+        for (String indexString: indexes.split(",")){
+            parsedIndexs.add(Integer.parseInt(indexString.trim()));
+        }
+
+        for (Integer index: parsedIndexs) {
+            assert (((1 << index & bitmap) != 0) == value): String.format(
+                    "bit %s of number '%s' is not %s ", index, bitmap, value
+            );
+        }
     }
 }

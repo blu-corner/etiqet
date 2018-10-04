@@ -809,4 +809,10 @@ public class EtiqetFixtures {
 	public void checkTimeStampForNamedPrecision(String field, String messageAlias, String precisionName) {
 		handlers.checkTimeStampPrecision(field, messageAlias, precisionName);
 	}
+
+	@Then("^check bit flags of \"([^\"]*)\" on field \"([^\"]*)\" are (true|false) at indexes \"([^\"]*)\"$")
+	public void checkMessageFieldBitFlags(String message, String field, boolean value, String indexes){
+		handlers.checkMessageNumericFieldBitValues(message, field, value, indexes);
+	}
+
 }
