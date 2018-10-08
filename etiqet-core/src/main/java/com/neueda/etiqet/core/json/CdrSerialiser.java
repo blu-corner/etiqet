@@ -68,8 +68,6 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
                 return new JsonPrimitive(cdrItem.getStrval());
             case CDR_INTEGER:
                 return new JsonPrimitive(cdrItem.getIntval());
-            case CDR_LONG:
-                return new JsonPrimitive(cdrItem.getLongval());
             case CDR_DOUBLE:
                 return new JsonPrimitive(cdrItem.getDoubleval());
             case CDR_BOOLEAN:
@@ -248,12 +246,9 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
 
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
             cdrValue.setCdrs(cdrList);
-        } else if(value instanceof Integer) {
+        } else if(value instanceof Integer || value instanceof Long) {
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_INTEGER);
-            cdrValue.setIntval((Integer) value);
-        } else if(value instanceof Long) {
-            cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_LONG);
-            cdrValue.setLongval((Long) value);
+            cdrValue.setIntval((Long) value);
         } else if(value instanceof Double) {
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_DOUBLE);
             cdrValue.setDoubleval((Double) value);

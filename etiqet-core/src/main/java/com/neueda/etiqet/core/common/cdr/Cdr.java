@@ -15,15 +15,15 @@ public class Cdr {
         return msgType;
     }
 
-    public void set(String key, Integer val) {
+    public void set(String key, Long val) {
         CdrItem i = new CdrItem(CdrItem.CdrItemType.CDR_INTEGER);
         i.setIntval(val);
         setItem(key, i);
     }
 
-    public void set(String key, Long val) {
-        CdrItem i = new CdrItem(CdrItem.CdrItemType.CDR_LONG);
-        i.setLongval(val);
+    public void set(String key, Integer val) {
+        CdrItem i = new CdrItem(CdrItem.CdrItemType.CDR_INTEGER);
+        i.setIntval(val.longValue());
         setItem(key, i);
     }
 
