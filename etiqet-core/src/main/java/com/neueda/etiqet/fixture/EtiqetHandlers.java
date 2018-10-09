@@ -1345,7 +1345,7 @@ public class EtiqetHandlers {
      * @param indexes Comma separated integers representing the indexes of the bitmap to check
      */
     void checkMessageNumericFieldBitValues(String messageName, String field, boolean value, String indexes){
-        long bitmap =  getResponse(messageName).getItem(field).getLongval();
+        long bitmap =  getResponse(messageName).getItem(field).getIntval();
 
         List<Integer> parsedIndexs = new ArrayList<>();
         for (String indexString: indexes.split(",")){
