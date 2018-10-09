@@ -72,6 +72,10 @@ public class FixClient extends Client<Message, String> {
 	public void stop() {
 		if (socketInitiator != null)
 			socketInitiator.stop();
+
+		// clear the msg queues
+		msgQueue.clear();
+		sessionQueue.clear();
 	}
 
     /**
