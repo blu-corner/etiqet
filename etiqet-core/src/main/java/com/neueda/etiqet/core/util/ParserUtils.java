@@ -92,8 +92,6 @@ public class ParserUtils {
 	private static void correctCdrItemType(CdrItem cdrItem) {
 		if(cdrItem.getIntval() != null) {
 			cdrItem.setType(CdrItem.CdrItemType.CDR_INTEGER);
-		} else if(cdrItem.getLongval() != null) {
-			cdrItem.setType(CdrItem.CdrItemType.CDR_LONG);
 		} else if(cdrItem.getDoubleval() != null) {
 			cdrItem.setType(CdrItem.CdrItemType.CDR_DOUBLE);
 		} else if(cdrItem.getCdrs() != null) {
@@ -383,7 +381,7 @@ public class ParserUtils {
         switch (fieldType) {
             case "integer":
                 try {
-                    cdr.set(fieldName, Integer.parseInt(value.toString()));
+                    cdr.set(fieldName, Long.parseLong(value.toString()));
                 } catch (NumberFormatException lnf) {
                     LOG.warn(String.format(ERROR_FORMAT, fieldName, "Integer", value.toString()));
                     cdr.set(fieldName, value.toString());
