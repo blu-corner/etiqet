@@ -147,6 +147,8 @@ public class WebSocketClient extends Client<WebSocketMsg, String> {
         {
             // Ignore shutdown exception
         }
+
+        msgQueue.clear();
     }
 
     @Override
