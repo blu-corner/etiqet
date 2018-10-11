@@ -731,7 +731,17 @@ public class EtiqetFixtures {
 
 	@And("^remove liquidity for \"([^\"]*)\" from \"([^\"]*)\"$")
 	public void removeLiquidityForSymbol(String symbol, String exchange) throws EtiqetException, IOException {
-		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getRemoveLiquidityJson(exchange, symbol), EtiqetHandlers.REMOVE_ORDERS, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getExchangeSymbolJson(exchange, symbol), EtiqetHandlers.REMOVE_ORDERS, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
+	}
+
+	@And("^halt asset for \"([^\"]*)\" from \"([^\"]*)\"$")
+	public void haltAssetForSymbol(String symbol, String exchange) throws EtiqetException, IOException {
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getExchangeSymbolJson(exchange, symbol), EtiqetHandlers.HALT_ASSET, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
+	}
+
+	@And("^resume asset for \"([^\"]*)\" from \"([^\"]*)\"$")
+	public void resumeAssetForSymbol(String symbol, String exchange) throws EtiqetException, IOException {
+		handlers.sendNamedRestMessageWithPayloadHeaders(EtiqetHandlers.HTTP_POST, handlers.getDefaultHeader(), handlers.getExchangeSymbolJson(exchange, symbol), EtiqetHandlers.RESUME_ASSET, handlers.getExtension(EtiqetHandlers.DEFAULT_CLIENT_NAME, EtiqetHandlers.DEFAULT_EXTENSIONS_NAME));
 	}
 
 	@And("^\"([^\"]*)\" phase is \"([^\"]*)\" for  \"([^\"]*)\"$")
