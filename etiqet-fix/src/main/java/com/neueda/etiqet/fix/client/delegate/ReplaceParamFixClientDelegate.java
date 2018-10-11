@@ -2,6 +2,9 @@ package com.neueda.etiqet.fix.client.delegate;
 
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.StopEncodingException;
+import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.message.config.ProtocolConfig;
+import com.neueda.etiqet.fix.config.FixConfigConstants;
 import com.neueda.etiqet.fix.message.FIXMsg;
 import quickfix.DefaultMessageFactory;
 import quickfix.Message;
@@ -37,6 +40,16 @@ public class ReplaceParamFixClientDelegate extends MessageFixClientDelegate {
                 Message fixMessage = MessageUtils.parse(new DefaultMessageFactory(), null, msg);
                 FIXMsg fixMsg = new FIXMsg(fixMessage);
                 fixMessage = fixMsg.updateWithCdr(message);
+
+                for (Integer removeTag: fixMsg.getFieldsInogred()){
+                    ProtocolConfig protocolConfig = GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME);
+                    if (protocolConfig.isHeaderField(removeTag)){
+                        fixMessage.getHeader().removeField(removeTag);
+                    } else {
+                        fixMessage.removeField(removeTag);
+                    }
+                }
+
                 msg = fixMessage.toString();
             } catch (Exception e) {
                 throw new StopEncodingException(e);
