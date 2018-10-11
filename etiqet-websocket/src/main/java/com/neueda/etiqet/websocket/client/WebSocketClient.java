@@ -12,20 +12,25 @@ import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
 import com.neueda.etiqet.core.util.StringUtils;
 import com.neueda.etiqet.websocket.config.WebSocketConfigConstants;
+import com.neueda.etiqet.websocket.messsage.WebSocketMsg;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-public class WebSocketClient extends Client<Message, String> {
+public class WebSocketClient extends Client<WebSocketMsg, String> {
 
     private static final Logger LOG = LogManager.getLogger(WebSocketClient.class);
 
     private String activeConfig;
+
+    private RemoteEndpoint remoteEndpoint;
 
     private org.eclipse.jetty.websocket.client.WebSocketClient client;
 
@@ -72,7 +77,7 @@ public class WebSocketClient extends Client<Message, String> {
             ClientUpgradeRequest request = new ClientUpgradeRequest();
             LOG.info("Starting websocket client: " + socketUrl);
             Future<Session> fut = client.connect(instance, new URI(socketUrl),request);
-            fut.get(5, TimeUnit.SECONDS);
+            this.remoteEndpoint = fut.get(5, TimeUnit.SECONDS).getRemote();
         }
         catch (Throwable e)
         {
@@ -95,7 +100,17 @@ public class WebSocketClient extends Client<Message, String> {
 
     @Override
     public void send(Cdr msg) throws EtiqetException {
+        if(this.client == null || this.remoteEndpoint == null) {
+            launchClient();
+        }
 
+        String webSocketMsg = encode(msg).serialize();
+        try {
+            this.remoteEndpoint.sendString(webSocketMsg);
+        } catch (IOException e) {
+            LOG.error("Failed to send message to websocket", e);
+            throw new EtiqetException("Failed to send message to websocket", e);
+        }
     }
 
     /**
@@ -132,6 +147,8 @@ public class WebSocketClient extends Client<Message, String> {
         {
             // Ignore shutdown exception
         }
+
+        msgQueue.clear();
     }
 
     @Override
@@ -160,13 +177,12 @@ public class WebSocketClient extends Client<Message, String> {
     }
 
     @Override
-    public Message encode(Cdr message) throws EtiqetException {
-        // Not implemented
-        return null;
+    public WebSocketMsg encode(Cdr message) throws EtiqetException {
+        return new WebSocketMsg(message.getType(), message);
     }
 
     @Override
-    public Cdr decode(Message message) {
+    public Cdr decode(WebSocketMsg message) {
         return msgQueue.iterator().next();
     }
 

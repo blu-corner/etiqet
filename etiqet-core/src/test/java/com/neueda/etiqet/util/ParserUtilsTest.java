@@ -198,7 +198,7 @@ public class ParserUtilsTest {
         assertNotNull(cdr);
         assertEquals(7, cdr.getItems().size());
         assertEquals("testValue", cdr.getAsString("testField"));
-        assertEquals(Integer.valueOf(1), cdr.getItem("testInt").getIntval());
+        assertEquals(Long.valueOf(1), cdr.getItem("testInt").getIntval());
         assertEquals(Boolean.TRUE, cdr.getItem("testBool").getBoolVal());
 
         String testDate = cdr.getItem("testDate").getStrval();

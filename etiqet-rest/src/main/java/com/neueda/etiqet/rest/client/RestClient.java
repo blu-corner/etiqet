@@ -130,9 +130,7 @@ public class RestClient extends Client<HttpRequestMsg, String> {
 
     @Override
     public void stop() {
-        /**
-         * Required to meet extension req's however unrequired method therefore not currently implemented
-         */
+        msgQueue.clear();
     }
 
     @Override

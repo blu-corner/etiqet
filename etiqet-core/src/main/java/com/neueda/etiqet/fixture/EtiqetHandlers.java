@@ -55,6 +55,8 @@ public class EtiqetHandlers {
     public static final String PURGE_ORDERS = "requests/purge_orders";
     public static final String SET_TRADE_PHASE = "requests/set_trading_phase";
     public static final String REMOVE_ORDERS = "requests/remove_orders";
+    public static final String HALT_ASSET = "requests/halt_asset";
+    public static final String RESUME_ASSET = "requests/resume_asset";
 
     public static final String SECONDS_NAME = "seconds";
     public static final String MILLI_TIME_NAME = "milli";
@@ -1216,7 +1218,7 @@ public class EtiqetHandlers {
         return gson.toJson(map);
     }
 
-    String getRemoveLiquidityJson(String exchange, String symbol) {
+    String getExchangeSymbolJson(String exchange, String symbol) {
         Map<String, String> map = new HashMap<>();
         map.put("exchange", exchange);
         map.put("symbol", symbol);
@@ -1345,7 +1347,7 @@ public class EtiqetHandlers {
      * @param indexes Comma separated integers representing the indexes of the bitmap to check
      */
     void checkMessageNumericFieldBitValues(String messageName, String field, boolean value, String indexes){
-        long bitmap =  getResponse(messageName).getItem(field).getLongval();
+        long bitmap =  getResponse(messageName).getItem(field).getIntval();
 
         List<Integer> parsedIndexs = new ArrayList<>();
         for (String indexString: indexes.split(",")){

@@ -106,7 +106,7 @@ public class FIXMsg {
 		switch (entry.getValue().getType()) {
 			case CDR_INTEGER:
 				IntField intf = new IntField(tag);
-				intf.setValue(entry.getValue().getIntval());
+				intf.setValue(entry.getValue().getIntval().intValue());
 				if (isHeaderField) {
 					((Message) instance).getHeader().setField(intf);
 				} else {
@@ -174,7 +174,7 @@ public class FIXMsg {
 		switch (entry.getValue().getType()) {
 			case CDR_INTEGER:
 				IntField intf = new IntField(tag);
-				intf.setValue(entry.getValue().getIntval());
+				intf.setValue(entry.getValue().getIntval().intValue());
 				instance.setField(intf);
 				break;
 			case CDR_DOUBLE:
