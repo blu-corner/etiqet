@@ -741,7 +741,7 @@ public class EtiqetHandlers {
         waitForNoResponse(messageName, clientName, messageType, 5000);
     }
 
-    public void validateMessage(String messageName, String clientName, String messageType) {
+    public void validateMessage(String messageName, String clientName, String messageType, Boolean checkValuesMatch) {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
 
@@ -750,7 +750,7 @@ public class EtiqetHandlers {
             for (Field field: message.getFields().getField()){
                 if(field != null && (field.getRequired()!= null )
                                 && (field.getRequired().equalsIgnoreCase("Y"))) {
-                    checkResponseKeyPresenceAndValue(messageName, field.getName());
+                    checkResponseKeyPresenceAndValue(messageName, field.getName(), checkValuesMatch);
                 }
             }
         }
@@ -794,7 +794,7 @@ public class EtiqetHandlers {
         LOG.info("Exception caught: " + e);
     }
 
-    public void checkResponseKeyPresenceAndValue(String messageName, String params, List<String> values) {
+    public void checkResponseKeyPresenceAndValue(String messageName, String params, List<String> values, String part, int position, boolean checkValuesMatch) {
         // Check if there are some params to check
         assertTrue("checkResponseKeyPresenceAndValue: Nothing to match", !StringUtils.isNullOrEmpty(params));
 
@@ -804,16 +804,18 @@ public class EtiqetHandlers {
         assertNotNull("checkResponseKeyPresenceAndValue: response for " + messageName + " not found", response);
 
         // Check if all params are into response message
-        Map<String,String> notMatched = checkMsgContainsKeysAndValues(response, preTreatedParams, values);
+        Map<String,String> notMatched = checkMsgContainsKeysAndValues(response, preTreatedParams, values, part, position, checkValuesMatch);
         for(Map.Entry<String, String> entry : notMatched.entrySet()) {
             assertTrue("checkResponseKeyPresenceAndValue: "+ messageName + " Msg: '"  + entry.getKey() + "' found, expected: '" + entry.getValue() +"'", StringUtils.isNullOrEmpty(entry.getKey()));
         }
     }
 
     public void checkResponseKeyPresenceAndValue(String messageName, String params) {
-        checkResponseKeyPresenceAndValue(messageName, params, null);
+        checkResponseKeyPresenceAndValue(messageName, params, null, null, -1, true);
     }
-
+    public void checkResponseKeyPresenceAndValue(String messageName, String params, boolean checkValuesMatch) {
+        checkResponseKeyPresenceAndValue(messageName, params, null, null, -1, checkValuesMatch);
+    }
 
     public void checkFieldPresence(String messageName, String params) {
         // Check if there are some params to check
@@ -879,10 +881,13 @@ public class EtiqetHandlers {
      *
      * @param msg    message to check.
      * @param params list of params.
-     * @values params optional list of values, will override values in the params.
+     * @param values optional list of values, will override values in the params.
+     * @param split optional if set, split the value with this result.
+     * @param position optional if split set, compare the result at this position from the split value.
+     * @param checkValuesMatch check the values match, or only that it exists.
      * @return string with param_value that don't match.
      */
-    private Map<String, String> checkMsgContainsKeysAndValues(Cdr msg, String params, List<String> values) {
+    private Map<String, String> checkMsgContainsKeysAndValues(Cdr msg, String params, List<String> values, String split, int position, boolean checkValuesMatch ) {
         Map<String,String> unmatched = new HashMap<>();
         String[] pairs = params.trim().split(Separators.PARAM_SEPARATOR);
         if (pairs.length > 0) {
@@ -892,14 +897,33 @@ public class EtiqetHandlers {
                 String key = keyValue[0];
                 String paramValue = keyValue.length == 2 ? keyValue[1] : null;
                 String value = values == null ? paramValue : values.get(i);
+                value = splitValue(value, split, position);
 
-                String msgValue = getValueFromTree(key, msg);
-                if (msgValue == null || (value != null && !value.equals(msgValue))) {
+                String msgValue = splitValue(getValueFromTree(key, msg), split, position);
+
+                if (msgValue == null || (checkValuesMatch && !value.equals(msgValue))) {
                     unmatched.put(String.format("%s=%s", key,msgValue ), pairs[i]);
                 }
             }
         }
         return unmatched;
+    }
+
+    /**
+     * Method to split a value if the string to split on exists in the value, otherwise return the original value
+     *
+     * @param value string to split
+     * @param split optional if set, split the value with this result.
+     * @param position optional if split set, compare the result at this position from the split value.
+     * @return params that are not in the message.
+     */
+    private String splitValue(String value, String split, int position)
+    {
+        if(!StringUtils.isNullOrEmpty(split) && position >= 0) {
+            if(value.contains(split))
+                value = value.split(split)[position];
+        }
+        return value;
     }
 
     /**
