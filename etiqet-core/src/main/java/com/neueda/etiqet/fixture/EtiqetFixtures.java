@@ -1,6 +1,7 @@
 package com.neueda.etiqet.fixture;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.util.StringUtils;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -8,6 +9,8 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 import java.io.IOException;
+
+import static com.neueda.etiqet.fixture.EtiqetHandlers.DEFAULT_MESSAGE_NAME;
 
 /**
  * Class to define Steps to that implement feature definitions.
@@ -421,7 +424,7 @@ public class EtiqetFixtures {
 	}
 	
 	/**
-	 * Method to check if last received message has a list of params. 
+	 * Method to check if last received message has a list of params.
 	 * @param params param list.
 	 */
 	@Then("^check contains \"([^\"]*)\"$")
@@ -823,5 +826,17 @@ public class EtiqetFixtures {
 	@Then("^check bit flags of \"([^\"]*)\" on field \"([^\"]*)\" are (true|false) at indexes \"([^\"]*)\"$")
 	public void checkMessageFieldBitFlags(String message, String field, boolean value, String indexes){
 		handlers.checkMessageNumericFieldBitValues(message, field, value, indexes);
+	}
+
+	@Then("check that ?\"?([^\"]*)?\"? has \"(\\S+)\"$")
+	public void checkMessageForValues(String responseName, String responseParams) {
+		responseName = StringUtils.isNullOrEmpty(responseName) ? DEFAULT_MESSAGE_NAME : responseName;
+		handlers.checkResponseKeyPresenceAndValue(responseName, responseParams);
+	}
+
+	@Then("check that ?\"?([^\"]*)?\"? has \"(\\S+)\" split by \"(\\S+)\" index \"(\\d+)\"$")
+	public void checkMessageForSplitValues(String responseName, String responseParams, String split, int index) {
+		responseName = StringUtils.isNullOrEmpty(responseName) ? DEFAULT_MESSAGE_NAME : responseName;
+		handlers.checkResponseKeyPresenceAndValue(responseName, responseParams, null, split, index, true);
 	}
 }
