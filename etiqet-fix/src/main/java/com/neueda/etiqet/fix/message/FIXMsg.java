@@ -15,13 +15,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import quickfix.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class FIXMsg {
 	private static final Logger LOG = LogManager.getLogger(FIXMsg.class);
 
 	private FieldMap instance;
-	
+	private List<Integer> fieldsIgnored = new ArrayList<>();
+
 	public FIXMsg() {
 	}
 
@@ -197,6 +200,13 @@ public class FIXMsg {
 		ProtocolConfig protocolConfig = GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME);
 		for (HashMap.Entry<String, CdrItem> entry : cdr.getItems().entrySet()) {
 			String key = entry.getKey();
+
+			// Tags prefixed with - should be ignored
+			if (key.charAt(0) == '-'){
+				fieldsIgnored.add(getIntegerTag(protocolConfig, key.substring(1)));
+				continue;
+			}
+
 			if (entry.getValue().getType() != CdrItemType.CDR_ARRAY) {
 				// Get tag
 				Integer tag=getIntegerTag(protocolConfig,key);
@@ -213,5 +223,9 @@ public class FIXMsg {
 				encodeArrayType(protocolConfig,entry);
 			}
 		}
+	}
+
+	public List<Integer> getFieldsInogred(){
+		return fieldsIgnored;
 	}
 }
