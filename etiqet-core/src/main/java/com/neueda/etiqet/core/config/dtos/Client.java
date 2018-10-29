@@ -23,6 +23,8 @@ public class Client implements Serializable {
 
 	private Delegates delegates;
 
+	private StopEvent stopEvent;
+
 	@XmlElement(name = "delegates", namespace = EtiqetConstants.NAMESPACE)
 	public Delegates getDelegates() {
 		return delegates;
@@ -30,6 +32,15 @@ public class Client implements Serializable {
 
 	public void setDelegates(Delegates delegates) {
 		this.delegates = delegates;
+	}
+
+	@XmlElement(name = "stopEvent", namespace = EtiqetConstants.NAMESPACE)
+	public StopEvent getStopEvent() {
+		return stopEvent;
+	}
+
+	public void setStopEvent(StopEvent stopEvent) {
+		this.stopEvent = stopEvent;
 	}
 
 	@XmlAttribute(required = true)

@@ -130,6 +130,10 @@ public class ProtocolConfig implements Serializable {
 		return getProtocol().getClient().getDelegates();
 	}
 
+	public StopEvent getStopEvent(){
+		return getProtocol().getClient().getStopEvent();
+	}
+
 	public List<UrlExtension> getClientUrlExtensions(){
 		return getProtocol().getClient().getUrlExtensions();
 	}

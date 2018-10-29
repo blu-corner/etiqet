@@ -218,6 +218,16 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="stopEvent" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>List of observers to be notified when a client is stopped.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="observer" maxOccurs="unbounded" type="Observer"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="urlExtensions" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>List of Api extensions for the client to use.</xs:documentation>
@@ -282,7 +292,16 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-
+    <xs:complexType name="Observer">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Executes logic on event trigger</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="impl" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Fully qualified class name of the Observer class</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
     <xs:complexType name="Dictionary">
         <xs:annotation>
             <xs:documentation xml:lang="en">Describes the dictionary class of message types.</xs:documentation>

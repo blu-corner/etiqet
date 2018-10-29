@@ -77,9 +77,14 @@ public class FixApp extends MessageCracker implements Application {
 
     private void receiveMsg(BlockingQueue<Cdr> queue, Message msg) {
         try {
-            Cdr cdr = new Cdr(msg.getHeader().getString(35));
-            cdr.update(delegate.transformAfterReceiveMessage(FIXUtils.decode(delegate.transformAfterDecoding(msg))));
-            queue.add(cdr);
+            Cdr message = FIXUtils.decode(delegate.transformAfterDecoding(msg));
+            message = delegate.transformAfterReceiveMessage(message);
+
+            if (message != null){
+                Cdr cdr = new Cdr(msg.getHeader().getString(35));
+                cdr.update(message);
+                queue.add(cdr);
+            }
         } catch (Exception e) {
             throw new EtiqetRuntimeException(e);
         }

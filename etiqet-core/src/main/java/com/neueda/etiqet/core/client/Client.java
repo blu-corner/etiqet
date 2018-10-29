@@ -2,6 +2,8 @@ package com.neueda.etiqet.core.client;
 
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.client.delegate.SinkClientDelegate;
+import com.neueda.etiqet.core.client.event.StopEvent;
+import com.neueda.etiqet.core.client.event.StopObserver;
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.EtiqetEvent;
 import com.neueda.etiqet.core.common.cdr.Cdr;
@@ -38,6 +40,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
 
     private static final int DEFAULT_TIMEOUT_MILLIS = 5000;
     private static final int LOGON_RETRIES = 3;
+    protected StopEvent stopEvent;
 
     /**
      * Defines the primary configuration
@@ -126,6 +129,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
             setProtocolName(protocolConfig.getProtocolName());
         }
         setClientConfig(primaryConfig, secondaryConfig);
+        this.stopEvent = new StopEvent(this);
     }
 
     @Override
@@ -343,6 +347,11 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
         }
     }
 
+    public void initiateStop(){
+        stopEvent.publishStop();
+        stop();
+    }
+
     /**
      * Method to stop client.
      * Must be implemented
@@ -423,6 +432,14 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
 
     public void setProtocolConfig(ProtocolConfig protocolConfig) {
         this.protocolConfig = protocolConfig;
+    }
+
+    public void addStopEventObserver(StopObserver observer){
+        stopEvent.registerObserver(observer);
+    }
+
+    public void removeStopEventObserver(StopObserver observer){
+        stopEvent.unregisterObserver(observer);
     }
 
     /** Attribute config. */
