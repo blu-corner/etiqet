@@ -832,7 +832,7 @@ public class EtiqetHandlers {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
 
-        client.stop();
+        client.initiateStop();
     }
 
     /**
@@ -1192,7 +1192,7 @@ public class EtiqetHandlers {
         try {
             // Stop all clients using lambda expressions.
             if (!ArrayUtils.isNullOrEmpty(clientMap)) {
-                clientMap.values().forEach(Client::stop);
+                clientMap.values().forEach(Client::initiateStop);
             }
         } catch (Exception lex) {
             // Log the caught exception.
