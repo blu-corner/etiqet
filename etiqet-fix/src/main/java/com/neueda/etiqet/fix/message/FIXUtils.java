@@ -22,13 +22,13 @@ import java.util.Random;
 
 public final class FIXUtils {
 
-	public FIXUtils()
-	{
-
-	}
-
 	public static final Logger LOG = LogManager.getLogger(FIXUtils.class);
 	private static DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
+
+	public static final String SOH_STR = "\u0001";
+	public static final char SOH_CHR = '\u0001';
+	public static final String LOG_SEPARATOR = "|";
+	public static final String TAG_VALUE_SEPARATOR = "=";
 
 	public static String getDateTime() {
         OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
