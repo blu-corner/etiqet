@@ -2,7 +2,6 @@ package com.neueda.etiqet.fixture;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.transform.Transformable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -58,6 +57,7 @@ public class FixEtiqetHandlers extends EtiqetHandlers {
 
   /**
    * Returns the flow for a given alias or throw an exception if it does not exists.
+   *
    * @param alias the alias of the flow.
    * @return the flow for a given alias or throw an exception if it does not exists.
    */
@@ -67,6 +67,7 @@ public class FixEtiqetHandlers extends EtiqetHandlers {
 
   /**
    * Runs the flow associated to the given alias or throw an exception if it does not exists.
+   *
    * @param alias the alias for the flow to run.
    * @throws EtiqetException propagated from client send operation.
    */
@@ -80,4 +81,19 @@ public class FixEtiqetHandlers extends EtiqetHandlers {
     sendMessage("TestRequest", DEFAULT_CLIENT_NAME);
   }
 
+  /**
+   * Remove the flow tagged with the given alias. If flow alias is not present it just ignores.
+   *
+   * @param alias the alias linked to the flow.
+   */
+  public void eraseFlow(String alias) {
+    flows.remove(alias);
+  }
+
+  /**
+   * Remove all the registered flows.
+   */
+  public void eraseAllFlow() {
+    flows.clear();
+  }
 }

@@ -24,15 +24,14 @@ public class FixEtiqetFixtures {
     handlers.createFlow(flow, alias);
   }
 
-  @Then("^check flow \"([^\"]*)\"$")
-  public void checkFlow(String alias) throws Throwable {
-    // Write code here that turns the phrase above into concrete actions
+  @Then("^check flow \"([^\"]*)\" exists$")
+  public void checkFlowExists(String alias) throws Throwable {
     assertNotNull(handlers.getFlow(alias));
   }
 
   @Then("^check flow \"([^\"]*)\" does not exist$")
   public void checkFlowDoesNotExist(String alias) throws Throwable {
-    // Write code here that turns the phrase above into concrete actions
+    // Check that flows does not exist
     assertNull(handlers.getFlow(alias));
   }
 
@@ -42,4 +41,13 @@ public class FixEtiqetFixtures {
     handlers.runFlow(alias);
   }
 
+  @Then("^erase flow \"([^\"]*)\"$")
+  public void eraseFlow(String alias) throws Throwable {
+    handlers.eraseFlow(alias);
+  }
+
+  @Then("^erase all flows$")
+  public void eraseAllFlows() throws Throwable {
+    handlers.eraseAllFlow();
+  }
 }
