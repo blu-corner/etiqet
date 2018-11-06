@@ -1,12 +1,13 @@
 package com.neueda.etiqet.fixture;
 
-import cucumber.api.PendingException;
-import cucumber.api.java.en.Then;
-
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
+import cucumber.api.java.en.Then;
+
+/**
+ * Fixtures specific for fix
+ */
 public class FixEtiqetFixtures {
 
   private final FixEtiqetHandlers handlers;
@@ -35,7 +36,7 @@ public class FixEtiqetFixtures {
     assertNull(handlers.getFlow(alias));
   }
 
-  @Then("^send raw message from flow \"([^\"]*)\"$")
+  @Then("^send raw message from through \"([^\"]*)\"$")
   public void sendRawMessageThroughFlow(String alias) throws Throwable {
     // Run the flow and send it
     handlers.runFlow(alias);

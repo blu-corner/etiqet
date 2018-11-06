@@ -8,17 +8,17 @@ import org.apache.logging.log4j.Logger;
  */
 public class TagValueFilterInTransformer extends TagValueFilterTransformer {
 
-    private static final Logger logger = LogManager.getLogger(TagValueFilterInTransformer.class);
+  private static final Logger logger = LogManager.getLogger(TagValueFilterInTransformer.class);
 
-    /**
-     * Constructor.
-     */
-    public TagValueFilterInTransformer(String tag, String value) {
-        super(tag, value);
-    }
+  /**
+   * Constructor.
+   */
+  public TagValueFilterInTransformer(String tag, String value) {
+    super(tag, value);
+  }
 
-    @Override
-    public String transform(String msg) {
-        return findTagValue(msg).equals(value) ? super.transform(msg) : msg;
-    }
+  @Override
+  public String transform(String msg) {
+    return findTagValue(msg).equals(value) ? super.transform(msg) : msg;
+  }
 }

@@ -4,7 +4,6 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.transform.Transformable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class FixEtiqetHandlers extends EtiqetHandlers {
 
@@ -72,13 +71,16 @@ public class FixEtiqetHandlers extends EtiqetHandlers {
    * @throws EtiqetException propagated from client send operation.
    */
   public void runFlow(String alias) throws EtiqetException {
-    // Send message to client and intercept the fix message
-    Optional.ofNullable(flows.get(alias)).map(flow -> {
-      FlowRunner fr = new FlowRunner(flow);
+    // Check that flow exists
+    Transformable<String, String> flow = flows.get(alias);
+    if (flow != null) {
+      // Register flow for replacement of test request message and sends a test request
+      Transformable<String, String> f = flowParser.createFlow("Replacer(35, 1)");
+      f.setNext(flow);
+      FlowRunner fr = new FlowRunner(f);
       getClient(DEFAULT_CLIENT_NAME).setDelegate(fr);
-      return fr;
-    });
-    sendMessage("TestRequest", DEFAULT_CLIENT_NAME);
+      sendMessage("TestRequest", DEFAULT_CLIENT_NAME);
+    }
   }
 
   /**

@@ -9,19 +9,19 @@ import org.apache.logging.log4j.Logger;
  */
 public class TagCleanerTransformer extends TagTransformer {
 
-    private static final Logger logger = LogManager.getLogger(TagCleanerTransformer.class);
+  private static final Logger logger = LogManager.getLogger(TagCleanerTransformer.class);
 
-    @Override
-    public String transform(String msg) {
-        StringBuilder sb = new StringBuilder();
-        for (String tuple : msg.split(FIXUtils.SOH_STR)) {
-            if (!tags.contains(tuple.split("=")[0])) {
-                sb.append(tuple.trim()).append(FIXUtils.SOH_STR);
-            }
-        }
-        String trans = sb.toString();
-        logger.debug(
-                "Cleaning fields {" + String.join(",", tags) + "] from [" + msg + "] -> [" + trans + "]");
-        return super.transform(trans);
+  @Override
+  public String transform(String msg) {
+    StringBuilder sb = new StringBuilder();
+    for (String tuple : msg.split(FIXUtils.SOH_STR)) {
+      if (!tags.contains(tuple.split("=")[0])) {
+        sb.append(tuple.trim()).append(FIXUtils.SOH_STR);
+      }
     }
+    String trans = sb.toString();
+    logger.debug(
+        "Cleaning fields {" + String.join(",", tags) + "] from [" + msg + "] -> [" + trans + "]");
+    return super.transform(trans);
+  }
 }

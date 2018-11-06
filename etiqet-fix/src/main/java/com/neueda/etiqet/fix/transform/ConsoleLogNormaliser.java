@@ -10,29 +10,29 @@ import org.apache.logging.log4j.Logger;
  */
 public class ConsoleLogNormaliser extends FixTransformer {
 
-    private static final Logger logger = LogManager.getLogger(ConsoleLogNormaliser.class);
+  private static final Logger logger = LogManager.getLogger(ConsoleLogNormaliser.class);
 
-    /**
-     * Constructor.
-     *
-     * @param next the next transformer in the chain to be processed.
-     */
-    public ConsoleLogNormaliser(Transformable<String, String> next) {
-        super(next);
-    }
+  /**
+   * Constructor.
+   *
+   * @param next the next transformer in the chain to be processed.
+   */
+  public ConsoleLogNormaliser(Transformable<String, String> next) {
+    super(next);
+  }
 
-    @Override
-    public String transform(String msg) {
-        StringBuilder sb = new StringBuilder();
-        for (String tuple : msg.split(FIXUtils.LOG_SEPARATOR)) {
-            tuple = tuple.trim();
-            int endOfTag = tuple.indexOf(")");
-            sb.append(tuple, tuple.indexOf("(") + 1, endOfTag)
-                    .append(tuple.substring(endOfTag + 1))
-                    .append(FIXUtils.SOH_STR);
-        }
-        String trans = sb.toString();
-        logger.debug("Normalising message [" + msg + "] into [" + trans + "]");
-        return super.transform(trans);
+  @Override
+  public String transform(String msg) {
+    StringBuilder sb = new StringBuilder();
+    for (String tuple : msg.split(FIXUtils.LOG_SEPARATOR)) {
+      tuple = tuple.trim();
+      int endOfTag = tuple.indexOf(")");
+      sb.append(tuple, tuple.indexOf("(") + 1, endOfTag)
+          .append(tuple.substring(endOfTag + 1))
+          .append(FIXUtils.SOH_STR);
     }
+    String trans = sb.toString();
+    logger.debug("Normalising message [" + msg + "] into [" + trans + "]");
+    return super.transform(trans);
+  }
 }

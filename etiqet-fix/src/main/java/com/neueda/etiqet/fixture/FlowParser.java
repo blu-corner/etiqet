@@ -3,9 +3,13 @@ package com.neueda.etiqet.fixture;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.transform.Transformable;
 import com.neueda.etiqet.fix.transform.FixTransformer;
-
 import java.util.ArrayList;
 
+/**
+ * This class is responsible for parsing flows in declared in text format.
+ *
+ * @see FlowParserDelegate
+ */
 class FlowParser {
 
   private static final String STAGE_SEPARATOR = "->";
@@ -14,14 +18,21 @@ class FlowParser {
 
   /**
    * Constructor.
+   *
    * @param delegate delegate fo tthis arser.
    */
   public FlowParser(FlowParserDelegate delegate) {
     this.delegate = delegate;
   }
 
-  private Object[] extractParams(String p) {
-    Object[] params = p.split(",");
+  /**
+   * Extract the parameters of a given stage.
+   *
+   * @param parameters the parameters to be extracted.
+   * @return the parameters of a given stage.
+   */
+  private Object[] extractParams(String parameters) {
+    Object[] params = parameters.split(",");
     ArrayList<Object> normParams = new ArrayList<>(params.length);
 
     // Normalise params
@@ -32,12 +43,12 @@ class FlowParser {
       if (!strParam.isEmpty()) {
         if (strParam.startsWith("${")) {
           String paramKey = strParam.substring(2, strParam.indexOf("}"));
-          if(delegate!=null) {
+          if (delegate != null) {
             normParams.add(delegate.getParam(paramKey));
           }
         } else {
           normParams.add(param);
-          if(delegate!=null) {
+          if (delegate != null) {
             delegate.addParam(strParam, param);
           }
         }
