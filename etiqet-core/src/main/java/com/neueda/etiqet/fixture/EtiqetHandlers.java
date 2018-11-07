@@ -828,6 +828,18 @@ public class EtiqetHandlers {
         assertTrue("checkResponseKeyPresenceAndValue: params '" + notMatched + "' don't match with message " + messageName, StringUtils.isNullOrEmpty(notMatched));
     }
 
+    public void checkFieldAbsence(String messageName, String params) {
+        // Check if there are some params to check
+        assertTrue("checkFieldPresence: Nothing to match", !StringUtils.isNullOrEmpty(params));
+
+        Cdr response = getResponse(messageName);
+        assertNotNull("checkFieldPresence: response for " + messageName + " not found", response);
+
+        for (String param : params.trim().split(Separators.PARAM_SEPARATOR)) {
+            assertTrue(!response.containsKey(param));
+        }
+    }
+
     public void stopClient(String clientName) {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
