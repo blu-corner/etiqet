@@ -8,7 +8,7 @@ Feature: Creation of flows
     Then create flow "Replacer(<log>)->SeparatorNormaliser(^)->TagValueReplacer()" as "replacerFlow"
       And create flow "TagKeeper(8, 34, 52)" as "tagKeeper"
       And create flow "Merger(${replacerFlow}, ${tagKeeper})->Length()->Checksum()" as "mainFlow"
-    Then send raw message from through "mainFlow"
+    Then send raw message through "mainFlow"
       And wait for a "Quote" message
     Examples:
       | log                                                                                                                                                |

@@ -45,7 +45,7 @@ public interface Transformable<Source, Target> {
      * @param transClass the transformer class to be search into the chain.
      * @return the transformable instance matching the class name or null if not found.
      */
-    Transformable<Source, Target> find(Class<? extends Transformable<Source, Target>> transClass);
+    <C extends Transformable<Source, Target>> C find(Class<C> transClass);
 
     /**
      * Returns the in order sequence of transformations applied by this chain.

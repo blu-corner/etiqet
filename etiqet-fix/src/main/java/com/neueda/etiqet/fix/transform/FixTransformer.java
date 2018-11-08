@@ -1,6 +1,7 @@
 package com.neueda.etiqet.fix.transform;
 
 import com.neueda.etiqet.core.transform.Transformable;
+import com.neueda.etiqet.fix.message.FIXUtils;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +27,21 @@ public class FixTransformer implements Transformable<String, String> {
    */
   public FixTransformer(Transformable<String, String> next) {
     this.next = next;
+  }
+
+  /**
+   * Returns the value for the given tag or null if tag is not found.
+   *
+   * @param tag the tag to get the value from.
+   * @return the value for the given tag or null if tag is not found.
+   */
+  public static String getTagValue(String tag, String msg) {
+    String value = null;
+    int start = msg.indexOf(FIXUtils.SOH_STR + tag + FIXUtils.TAG_VALUE_SEPARATOR);
+    if (start >= 0) {
+      value = msg.substring(start + 1, msg.indexOf(FIXUtils.SOH_STR, start + 1));
+    }
+    return value;
   }
 
   @Override
@@ -59,10 +75,9 @@ public class FixTransformer implements Transformable<String, String> {
   }
 
   @Override
-  public Transformable<String, String> find(
-      Class<? extends Transformable<String, String>> transClass) {
+  public <C extends Transformable<String, String>> C find(Class<C> transClass) {
     return (this.getClass().getCanonicalName().equals(transClass.getCanonicalName()))
-        ? this
+        ? (C) this
         : (next != null) ? next.find(transClass) : null;
   }
 

@@ -36,7 +36,7 @@ public class FixEtiqetFixtures {
     assertNull(handlers.getFlow(alias));
   }
 
-  @Then("^send raw message from through \"([^\"]*)\"$")
+  @Then("^send raw message through \"([^\"]*)\"$")
   public void sendRawMessageThroughFlow(String alias) throws Throwable {
     // Run the flow and send it
     handlers.runFlow(alias);

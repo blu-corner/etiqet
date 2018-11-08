@@ -29,7 +29,6 @@ public class MergerTransformer extends FixTransformer {
         .map(obj -> (FixTransformer) obj).collect(Collectors.toList()));
   }
 
-
   /**
    * Constructor.
    *
@@ -50,7 +49,8 @@ public class MergerTransformer extends FixTransformer {
   }
 
   @Override
-  public Transformable<String, String> find(Class<? extends Transformable<String, String>> trans) {
-    return transformers.stream().filter(t -> t.find(trans) != null).findFirst().orElse(null);
+  public <C extends Transformable<String, String>> C find(Class<C> transClass) {
+    return (C) transformers.stream().filter(t -> t.find(transClass) != null).findFirst()
+        .orElse(null);
   }
 }
