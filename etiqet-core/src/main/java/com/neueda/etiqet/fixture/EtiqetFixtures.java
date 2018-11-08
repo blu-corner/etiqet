@@ -436,6 +436,11 @@ public class EtiqetFixtures {
 	public void checkResponseContains(String msgName, String params) {
         handlers.checkFieldPresence(msgName, params);
 	}
+
+	@Then("^check \"([^\"]*)\" does not contain \"([^\"]*)\"$")
+	public void checkAbsenceOfResponseContains(String msgName, String params) {
+		handlers.checkFieldAbsence(msgName, params);
+	}
 	
 	@Then("^get response \"([^\"]*)\" to \"([^\"]*)\" from \"(.*)\" by \"([^\"]*)\"$")
 	public void getResponseToMessageFromListByField(String responseName, String messageName, String responseList, String fieldName) {
