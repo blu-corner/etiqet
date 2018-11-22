@@ -562,6 +562,12 @@ public class EtiqetFixtures {
 		handlers.validateMessageTypeDoesNotExistInResponseMap(messageName);
 	}
 
+	@And("^wait for \"([^\"]*)\" to receive a \"([^\"]*)\" message times out$")
+	public void waitForAClientMessageAsTimesOut(String clientName, String messageType) throws EtiqetException {
+		handlers.waitForNoResponse(messageType, clientName, messageType);
+		handlers.validateMessageTypeDoesNotExistInResponseMap(messageType);
+	}
+
 	@And("^wait for a \"([^\"]*)\" message as \"([^\"]*)\" times out within (\\d+) seconds$")
 	public void waitForAMessageAsTimesOutWithinSeconds(String messageType, String messageName, int time) throws EtiqetException {
 		handlers.waitForNoResponse(messageName, EtiqetHandlers.DEFAULT_CLIENT_NAME, messageType, time * 1000);
