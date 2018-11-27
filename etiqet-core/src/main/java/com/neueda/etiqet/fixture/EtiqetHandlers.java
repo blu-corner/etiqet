@@ -760,7 +760,7 @@ public class EtiqetHandlers {
         assertNotNull(getResponse(messageName));
     }
 
-    Cdr getResponse(String messageName) {
+    public Cdr getResponse(String messageName) {
         return responseMap.get(messageName);
     }
 
