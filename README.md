@@ -1,5 +1,6 @@
 # Etiqet
 [![Build Status](https://travis-ci.org/blu-corner/etiqet.svg?branch=master)](https://travis-ci.org/blu-corner/etiqet)
+[![Latest Version @ Cloudsmith](https://api-prd.cloudsmith.io/badges/version/neueda/etiqet/maven/etiqet-core/latest/x/?render=true)](https://cloudsmith.io/~neueda/repos/etiqet/packages/detail/maven/etiqet-core/latest/)
 
 ## What is Etiqet
 Etiqet is a testing framework that allows you to run test interfaces with a generic client, message and protocol. The
