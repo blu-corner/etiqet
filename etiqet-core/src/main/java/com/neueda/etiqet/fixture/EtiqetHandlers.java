@@ -1322,7 +1322,7 @@ public class EtiqetHandlers {
             String resMsg = con.getResponseMessage();
             throw new EtiqetException("Did not receive 200 (OK) response. Response from server: " + resMsg);
         }
-        LOG.info("Rest request: " + httpVerb + " to: " + extensionsUrl + endpoint + payload );
+        LOG.info("Rest request: " + httpVerb + " to: " + url.toString() + " " + payload );
     }
 
     /**
