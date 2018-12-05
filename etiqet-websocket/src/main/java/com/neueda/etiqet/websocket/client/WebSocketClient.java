@@ -78,6 +78,11 @@ public class WebSocketClient extends Client<WebSocketMsg, String> {
             LOG.info("Starting websocket client: " + socketUrl);
             Future<Session> fut = client.connect(instance, new URI(socketUrl),request);
             this.remoteEndpoint = fut.get(5, TimeUnit.SECONDS).getRemote();
+
+            synchronized(this.logonEvent) {
+                this.logonEvent.completeEvent();
+                this.logonEvent.notifyAll();
+            }
         }
         catch (Throwable e)
         {
@@ -152,7 +157,9 @@ public class WebSocketClient extends Client<WebSocketMsg, String> {
     }
 
     @Override
-    public boolean isLoggedOn() { return false; }
+    public boolean isLoggedOn() {
+        return this.client != null && this.remoteEndpoint != null;
+    }
 
     @Override
     public String getMsgType(String messageType) {
