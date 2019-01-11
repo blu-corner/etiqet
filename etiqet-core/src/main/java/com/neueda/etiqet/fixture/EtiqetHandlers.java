@@ -1461,4 +1461,17 @@ public class EtiqetHandlers {
       );
     }
   }
+
+  public void checkFieldAbsence(String messageName, String params) {
+    // Check if there are some params to check
+    assertTrue("checkFieldPresence: Nothing to match", !StringUtils.isNullOrEmpty(params));
+
+    Cdr response = getResponse(messageName);
+    assertNotNull("checkFieldPresence: response for " + messageName + " not found", response);
+
+    for (String param : params.trim().split(Separators.PARAM_SEPARATOR)) {
+      assertTrue(!response.containsKey(param));
+    }
+  }
+
 }

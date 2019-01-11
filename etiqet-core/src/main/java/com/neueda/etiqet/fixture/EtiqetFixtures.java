@@ -436,6 +436,11 @@ public class EtiqetFixtures {
 	public void checkResponseContains(String msgName, String params) {
         handlers.checkFieldPresence(msgName, params);
 	}
+
+	@Then("^check \"([^\"]*)\" does not contain \"([^\"]*)\"$")
+	public void checkAbsenceOfResponseContains(String msgName, String params) {
+		handlers.checkFieldAbsence(msgName, params);
+	}
 	
 	@Then("^get response \"([^\"]*)\" to \"([^\"]*)\" from \"(.*)\" by \"([^\"]*)\"$")
 	public void getResponseToMessageFromListByField(String responseName, String messageName, String responseList, String fieldName) {
@@ -555,6 +560,12 @@ public class EtiqetFixtures {
 	public void waitForAMessageAsTimesOut(String messageType, String messageName) throws EtiqetException {
 		handlers.waitForNoResponse(messageName, EtiqetHandlers.DEFAULT_CLIENT_NAME, messageType);
 		handlers.validateMessageTypeDoesNotExistInResponseMap(messageName);
+	}
+
+	@And("^wait for \"([^\"]*)\" to receive a \"([^\"]*)\" message times out$")
+	public void waitForAClientMessageAsTimesOut(String clientName, String messageType) throws EtiqetException {
+		handlers.waitForNoResponse(messageType, clientName, messageType);
+		handlers.validateMessageTypeDoesNotExistInResponseMap(messageType);
 	}
 
 	@And("^wait for a \"([^\"]*)\" message as \"([^\"]*)\" times out within (\\d+) seconds$")
