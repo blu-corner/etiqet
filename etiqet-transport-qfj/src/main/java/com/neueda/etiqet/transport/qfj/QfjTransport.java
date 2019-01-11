@@ -4,7 +4,7 @@ import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
-import com.neueda.etiqet.core.message.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.Transport;
 import com.neueda.etiqet.core.transport.TransportDelegate;

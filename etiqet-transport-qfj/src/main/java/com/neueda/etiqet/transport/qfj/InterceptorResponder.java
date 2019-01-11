@@ -1,7 +1,7 @@
 package com.neueda.etiqet.transport.qfj;
 
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
-import com.neueda.etiqet.core.message.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.transport.Codec;
 import java.util.ArrayDeque;
 import java.util.Deque;

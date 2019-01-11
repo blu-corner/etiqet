@@ -22,6 +22,8 @@
     <module>etiqet-fix</module>
     <module>etiqet-rest</module>
     <module>etiqet-websocket</module>
+    <module>etiqet-transport-qfj</module>
+    <module>etiqet-codec-qfj</module>
   </modules>
 
   <profiles>
