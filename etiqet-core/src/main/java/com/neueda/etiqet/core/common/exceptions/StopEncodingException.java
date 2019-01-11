@@ -1,6 +1,6 @@
 package com.neueda.etiqet.core.common.exceptions;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 
 /**
  * Exception thrown to stop the encoder for a specific message

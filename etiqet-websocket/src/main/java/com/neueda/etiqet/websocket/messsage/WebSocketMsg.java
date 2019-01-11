@@ -1,6 +1,7 @@
 package com.neueda.etiqet.websocket.messsage;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Message;
@@ -19,7 +20,12 @@ public class WebSocketMsg extends Cdr {
         update(cdr);
     }
 
-    public String serialize() throws EtiqetException {
+    @Override
+    public String toString() {
+        return serialize();
+    }
+
+    public String serialize() throws EtiqetRuntimeException {
 
         String result = "";
         try {
@@ -39,7 +45,7 @@ public class WebSocketMsg extends Cdr {
             result = JsonUtils.cdrToJson(resultCdr);
         } catch (EtiqetException e) {
             LOG.error("Exception thrown serializing WebSocketMsg", e);
-            throw e;
+            throw new EtiqetRuntimeException(e);
         }
         return result;
     }

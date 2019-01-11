@@ -1,6 +1,6 @@
-package com.neueda.etiqet.fix.client.logger;
+package com.neueda.etiqet.transport.qfj;
 
-import com.neueda.etiqet.fix.client.logger.LogAdapter.Level;
+import com.neueda.etiqet.transport.qfj.LogAdapter.Level;
 import quickfix.Log;
 import quickfix.LogFactory;
 import quickfix.SessionID;

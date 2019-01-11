@@ -1,7 +1,7 @@
 package com.neueda.etiqet.core.json;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
-import com.neueda.etiqet.core.common.cdr.CdrItem;
+import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.CdrItem;
 
 import com.google.gson.*;
 import java.lang.reflect.Type;

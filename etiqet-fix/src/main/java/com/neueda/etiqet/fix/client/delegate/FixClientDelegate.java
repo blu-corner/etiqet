@@ -2,17 +2,13 @@ package com.neueda.etiqet.fix.client.delegate;
 
 import com.neueda.etiqet.core.client.delegate.BaseClientDelegate;
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
-import com.neueda.etiqet.core.common.exceptions.StopEncodingException;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.util.StringUtils;
-import quickfix.Message;
-import quickfix.field.Password;
-import quickfix.field.SenderSubID;
-import quickfix.field.TargetSubID;
 
 /**
  * Delegate for QuickFix client that fills some necessary parameters when sending messages to the server.
  */
-public class FixClientDelegate extends BaseClientDelegate<Message, String> {
+public class FixClientDelegate extends BaseClientDelegate {
 
     private String targetSubID;
     private String senderSubID;
@@ -29,7 +25,7 @@ public class FixClientDelegate extends BaseClientDelegate<Message, String> {
      * Constructor.
      * @param next the next delegate on the chain to process the message.
      */
-    public FixClientDelegate(ClientDelegate<Message, String> next) {
+    public FixClientDelegate(ClientDelegate next) {
         super(next);
     }
 
@@ -57,16 +53,16 @@ public class FixClientDelegate extends BaseClientDelegate<Message, String> {
     }
 
     @Override
-    public Message transformBeforeEncoding(Message msg) throws StopEncodingException {
+    public Cdr processMessage(Cdr msg) {
         if(!StringUtils.isNullOrEmpty(targetSubID)) {
-            msg.getHeader().setField(new TargetSubID(targetSubID));
+            msg.set("TargetSubID", targetSubID);
         }
         if(!StringUtils.isNullOrEmpty(senderSubID)) {
-            msg.getHeader().setField(new SenderSubID(senderSubID));
+            msg.set("SenderSubID", senderSubID);
         }
-        if(msg.isAdmin() && !StringUtils.isNullOrEmpty(password)) {
-            msg.setField(new Password(password));
+        if(!StringUtils.isNullOrEmpty(password)) {
+            msg.set("Password", password);
         }
-        return (next != null)? next.transformBeforeEncoding(msg): msg;
+        return (next != null)? next.processMessage(msg): msg;
     }
 }

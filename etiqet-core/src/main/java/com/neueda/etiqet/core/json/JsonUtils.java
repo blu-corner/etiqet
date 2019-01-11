@@ -2,7 +2,7 @@ package com.neueda.etiqet.core.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 
 import java.util.List;
 import java.util.Map;

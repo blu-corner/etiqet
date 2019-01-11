@@ -251,6 +251,16 @@
                 <xs:documentation xml:lang="en">Path to the default configuration for this client</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="transportImpl" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Immplementation class for transport</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="codecImpl" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Immplementation class for codec</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
 
     </xs:complexType>
 

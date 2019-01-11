@@ -1,4 +1,4 @@
-package com.neueda.etiqet.core.common.cdr;
+package com.neueda.etiqet.core.message.cdr;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 

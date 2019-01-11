@@ -1,6 +1,6 @@
 package com.neueda.etiqet.core.server;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
@@ -72,7 +72,7 @@ public abstract class Server implements Runnable {
 	public abstract void launchServer();
 
 	/**
-	 * Metodo to send a message.
+	 * Method to send a message.
 	 * It must to be implemented.
 	 * @param msg message to be sent
 	 * @return operation result (true/false)

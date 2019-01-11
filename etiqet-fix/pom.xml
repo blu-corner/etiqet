@@ -13,7 +13,6 @@
 	<artifactId>etiqet-fix</artifactId>
 
 	<properties>
-		<slf4j.version>1.7.25</slf4j.version>
 		<quickfixj.version>2.0.0</quickfixj.version>
 	</properties>
 

@@ -1,6 +1,6 @@
 package com.neueda.etiqet.core.testing.server;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.server.Server;
 

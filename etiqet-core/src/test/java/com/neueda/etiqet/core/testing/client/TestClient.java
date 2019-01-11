@@ -1,7 +1,7 @@
 package com.neueda.etiqet.core.testing.client;
 
 import com.neueda.etiqet.core.client.Client;
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 
-public class TestClient extends Client<Cdr, String> {
+public class TestClient extends Client {
 
     public static final String DEFAULT_CLIENT_CONFIG
             = "${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties";
@@ -141,16 +141,6 @@ public class TestClient extends Client<Cdr, String> {
         } catch (EtiqetException ignored) {}
 
         return isStarted;
-    }
-
-    @Override
-    public Cdr encode(Cdr message) {
-        return message;
-    }
-
-    @Override
-    public Cdr decode(Cdr message) {
-        return message;
     }
 
     public String getSessionId() {

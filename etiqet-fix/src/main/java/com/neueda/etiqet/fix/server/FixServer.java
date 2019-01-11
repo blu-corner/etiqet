@@ -1,20 +1,20 @@
 package com.neueda.etiqet.fix.server;
 
 import com.neueda.etiqet.core.common.Environment;
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.server.Server;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.*;
 
 import java.io.File;
 
 public class FixServer extends Server {
 
-	/** Attribute LOG for logging executions. */
-	private static final Logger LOG = LogManager.getLogger(FixServer.class);
+	/** Attribute log for logging executions. */
+	private static final Logger logger = LoggerFactory.getLogger(FixServer.class);
 	
 	private SocketAcceptor socketAcceptor;
 
@@ -31,7 +31,7 @@ public class FixServer extends Server {
 		try {
 			File f = new File(Environment.resolveEnvVars(serverConfig));
 			if (!f.exists()) {
-				LOG.fatal(serverConfig + "not found");
+				logger.error(serverConfig + "not found");
 				throw new EtiqetException("Could not find server configuration file " + serverConfig);
 			}
 			
@@ -49,7 +49,7 @@ public class FixServer extends Server {
             );
 			socketAcceptor.start();
 		} catch (Exception exp) {
-			LOG.error("Error launching server", exp);
+			logger.error("Error launching server", exp);
 			throw new EtiqetRuntimeException("Error launching server", exp);
 		}
 	}

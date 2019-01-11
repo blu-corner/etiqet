@@ -1,7 +1,7 @@
 package com.neueda.etiqet.util;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
-import com.neueda.etiqet.core.common.cdr.CdrItem;
+import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.CdrItem;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Fields;

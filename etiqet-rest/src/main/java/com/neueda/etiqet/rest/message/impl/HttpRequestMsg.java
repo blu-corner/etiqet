@@ -20,6 +20,8 @@ public class HttpRequestMsg {
 
     private Map<String, String> headers = new HashMap<>(0);
 
+    private HttpResponse response;
+
     public String getVerb() {
         return verb;
     }
@@ -87,4 +89,11 @@ public class HttpRequestMsg {
         return request;
     }
 
+    public void setResponse(HttpResponse response) {
+        this.response = response;
+    }
+
+    public HttpResponse getResponse() {
+        return this.response;
+    }
 }

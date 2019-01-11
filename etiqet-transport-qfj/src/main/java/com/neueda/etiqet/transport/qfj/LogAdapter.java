@@ -1,4 +1,4 @@
-package com.neueda.etiqet.fix.client.logger;
+package com.neueda.etiqet.transport.qfj;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

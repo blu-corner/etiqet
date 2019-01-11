@@ -16,6 +16,8 @@ import java.util.List;
 public class Client implements Serializable {
 
 	private String impl;
+	private String transportImpl;
+	private String codecImpl;
 
 	private String defaultConfig;
 
@@ -46,6 +48,24 @@ public class Client implements Serializable {
 	@XmlAttribute(required = true)
 	public String getImpl() {
 		return impl;
+	}
+
+	@XmlAttribute(required = true)
+	public String getCodecImpl() {
+		return codecImpl;
+	}
+
+	public void setCodecImpl(String codecImpl) {
+		this.codecImpl = codecImpl;
+	}
+
+	@XmlAttribute(required = true)
+	public String getTransportImpl() {
+		return transportImpl;
+	}
+
+	public void setTransportImpl(String transportImpl) {
+		this.transportImpl = transportImpl;
 	}
 
 	public void setImpl(String impl) {

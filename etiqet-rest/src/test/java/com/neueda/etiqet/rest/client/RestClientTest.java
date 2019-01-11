@@ -1,9 +1,8 @@
 package com.neueda.etiqet.rest.client;
 
 import com.google.api.client.http.HttpRequestFactory;
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsgTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,7 +98,7 @@ public class RestClientTest {
         testCdr.set("$header.responsecode", "200");
         testCdr.set("$header.authorization", "key");
         client.send(testCdr);
-        cdr = client.waitForMsgType("200", 5000);
+        cdr = client.waitForAppMsg();
         assertNotNull(cdr.getItems());
 
         testCdr.set("$httpEndpoint", "/test/api");
@@ -119,7 +118,7 @@ public class RestClientTest {
     @Test
     public void testDecode() throws EtiqetException {
         client.send(testCdr);
-        assertNotNull(client.decode(new HttpRequestMsg()));
+        assertNotNull(client.waitForAppMsg());
     }
 
     @Test
