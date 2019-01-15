@@ -3,6 +3,7 @@ package com.neueda.etiqet.core.util;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
 import java.lang.reflect.Method;
