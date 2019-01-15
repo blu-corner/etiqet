@@ -68,10 +68,10 @@ public class QfjTransport implements Transport, Application {
     delegate = del;
   }
 
-  @Override
-  public void setTransDel(TransportDelegate<String, Cdr> transDel) {
-    this.transDel = transDel;
-  }
+    @Override
+    public void setTransportDelegate(TransportDelegate<String, Cdr> transDel) {
+        this.transDel = transDel;
+    }
 
   @Override
   public Codec getCodec() {
@@ -190,7 +190,7 @@ public class QfjTransport implements Transport, Application {
   @Override
   public void fromAdmin(Message msg, SessionID sessionID) {
     try {
-      transDel.fromApp(delegate.processMessage(codec.decode(msg)), sessionID.toString());
+      transDel.fromAdmin(delegate.processMessage(codec.decode(msg)), sessionID.toString());
     } catch (EtiqetException e) {
       throw new EtiqetRuntimeException("Error receiving admin message [" + msg.toString() + "]", e);
     }
@@ -209,7 +209,7 @@ public class QfjTransport implements Transport, Application {
   public void toAdmin(Message msg, SessionID sessionID) {
     try {
       Cdr cdr = delegate.processMessage(codec.decode(msg));
-      transDel.toApp(cdr, sessionID.toString());
+      transDel.toAdmin(cdr, sessionID.toString());
       replaceMesageFields(msg, codec.encode(cdr));
     } catch (EtiqetException e) {
       throw new EtiqetRuntimeException("Error sending admin message [" + msg.toString() + "]", e);
@@ -220,7 +220,7 @@ public class QfjTransport implements Transport, Application {
   public void toApp(Message msg, SessionID sessionID) {
     try {
       Cdr cdr = delegate.processMessage(codec.decode(msg));
-      transDel.toApp(cdr, sessionID.toString());
+      transDel.toAdmin(cdr, sessionID.toString());
       replaceMesageFields(msg, codec.encode(cdr));
     } catch (EtiqetException e) {
       throw new EtiqetRuntimeException("Error sending app message [" + msg.toString() + "]", e);

@@ -17,14 +17,15 @@
     <log.version>2.9.1</log.version>
   </properties>
 
-  <modules>
-    <module>etiqet-core</module>
-    <module>etiqet-fix</module>
-    <module>etiqet-rest</module>
-    <module>etiqet-websocket</module>
-    <module>etiqet-transport-qfj</module>
-    <module>etiqet-transport-rabbitmq-gpb</module>
-  </modules>
+    <modules>
+        <module>etiqet-core</module>
+        <module>etiqet-fix</module>
+        <module>etiqet-rest</module>
+        <module>etiqet-websocket</module>
+        <module>etiqet-selenium</module>
+        <module>etiqet-transport-qfj</module>
+        <module>etiqet-codec-qfj</module>
+    </modules>
 
   <profiles>
     <profile>
@@ -65,12 +66,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.7.25</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.25</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>

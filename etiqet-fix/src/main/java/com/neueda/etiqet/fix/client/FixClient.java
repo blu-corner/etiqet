@@ -60,9 +60,9 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
         (delegate instanceof FixClientDelegate) ? delegate : new FixClientDelegate(delegate));
   }
 
-  @Override
   public void stop() {
-    super.stop();
+    // Stops the transport
+    transport.stop();
 
     // clear the msg queues
     msgQueue.clear();
@@ -79,11 +79,16 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
     return (transport != null) && (transport.isLoggedOn());
   }
 
+    @Override
+    public void init(String config) throws EtiqetException {
+        super.init(config);
+        transport.setTransportDelegate(this);
+        activeConfig = config;
+    }
+
   @Override
-  public void init(String config) throws EtiqetException {
-    super.init(config);
-    transport.setTransDel(this);
-    activeConfig = config;
+  public String getDefaultSessionId() {
+    return transport.getDefaultSessionId();
   }
 
   @Override
@@ -93,6 +98,16 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
 
   public boolean isAdmin(String msgType) {
     return getProtocolConfig().isAdmin(msgType);
+  }
+
+  @Override
+  public String getMsgType(String messageName) {
+    return getProtocolConfig().getMsgType(messageName);
+  }
+
+  @Override
+  public String getMsgName(String messageType) {
+    return getProtocolConfig().getMsgName(messageType);
   }
 
   /**
@@ -126,12 +141,13 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
   }
 
   @Override
-  public void fromApp(Cdr msg, String sessionID) {
-    if(isAdmin(msg.getType())) {
+  public void fromAdmin(Cdr msg, String sessionID) {
     sessionQueue.add(msg);
-    } else {
-      msgQueue.add(msg);
-    }
+  }
+
+  @Override
+  public void fromApp(Cdr msg, String sessionID) {
+    msgQueue.add(msg);
   }
 
   @Override
@@ -146,6 +162,11 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
   @Override
   public void onLogout(String sessionID) {
     logger.info("session logged out : " + sessionID);
+  }
+
+  @Override
+  public void toAdmin(Cdr msg, String sessionId) {
+    // Nothing to do here
   }
 
   @Override
