@@ -24,6 +24,8 @@
     <module>etiqet-websocket</module>
     <module>etiqet-transport-qfj</module>
     <module>etiqet-codec-qfj</module>
+    <module>etiqet-codec-protobuf</module>
+    <module>etiqet-trasnport-rabbitmq</module>
   </modules>
 
   <profiles>

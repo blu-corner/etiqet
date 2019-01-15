@@ -545,7 +545,7 @@ public abstract class Client implements Transport, Runnable {
   }
 
   @Override
-  public void setTransportDelegate(TransportDelegate transDel) {
+  public void setTransDel(TransportDelegate transDel) {
     transportDelegate = transDel;
   }
 }

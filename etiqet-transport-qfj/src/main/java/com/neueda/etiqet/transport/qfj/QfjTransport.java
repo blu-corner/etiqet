@@ -69,7 +69,7 @@ public class QfjTransport implements Transport, Application {
   }
 
   @Override
-  public void setTransportDelegate(TransportDelegate<String, Cdr> transDel) {
+  public void setTransDel(TransportDelegate<String, Cdr> transDel) {
     this.transDel = transDel;
   }
 

@@ -51,7 +51,7 @@ public interface Transport {
    * Sets the transport delegate to attend incoming and outgoing messages.
    * @param transDel the transport delegate
    */
-  void setTransportDelegate(TransportDelegate<String, Cdr> transDel);
+  void setTransDel(TransportDelegate<String, Cdr> transDel);
 
   /**
    * Sets the codec used by the transport.
