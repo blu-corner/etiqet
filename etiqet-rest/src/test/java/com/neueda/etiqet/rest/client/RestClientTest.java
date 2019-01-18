@@ -1,24 +1,16 @@
 package com.neueda.etiqet.rest.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import com.google.api.client.http.HttpRequestFactory;
-import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.rest.RestConfig;
+import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsgTest;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
 
 public class RestClientTest {
 
@@ -30,14 +22,11 @@ public class RestClientTest {
 
     private Cdr testCdr;
 
-    private GlobalConfig globalConfig;
-
     @Before
     public void setUp() throws EtiqetException {
-        globalConfig = GlobalConfig.getInstance(RestConfig.class);
         // override the HttpRequestFactory and Config objects for testing purposes
-        primaryConfig = getClass().getClassLoader().getResource("config/ok/client.cfg").getPath();
-        secondaryConfig = getClass().getClassLoader().getResource("config/ok/secondary_client.cfg").getPath();
+        primaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/client.cfg";
+        secondaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/secondary_client.cfg";
         testCdr = new Cdr("test_01");
         testCdr.set("$httpEndpoint", "/test/api");
         testCdr.set("$httpVerb", "GET");
@@ -51,14 +40,6 @@ public class RestClientTest {
             }
         };
     }
-
-    @After
-    public void tearDown() throws Exception {
-        Field field = GlobalConfig.class.getDeclaredField("instance");
-        field.setAccessible(true);
-        field.set(globalConfig, null);
-    }
-
     @Test
     public void testConstructor() throws EtiqetException {
         RestClient restClient = new RestClient(primaryConfig);
@@ -67,13 +48,6 @@ public class RestClientTest {
         restClient = new RestClient(primaryConfig, secondaryConfig);
         assertNotNull(restClient.getPrimaryConfig());
         assertNotNull(restClient.getSecondaryConfig());
-    }
-
-    @Test
-    public void testIsAdmin() {
-        for (String msgType : Arrays.asList("", "200", "404", "GET", "PUT", "POST", "DELETE", "301")) {
-            assertFalse(client.isAdmin(msgType));
-        }
     }
 
     @Test
@@ -96,7 +70,7 @@ public class RestClientTest {
     @Test
     public void testFailover() throws EtiqetException {
         assertTrue("Client was instantiated with 2 config files, so should be able to failover",
-            client.canFailover());
+                        client.canFailover());
         client.launchClient();
         assertNotNull(client.getClientConfig().getString("baseUrl"));
         client.failover();
@@ -148,7 +122,7 @@ public class RestClientTest {
 
         try {
             assertNull(client.waitForNoMsgType("test", 100));
-            fail("Expected EtiqetException not thrown");
+            fail( "Expected EtiqetException not thrown" );
         } catch (EtiqetException e) {
         }
     }
@@ -158,7 +132,6 @@ public class RestClientTest {
         assertEquals("test_01", client.getMsgName("test_01"));
         assertEquals("400", client.getMsgName("400"));
     }
-
     @Test
     public void testGetMsgType() {
         assertNotNull(client.getMsgType("test_01"));

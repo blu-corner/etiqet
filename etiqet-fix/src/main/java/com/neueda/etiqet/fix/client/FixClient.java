@@ -79,16 +79,11 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
     return (transport != null) && (transport.isLoggedOn());
   }
 
-    @Override
-    public void init(String config) throws EtiqetException {
-        super.init(config);
-        transport.setTransportDelegate(this);
-        activeConfig = config;
-    }
-
   @Override
-  public String getDefaultSessionId() {
-    return transport.getDefaultSessionId();
+  public void init(String config) throws EtiqetException {
+    super.init(config);
+    transport.setTransDel(this);
+    activeConfig = config;
   }
 
   @Override
@@ -141,13 +136,12 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
   }
 
   @Override
-  public void fromAdmin(Cdr msg, String sessionID) {
-    sessionQueue.add(msg);
-  }
-
-  @Override
   public void fromApp(Cdr msg, String sessionID) {
-    msgQueue.add(msg);
+    if(isAdmin(msg.getType())) {
+    sessionQueue.add(msg);
+    } else {
+      msgQueue.add(msg);
+    }
   }
 
   @Override
@@ -162,11 +156,6 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
   @Override
   public void onLogout(String sessionID) {
     logger.info("session logged out : " + sessionID);
-  }
-
-  @Override
-  public void toAdmin(Cdr msg, String sessionId) {
-    // Nothing to do here
   }
 
   @Override

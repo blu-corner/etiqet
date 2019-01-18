@@ -46,11 +46,6 @@ public class TestClient extends Client {
     }
 
     @Override
-    public boolean isAdmin(String msgType) {
-        return false;
-    }
-
-    @Override
     public void launchClient() throws EtiqetException {
         isStarted = true;
     }

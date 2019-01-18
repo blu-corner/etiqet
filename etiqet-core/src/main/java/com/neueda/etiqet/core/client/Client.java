@@ -219,14 +219,6 @@ public abstract class Client implements Transport, Runnable {
   }
 
   /**
-   * Returns true if the given message type is adminstration related, false otherwise.
-   *
-   * @param msgType the type of message.
-   * @return true if the given message type is adminstration related, false otherwise.
-   */
-  public abstract boolean isAdmin(String msgType);
-
-  /**
    * Method to check type of received message
    *
    * @param msgType type of msg requested
@@ -297,7 +289,9 @@ public abstract class Client implements Transport, Runnable {
    *
    * @return string containing a session identifier by default.
    */
-  public abstract String getDefaultSessionId();
+  public String getDefaultSessionId() {
+    return transport.getDefaultSessionId();
+  }
 
   @Override
   public void init(String config) throws EtiqetException {
@@ -405,7 +399,10 @@ public abstract class Client implements Transport, Runnable {
   /**
    * Method to stop client. Must be implemented
    */
-  public abstract void stop();
+  public void stop() {
+    // Stops the transport
+    transport.stop();
+  }
 
   /**
    * Method to create if client is logged on.
@@ -438,7 +435,9 @@ public abstract class Client implements Transport, Runnable {
    * @param messageName the name of the message.
    * @return the value of the attribute msgType of the message definition.
    */
-  public abstract String getMsgType(String messageName);
+  public String getMsgType(String messageName) {
+    return getProtocolConfig().getMsgType(messageName);
+  }
 
   /**
    * Method to find out the messageName given a message type
@@ -446,7 +445,9 @@ public abstract class Client implements Transport, Runnable {
    * @param messageType type of the message.
    * @return the name of the message.
    */
-  public abstract String getMsgName(String messageType);
+  public String getMsgName(String messageType) {
+    return getProtocolConfig().getMsgName(messageType);
+  }
 
   /**
    * Method to wait for given time and check that no message was received in that time
@@ -456,8 +457,10 @@ public abstract class Client implements Transport, Runnable {
    * @return CDR object if one is received
    * @throws EtiqetException when an error occurs
    */
-  public abstract Cdr waitForNoMsgType(String msgType, Integer timeoutMillis)
-      throws EtiqetException;
+  public Cdr waitForNoMsgType(String msgType, Integer timeoutMillis)
+      throws EtiqetException {
+    return waitForNoMsg(msgQueue, timeoutMillis);
+  }
 
   /**
    * Method to switch between the primary and secondary configurations

@@ -17,15 +17,15 @@
     <log.version>2.9.1</log.version>
   </properties>
 
-    <modules>
-        <module>etiqet-core</module>
-        <module>etiqet-fix</module>
-        <module>etiqet-rest</module>
-        <module>etiqet-websocket</module>
-        <module>etiqet-selenium</module>
-        <module>etiqet-transport-qfj</module>
-        <module>etiqet-codec-qfj</module>
-    </modules>
+  <modules>
+    <module>etiqet-core</module>
+    <module>etiqet-fix</module>
+    <module>etiqet-rest</module>
+    <module>etiqet-websocket</module>
+    <module>etiqet-selenium</module>
+    <module>etiqet-transport-qfj</module>
+    <module>etiqet-trasnport-rabbitmq-gpb</module>
+  </modules>
 
   <profiles>
     <profile>
