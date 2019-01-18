@@ -14,8 +14,8 @@ public class GenericClient extends Client implements TransportDelegate<String, C
 
   public Set<String> logged = new HashSet<>();
 
-  public GenericClient(String clientConfig, String secondaryConfig) throws EtiqetException {
-    super(clientConfig, secondaryConfig);
+  public GenericClient(String clientConfig) throws EtiqetException {
+    super(clientConfig);
   }
 
   @Override

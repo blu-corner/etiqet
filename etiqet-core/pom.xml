@@ -48,6 +48,16 @@
             <artifactId>jsch</artifactId>
             <version>0.1.54</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
 
         <!-- cucumber dependency -->
         <dependency>
@@ -208,14 +218,6 @@
                 <version>2.14.1</version>
                 <configuration>
                     <argLine>-Detiqet.directory=${project.parent.basedir} -Detiqet.global.config=${etiqet.directory}/etiqet-core/src/test/resources/config/etiqet.config.xml ${argLine}</argLine>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>7</source>
-                    <target>7</target>
                 </configuration>
             </plugin>
         </plugins>
