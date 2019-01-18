@@ -215,11 +215,11 @@ Etiqet is currently made up of 3 components available as individual jar files ho
 
 An Etiqet example project is available at https://github.com/blu-corner/etiqet-example for reference.
 
-Etiqet-core is the platform with the main verbs to write automated tests. 
+* Etiqet-core is the platform with the main verbs to write automated tests. 
 
-Etiqet-fix is dependent on Etiqet-core and allows the use of fix messages in automated tests. 
+* Etiqet-fix is dependent on Etiqet-core and gives the ability to create fix sessions and analyse and validate fix messages to and from trading engines.
 
-Etiqet-rest is also dependent on Etiqet-core and allows the use of REST APIs.
+* Etiqet-rest is also dependent on Etiqet-core and allows the use of REST APIs.
 
 ### etiqet-fix
 
