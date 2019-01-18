@@ -9,10 +9,6 @@ public interface TransportDelegate<S, M> {
 
   void onLogout(S var1);
 
-  void toAdmin(M var1, S var2) throws EtiqetException;
-
-  void fromAdmin(M var1, S var2) throws EtiqetException;
-
   void toApp(M var1, S var2) throws EtiqetException;
 
   void fromApp(M var1, S var2) throws EtiqetException;

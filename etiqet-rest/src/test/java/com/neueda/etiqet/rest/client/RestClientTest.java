@@ -51,12 +51,6 @@ public class RestClientTest {
     }
 
     @Test
-    public void testIsAdmin() {
-        for(String msgType : Arrays.asList("", "200", "404", "GET", "PUT", "POST", "DELETE", "301"))
-            assertFalse(client.isAdmin(msgType));
-    }
-
-    @Test
     public void testDefaultSession() {
         assertEquals("", client.getDefaultSessionId());
     }

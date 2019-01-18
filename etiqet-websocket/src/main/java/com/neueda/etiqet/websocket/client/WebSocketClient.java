@@ -51,11 +51,6 @@ public class WebSocketClient extends Client {
   }
 
   @Override
-  public boolean isAdmin(String msgType) {
-    return false;
-  }
-
-  @Override
   public void launchClient() throws EtiqetException {
     launchClient(primaryConfig);
   }

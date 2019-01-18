@@ -60,9 +60,9 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
         (delegate instanceof FixClientDelegate) ? delegate : new FixClientDelegate(delegate));
   }
 
+  @Override
   public void stop() {
-    // Stops the transport
-    transport.stop();
+    super.stop();
 
     // clear the msg queues
     msgQueue.clear();
@@ -87,27 +87,12 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
   }
 
   @Override
-  public String getDefaultSessionId() {
-    return transport.getDefaultSessionId();
-  }
-
-  @Override
   public void setCodec(Codec c) {
     transport.setCodec(c);
   }
 
   public boolean isAdmin(String msgType) {
     return getProtocolConfig().isAdmin(msgType);
-  }
-
-  @Override
-  public String getMsgType(String messageName) {
-    return getProtocolConfig().getMsgType(messageName);
-  }
-
-  @Override
-  public String getMsgName(String messageType) {
-    return getProtocolConfig().getMsgName(messageType);
   }
 
   /**
@@ -141,13 +126,12 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
   }
 
   @Override
-  public void fromAdmin(Cdr msg, String sessionID) {
-    sessionQueue.add(msg);
-  }
-
-  @Override
   public void fromApp(Cdr msg, String sessionID) {
-    msgQueue.add(msg);
+    if(isAdmin(msg.getType())) {
+    sessionQueue.add(msg);
+    } else {
+      msgQueue.add(msg);
+    }
   }
 
   @Override
@@ -162,11 +146,6 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
   @Override
   public void onLogout(String sessionID) {
     logger.info("session logged out : " + sessionID);
-  }
-
-  @Override
-  public void toAdmin(Cdr msg, String sessionId) {
-    // Nothing to do here
   }
 
   @Override
