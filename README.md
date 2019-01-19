@@ -8,6 +8,7 @@
         - [Client Configuration](#Client-Configuration)
         - [Message Configuration](#Message-Configuration)
 - [Building Etiqet](#Building-and-Running)
+- [The Library (of Test Steps)](docs/teststeps.md)
 
 # Etiqet
 
