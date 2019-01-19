@@ -2,11 +2,12 @@
 
 - [Etiqet](#Etiqet)
 - [Getting Started](#Getting-Started)
-    - [Protocol Configuration](#Protocol-Configuration)
-    - [Client Configuration](#Client-Configuration)
-    - [Message Configuration](#Message-Configuration)
-- [Using Etiqet](#Using-Etiqet)
-- [Building and Running](#Building-and-Running)
+    - [Maven Projects](#Maven-Projects)
+    - [Configuration](#Configuration)
+        - [Protocol Configuration](#Protocol-Configuration)
+        - [Client Configuration](#Client-Configuration)
+        - [Message Configuration](#Message-Configuration)
+- [Building Etiqet](#Building-and-Running)
 
 # Etiqet
 
@@ -256,9 +257,8 @@ Messages can be defined in a separate messages.xml file to reduce the size of th
 
 An example of messages.xml can be found here: https://github.com/blu-corner/etiqet/blob/master/etiqet-fix/src/test/resources/config/etiqet-fix-messages.xml
 
-## Building Etiqet
+# Building Etiqet
 
-### Maven
 To build Etiqet using Maven in Command line, run the following command:
 ```
 cd blu-corner/etiqet
