@@ -9,6 +9,11 @@
 	<packaging>pom</packaging>
 
 	<name>Etiqet Parent Project</name>
+    <url>https://github.com/blu-corner/etiqet</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/blu-corner/etiqet.git</connection>
+    </scm>
 
 	<properties>
 	  <maven.compiler.target>1.8</maven.compiler.target>
