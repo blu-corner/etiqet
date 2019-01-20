@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/blu-corner/etiqet.svg?branch=master)](https://travis-ci.org/blu-corner/etiqet)
+[![Latest Version @ Cloudsmith](https://api-prd.cloudsmith.io/badges/version/neueda/etiqet/maven/etiqet-core/latest/x/?render=true)](https://cloudsmith.io/~neueda/repos/etiqet/packages/detail/maven/etiqet-core/latest/)
+
 ### Table of Contents
 
 - [Etiqet](#Etiqet)
@@ -75,9 +78,8 @@ repository in a project add the following lines to the pom.xml
 	<repositories>
       ...
 	  <repository>
-	    <id>cloudsmith-api</id>
-	    <name>Cloudsmith API Releases</name>
-	    <url>https://dl.cloudsmith.io/public/cloudsmith/api/maven</url>
+	    <id>etiqet</id>
+	    <url>https://dl.cloudsmith.io/public/neueda/etiqet/maven</url>
 	  </repository>
       ...
 	</repositories>
@@ -93,21 +95,21 @@ To include the etiqet modules add the following stanzas as required.
         <dependency>
             <groupId>com.neueda.etiqet</groupId>
             <artifactId>etiqet-fix</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 
         <!--etiqet-rest-->
         <dependency>
             <groupId>com.neueda.etiqet</groupId>
             <artifactId>etiqet-rest</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 
         <!--etiqet-core-->
         <dependency>
             <groupId>com.neueda.etiqet</groupId>
             <artifactId>etiqet-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         ...
     </dependencies>
