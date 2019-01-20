@@ -69,12 +69,12 @@
 
 	<distributionManagement>
 	  <snapshotRepository>
-	    <id>cloudsmith-snapshots</id>
-	    <url>cloudsmith+https://api.cloudsmith.io/neueda/etiqet</url>
+	    <id>cloudsmith</id>
+	    <url>https://api.cloudsmith.io/neueda/etiqet</url>
 	  </snapshotRepository>
 	  <repository>
-	    <id>cloudsmith-releases</id>
-	    <url>cloudsmith+https://api.cloudsmith.io/neueda/etiqet</url>
+	    <id>cloudsmith</id>
+	    <url>https://api.cloudsmith.io/neueda/etiqet</url>
 	  </repository>
 	</distributionManagement>
 </project>
