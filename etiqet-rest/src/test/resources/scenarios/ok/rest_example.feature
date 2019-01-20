@@ -14,7 +14,6 @@ Scenario: Valid GET request with nested response
      And check that matches "response_01"
      And check that contains "prices"
      And check that has "prices->0->instrument=EUR_USD"
-     And check that has "prices->0->tradeable=true"
 
 Scenario: Valid POST request with body and overridden header
     Given a "rest" client
