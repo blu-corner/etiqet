@@ -61,7 +61,7 @@
 	<distributionManagement>
 	  <snapshotRepository>
 	    <id>cloudsmith</id>
-        <url>https://maven.cloudsmith.io/neueda/etiqet/</url>
+        <url>https://maven.cloudsmith.io/neueda/etiqet-snapshot/</url>
 	  </snapshotRepository>
 	  <repository>
 	    <id>cloudsmith</id>
