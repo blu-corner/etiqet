@@ -44,11 +44,11 @@
 	<distributionManagement>
 	  <snapshotRepository>
 	    <id>cloudsmith</id>
-	    <url>https://api.cloudsmith.io/neueda/etiqet</url>
+        <url>https://maven.cloudsmith.io/neueda/etiqet/</url>
 	  </snapshotRepository>
 	  <repository>
 	    <id>cloudsmith</id>
-	    <url>https://api.cloudsmith.io/neueda/etiqet</url>
+        <url>https://maven.cloudsmith.io/neueda/etiqet/</url>
 	  </repository>
 	</distributionManagement>
 </project>
