@@ -27,7 +27,7 @@ public class RabbitMqTransport implements Transport {
   private final static Logger logger = LoggerFactory.getLogger(RabbitMqTransport.class);
   private final static String DEF_CONNECTION = "DEF_CONNECTION";
   private final static String DEF_CHANNEL = "DEF_CHANNEL";
-  private final static String SESSION_SEPARATOR = ".";
+  private final static String SESSION_SEPARATOR = "\\.";
   private Map<String, Connection> connections = new HashMap<>();
   private Map<String, Channel> channels = new HashMap<>();
   private Codec<Cdr, byte[]> codec;
@@ -37,7 +37,7 @@ public class RabbitMqTransport implements Transport {
   @Override
   public void init(String configPath) throws EtiqetException {
     try {
-      // Load configuation
+      // Load configuration
       Properties props = new Properties();
       props.load(Environment.fileResolveEnvVars(configPath));
 
@@ -85,7 +85,9 @@ public class RabbitMqTransport implements Transport {
   @Override
   public void start() throws EtiqetException {
     try {
-      send(new Cdr("Logon"));
+      for(String channelId: channels.keySet()) {
+        send(new Cdr("Logon"), channelId);
+      }
     } catch (Exception e) {
       throw new EtiqetException("Could not start RabbitMQ. Reason " + e.getMessage(), e);
     }

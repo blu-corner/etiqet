@@ -23,7 +23,7 @@
     <module>etiqet-rest</module>
     <module>etiqet-websocket</module>
     <module>etiqet-transport-qfj</module>
-    <module>etiqet-trasnport-rabbitmq-gpb</module>
+    <module>etiqet-transport-rabbitmq-gpb</module>
   </modules>
 
   <profiles>
