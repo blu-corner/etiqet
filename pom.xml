@@ -24,7 +24,7 @@
     <module>etiqet-websocket</module>
     <module>etiqet-selenium</module>
     <module>etiqet-transport-qfj</module>
-    <module>etiqet-trasnport-rabbitmq-gpb</module>
+    <module>etiqet-transport-rabbitmq-gpb</module>
   </modules>
 
   <profiles>
@@ -66,6 +66,12 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.7.25</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.25</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
