@@ -44,54 +44,54 @@ public class ProtocolConfig implements Serializable {
 		return protocol.getName();
 	}
 
-	private void commonInit() throws EtiqetException {
-		// Setup the ProtocolConfig based on the Protocol parsed from the XML
-		messageMap = new HashMap<>();
-		if((getProtocol().getMessages() != null) && (getProtocol().getMessages().getMessage() != null)) {
-			for (Message message: getProtocol().getMessages().getMessage()) {
-				messageMap.put(message.getName(), message);
-			}
-		}
-		Dictionary protocolDictionary = getProtocol().getDictionary();
-		if (protocolDictionary != null) {
-			String handlerPath = protocolDictionary.getHandler();
-			try {
-				setDictionary((AbstractDictionary) Class.forName(handlerPath)
-												 		.getConstructor(String.class)
-												 		.newInstance(protocolDictionary.getValue()));
-			} catch (Exception e) {
-				LOG.error("Error loading dictionaryHandler: " + handlerPath);
-				throw new EtiqetException("Error loading dictionaryHandler: " + handlerPath, e);
-			}
-		}
-	}
-	
-	public Message getMessage(String name) {
-		return messageMap.get(name);
-	}
-	
-	public Message[] getMessages() {
-		return getProtocol().getMessages().getMessage();
-	}
-	
-	public String getComponentPackage() {
-		String componentPackage = getProtocol().getComponentsPackage();
-		return componentPackage + (componentPackage.endsWith(".") ? "" : ".");
-	}
-	
-	public String getMsgType(String messageName) {
-		String msgType = null;
-		if (getDictionary() != null) {
-			msgType = getDictionary().getMsgType(messageName);
-		}
-		if (StringUtils.isNullOrEmpty(msgType)) {
-			Message message = messageMap.get(messageName);
-			if (message != null) {
-				msgType = message.getMsgtype();
-			}
-		}
-		return msgType;
-	}
+    private void commonInit() throws EtiqetException {
+        // Setup the ProtocolConfig based on the Protocol parsed from the XML
+        messageMap = new HashMap<>();
+        if (getProtocol().getMessages() != null) {
+            for (Message message : getProtocol().getMessages().getMessage()) {
+                messageMap.put(message.getName(), message);
+            }
+        }
+        Dictionary protocolDictionary = getProtocol().getDictionary();
+        if (protocolDictionary != null) {
+            String handlerPath = protocolDictionary.getHandler();
+            try {
+                setDictionary((AbstractDictionary) Class.forName(handlerPath)
+                    .getConstructor(String.class)
+                    .newInstance(protocolDictionary.getValue()));
+            } catch (Exception e) {
+                LOG.error("Error loading dictionaryHandler: {}", handlerPath);
+                throw new EtiqetException("Error loading dictionaryHandler: " + handlerPath, e);
+            }
+        }
+    }
+
+    public Message getMessage(String name) {
+        return messageMap.get(name);
+    }
+
+    public Message[] getMessages() {
+        return getProtocol().getMessages().getMessage();
+    }
+
+    public String getComponentPackage() {
+        String componentPackage = getProtocol().getComponentsPackage();
+        return componentPackage + (componentPackage.endsWith(".") ? "" : ".");
+    }
+
+    public String getMsgType(String messageName) {
+        String msgType = null;
+        if (getDictionary() != null) {
+            msgType = getDictionary().getMsgType(messageName);
+        }
+        if (StringUtils.isNullOrEmpty(msgType)) {
+            Message message = messageMap.get(messageName);
+            if (message != null) {
+                msgType = message.getMsgtype();
+            }
+        }
+        return msgType;
+    }
 
 	public String getNameForTag(Integer t) {
 		return getDictionary() != null ? getDictionary().getNameForTag(t) : null;
