@@ -14,10 +14,11 @@ import static org.mockito.Mockito.when;
 public class RestMsgTest {
 
     @Test
-    public void testSerializeHttpVerb() throws EtiqetException {
+    public void testSerializeMessage() throws EtiqetException {
         String verb = "POST";
         String endpoint = "/api/test";
         String authHeader = "Bearer 12345";
+        String messageName = "test_01";
 
         Cdr cdr = new Cdr(verb);
         cdr.set("$httpVerb", verb);
@@ -26,7 +27,8 @@ public class RestMsgTest {
         cdr.set("test", "value");
         cdr.set("test2", "value2");
 
-        RestMsg restMsg = new RestMsg(verb);
+        RestMsg restMsg = new RestMsg(messageName);
+        assertEquals(messageName, restMsg.getType());
         HttpRequestMsg requestMsg = restMsg.serialize(cdr);
         assertEquals(verb, requestMsg.getVerb());
         assertEquals(endpoint, requestMsg.getUrl());
@@ -36,22 +38,15 @@ public class RestMsgTest {
     }
 
     @Test
-    public void testSerializeNotHttpVerbType() throws EtiqetException {
-        RestMsg msg = new RestMsg("404") {
-            @Override
-            Message getMessage() throws EtiqetException {
-                Message message = mock(Message.class);
-                when(message.getImplementation()).thenReturn("com.neueda.etiqet.rest.message.impl.HttpRequestMsg");
-                return message;
-            }
-        };
+    public void testSerializeNotValidMessage() throws EtiqetException {
+        RestMsg msg = new RestMsg("invalid");
 
         try {
-            msg.serialize(new Cdr("404"));
-            fail("Serialise should have failed for msgType 404");
+            msg.serialize(new Cdr("invalid"));
+            fail("Serialise should have failed for msgType \"invalid\"");
         } catch (Exception e) {
             assertTrue(e instanceof EtiqetException);
-            assertEquals("Message type 404 not recognised", e.getMessage());
+            assertEquals("Message type invalid not recognised", e.getMessage());
         }
     }
 

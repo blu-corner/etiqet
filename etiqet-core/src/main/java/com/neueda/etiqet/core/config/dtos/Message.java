@@ -17,6 +17,8 @@ public class Message implements Serializable {
 	private String name;
 	
 	private String msgtype;
+
+	private Fields headers;
 	
 	private Fields fields;
 
@@ -54,6 +56,15 @@ public class Message implements Serializable {
 
 	public void setMsgtype(String msgtype) {
 		this.msgtype = msgtype;
+	}
+
+	@XmlElement(name = "headers", namespace = EtiqetConstants.NAMESPACE)
+	public Fields getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(Fields headers) {
+		this.headers = headers;
 	}
 
 	@XmlElement(name = "fields", namespace = EtiqetConstants.NAMESPACE)

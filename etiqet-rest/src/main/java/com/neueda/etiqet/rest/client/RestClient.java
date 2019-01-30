@@ -10,11 +10,12 @@ import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
 import com.neueda.etiqet.rest.config.RestConfigConstants;
-import com.neueda.etiqet.rest.json.JsonUtils;
+import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.rest.message.RestMsg;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
 import org.slf4j.Logger;
@@ -86,7 +87,12 @@ public class RestClient extends Client<HttpRequestMsg, String> {
             HttpRequest request = httpRequestMsg.createHttpRequest(requestFactory, baseUrl);
 
             HttpResponse httpResponse = request.execute();
-            Cdr responseData = JsonUtils.jsonToCdr(httpResponse.parseAsString());
+            Cdr responseData = null;
+            if (httpResponse.getStatusCode() != 404)
+                responseData = JsonUtils.jsonToCdr(httpResponse.parseAsString());
+            if(responseData == null)
+                responseData = new Cdr(Cdr.class.getName());
+
             for(Map.Entry<String, Object> header : httpResponse.getHeaders().entrySet()) {
                 responseData.set("$header." + header.getKey(), String.valueOf(header.getValue()));
             }
@@ -124,22 +130,27 @@ public class RestClient extends Client<HttpRequestMsg, String> {
 
     @Override
     public void stop() {
-        /**
-         * Required to meet extension req's however unrequired method therefore not currently implemented
-         */
+        msgQueue.clear();
     }
 
     @Override
     public boolean isLoggedOn() { return false; }
 
     @Override
-    public String getMsgType(String messageName) {
-        return getProtocolConfig().getMsgType(messageName);
+    public String getMsgType(String messageType) {
+        return getMsgName(messageType);
     }
 
     @Override
-    public String getMsgName(String messageType) {
-        return getProtocolConfig().getMsgName(messageType);
+    public String getMsgName(String messageName) {
+        String msgName;
+        Message message = getProtocolConfig().getMessage(messageName);
+        if (message != null) {
+            msgName = message.getName();
+        } else {
+            msgName = messageName;
+        }
+        return msgName;
     }
 
     @Override
@@ -165,7 +176,15 @@ public class RestClient extends Client<HttpRequestMsg, String> {
     }
 
     @Override
-    public Cdr decode(HttpRequestMsg message) throws EtiqetException {
+    public Cdr decode(HttpRequestMsg message) {
         return msgQueue.iterator().next();
+    }
+
+    public String getPrimaryConfig() {
+        return primaryConfig;
+    }
+
+    public String getSecondaryConfig() {
+        return secondaryConfig;
     }
 }

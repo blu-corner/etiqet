@@ -5,6 +5,8 @@ import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
 import com.neueda.etiqet.core.util.Separators;
 import com.neueda.etiqet.core.util.StringUtils;
+import com.neueda.etiqet.fixture.EtiqetFixtures;
+import com.neueda.etiqet.fixture.EtiqetHandlers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

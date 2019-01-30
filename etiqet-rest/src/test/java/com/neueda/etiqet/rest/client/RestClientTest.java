@@ -1,21 +1,15 @@
 package com.neueda.etiqet.rest.client;
 
 import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.LowLevelHttpRequest;
-import com.google.api.client.http.LowLevelHttpResponse;
-import com.google.api.client.testing.http.MockHttpTransport;
-import com.google.api.client.testing.http.MockLowLevelHttpRequest;
-import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import org.junit.After;
+import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
+import com.neueda.etiqet.rest.message.impl.HttpRequestMsgTest;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -23,42 +17,38 @@ public class RestClientTest {
 
     private RestClient client;
 
+    private String primaryConfig;
+
+    private String secondaryConfig;
+
+    private Cdr testCdr;
+
     @Before
     public void setUp() throws EtiqetException {
         // override the HttpRequestFactory and Config objects for testing purposes
-        String primaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/client.cfg";
-        String secondaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/secondary_client.cfg";
+        primaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/client.cfg";
+        secondaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/secondary_client.cfg";
+        testCdr = new Cdr("test_01");
+        testCdr.set("$httpEndpoint", "/test/api");
+        testCdr.set("$httpVerb", "GET");
+        testCdr.set("$header.responsecode", "200");
+        testCdr.set("$header.responsebody", "{ \"text\" : \"Everything OK\" }");
+
         client = new RestClient(primaryConfig, secondaryConfig) {
             @Override
             HttpRequestFactory getHttpRequestFactory() {
-                return new MockHttpTransport() {
-                    @Override
-                    public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
-                        return new MockLowLevelHttpRequest() {
-                            @Override
-                            public LowLevelHttpResponse execute() throws IOException {
-                                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
-                                Map<String, List<String>> headers = getHeaders();
-                                String responseCode = headers.get("responsecode").get(0);
-                                if("-1".equals(responseCode)) {
-                                    throw new IOException("ResponseCode -1 sent");
-                                }
-
-                                String responseBody = headers.get("responsebody").get(0);
-                                response.setContent(responseBody);
-                                response.setStatusCode(Integer.parseInt(responseCode));
-                                return response;
-                            }
-                        };
-                    }
-                }.createRequestFactory();
+                return HttpRequestMsgTest.getHttpRequestFactory();
             }
         };
     }
-
-    @After
-    public void tearDown() {
-
+    @Test
+    public void testConstructor() throws EtiqetException {
+        RestClient restClient = new RestClient(primaryConfig);
+        assertNotNull(restClient.getPrimaryConfig());
+        assertNull(restClient.getSecondaryConfig());
+        restClient = new RestClient(primaryConfig, secondaryConfig);
+        assertNotNull(restClient.getPrimaryConfig());
+        assertNotNull(restClient.getSecondaryConfig());
     }
 
     @Test
@@ -89,32 +79,34 @@ public class RestClientTest {
         assertTrue("Client was instantiated with 2 config files, so should be able to failover",
                         client.canFailover());
         client.launchClient();
-        assertEquals("https://api-fxpractice.oanda.com/v3/", client.getClientConfig().getString("baseUrl"));
+        assertNotNull(client.getClientConfig().getString("baseUrl"));
         client.failover();
-        assertEquals("https://api-fxpractice2.oanda.com/v3/", client.getClientConfig().getString("baseUrl"));
+        assertNotNull(client.getClientConfig().getString("baseUrl"));
         client.failover();
-        assertEquals("https://api-fxpractice.oanda.com/v3/", client.getClientConfig().getString("baseUrl"));
+        assertNotNull(client.getClientConfig().getString("baseUrl"));
     }
 
     @Test
     public void testSendMessage() throws EtiqetException {
-        Cdr data = new Cdr("GET");
-        data.set("$httpEndpoint", "/test/api");
-        data.set("$httpVerb", "GET");
-        data.set("$header.responsecode", "200");
-        data.set("$header.responsebody", "{ text : \"Everything OK\" }");
-
-        client.launchClient();
-        client.send(data);
+        client.send(testCdr);
         Cdr cdr = client.waitForMsgType("200", 5000);
         assertTrue(cdr.containsKey("text"));
         assertEquals("Everything OK", cdr.getAsString("text"));
 
-        data.set("$httpEndpoint", "/test/api");
-        data.set("$httpVerb", "GET");
-        data.set("$header.responsecode", "-1");
+        testCdr.clear();
+        testCdr.set("$httpEndpoint", "/test/api");
+        testCdr.set("$httpVerb", "GET");
+        testCdr.set("$header.responsecode", "200");
+        testCdr.set("$header.authorization", "key");
+        client.send(testCdr);
+        cdr = client.waitForMsgType("200", 5000);
+        assertNotNull(cdr.getItems());
+
+        testCdr.set("$httpEndpoint", "/test/api");
+        testCdr.set("$httpVerb", "GET");
+        testCdr.set("$header.responsecode", "-1");
         try {
-            client.send(data);
+            client.send(testCdr, null);
             fail("Should have thrown an exception because the response code was set to -1");
         } catch (Exception e) {
             assertTrue(e instanceof EtiqetException);
@@ -124,4 +116,44 @@ public class RestClientTest {
         }
     }
 
+    @Test
+    public void testDecode() throws EtiqetException {
+        client.send(testCdr);
+        assertNotNull(client.decode(new HttpRequestMsg()));
+    }
+
+    @Test
+    public void testwaitForNoMsgType() throws EtiqetException {
+        assertNull(client.waitForNoMsgType("test", 100));
+        client.send(testCdr);
+
+        try {
+            assertNull(client.waitForNoMsgType("test", 100));
+            fail( "Expected EtiqetException not thrown" );
+        } catch (EtiqetException e) {
+        }
+    }
+
+    @Test
+    public void testGetMsgName() {
+        assertEquals("test_01", client.getMsgName("test_01"));
+        assertEquals("400", client.getMsgName("400"));
+    }
+    @Test
+    public void testGetMsgType() {
+        assertNotNull(client.getMsgType("test_01"));
+    }
+
+    @Test
+    public void testGetRequestFactory() throws EtiqetException {
+        assertNull(client.getRequestFactory());
+        client.launchClient();
+        assertNotNull(client.getRequestFactory());
+    }
+
+    @Test
+    public void testHttpRequestFactory() throws EtiqetException {
+        RestClient restClient = new RestClient(primaryConfig, secondaryConfig);
+        assertNotNull(restClient.getHttpRequestFactory());
+    }
 }

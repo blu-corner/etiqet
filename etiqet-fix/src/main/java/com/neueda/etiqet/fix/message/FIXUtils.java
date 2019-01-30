@@ -14,19 +14,31 @@ import quickfix.StringField;
 import quickfix.field.MsgType;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.Random;
 
-public class FIXUtils {
+public final class FIXUtils {
+
+	public FIXUtils()
+	{
+
+	}
 
 	public static final Logger LOG = LogManager.getLogger(FIXUtils.class);
+	private static DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
 
 	public static String getDateTime() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
-		LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
+		return dateTimeFormat.format(utc);
+	}
 
-		return dtf.format(now);
+	public static String getDateTime(String secondsOffset){
+		LocalDateTime local = LocalDateTime.parse(getDateTime(), dateTimeFormat);
+		local = local.plusSeconds(Long.parseLong(secondsOffset));
+		return dateTimeFormat.format(local);
 	}
 
 	public static String genClientOrderID() {

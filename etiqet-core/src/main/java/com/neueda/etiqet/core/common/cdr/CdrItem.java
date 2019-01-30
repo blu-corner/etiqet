@@ -7,11 +7,11 @@ import java.util.List;
 public class CdrItem {
 
     public enum CdrItemType {
-        CDR_STRING, CDR_INTEGER, CDR_DOUBLE, CDR_BOOLEAN, CDR_ARRAY
+        CDR_STRING, CDR_INTEGER, CDR_DOUBLE, CDR_BOOLEAN, CDR_ARRAY, CDR_NULL
     }
 
     private CdrItemType type;
-    private Integer intval;
+    private Long intval;
     private String strval;
     private Double doubleval;
     private Boolean boolVal;
@@ -33,12 +33,17 @@ public class CdrItem {
         this.type = type;
     }
 
-    public Integer getIntval() {
+    public Long getIntval() {
         return intval;
     }
 
-    public void setIntval(Integer intval) {
+    public void setIntval(Long intval) {
         this.intval = intval;
+        this.type = CdrItemType.CDR_INTEGER;
+    }
+
+    public void setIntval(Integer intval) {
+        this.intval = intval.longValue();
         this.type = CdrItemType.CDR_INTEGER;
     }
 
@@ -90,6 +95,8 @@ public class CdrItem {
                 return strval;
             case CDR_ARRAY:
                 return cdrs.toString();
+            case CDR_NULL:
+                return String.valueOf(null);
             default:
                 throw new EtiqetRuntimeException(String.format("Unsupported type '%s' for getAsString", type));
         }

@@ -1,11 +1,14 @@
 package com.neueda.etiqet.fix.client.delegate;
 
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
-import com.neueda.etiqet.core.common.cdr.CdrItem;
 import com.neueda.etiqet.core.common.exceptions.StopEncodingException;
 import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.fix.config.FixConfigConstants;
+import com.neueda.etiqet.fix.message.FIXMsg;
+import quickfix.DefaultMessageFactory;
 import quickfix.Message;
+import quickfix.MessageUtils;
 
 /**
  * Delegate for QuickFix client that fills some necessary parameters when sending messages to the server.
@@ -30,25 +33,28 @@ public class ReplaceParamFixClientDelegate extends MessageFixClientDelegate {
 
     @Override
     public String transformAfterEncoding(String msg) throws StopEncodingException {
-        String transformed = msg;
 
         // If message with params has been defined then replace with message's values.
         if(message != null) {
             try {
-                StringBuilder buffer = new StringBuilder();
-                for(String entry: msg.split(FIELD_SEPARATOR)) {
-                    String[] keyValuePair = entry.split("=");
-                    String tagName = GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME)
-                                                               .getNameForTag(Integer.parseInt(keyValuePair[0]));
-                    CdrItem toReplaceWith = message.getItem(tagName);
-                    String value = (toReplaceWith != null)? toReplaceWith.toString(): keyValuePair[1];
-                    buffer.append(keyValuePair[0]).append(KEY_VALUE_SEPARATOR).append(value).append(FIELD_SEPARATOR);
+                Message fixMessage = MessageUtils.parse(new DefaultMessageFactory(), null, msg);
+                FIXMsg fixMsg = new FIXMsg(fixMessage);
+                fixMessage = fixMsg.updateWithCdr(message);
+
+                for (Integer removeTag: fixMsg.getFieldsInogred()){
+                    ProtocolConfig protocolConfig = GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME);
+                    if (protocolConfig.isHeaderField(removeTag)){
+                        fixMessage.getHeader().removeField(removeTag);
+                    } else {
+                        fixMessage.removeField(removeTag);
+                    }
                 }
-                transformed = buffer.toString();
+
+                msg = fixMessage.toString();
             } catch (Exception e) {
                 throw new StopEncodingException(e);
             }
         }
-        return super.transformAfterEncoding(transformed);
+        return super.transformAfterEncoding(msg);
     }
 }

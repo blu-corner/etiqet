@@ -33,7 +33,7 @@
             <xs:field xpath="@impl"/>
         </xs:keyref>
     </xs:element>
-    
+
     <xs:element name="messages" type="Messages"/>
 
     <xs:complexType name="Configuration">
@@ -109,19 +109,8 @@
                 <xs:documentation xml:lang="en">Name of the client to be used in test steps</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="extensionsUrl" type="httpUri">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Neueda Simulator URL for the extensions</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
     </xs:complexType>
-    
-    <xs:simpleType name="httpUri">
-        <xs:restriction base="xs:anyURI">
-            <xs:pattern value="http(s?)://.*"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
+
     <xs:complexType name="ClientConfig">
         <xs:annotation>
             <xs:documentation xml:lang="en">Provides the path to configure the client</xs:documentation>
@@ -132,7 +121,7 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-    
+
     <xs:complexType name="Server">
         <xs:annotation>
             <xs:documentation xml:lang="en">Pre-defined server definition available to be used in Etiqet
@@ -158,7 +147,7 @@
     <xs:complexType name="Protocol">
         <xs:sequence minOccurs="0">
             <xs:element name="client" type="Client"/>
-            <xs:element name="dictionary" type="Dictionary"/>
+            <xs:element name="dictionary" type="Dictionary" minOccurs="0" />
             <xs:element name="components_package" type="xs:string">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Fully qualified package of message components</xs:documentation>
@@ -169,7 +158,7 @@
                     <xs:documentation xml:lang="en">Fully qualified class name of the message class</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element ref="messages"/>
+            <xs:element ref="messages" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
             <xs:annotation>
@@ -189,7 +178,7 @@
             </xs:annotation>
         </xs:assert>
     </xs:complexType>
-    
+
     <xs:complexType name="Messages">
         <xs:annotation>
             <xs:documentation>List of messages used in the protocol with
@@ -205,7 +194,7 @@
                     message definitions</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:assert test="(./@ref and (count(./*) eq 0)) or (not(@ref) and (count(./*) gt 0))">
+        <xs:assert test="(./@ref and (count(./*) eq 0)) or (not(@ref))">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Test that we either have a reference to a list of messages,
                     or a list of messages</xs:documentation>
@@ -229,7 +218,28 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="stopEvent" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>List of observers to be notified when a client is stopped.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="observer" maxOccurs="unbounded" type="Observer"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="urlExtensions" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>List of Api extensions for the client to use.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="urlExtension" maxOccurs="unbounded" type="UrlExtension"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
+
         <xs:attribute name="impl" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Fully qualified class name of the Client
@@ -242,9 +252,26 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="extensionsUrl" type="httpUri">
+    </xs:complexType>
+
+    <xs:simpleType name="httpUri">
+        <xs:restriction base="xs:anyURI">
+            <xs:pattern value="http(s?)://.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="UrlExtension">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">URL extensions used to launch/stop/interact with additional services</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Neueda Simulator URL for the extensions</xs:documentation>
+                <xs:documentation xml:lang="en">Api Name</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="uri" type="httpUri">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Fully qualified uri</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
@@ -265,7 +292,16 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-
+    <xs:complexType name="Observer">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Executes logic on event trigger</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="impl" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Fully qualified class name of the Observer class</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
     <xs:complexType name="Dictionary">
         <xs:annotation>
             <xs:documentation xml:lang="en">Describes the dictionary class of message types.</xs:documentation>
@@ -291,13 +327,24 @@
                     <xs:documentation xml:lang="en">Fully qualified class name of the message</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="fields">
+            <xs:element name="headers" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">List of header field values</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="field" type="Field"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="fields" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">List of default field values</xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                        <xs:element name="field" type="Field"/>
+                        <xs:element name="field" type="Field">
+                        </xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -358,6 +405,11 @@
                         <xs:documentation xml:lang="en">Static method belonging to @utilclass</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="methodArg" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">String argument to call method with</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">Is the field required or not</xs:documentation>
@@ -374,7 +426,7 @@
                         <xs:documentation xml:lang="en">Comma separated list of allowed values</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:assert test="(@utilclass and @method and string-length(text()) eq 0)
+                <xs:assert test="((@utilclass and @method) or (@required) and string-length(text()) eq 0)
                                     or (not(@utilclass) and not(@method) and string-length(text()) gt 0)">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">Assert that either utilclass and method are specified or a

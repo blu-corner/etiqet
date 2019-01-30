@@ -2,6 +2,8 @@ package com.neueda.etiqet.core.client;
 
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.client.delegate.SinkClientDelegate;
+import com.neueda.etiqet.core.client.event.StopEvent;
+import com.neueda.etiqet.core.client.event.StopObserver;
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.EtiqetEvent;
 import com.neueda.etiqet.core.common.cdr.Cdr;
@@ -12,6 +14,7 @@ import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.config.dtos.UrlExtension;
 import com.neueda.etiqet.core.message.Codec;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.Config;
@@ -21,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +40,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
 
     private static final int DEFAULT_TIMEOUT_MILLIS = 5000;
     private static final int LOGON_RETRIES = 3;
+    protected StopEvent stopEvent;
 
     /**
      * Defines the primary configuration
@@ -47,7 +52,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
      */
     protected String secondaryConfig;
 
-    private String extensionsUrl;
+    private List<UrlExtension> urlExtensions;
 
     /** The name of the protocol used by this client */
     private String protocolName;
@@ -59,7 +64,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
 
     protected Config config;
 
-    private ProtocolConfig protocolConfig;
+    protected ProtocolConfig protocolConfig;
 
     /* Delegate for processing messages during encoding and decoding phases */
     protected ClientDelegate<U, M> delegate;
@@ -124,6 +129,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
             setProtocolName(protocolConfig.getProtocolName());
         }
         setClientConfig(primaryConfig, secondaryConfig);
+        this.stopEvent = new StopEvent(this);
     }
 
     @Override
@@ -324,7 +330,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
         if(protocolConf == null) return;
 
         Message message = protocolConf.getMessage(msgName);
-        if(message != null) {
+        if(message != null && message.getFields() != null && message.getFields().getField() != null) {
             for (Field field: message.getFields().getField()){
                 if(field != null && (field.getRequired()!= null )
                     && (field.getRequired().equalsIgnoreCase("Y"))
@@ -339,6 +345,11 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
                 }
             }
         }
+    }
+
+    public void initiateStop(){
+        stopEvent.publishStop();
+        stop();
     }
 
     /**
@@ -406,12 +417,13 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
         return !StringUtils.isNullOrEmpty(this.secondaryConfig);
     }
 
-    public String getExtensionsUrl() {
-        return extensionsUrl;
+    public List<UrlExtension> getUrlExtensions() {
+        return urlExtensions;
     }
 
-    public void setExtensionsUrl(String extensionsUrl) {
-        this.extensionsUrl = extensionsUrl;
+
+    public void setUrlExtensions(List<UrlExtension> urlExtensions) {
+        this.urlExtensions = urlExtensions;
     }
 
     public ProtocolConfig getProtocolConfig() {
@@ -420,6 +432,14 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
 
     public void setProtocolConfig(ProtocolConfig protocolConfig) {
         this.protocolConfig = protocolConfig;
+    }
+
+    public void addStopEventObserver(StopObserver observer){
+        stopEvent.registerObserver(observer);
+    }
+
+    public void removeStopEventObserver(StopObserver observer){
+        stopEvent.unregisterObserver(observer);
     }
 
     /** Attribute config. */

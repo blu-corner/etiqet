@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProtocolConfig implements Serializable {
@@ -46,8 +47,10 @@ public class ProtocolConfig implements Serializable {
 	private void commonInit() throws EtiqetException {
 		// Setup the ProtocolConfig based on the Protocol parsed from the XML
 		messageMap = new HashMap<>();
-		for (Message message: getProtocol().getMessages().getMessage()) {
-			messageMap.put(message.getName(), message);
+		if(getProtocol().getMessages() != null) {
+			for (Message message: getProtocol().getMessages().getMessage()) {
+				messageMap.put(message.getName(), message);
+			}
 		}
 		Dictionary protocolDictionary = getProtocol().getDictionary();
 		if (protocolDictionary != null) {
@@ -125,6 +128,14 @@ public class ProtocolConfig implements Serializable {
 
 	public Delegates getClientDelegates() {
 		return getProtocol().getClient().getDelegates();
+	}
+
+	public StopEvent getStopEvent(){
+		return getProtocol().getClient().getStopEvent();
+	}
+
+	public List<UrlExtension> getClientUrlExtensions(){
+		return getProtocol().getClient().getUrlExtensions();
 	}
 
 	public Client getClient() {

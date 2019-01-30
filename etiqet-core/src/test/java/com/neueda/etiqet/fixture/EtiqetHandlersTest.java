@@ -6,6 +6,7 @@ import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.cdr.CdrItem;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.config.dtos.UrlExtension;
 import com.neueda.etiqet.core.testing.client.TestClient;
 import com.neueda.etiqet.core.testing.server.TestServer;
 import com.neueda.etiqet.core.util.Separators;
@@ -21,10 +22,7 @@ import java.io.IOException;
 import java.net.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -341,7 +339,7 @@ public class EtiqetHandlersTest {
         EtiqetHandlers handlers = new EtiqetHandlers();
         String clientName = "clientNotFound";
         try {
-            handlers.waitForResponseOfType("default", clientName, "MsgType", 100);
+            handlers.waitForResponseOfType("default", clientName, "MsgType", 100, false);
         } catch (AssertionError e) {
             assertEquals("Client " + clientName + " must exist", e.getMessage());
         }
@@ -500,6 +498,66 @@ public class EtiqetHandlersTest {
         Mockito.doReturn("=200").when(mock).preTreatParams("=" + secondMessageAlias + "->" + sSecondField);
 
         mock.compareValuesEqual(sSecondField, secondMessageAlias, sFirstField, firstMessageAlias);
+    }
+
+    @Test
+    public void testValueEqualityFail() {
+
+        String firstMessageAlias = "ER";
+        String secondMessageAlias = "NOS";
+        EtiqetHandlers mock = Mockito.spy(EtiqetHandlers.class);
+
+        String sFirstField = "OrderQty";
+        String sSecondField = "OrderQty";
+
+        Mockito.doReturn("=201").when(mock).preTreatParams("=" + firstMessageAlias + "->" + sFirstField);
+        Mockito.doReturn("=200").when(mock).preTreatParams("=" + secondMessageAlias + "->" + sSecondField);
+
+        try {
+            mock.compareValuesEqual(sFirstField, firstMessageAlias, sSecondField, secondMessageAlias);
+        } catch (AssertionError e) {
+            assertEquals("Test for equality: " + sFirstField + " in " + firstMessageAlias +
+                    " is 201, in " + secondMessageAlias +
+                    " it is 200", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testValueInEquality() {
+
+        String firstMessageAlias = "ER";
+        String secondMessageAlias = "NOS";
+        EtiqetHandlers mock = Mockito.spy(EtiqetHandlers.class);
+
+        String sFirstField = "OrderQty";
+        String sSecondField = "OrderQty";
+
+        Mockito.doReturn("=201").when(mock).preTreatParams("=" + firstMessageAlias + "->" + sFirstField);
+        Mockito.doReturn("=200").when(mock).preTreatParams("=" + secondMessageAlias + "->" + sSecondField);
+
+        mock.compareValuesNotEqual(sFirstField, firstMessageAlias, sSecondField, secondMessageAlias);
+    }
+
+    @Test
+    public void testValueInEqualityFail() {
+
+        String firstMessageAlias = "ER";
+        String secondMessageAlias = "NOS";
+        EtiqetHandlers mock = Mockito.spy(EtiqetHandlers.class);
+
+        String firstField = "OrderQty";
+        String secondField = "OrderQty";
+
+        Mockito.doReturn("=200").when(mock).preTreatParams("=" + firstMessageAlias + "->" + firstField);
+        Mockito.doReturn("=200").when(mock).preTreatParams("=" + secondMessageAlias + "->" + secondField);
+
+        try {
+            mock.compareValuesNotEqual(firstField, firstMessageAlias, secondField, secondMessageAlias);
+        } catch (AssertionError e) {
+            assertEquals("Test for inequality: " + firstField + " in " + firstMessageAlias +
+                    " is 200, in " + secondMessageAlias +
+                    " it is 200", e.getMessage());
+        }
     }
 
     @Test
@@ -690,30 +748,30 @@ public class EtiqetHandlersTest {
     }
 
     @Test
-    public void testAssertFoundOrExists(){
+    public void testAssertFoundOrExists() {
 
         String messageCheck = "Test";
         String noMatch = "DidnotMatch";
         String messageList = "msg1,msg2";
         try {
             handlers.assertFoundOrExists(true, false, messageCheck, noMatch, messageList);
-        }catch (AssertionError e){
+        } catch (AssertionError e) {
             assertEquals("No Exist", "Messages 'Test' do not exist ", e.getMessage());
         }
         try {
             handlers.assertFoundOrExists(true, true, messageCheck, noMatch, messageList);
-        }catch (AssertionError e){
+        } catch (AssertionError e) {
             assertEquals("neither matching", "Messages 'Test' do not exist and Params 'DidnotMatch' do not match in messages 'msg1,msg2'", e.getMessage());
         }
         try {
             handlers.assertFoundOrExists(false, false, messageCheck, noMatch, messageList);
-        }catch (AssertionError e){
-            assertEquals("Params shouldn't match","Params 'DidnotMatch' do not match in messages 'msg1,msg2", e.getMessage());
+        } catch (AssertionError e) {
+            assertEquals("Params shouldn't match", "Params 'DidnotMatch' do not match in messages 'msg1,msg2", e.getMessage());
         }
         try {
             handlers.assertFoundOrExists(false, true, messageCheck, noMatch, messageList);
-        }catch (AssertionError e){
-            assertEquals("params not equals?","Params 'DidnotMatch' do not match in messages 'msg1,msg2'", e.getMessage());
+        } catch (AssertionError e) {
+            assertEquals("params not equals?", "Params 'DidnotMatch' do not match in messages 'msg1,msg2'", e.getMessage());
         }
 
     }
@@ -759,6 +817,7 @@ public class EtiqetHandlersTest {
         handlers.stopClient(clientName);
         handlers.isClientLoggedOff(clientName);
     }
+
     @Test
     public void testResponsesIncorrect() throws EtiqetException {
         String clientName = "testClient";
@@ -779,7 +838,7 @@ public class EtiqetHandlersTest {
         try {
             handlers.checkResponseKeyPresenceAndValue("testResponse", responseParams);
             fail("Should have thrown an AssertionError");
-        } catch(AssertionError e) {
+        } catch (AssertionError e) {
             assertEquals("checkResponseKeyPresenceAndValue: testResponse Msg: 'test=value' found, expected: 'test=value2'", e.getMessage());
         }
 
@@ -849,7 +908,7 @@ public class EtiqetHandlersTest {
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
         handlers.sendMessage(messageName, clientName);
 
-        handlers.waitForResponse(EtiqetHandlers.DEFAULT_MESSAGE_NAME,  clientName);
+        handlers.waitForResponse(EtiqetHandlers.DEFAULT_MESSAGE_NAME, clientName);
         handlers.checkFieldPresence(EtiqetHandlers.DEFAULT_MESSAGE_NAME, "test,sent");
     }
 
@@ -929,12 +988,12 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-                                            "message1", "test=value,messageId=123");
+                "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message2",
-                                            "test=otherValue,messageId=234");
+                "test=otherValue,messageId=234");
         handlers.sendMessage("message2", clientName);
         handlers.waitForResponseOfType("response2", clientName, "testResponse");
 
@@ -944,7 +1003,7 @@ public class EtiqetHandlersTest {
                 ("response3", "message3", "response2,response1", "messageId");
 
         String paramsToCheck = "test=value,messageId=123,sent="
-                                + new SimpleDateFormat("yyyyMMdd").format(new Date());
+                + new SimpleDateFormat("yyyyMMdd").format(new Date());
         handlers.checkResponseKeyPresenceAndValue("response3", paramsToCheck);
     }
 
@@ -1012,7 +1071,7 @@ public class EtiqetHandlersTest {
         try {
             handlers.checkThatListOfParamsMatchInListOfMessages("field1,field2", "msg1,msg2,msg3");
             fail("msg2 and msg3 should not exist, causing an AssertionError");
-        } catch(AssertionError e) {
+        } catch (AssertionError e) {
             assertEquals("Messages 'msg2,msg3' do not exist ", e.getMessage());
         }
 
@@ -1024,16 +1083,16 @@ public class EtiqetHandlersTest {
         try {
             handlers.checkThatListOfParamsMatchInListOfMessages("field1,field2", "msg1,msg2");
             fail("field1 and field2 do not match, this should cause an AssertionError");
-        } catch(AssertionError e) {
+        } catch (AssertionError e) {
             assertEquals("Params 'field1,field2' do not match in messages 'msg1,msg2'", e.getMessage());
         }
 
         try {
             handlers.checkThatListOfParamsMatchInListOfMessages("field1,field2", "msg1,msg2,msg3");
             fail("field1 and field2 do not match, this should cause an AssertionError");
-        } catch(AssertionError e) {
+        } catch (AssertionError e) {
             assertEquals("Messages 'msg3' do not exist and Params 'field1,field2' do not match in messages 'msg1,msg2,msg3'",
-                            e.getMessage());
+                    e.getMessage());
         }
     }
 
@@ -1051,7 +1110,7 @@ public class EtiqetHandlersTest {
             fail("Empty messageList in checkThatListOfParamsMatchInListOfMessages should have thrown AssertionError");
         } catch (AssertionError e) {
             assertEquals("checkThatListOfParamsMatchInListOfMessages: No messages where to find matches",
-                            e.getMessage());
+                    e.getMessage());
         }
     }
 
@@ -1137,7 +1196,7 @@ public class EtiqetHandlersTest {
             fail("field1 in msg1 doesn't match field2 in msg2 so should have caused an AssertionError");
         } catch (AssertionError e) {
             assertEquals("No matches found in 'msg1->field1=msg2->field2,msg1->field2=msg2->field1'",
-                e.getMessage());
+                    e.getMessage());
         }
 
         try {
@@ -1276,7 +1335,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+                "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
@@ -1295,7 +1354,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+                "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
@@ -1319,7 +1378,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+                "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
@@ -1344,14 +1403,14 @@ public class EtiqetHandlersTest {
     private EtiqetHandlers createMockHandlersForNeuedaExtensions(Integer responseCode, String response) {
         return new EtiqetHandlers() {
             @Override
-            URL getFullExtensionsUrl(String extensionsUrl, String endpoint) throws MalformedURLException {
+            public URL getFullExtensionsUrl(String extensionsUrl, String endpoint) throws MalformedURLException {
                 String spec = String.format("%s%s", extensionsUrl, endpoint);
                 URL mockURL = new URL(spec);
                 return new URL(mockURL, spec, new URLStreamHandler() {
                     @Override
                     protected URLConnection openConnection(URL u) throws IOException {
                         HttpURLConnection connection;
-                        if(u.toString().startsWith("https://"))
+                        if (u.toString().startsWith("https://"))
                             connection = Mockito.mock(HttpsURLConnection.class);
                         else
                             connection = Mockito.mock(HttpURLConnection.class);
@@ -1371,15 +1430,34 @@ public class EtiqetHandlersTest {
         EtiqetHandlers mockHandlers = createMockHandlersForNeuedaExtensions(200, "Success");
         String clientName = "testClient";
         mockHandlers.createClient("testProtocol", clientName);
-        mockHandlers.getClient(clientName).setExtensionsUrl("http://localhost:5000");
+        UrlExtension u = new UrlExtension();
+        u.setName("neueda");
+        u.setUri("http://localhost:5000");
+        UrlExtension ux = new UrlExtension();
+        u.setName("neueda2");
+        u.setUri("http://localhost:5001");
+        List<UrlExtension> ex = new ArrayList<>();
+        ex.add(u);
+        ex.add(ux);
+        mockHandlers.getClient(clientName).setUrlExtensions(ex);
         mockHandlers.startClient(clientName);
 
         mockHandlers.sendNamedRestMessageWithPayloadHeaders(
-            EtiqetHandlers.HTTP_POST,
-            new HashMap<>(),
-            "testPayload",
-            "/testEndpoint",
-            clientName
+                EtiqetHandlers.HTTP_POST,
+                new HashMap<>(),
+                "testPayload",
+                "/testEndpoint",
+                new UrlExtension() {
+                    @Override
+                    public String getName() {
+                        return "Test";
+                    }
+
+                    @Override
+                    public String getUri() {
+                        return "https://localhost:5000";
+                    }
+                }
         );
     }
 
@@ -1389,18 +1467,27 @@ public class EtiqetHandlersTest {
         EtiqetHandlers mockHandlers = createMockHandlersForNeuedaExtensions(403, response);
         String clientName = "testClient";
         mockHandlers.createClient("testProtocol", clientName);
-        mockHandlers.getClient(clientName).setExtensionsUrl("https://localhost:5000");
         mockHandlers.startClient(clientName);
 
         try {
             HashMap<String, String> headers = new HashMap<>();
             headers.put("Authorization", "Bearer sdfasdfgs-sd245sdf-45aaasd");
             mockHandlers.sendNamedRestMessageWithPayloadHeaders(
-                EtiqetHandlers.HTTP_POST,
-                headers,
-                "testPayload",
-                "/testEndpoint",
-                clientName
+                    EtiqetHandlers.HTTP_POST,
+                    headers,
+                    "testPayload",
+                    "/testEndpoint",
+                    new UrlExtension() {
+                        @Override
+                        public String getName() {
+                            return "Test";
+                        }
+
+                        @Override
+                        public String getUri() {
+                            return "http://localhost:5000";
+                        }
+                    }
             );
             fail("sendNamedRestMessageWithPayloadHeaders should have thrown an exception due to the 403 error code");
         } catch (Exception e) {
@@ -1413,7 +1500,7 @@ public class EtiqetHandlersTest {
     public void testSendNamedResponseMessageWithPayloadHeadersNoConnection() throws EtiqetException {
         EtiqetHandlers mockHandlers = new EtiqetHandlers() {
             @Override
-            URL getFullExtensionsUrl(String extensionsUrl, String endpoint) throws MalformedURLException {
+            public URL getFullExtensionsUrl(String extensionsUrl, String endpoint) throws MalformedURLException {
                 String spec = String.format("%s%s", extensionsUrl, endpoint);
                 URL mockURL = new URL(spec);
                 return new URL(mockURL, spec, new URLStreamHandler() {
@@ -1427,16 +1514,26 @@ public class EtiqetHandlersTest {
 
         String clientName = "testClient";
         mockHandlers.createClient("testProtocol", clientName);
-        mockHandlers.getClient(clientName).setExtensionsUrl("https://localhost:5000");
+
         mockHandlers.startClient(clientName);
 
         try {
             mockHandlers.sendNamedRestMessageWithPayloadHeaders(
-                EtiqetHandlers.HTTP_POST,
-                new HashMap<>(),
-                "testPayload",
-                "/testEndpoint",
-                clientName
+                    EtiqetHandlers.HTTP_POST,
+                    new HashMap<>(),
+                    "testPayload",
+                    "/testEndpoint",
+                    new UrlExtension() {
+                        @Override
+                        public String getName() {
+                            return "Test";
+                        }
+
+                        @Override
+                        public String getUri() {
+                            return "https://localhost:5000";
+                        }
+                    }
             );
             fail("sendNamedRestMessageWithPayloadHeaders should have failed because of a null HTTP connection");
         } catch (AssertionError e) {
@@ -1454,11 +1551,21 @@ public class EtiqetHandlersTest {
 
         try {
             handlers.sendNamedRestMessageWithPayloadHeaders(
-                EtiqetHandlers.HTTP_POST,
-                new HashMap<>(),
-                "testPayload",
-                null,
-                clientName
+                    EtiqetHandlers.HTTP_POST,
+                    new HashMap<>(),
+                    "testPayload",
+                    null,
+                    new UrlExtension() {
+                        @Override
+                        public String getName() {
+                            return "Test";
+                        }
+
+                        @Override
+                        public String getUri() {
+                            return "http://localhost:5000";
+                        }
+                    }
             );
         } catch (Exception e) {
             assertTrue(e instanceof EtiqetException);
@@ -1467,16 +1574,78 @@ public class EtiqetHandlersTest {
 
         try {
             handlers.sendNamedRestMessageWithPayloadHeaders(
-                EtiqetHandlers.HTTP_POST,
-                new HashMap<>(),
-                "testPayload",
-                "/testEndpoint",
-                clientName
+                    EtiqetHandlers.HTTP_POST,
+                    new HashMap<>(),
+                    "testPayload",
+                    "/testEndpoint",
+                    handlers.getExtension("testClient", "neueda3")
             );
         } catch (AssertionError e) {
-            assertEquals("No Extensions URL found in client " + clientName, e.getMessage());
+            assertEquals("Extension: neueda3 Not found", e.getMessage());
         } catch (Exception e) {
             fail("Unexpected Exception thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetExtensionFailOnNoClientNameOrUrl() {
+        try {
+            handlers.getExtension(null, "http://localhost:5000");
+        } catch (AssertionError e) {
+            assertEquals("Must provide client name to acquire URL", e.getMessage());
+        }
+        try {
+            handlers.getExtension("testClient", null);
+        } catch (AssertionError e) {
+            assertEquals("Must provide extensions name to acquire URL", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetExtensionFailOnNoClient() {
+        try {
+            handlers.getExtension("testClient", "neueda3");
+        } catch (AssertionError e) {
+            assertEquals("Client not found: testClient", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetExtensionFailOnNoExtensions() throws EtiqetException {
+        String clientName = "testClient";
+        handlers.createClient("testProtocol", clientName);
+        handlers.startClient(clientName);
+        try {
+            handlers.getExtension("testClient", "neueda2");
+        } catch (AssertionError e) {
+            assertEquals("Extension: neueda2 Not found", e.getMessage());
+        }
+
+    }
+
+    @Test
+    public void testGetExtensionPass() throws EtiqetException {
+
+        String clientName = "testClient";
+        handlers.createClient("testProtocol", clientName);
+        handlers.startClient(clientName);
+        try {
+            handlers.getExtension("testClient", "neueda");
+        } catch (AssertionError e) {
+            assertEquals("Extension: neueda2 Not found", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testExtensionsNotEnabled() throws EtiqetException {
+        String clientName = "testClient";
+        handlers.createClient("testProtocol", clientName);
+        handlers.startClient(clientName);
+
+        try {
+            handlers.checkExtensionsEnabled(EtiqetHandlers.DEFAULT_EXTENSIONS_NAME, clientName);
+        } catch (AssertionError e) {
+            assertEquals("Extensions are not enabled - please enable to use this function", e.getMessage());
         }
     }
 
@@ -1486,15 +1655,18 @@ public class EtiqetHandlersTest {
         handlers.createClient("testProtocol", clientName);
         handlers.startClient(clientName);
 
-        try {
-            handlers.checkExtensionsEnabled(clientName);
-        } catch (Exception e) {
-            assertTrue(e instanceof EtiqetException);
-            assertEquals("Extensions are not enabled - please enable to use this function", e.getMessage());
-        }
+        UrlExtension ext1 = new UrlExtension();
+        ext1.setName("neueda");
+        ext1.setUri("http://localhost:5000");
+        UrlExtension ext2 = new UrlExtension();
+        ext2.setName("neueda2");
+        ext2.setUri("http://localhost:5001");
+        List<UrlExtension> ex = new ArrayList<>();
+        ex.add(ext1);
+        ex.add(ext2);
 
-        handlers.getClient(clientName).setExtensionsUrl("https://localhost:5000");
-        handlers.checkExtensionsEnabled(clientName);
+        handlers.getClient(clientName).setUrlExtensions(ex);
+        handlers.checkExtensionsEnabled("neueda2", clientName);
     }
 
 }

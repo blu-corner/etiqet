@@ -23,8 +23,6 @@ public class ClientImpl implements Serializable {
 
     private ClientConfig secondaryConfig;
 
-    private String extensionsUrl;
-
     @XmlAttribute(required = true)
     public String getName() {
         return name;
@@ -68,14 +66,5 @@ public class ClientImpl implements Serializable {
 
     public void setSecondaryConfig(ClientConfig secondaryConfig) {
         this.secondaryConfig = secondaryConfig;
-    }
-
-    @XmlAttribute(name = "extensionsUrl")
-    public String getExtensionsUrl() {
-        return extensionsUrl;
-    }
-
-    public void setExtensionsUrl(String extensionsUrl) {
-        this.extensionsUrl = extensionsUrl;
     }
 }

@@ -12,7 +12,6 @@ import com.neueda.etiqet.core.config.xml.XmlParser;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.server.Server;
 import com.neueda.etiqet.core.server.ServerFactory;
-import com.neueda.etiqet.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,10 +72,6 @@ public class GlobalConfig {
                     secondaryConfig != null ? secondaryConfig.getConfigPath() : null,
                     protocolConfig
                 );
-
-                if(!StringUtils.isNullOrEmpty(clientImpl.getExtensionsUrl())) {
-                    client.setExtensionsUrl(clientImpl.getExtensionsUrl());
-                }
 
                 clients.put(clientImpl.getName(), client);
             }

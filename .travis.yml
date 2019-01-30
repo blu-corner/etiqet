@@ -1,11 +1,7 @@
 language: java
-
+cache:
+  directories:
+  - "$HOME/.m2"
 notifications:
-  webhooks: $TEAMS_WEBHOOK
-
-deploy:
-  - provider: script
-    script: "mvn deploy"
-    skip_cleanup: true
-    on:
-      tags: true
+  webhooks:
+    secure: VOulY4tAbu0wTcdWF4nD+OjPz02E3iiPJSx63HrIorNe5N8snydrcG68Ex8UZ5BNMZwvGeNadXAeweY0o14jh67zSoe4dCq/HjCyxEsnvn+KkF518qJZFNR8p720UzWwffAAHteUTwUlysMjLcpBFHjsZ3scAgjUhtpFQXf5/5nhvwUITt/jXhCwBgxFnWL1Ee1bR6jwS6yvQ9Y8nY9TD6D60eQo/2uv5wk4HU9PymCMVu9RvtZkrzcie1w42kugHmNmaJagXamQ3ISV1f6QJ80DNBb+j1kMv8MR64oXA5ShNb7UvuZZHvKZ7no5k/V9eQ+GbRRzg/09HtKujXoNRvxvqLUWryVTLIAnQ3jQUwKTHxECpjddxFXabcV0QqzmT84wr199BFSjQL4VOciIP4ZdguCjj0WMPwwtvKmn165IDNasvYrTryGVhx+ElkVuVJn8zKHK1UyXuEsoA6buuThGF2ZXGJzS4r2/RCr0wphkO7wE3wFQaP3EQYpNgxnVG4ffdQXvWitzjdk3c4rhxIR8TiMT+K7L8q9wTew1VX06DY9z0asZGb21QX1EtFO6L3FkzRdGut4SNZDoLLSxBOwTg/VDmuTCW/tEP8XeSiEtSfvPJ4B3XpLIwkHlYuGIsoKFVs96C7YaOygWeMdy4m6wQQT78kwRco8758jgVPo=

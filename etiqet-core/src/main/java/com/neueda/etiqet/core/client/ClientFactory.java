@@ -2,17 +2,19 @@ package com.neueda.etiqet.core.client;
 
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.client.delegate.SinkClientDelegate;
+import com.neueda.etiqet.core.client.event.StopObserver;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.UnhandledClientException;
 import com.neueda.etiqet.core.common.exceptions.UnhandledProtocolException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Delegate;
 import com.neueda.etiqet.core.config.dtos.Delegates;
+import com.neueda.etiqet.core.config.dtos.Observer;
+import com.neueda.etiqet.core.config.dtos.StopEvent;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
-import com.neueda.etiqet.core.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Class implementing the factory method pattern to create Clients.
@@ -46,10 +48,9 @@ public class ClientFactory {
 
 			client.setProtocolConfig(protocolConfig);
 			client.setProtocolName(clientType);
-			if(!StringUtils.isNullOrEmpty(protocolConfig.getClient().getExtensionsUrl())) {
-			    client.setExtensionsUrl(protocolConfig.getClient().getExtensionsUrl());
-            }
+			client.setUrlExtensions(protocolConfig.getClientUrlExtensions());
             setClientDelegates(client, protocolConfig);
+            setClientStopEventObservers(client, protocolConfig);
 			return client;
         } catch (Exception e) {
             LOG.error(String.format(CLIENT_CREATION_ERROR, clientType), e);
@@ -74,11 +75,9 @@ public class ClientFactory {
 			Client client = (Client) Class.forName(classUri).getConstructor(String.class).newInstance(config);
             client.setProtocolConfig(protocolConfig);
             client.setProtocolName(clientType);
-
-            if(!StringUtils.isNullOrEmpty(protocolConfig.getClient().getExtensionsUrl())) {
-                client.setExtensionsUrl(protocolConfig.getClient().getExtensionsUrl());
-            }
+            client.setUrlExtensions(protocolConfig.getClientUrlExtensions());
             setClientDelegates(client, protocolConfig);
+            setClientStopEventObservers(client, protocolConfig);
             return client;
         } catch (Exception e) {
             LOG.error(String.format(CLIENT_CREATION_ERROR, clientType), e);
@@ -107,11 +106,10 @@ public class ClientFactory {
 
 			client.setProtocolConfig(protocolConfig);
             client.setProtocolName(clientType);
-            if(!StringUtils.isNullOrEmpty(protocolConfig.getClient().getExtensionsUrl())) {
-                client.setExtensionsUrl(protocolConfig.getClient().getExtensionsUrl());
-            }
+            client.setUrlExtensions(protocolConfig.getClientUrlExtensions());
             setClientDelegates(client, protocolConfig);
-			return client;
+            setClientStopEventObservers(client, protocolConfig);
+            return client;
 		} catch (Exception e) {
 			LOG.error(String.format(CLIENT_CREATION_ERROR, clientType), e);
 			throw new UnhandledClientException(String.format(CLIENT_CREATION_ERROR, clientType), e);
@@ -129,6 +127,7 @@ public class ClientFactory {
                                           .getConstructor(String.class, String.class, ProtocolConfig.class)
                                           .newInstance(primaryClientConfig, secondaryClientConfig, protocolConfig);
             setClientDelegates(client, protocolConfig);
+            setClientStopEventObservers(client, protocolConfig);
             return client;
 		} catch (Exception e) {
 		    LOG.error(String.format(CLIENT_CREATION_ERROR, clientClass), e);
@@ -158,6 +157,28 @@ public class ClientFactory {
             }
 
             client.setDelegate(del);
+        }
+    }
+
+	private static void setClientStopEventObservers(Client client, ProtocolConfig protocolConfig) throws EtiqetException{
+        StopEvent event = protocolConfig.getStopEvent();
+        if (event != null){
+            for (Observer observer: event.getObservers()){
+                StopObserver observerImpl;
+                try{
+                    observerImpl = (StopObserver) Class.forName(observer.getImpl()).getConstructor().newInstance();
+                } catch (ClassNotFoundException e){
+                    throw new EtiqetException(
+                            String.format("Can't find StopObserver impl '%s'\n\t%s", observer.getImpl(), e.getMessage())
+                    );
+                }
+                catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e){
+                    throw new EtiqetException(
+                            String.format("Failed to instantiate '%s'\n\t%s", observer.getImpl(), e.getMessage())
+                    );
+                }
+                client.addStopEventObserver(observerImpl);
+            }
         }
     }
 

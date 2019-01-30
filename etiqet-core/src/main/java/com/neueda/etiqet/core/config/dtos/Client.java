@@ -4,8 +4,10 @@ import com.neueda.etiqet.core.common.EtiqetConstants;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * XPath element: /etiqetConfiguration/protocols/protocol/client
@@ -17,9 +19,11 @@ public class Client implements Serializable {
 
 	private String defaultConfig;
 
-	private String extensionsUrl;
+	private List<UrlExtension> urlExtensions;
 
 	private Delegates delegates;
+
+	private StopEvent stopEvent;
 
 	@XmlElement(name = "delegates", namespace = EtiqetConstants.NAMESPACE)
 	public Delegates getDelegates() {
@@ -28,6 +32,15 @@ public class Client implements Serializable {
 
 	public void setDelegates(Delegates delegates) {
 		this.delegates = delegates;
+	}
+
+	@XmlElement(name = "stopEvent", namespace = EtiqetConstants.NAMESPACE)
+	public StopEvent getStopEvent() {
+		return stopEvent;
+	}
+
+	public void setStopEvent(StopEvent stopEvent) {
+		this.stopEvent = stopEvent;
 	}
 
 	@XmlAttribute(required = true)
@@ -48,12 +61,13 @@ public class Client implements Serializable {
 		this.defaultConfig = defaultConfig;
 	}
 
-	@XmlAttribute
-	public String getExtensionsUrl() {
-		return extensionsUrl;
+	@XmlElementWrapper(name = "urlExtensions", namespace = EtiqetConstants.NAMESPACE, required = false)
+    @XmlElement(name = "urlExtension", namespace = EtiqetConstants.NAMESPACE, required = false)
+    public List<UrlExtension> getUrlExtensions() {
+        return this.urlExtensions;
 	}
 
-	public void setExtensionsUrl(String extensionsUrl) {
-		this.extensionsUrl = extensionsUrl;
+	public void setUrlExtensions(List<UrlExtension> urlExtensions) {
+		this.urlExtensions = urlExtensions;
 	}
 }

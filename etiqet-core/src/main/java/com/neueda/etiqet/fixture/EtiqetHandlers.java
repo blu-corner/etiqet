@@ -6,6 +6,9 @@ import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.cdr.CdrItem;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.config.dtos.Field;
+import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.config.dtos.UrlExtension;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.server.Server;
 import com.neueda.etiqet.core.server.ServerFactory;
@@ -46,9 +49,14 @@ public class EtiqetHandlers {
     public static final int NOT_SET = -999999999;
     public static final int MILLI_NANO_CONVERSION = 1000000;
 
+
+    public static final String DEFAULT_EXTENSIONS_NAME = "neueda";
     public static final String HTTP_POST = "POST";
     public static final String PURGE_ORDERS = "requests/purge_orders";
     public static final String SET_TRADE_PHASE = "requests/set_trading_phase";
+    public static final String REMOVE_ORDERS = "requests/remove_orders";
+    public static final String HALT_ASSET = "requests/halt_asset";
+    public static final String RESUME_ASSET = "requests/resume_asset";
 
     public static final String SECONDS_NAME = "seconds";
     public static final String MILLI_TIME_NAME = "milli";
@@ -183,7 +191,7 @@ public class EtiqetHandlers {
      * @param secondaryConfig
      * @return
      */
-    public Client createClientWithFailover(String clientType, String clientName, String primaryConfig, String secondaryConfig)throws EtiqetException{
+    public Client createClientWithFailover(String clientType, String clientName, String primaryConfig, String secondaryConfig)throws EtiqetException {
         if(StringUtils.isNullOrEmpty(secondaryConfig)){
             throw new EtiqetException( "Secondary Config must be provided when trying to create a client with failover capabilities");
         }
@@ -197,7 +205,7 @@ public class EtiqetHandlers {
      * @param clientName
      * @throws EtiqetException
      */
-    public void failover(String clientName)throws EtiqetException{
+    public void failover(String clientName)throws EtiqetException {
         Client client = clientMap.get(clientName);
         if (client.canFailover()){
             client.failover();
@@ -296,6 +304,19 @@ public class EtiqetHandlers {
         return cdrItem == null ? null : cdrItem.toString();
     }
 
+    private String checkArrayIndex(String param)
+    {
+        String result = "";
+        try {
+            int index = Integer.parseInt(param);
+            if(index > -1)
+                result = param;
+        } catch (NumberFormatException e) {
+            // Ignored
+        }
+        return result;
+    }
+
     /**
      * Method to prepare params correctly before set them into message.
      *
@@ -305,8 +326,10 @@ public class EtiqetHandlers {
     String preTreatParams(String params) {
         StringBuilder preTreatedParams = new StringBuilder();
 
-        if (StringUtils.isNullOrEmpty(params) || params.length() < 3) // minimum 3 characters (e.g. x=y)
-            return preTreatedParams.toString();
+        if (StringUtils.isNullOrEmpty(params) || params.length() < 3) {
+            // minimum 3 characters (e.g. x=y), or array index (e.g 0)
+            return checkArrayIndex(params);
+        }
 
         String[] parameList = params.trim().split(Separators.PARAM_SEPARATOR);
         for (String param : parameList) {
@@ -416,9 +439,17 @@ public class EtiqetHandlers {
     public void compareValuesEqual(String firstField, String firstMessageAlias, String secondField, String secondMessageAlias){
         String sFirstValue = getValueFromField(firstMessageAlias,firstField);
         String sSecondValue = getValueFromField(secondMessageAlias,secondField);
-        assertTrue(firstField +" in " + firstMessageAlias +
-                " is " + sFirstValue +" in " + secondMessageAlias +
-                " it is " + sSecondValue, sFirstValue.equals(sFirstValue));
+        assertTrue("Test for equality: " + firstField +" in " + firstMessageAlias +
+                " is " + sFirstValue +", in " + secondMessageAlias +
+                " it is " + sSecondValue, sFirstValue.equals(sSecondValue));
+    }
+
+    public void compareValuesNotEqual(String firstField, String firstMessageAlias, String secondField, String secondMessageAlias){
+        String sFirstValue = getValueFromField(firstMessageAlias,firstField);
+        String sSecondValue = getValueFromField(secondMessageAlias,secondField);
+        assertFalse("Test for inequality: " + firstField +" in " + firstMessageAlias +
+                " is " + sFirstValue +", in " + secondMessageAlias +
+                " it is " + sSecondValue, sFirstValue.equals(sSecondValue));
     }
 
     public void compareValues(String firstField, String firstMessageAlias, String secondField, String secondMessageAlias, Long millis){
@@ -640,14 +671,23 @@ public class EtiqetHandlers {
     }
 
     public void waitForResponse(String messageType, String clientName, int milliseconds) throws EtiqetException {
-        waitForResponseOfType(DEFAULT_MESSAGE_NAME, clientName, messageType, milliseconds);
+        waitForResponseOfType(DEFAULT_MESSAGE_NAME, clientName, messageType, milliseconds, false);
     }
 
     public void waitForResponse(String messageName, String clientName) throws EtiqetException {
         waitForResponse(messageName, clientName, 5000);
     }
 
-    public void waitForResponseOfType(String messageName, String clientName, String messageType, int milliseconds)
+    /**
+     * Method to send a message by name using a client.
+     *
+     * @param messageName the key to store the message as the response map.
+     * @param clientName  the key to find the client from client map.
+     * @param messageType the key to find the message from message map.
+     * @param milliseconds milliseconds to wait
+     * @param skipOther skip any other messages found in the queue, rather than stopping and failing the test.
+     */
+    public void waitForResponseOfType(String messageName, String clientName, String messageType, int milliseconds, boolean skipOther)
             throws EtiqetException {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
@@ -660,7 +700,7 @@ public class EtiqetHandlers {
 
             assertNotNull("Dictionary does not contain a definition for received message type '" + rsp.getType() + "'",
                             receivedMsgType);
-            if (!filteredMsgs.contains(receivedMsgType)) {
+            if (!filteredMsgs.contains(receivedMsgType) && (!skipOther || (skipOther && receivedMsgType.equals(messageType)))) {
                 if (!DEFAULT_MESSAGE_NAME.equals(messageType)) {
                     handleError("Expected message '" + messageType + "' but found message '" + rsp.getType() + "'.",
                             (receivedMsgType.equals(messageType)), "NoCorrectResponseException");
@@ -676,7 +716,7 @@ public class EtiqetHandlers {
     }
 
     public void waitForResponseOfType(String messageName, String clientName, String msgType) throws EtiqetException {
-        waitForResponseOfType(messageName, clientName, msgType, 5000);
+        waitForResponseOfType(messageName, clientName, msgType, 5000, false);
     }
 
     public void waitForNoResponse(String messageName, String clientName, String messageType, int milliseconds)
@@ -701,11 +741,26 @@ public class EtiqetHandlers {
         waitForNoResponse(messageName, clientName, messageType, 5000);
     }
 
+    public void validateMessage(String messageName, String clientName, String messageType, Boolean checkValuesMatch) {
+        Client client = getClient(clientName);
+        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
+
+        Message message = client.getProtocolConfig().getMessage(messageType);
+        if(message != null && message.getFields() != null && message.getFields().getField() != null) {
+            for (Field field: message.getFields().getField()){
+                if(field != null && (field.getRequired()!= null )
+                                && (field.getRequired().equalsIgnoreCase("Y"))) {
+                    checkResponseKeyPresenceAndValue(messageName, field.getName(), checkValuesMatch);
+                }
+            }
+        }
+    }
+
     public void validateMessageTypeExistInResponseMap(String messageName) {
         assertNotNull(getResponse(messageName));
     }
 
-    Cdr getResponse(String messageName) {
+    public Cdr getResponse(String messageName) {
         return responseMap.get(messageName);
     }
 
@@ -739,7 +794,7 @@ public class EtiqetHandlers {
         LOG.info("Exception caught: " + e);
     }
 
-    public void checkResponseKeyPresenceAndValue(String messageName, String params) {
+    public void checkResponseKeyPresenceAndValue(String messageName, String params, List<String> values, String part, int position, boolean checkValuesMatch) {
         // Check if there are some params to check
         assertTrue("checkResponseKeyPresenceAndValue: Nothing to match", !StringUtils.isNullOrEmpty(params));
 
@@ -749,10 +804,17 @@ public class EtiqetHandlers {
         assertNotNull("checkResponseKeyPresenceAndValue: response for " + messageName + " not found", response);
 
         // Check if all params are into response message
-        Map<String,String> notMatched = checkMsgContainsKeysAndValues(response, preTreatedParams);
+        Map<String,String> notMatched = checkMsgContainsKeysAndValues(response, preTreatedParams, values, part, position, checkValuesMatch);
         for(Map.Entry<String, String> entry : notMatched.entrySet()) {
             assertTrue("checkResponseKeyPresenceAndValue: "+ messageName + " Msg: '"  + entry.getKey() + "' found, expected: '" + entry.getValue() +"'", StringUtils.isNullOrEmpty(entry.getKey()));
         }
+    }
+
+    public void checkResponseKeyPresenceAndValue(String messageName, String params) {
+        checkResponseKeyPresenceAndValue(messageName, params, null, null, -1, true);
+    }
+    public void checkResponseKeyPresenceAndValue(String messageName, String params, boolean checkValuesMatch) {
+        checkResponseKeyPresenceAndValue(messageName, params, null, null, -1, checkValuesMatch);
     }
 
     public void checkFieldPresence(String messageName, String params) {
@@ -766,11 +828,23 @@ public class EtiqetHandlers {
         assertTrue("checkResponseKeyPresenceAndValue: params '" + notMatched + "' don't match with message " + messageName, StringUtils.isNullOrEmpty(notMatched));
     }
 
+    public void checkFieldAbsence(String messageName, String params) {
+        // Check if there are some params to check
+        assertTrue("checkFieldPresence: Nothing to match", !StringUtils.isNullOrEmpty(params));
+
+        Cdr response = getResponse(messageName);
+        assertNotNull("checkFieldPresence: response for " + messageName + " not found", response);
+
+        for (String param : params.trim().split(Separators.PARAM_SEPARATOR)) {
+            assertTrue(!response.containsKey(param));
+        }
+    }
+
     public void stopClient(String clientName) {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
 
-        client.stop();
+        client.initiateStop();
     }
 
     /**
@@ -818,26 +892,50 @@ public class EtiqetHandlers {
      * Method to check if a list of param=value is into a message.
      *
      * @param msg    message to check.
-     * @param params list of params
+     * @param params list of params.
+     * @param values optional list of values, will override values in the params.
+     * @param split optional if set, split the value with this result.
+     * @param position optional if split set, compare the result at this position from the split value.
+     * @param checkValuesMatch check the values match, or only that it exists.
      * @return string with param_value that don't match.
      */
-    private Map<String, String> checkMsgContainsKeysAndValues(Cdr msg, String params) {
+    private Map<String, String> checkMsgContainsKeysAndValues(Cdr msg, String params, List<String> values, String split, int position, boolean checkValuesMatch ) {
         Map<String,String> unmatched = new HashMap<>();
         String[] pairs = params.trim().split(Separators.PARAM_SEPARATOR);
         if (pairs.length > 0) {
-            for (String expected : pairs) {
-                String[] keyValue = expected.split(Separators.KEY_VALUE_SEPARATOR);
+            for(int i = 0; i < pairs.length; i++) {
+                String[] keyValue = pairs[i].split(Separators.KEY_VALUE_SEPARATOR);
 
                 String key = keyValue[0];
-                String value = keyValue[1];
+                String paramValue = keyValue.length == 2 ? keyValue[1] : null;
+                String value = values == null ? paramValue : values.get(i);
+                value = splitValue(value, split, position);
 
-                String msgValue = getValueFromTree(key, msg);
-                if (!value.equals(msgValue)) {
-                    unmatched.put(String.format("%s=%s", key,msgValue ),expected);
+                String msgValue = splitValue(getValueFromTree(key, msg), split, position);
+
+                if (msgValue == null || (checkValuesMatch && !value.equals(msgValue))) {
+                    unmatched.put(String.format("%s=%s", key,msgValue ), pairs[i]);
                 }
             }
         }
         return unmatched;
+    }
+
+    /**
+     * Method to split a value if the string to split on exists in the value, otherwise return the original value
+     *
+     * @param value string to split
+     * @param split optional if set, split the value with this result.
+     * @param position optional if split set, compare the result at this position from the split value.
+     * @return params that are not in the message.
+     */
+    private String splitValue(String value, String split, int position)
+    {
+        if(!StringUtils.isNullOrEmpty(split) && position >= 0) {
+            if(value.contains(split))
+                value = value.split(split)[position];
+        }
+        return value;
     }
 
     /**
@@ -1106,7 +1204,7 @@ public class EtiqetHandlers {
         try {
             // Stop all clients using lambda expressions.
             if (!ArrayUtils.isNullOrEmpty(clientMap)) {
-                clientMap.values().forEach(Client::stop);
+                clientMap.values().forEach(Client::initiateStop);
             }
         } catch (Exception lex) {
             // Log the caught exception.
@@ -1143,10 +1241,9 @@ public class EtiqetHandlers {
         getClient(clientName).setActions(new String[]{});
     }
 
-    public void checkExtensionsEnabled(String clientName) throws EtiqetException{
-        if (StringUtils.isNullOrEmpty(getClient(clientName).getExtensionsUrl())){
-            throw new EtiqetException("Extensions are not enabled - please enable to use this function");
-        }
+    public void checkExtensionsEnabled(String extensionsName, String clientName){
+         assertNotNull("Extensions are not enabled - please enable to use this function",
+                 getNamedExtension(getClient(clientName).getUrlExtensions(),extensionsName));
     }
 
     String getJson(String exchange, String auctionPhase){
@@ -1157,23 +1254,51 @@ public class EtiqetHandlers {
         return gson.toJson(map);
     }
 
-    Map<String,String> getDefaultHeader(){
+    String getExchangeSymbolJson(String exchange, String symbol) {
+        Map<String, String> map = new HashMap<>();
+        map.put("exchange", exchange);
+        map.put("symbol", symbol);
+        Gson gson = new Gson();
+        return gson.toJson(map);
+    }
+
+    public Map<String,String> getDefaultHeader(){
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
         return map;
     }
+    public UrlExtension getNamedExtension(List<UrlExtension> urlExtensions, String name) {
+        assertFalse("No url extensions specified in client", ArrayUtils.isNullOrEmpty(urlExtensions));
+        assertFalse("Client name required to elicit urlExtension", StringUtils.isNullOrEmpty(name));
+
+        UrlExtension ext = urlExtensions.stream().
+                           filter(x -> x.getName().equalsIgnoreCase(name)).
+                           findFirst().orElse(null);
+        assertNotNull(String.format("Extension: %s Not found", name),ext);
+
+        return ext;
+    }
+
+    public UrlExtension getExtension(String clientName, String uri) {
+        assertFalse( "Must provide client name to acquire URL", StringUtils.isNullOrEmpty(clientName));
+        assertFalse( "Must provide extensions name to acquire URL", StringUtils.isNullOrEmpty(uri));
+        Client client = getClient(clientName);
+        assertFalse("Client not found: "+clientName,client==null);
+        List<UrlExtension> extensions = client.getUrlExtensions();
+        assertFalse("No Extensions URL found in client " + clientName, (extensions.isEmpty()));
+
+        return getNamedExtension(extensions, uri);
+
+    }
 
     public void sendNamedRestMessageWithPayloadHeaders
-            (String httpVerb, Map<String, String> headers, String payload, String endpoint, String clientName)
+            (String httpVerb, Map<String, String> headers, String payload, String endpoint, UrlExtension extensionsUrl)
     throws EtiqetException, IOException {
         if(endpoint == null) {
             throw new EtiqetException("Cannot send REST request without an endpoint");
         }
 
-        String extensionsUrl = getClient(clientName).getExtensionsUrl();
-        assertFalse("No Extensions URL found in client " + clientName, StringUtils.isNullOrEmpty(extensionsUrl));
-
-        URL url = getFullExtensionsUrl(extensionsUrl, endpoint);
+        URL url = getFullExtensionsUrl(extensionsUrl.getUri(), endpoint);
         HttpURLConnection con;
         if(url.toString().startsWith("https")){
             con = (HttpsURLConnection) url.openConnection();
@@ -1197,7 +1322,7 @@ public class EtiqetHandlers {
             String resMsg = con.getResponseMessage();
             throw new EtiqetException("Did not receive 200 (OK) response. Response from server: " + resMsg);
         }
-        LOG.info("Rest request: " + httpVerb + " to: " + extensionsUrl + endpoint + payload );
+        LOG.info("Rest request: " + httpVerb + " to: " + url.toString() + " " + payload );
     }
 
     /**
@@ -1207,7 +1332,7 @@ public class EtiqetHandlers {
      * @return fully qualified URL
      * @throws MalformedURLException when URL is malformed
      */
-    URL getFullExtensionsUrl(String extensionsUrl, String endpoint) throws MalformedURLException {
+    public URL getFullExtensionsUrl(String extensionsUrl, String endpoint) throws MalformedURLException {
         return new URL(String.format("%s%s", extensionsUrl, endpoint));
     }
 
@@ -1249,5 +1374,26 @@ public class EtiqetHandlers {
         Cdr response = getResponse(messageName);
         assertNotNull(String.format("Couldn't find message: %s", messageName), response);
         checkPrecision(timePrecision, response.getItem(field).toString());
+    }
+
+    /**
+     * @param messageName key of the CDR message in responseMap
+     * @param field Long field of CDR containing the bitmap to be checked
+     * @param value Expected value of bits at given indexes
+     * @param indexes Comma separated integers representing the indexes of the bitmap to check
+     */
+    void checkMessageNumericFieldBitValues(String messageName, String field, boolean value, String indexes){
+        long bitmap =  getResponse(messageName).getItem(field).getIntval();
+
+        List<Integer> parsedIndexs = new ArrayList<>();
+        for (String indexString: indexes.split(",")){
+            parsedIndexs.add(Integer.parseInt(indexString.trim()));
+        }
+
+        for (Integer index: parsedIndexs) {
+            assert (((1 << index & bitmap) != 0) == value): String.format(
+                    "bit %s of number '%s' is not %s ", index, bitmap, value
+            );
+        }
     }
 }
