@@ -221,23 +221,19 @@ public class GlobalConfig {
             throw new EtiqetException("Client for protocol " + protocolName + " doesn't specify an implementation class");
         }
         Dictionary dictionary = protocol.getDictionary();
-        if (dictionary == null) {
-            throw new EtiqetException("Protocol " + protocolName + " does not specify a Dictionary");
-        }
-        if (StringUtils.isNullOrEmpty(dictionary.getHandler())) {
+        if (dictionary != null && StringUtils.isNullOrEmpty(dictionary.getHandler())) {
             throw new EtiqetException("Protocol " + protocolName + " does not specify a dictionary handler class");
         }
 
         Messages messages = protocol.getMessages();
-        if (messages == null || messages.getMessage().length == 0) {
-            throw new EtiqetException("No messages have been specified for protocol " + protocolName);
-        }
-        for (Message message : messages.getMessage()) {
-            if (StringUtils.isNullOrEmpty(message.getName())) {
-                throw new EtiqetException("A message for protocol " + protocolName + " was passed without a name");
-            }
-            if (StringUtils.isNullOrEmpty(message.getImplementation())) {
-                throw new EtiqetException("A message for protocol " + protocolName + " was passed without an implementation class");
+        if (messages != null) {
+            for (Message message : messages.getMessage()) {
+                if (StringUtils.isNullOrEmpty(message.getName())) {
+                    throw new EtiqetException("A message for protocol " + protocolName + " was passed without a name");
+                }
+                if (StringUtils.isNullOrEmpty(message.getImplementation())) {
+                    throw new EtiqetException("A message for protocol " + protocolName + " was passed without an implementation class");
+                }
             }
         }
     }

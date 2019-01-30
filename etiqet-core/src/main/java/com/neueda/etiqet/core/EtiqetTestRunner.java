@@ -69,7 +69,7 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
         GlobalConfig globalConfig;
         if (!etiqetOptions.configClass().equals(EtiqetOptions.NullConfiguration.class)) {
             LOG.info("Initialising EtiqetTestRunner with configuration class " + etiqetOptions.configClass());
-            globalConfig = GlobalConfig.getInstance(clazz);
+            globalConfig = GlobalConfig.getInstance(etiqetOptions.configClass());
         } else if (!StringUtils.isNullOrEmpty(etiqetOptions.configFile())) {
             LOG.info("Initialising EtiqetTestRunner with configuration file " + etiqetOptions.configFile());
             globalConfig = GlobalConfig.getInstance(etiqetOptions.configFile());

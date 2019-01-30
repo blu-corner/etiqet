@@ -1,0 +1,24 @@
+package com.neueda.etiqet.websocket;
+
+import com.neueda.etiqet.core.config.annotations.Configuration;
+import com.neueda.etiqet.core.config.annotations.Protocol;
+import com.neueda.etiqet.core.config.dtos.Client;
+import com.neueda.etiqet.websocket.client.WebSocketClient;
+
+@Configuration
+public class WebSocketConfiguration {
+
+    @Protocol("websocket")
+    public com.neueda.etiqet.core.config.dtos.Protocol getProtocol() {
+        com.neueda.etiqet.core.config.dtos.Protocol protocol = new com.neueda.etiqet.core.config.dtos.Protocol();
+        protocol.setClient(getWebSocketClient());
+        return protocol;
+    }
+
+    private Client getWebSocketClient() {
+        Client client = new Client();
+        client.setImplementationClass(WebSocketClient.class);
+        client.setDefaultConfig(getClass().getClassLoader().getResource("config/client.cfg").getPath());
+        return client;
+    }
+}

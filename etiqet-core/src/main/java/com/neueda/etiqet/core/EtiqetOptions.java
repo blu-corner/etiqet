@@ -39,9 +39,9 @@ public @interface EtiqetOptions {
     String[] plugin() default {};
 
     /**
-     * Class that represents that a configClass has not been specified
+     * Interface that represents that {@link #configClass()} has not been specified
      */
-    final class NullConfiguration {
+    interface NullConfiguration {
     }
 
 }
