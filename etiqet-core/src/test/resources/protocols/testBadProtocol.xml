@@ -5,8 +5,6 @@
 			defaultConfig="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"/>
 	<!-- dictionary class doesn't exist, should throw exception -->
 	<dictionary handler="com.neueda.etiqet.core.TestDictionary"/>
-	<components_package>quickfix.fix44.component</components_package>
-	<messageClass>com.neueda.etiqet.core.testing.message.TestMessage</messageClass>
 	<messages>
 		<message name="TestMsg">
 			<implementation>java.lang.String</implementation>

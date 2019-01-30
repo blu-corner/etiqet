@@ -26,6 +26,9 @@ public class ProtocolConfig implements Serializable {
 	
 	private Map<String, Message> messageMap;
 
+	public ProtocolConfig() {
+	}
+
 	public ProtocolConfig(Protocol protocol) throws EtiqetException {
 		setProtocol(protocol);
 		commonInit();

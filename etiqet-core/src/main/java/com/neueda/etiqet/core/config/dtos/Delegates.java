@@ -5,10 +5,23 @@ import com.neueda.etiqet.core.common.EtiqetConstants;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.List;
 
 @XmlRootElement(namespace = EtiqetConstants.NAMESPACE)
 public class Delegates implements Serializable {
+
 	private Delegate[] delegate;
+
+    public Delegates() {
+    }
+
+    public Delegates(Delegate[] delegate) {
+        this.delegate = delegate;
+    }
+
+    public Delegates(List<Delegate> delegates) {
+        this.delegate = delegates.toArray(new Delegate[0]);
+    }
 
 	@XmlElement(name = "delegate", namespace = EtiqetConstants.NAMESPACE)
 	public Delegate[] getDelegate() {

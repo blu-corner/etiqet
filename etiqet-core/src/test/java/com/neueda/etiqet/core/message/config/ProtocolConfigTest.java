@@ -17,10 +17,6 @@ public class ProtocolConfigTest {
         testCommonFields(protocolConfig);
         assertEquals("com.neueda.etiqet.core.testing.message.TestDictionary",
                 protocolConfig.getProtocol().getDictionary().getHandler());
-        assertEquals("quickfix.fix44.component.",
-                protocolConfig.getComponentPackage());
-        assertEquals("quickfix.fix44.component",
-                protocolConfig.getProtocol().getComponentsPackage());
 
         Delegate[] delegates = protocolConfig.getClientDelegates().getDelegate();
         assertEquals(2, delegates.length);
@@ -100,9 +96,6 @@ public class ProtocolConfigTest {
 
         assertEquals("com.neueda.etiqet.core.testing.client.TestClient",
                 protocolConfig.getClient().getImpl());
-
-        assertEquals("com.neueda.etiqet.core.testing.message.TestMessage",
-                protocol.getMessageClass());
 
         Message message = protocolConfig.getMessages()[0];
         assertNotNull(message);

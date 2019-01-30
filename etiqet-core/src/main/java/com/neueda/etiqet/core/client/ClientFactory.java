@@ -14,6 +14,7 @@ import com.neueda.etiqet.core.config.dtos.StopEvent;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -147,7 +148,7 @@ public class ClientFactory {
     private static void setClientDelegates(Client client, ProtocolConfig protocolConfig) throws EtiqetException {
         ClientDelegateFactory cdf = new ClientDelegateFactory(protocolConfig);
         Delegates clientDelegates = protocolConfig.getClientDelegates();
-        if(clientDelegates != null) {
+        if (clientDelegates != null && clientDelegates.getDelegate() != null) {
             Delegate[] delegates = clientDelegates.getDelegate();
             ClientDelegate del = new SinkClientDelegate<>();
             for(int i = delegates.length - 1; i >= 0; i--) {

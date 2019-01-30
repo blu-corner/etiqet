@@ -59,6 +59,10 @@ public class ClientImpl implements Serializable {
         this.primaryConfig = primaryConfig;
     }
 
+    public void setPrimaryConfig(String primaryConfig) {
+        this.primaryConfig = new ClientConfig(primaryConfig);
+    }
+
     @XmlElement(name = "secondary", namespace = EtiqetConstants.NAMESPACE)
     public ClientConfig getSecondaryConfig() {
         return secondaryConfig;
@@ -66,5 +70,9 @@ public class ClientImpl implements Serializable {
 
     public void setSecondaryConfig(ClientConfig secondaryConfig) {
         this.secondaryConfig = secondaryConfig;
+    }
+
+    public void setSecondaryConfig(String secondaryConfig) {
+        this.secondaryConfig = new ClientConfig(secondaryConfig);
     }
 }

@@ -42,4 +42,8 @@ public class TestServer extends Server {
         return isStarted;
     }
 
+    public String getConfigPath() {
+        return this.serverConfig;
+    }
+
 }

@@ -21,7 +21,7 @@ public class ClientDelegateFactory<U, M> {
 
     public ClientDelegateFactory(ProtocolConfig protocolConfig) {
         delegatesUriFromAction = new HashMap<>();
-        if(protocolConfig.getClientDelegates() != null) {
+        if (protocolConfig.getClientDelegates() != null && protocolConfig.getClientDelegates().getDelegate() != null) {
             for(Delegate del: protocolConfig.getClientDelegates().getDelegate()) {
                 delegatesUriFromAction.put(del.getKey(), del.getImpl());
             }

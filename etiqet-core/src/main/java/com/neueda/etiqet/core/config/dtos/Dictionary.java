@@ -4,6 +4,7 @@ import com.neueda.etiqet.core.common.EtiqetConstants;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlValue;
 import java.io.Serializable;
 
@@ -12,6 +13,19 @@ public class Dictionary implements Serializable {
 	private String handler;
 
 	private String value;
+	private Class<?> handlerClass;
+
+	public Dictionary() {
+	}
+
+	public Dictionary(String handler) {
+		this.handler = handler;
+	}
+
+	public Dictionary(Class<?> handlerClass) {
+		this.handlerClass = handlerClass;
+		this.handler = handlerClass.getName();
+	}
 
 	@XmlAttribute
 	public String getHandler() {
@@ -20,6 +34,16 @@ public class Dictionary implements Serializable {
 
 	public void setHandler(String handler) {
 		this.handler = handler;
+	}
+
+	public void setHandler(Class<?> handler) {
+		this.handler = handler.getName();
+		this.handlerClass = handler;
+	}
+
+	@XmlTransient
+	public Class<?> getHandlerClass() {
+		return this.handlerClass;
 	}
 
 	@XmlValue

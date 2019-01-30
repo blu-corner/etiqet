@@ -19,7 +19,7 @@ public class EtiqetConfiguration implements Serializable {
 
     private List<ClientImpl> clients = new ArrayList<>();
 
-    private List<Server> servers = new ArrayList<>();
+    private List<ServerImpl> servers = new ArrayList<>();
 
     /**
      * Gets all defined protocols in the configuration.
@@ -72,7 +72,7 @@ public class EtiqetConfiguration implements Serializable {
      */
     @XmlElementWrapper(name = "servers", namespace = EtiqetConstants.NAMESPACE, required = false)
     @XmlElement(name = "server", namespace = EtiqetConstants.NAMESPACE, required = false)
-    public List<Server> getServers() {
+    public List<ServerImpl> getServers() {
         return servers;
     }
 
@@ -80,7 +80,7 @@ public class EtiqetConfiguration implements Serializable {
      * Sets pre-defined servers to be used in test steps
      * @param servers list of server names, implementations and configurations
      */
-    public void setServers(List<Server> servers) {
+    public void setServers(List<ServerImpl> servers) {
         this.servers = servers;
     }
 }

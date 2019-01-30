@@ -5,6 +5,7 @@ import com.neueda.etiqet.core.common.EtiqetConstants;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -13,6 +14,7 @@ public class Message implements Serializable {
 	private String admin;
 	
 	private String implementation;
+    private Class<?> implementationClass;
 
 	private String name;
 	
@@ -21,6 +23,20 @@ public class Message implements Serializable {
 	private Fields headers;
 	
 	private Fields fields;
+
+    public Message() {
+    }
+
+    public Message(String name, String implementation) {
+        this.name = name;
+        this.implementation = implementation;
+    }
+
+    public Message(String name, Class<?> implementation) {
+        this.name = name;
+        this.implementation = implementation.getName();
+        this.implementationClass = implementation;
+    }
 
 	@XmlAttribute
 	public String getAdmin() {
@@ -39,6 +55,16 @@ public class Message implements Serializable {
 	public void setImplementation(String implementation) {
 		this.implementation = implementation;
 	}
+
+    public void setImplementation(Class<?> implementationClass) {
+        this.implementation = implementationClass.getName();
+        this.implementationClass = implementationClass;
+    }
+
+    @XmlTransient
+    public Class<?> getImplementationClass() {
+        return this.implementationClass;
+    }
 
 	@XmlAttribute
 	public String getName() {
