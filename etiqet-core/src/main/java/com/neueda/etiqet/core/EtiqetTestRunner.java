@@ -48,14 +48,14 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
     public EtiqetTestRunner(Class<?> clazz) throws InitializationError, IOException, EtiqetException {
         super(clazz);
         if (!clazz.isAnnotationPresent(EtiqetOptions.class)) {
-            throw new InitializationError("EtiqetTestRunner requires the @EtiqetOptions annotation");
+            throw new EtiqetException("EtiqetTestRunner requires the @EtiqetOptions annotation");
         }
 
         etiqetOptions = clazz.getAnnotation(EtiqetOptions.class);
         if (StringUtils.isNullOrEmpty(etiqetOptions.configFile())
             && etiqetOptions.configClass().equals(EtiqetOptions.NullConfiguration.class)
             && !Environment.isEnvVarSet(DEFAULT_CONFIG_VARIABLE)) {
-            throw new InitializationError("EtiqetTestRunner requires one of the following configuration "
+            throw new EtiqetException("EtiqetTestRunner requires one of the following configuration "
                 + "options to be specified:"
                 + System.lineSeparator()
                 + "\t1. Specifying a configuration class via the configClass option"
@@ -66,6 +66,7 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
                 + "to a configuration file");
         }
 
+        // As GlobalConfig is a singleton, if we instantiate it here then it will be set for all test runs
         GlobalConfig globalConfig;
         if (!etiqetOptions.configClass().equals(EtiqetOptions.NullConfiguration.class)) {
             LOG.info("Initialising EtiqetTestRunner with configuration class " + etiqetOptions.configClass());
@@ -92,6 +93,8 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
      */
     Cucumber getCucumberDelegate(Class clazz) throws InitializationError, IOException {
         return new Cucumber(clazz) {
+
+            @Override
             protected Runtime createRuntime(ResourceLoader resourceLoader,
                                             ClassLoader classLoader,
                                             RuntimeOptions runtimeOptions) {
@@ -100,15 +103,12 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
                 if (!runtimeOptions.getGlue().contains(FIXTURE_PACKAGE)) {
                     runtimeOptions.getGlue().add(FIXTURE_PACKAGE);
                 }
-                for (String additionalGlue : etiqetOptions.additionalFixtures()) {
-                    if (!runtimeOptions.getGlue().contains(additionalGlue)) {
-                        runtimeOptions.getGlue().add(additionalGlue);
-                    }
-                }
+                Arrays.stream(etiqetOptions.additionalFixtures())
+                    .filter(glue -> !runtimeOptions.getGlue().contains(glue))
+                    .forEach(glue -> runtimeOptions.getGlue().add(glue));
 
                 // ensure that list of features we provide Cucumber is unique
-                Set<String> uniqueFeatures = new HashSet<>(etiqetOptions.features().length
-                    + runtimeOptions.getFeaturePaths().size());
+                Set<String> uniqueFeatures = new HashSet<>();
                 uniqueFeatures.addAll(Arrays.asList(etiqetOptions.features()));
                 uniqueFeatures.addAll(runtimeOptions.getFeaturePaths());
 
@@ -117,6 +117,7 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
 
                 return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
             }
+
         };
     }
 
