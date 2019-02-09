@@ -6,6 +6,8 @@ import com.neueda.etiqet.core.testing.NoOptionsTestRun;
 import com.neueda.etiqet.core.testing.ValidTestRun;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.junit.FeatureRunner;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -18,6 +20,20 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class EtiqetTestRunnerTest {
+
+    private String defaultConfigVar;
+
+    @Before
+    public void setUp() {
+        defaultConfigVar = System.getProperty(DEFAULT_CONFIG_VARIABLE);
+    }
+
+    @After
+    public void tearDown() {
+        if (defaultConfigVar != null) {
+            System.setProperty(DEFAULT_CONFIG_VARIABLE, defaultConfigVar);
+        }
+    }
 
     @Test
     public void testExceptionWithNoEtiqetOptions() {
@@ -33,6 +49,7 @@ public class EtiqetTestRunnerTest {
     @Test
     public void testExceptionWhenNoConfigSpecified() {
         try {
+            System.clearProperty(DEFAULT_CONFIG_VARIABLE);
             new EtiqetTestRunner(EmptyOptionsTestRun.class);
             fail("EmptyOptionsTestRun should not specify any options, so this should throw an exception");
         } catch (Exception e) {

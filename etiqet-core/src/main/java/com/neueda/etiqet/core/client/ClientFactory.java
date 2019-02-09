@@ -8,7 +8,6 @@ import com.neueda.etiqet.core.common.exceptions.UnhandledClientException;
 import com.neueda.etiqet.core.common.exceptions.UnhandledProtocolException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Delegate;
-import com.neueda.etiqet.core.config.dtos.Delegates;
 import com.neueda.etiqet.core.config.dtos.Observer;
 import com.neueda.etiqet.core.config.dtos.StopEvent;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
@@ -16,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /**
  * Class implementing the factory method pattern to create Clients.
@@ -147,12 +147,11 @@ public class ClientFactory {
     @SuppressWarnings("unchecked")
     private static void setClientDelegates(Client client, ProtocolConfig protocolConfig) throws EtiqetException {
         ClientDelegateFactory cdf = new ClientDelegateFactory(protocolConfig);
-        Delegates clientDelegates = protocolConfig.getClientDelegates();
-        if (clientDelegates != null && clientDelegates.getDelegate() != null) {
-            Delegate[] delegates = clientDelegates.getDelegate();
+        List<Delegate> clientDelegates = protocolConfig.getClientDelegates();
+        if (clientDelegates != null && !clientDelegates.isEmpty()) {
             ClientDelegate del = new SinkClientDelegate<>();
-            for(int i = delegates.length - 1; i >= 0; i--) {
-                ClientDelegate tmp = cdf.create(delegates[i].getKey());
+            for (int i = clientDelegates.size() - 1; i >= 0; i--) {
+                ClientDelegate tmp = cdf.create(clientDelegates.get(i).getKey());
                 tmp.setNextDelegate(del);
                 del = tmp;
             }

@@ -1,14 +1,14 @@
 package com.neueda.etiqet.websocket;
 
 import com.neueda.etiqet.core.config.annotations.Configuration;
-import com.neueda.etiqet.core.config.annotations.Protocol;
+import com.neueda.etiqet.core.config.annotations.EtiqetProtocol;
 import com.neueda.etiqet.core.config.dtos.Client;
 import com.neueda.etiqet.websocket.client.WebSocketClient;
 
 @Configuration
 public class WebSocketConfiguration {
 
-    @Protocol("websocket")
+    @EtiqetProtocol("websocket")
     public com.neueda.etiqet.core.config.dtos.Protocol getProtocol() {
         com.neueda.etiqet.core.config.dtos.Protocol protocol = new com.neueda.etiqet.core.config.dtos.Protocol();
         protocol.setClient(getWebSocketClient());

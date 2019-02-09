@@ -5,6 +5,7 @@ import com.neueda.etiqet.core.common.EtiqetConstants;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,11 @@ import java.util.List;
 /**
  * XPath: /etiqetConfiguration
  */
+@XmlType(propOrder = {"protocols", "clients", "servers"}, namespace = EtiqetConstants.NAMESPACE)
 @XmlRootElement(name = "etiqetConfiguration", namespace = EtiqetConstants.NAMESPACE)
 public class EtiqetConfiguration implements Serializable {
 
-    private List<Protocol> protocols;
+    private List<Protocol> protocols = new ArrayList<>();
 
     private List<ClientImpl> clients = new ArrayList<>();
 

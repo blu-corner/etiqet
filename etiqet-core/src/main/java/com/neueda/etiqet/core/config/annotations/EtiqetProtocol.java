@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @Documented
-public @interface Protocol {
+public @interface EtiqetProtocol {
 
     /**
      * @return name of the protocol to be accessed inside

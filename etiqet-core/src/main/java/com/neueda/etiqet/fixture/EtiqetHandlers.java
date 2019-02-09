@@ -746,10 +746,11 @@ public class EtiqetHandlers {
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
 
         Message message = client.getProtocolConfig().getMessage(messageType);
-        if(message != null && message.getFields() != null && message.getFields().getField() != null) {
-            for (Field field: message.getFields().getField()){
-                if(field != null && (field.getRequired()!= null )
-                                && (field.getRequired().equalsIgnoreCase("Y"))) {
+        if (message != null) {
+            for (Field field : message.getFields()) {
+                if (field != null
+                        && field.getRequired() != null
+                        && field.getRequired().equalsIgnoreCase("Y")) {
                     checkResponseKeyPresenceAndValue(messageName, field.getName(), checkValuesMatch);
                 }
             }

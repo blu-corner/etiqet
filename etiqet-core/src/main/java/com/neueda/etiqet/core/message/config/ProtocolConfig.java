@@ -129,7 +129,7 @@ public class ProtocolConfig implements Serializable {
 		return getProtocol().toString();
 	}
 
-	public Delegates getClientDelegates() {
+	public List<Delegate> getClientDelegates() {
 		return getProtocol().getClient().getDelegates();
 	}
 

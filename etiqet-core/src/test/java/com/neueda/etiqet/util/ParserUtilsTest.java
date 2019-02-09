@@ -4,7 +4,6 @@ import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.cdr.CdrItem;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Field;
-import com.neueda.etiqet.core.config.dtos.Fields;
 import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.testing.util.TestUtils;
@@ -14,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -219,8 +219,8 @@ public class ParserUtilsTest {
         ProtocolConfig protocolConfig = new ProtocolConfig(protocolPath);
 
         Message message = protocolConfig.getMessage("TestMsg");
-        Field[] fields = message.getFields().getField();
-        assertEquals(11, fields.length);
+        List<Field> fields = message.getFields();
+        assertEquals(11, fields.size());
 
         Cdr testMsg = new Cdr("TestMsg");
         ParserUtils.fillDefault(message, testMsg);
@@ -264,11 +264,8 @@ public class ParserUtilsTest {
         field.setUtilclass("com.neueda.etiqet.util.TestUtils");
         field.setMethod("methodNotFound");
 
-        Fields fields = new Fields();
-        fields.setField(new Field[]{field});
-
         Message message = new Message();
-        message.setFields(fields);
+        message.setFields(Collections.singletonList(field));
 
         try {
             ParserUtils.fillDefault(message, new Cdr("TestMsg"));

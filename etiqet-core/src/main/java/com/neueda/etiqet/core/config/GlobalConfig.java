@@ -5,6 +5,9 @@ import com.neueda.etiqet.core.client.ClientFactory;
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.annotations.Configuration;
+import com.neueda.etiqet.core.config.annotations.EtiqetProtocol;
+import com.neueda.etiqet.core.config.annotations.NamedClient;
+import com.neueda.etiqet.core.config.annotations.NamedServer;
 import com.neueda.etiqet.core.config.dtos.*;
 import com.neueda.etiqet.core.config.xml.XmlParser;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
@@ -15,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,29 +63,42 @@ public class GlobalConfig {
         }
 
         try {
+            this.config = new EtiqetConfiguration();
             // Process the protocols first, then the clients, then the servers
-            for (Method method : configClass.getMethods()) {
-                if (method.isAnnotationPresent(com.neueda.etiqet.core.config.annotations.Protocol.class)) {
+            Method[] methods = configClass.getMethods();
+            if (Arrays.stream(methods).noneMatch(m -> m.isAnnotationPresent(EtiqetProtocol.class))) {
+                throw new EtiqetException("Could not find any protocols defined in " + configClass.getName());
+            }
+
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(EtiqetProtocol.class)) {
                     Protocol protocol = getProtocol(method);
                     addProtocol(protocol);
+                    this.config.getProtocols().add(protocol);
                 }
             }
-            for (Method method : configClass.getMethods()) {
-                if (method.isAnnotationPresent(com.neueda.etiqet.core.config.annotations.Client.class)) {
+
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(NamedClient.class)) {
                     ClientImpl clientImpl = getClientImpl(method);
                     addClient(clientImpl);
+                    this.config.getClients().add(clientImpl);
                 }
             }
-            for (Method method : configClass.getMethods()) {
-                if (method.isAnnotationPresent(com.neueda.etiqet.core.config.annotations.Server.class)) {
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(NamedServer.class)) {
                     ServerImpl server = getServer(method);
                     addServer(server);
+                    this.config.getServers().add(server);
                 }
             }
+
+            new XmlParser().validate(this.config, configClass);
         } catch (EtiqetException e) {
+            LOG.error("EtiqetException was thrown during setup of configuration class {}", config, e);
             throw e;
         } catch (Exception e) {
-            throw new EtiqetException("Unexception exception occurred while configuring Etiqet.", e);
+            throw new EtiqetException("Unexpected exception occurred while configuring Etiqet.", e);
         }
     }
 
@@ -129,14 +146,13 @@ public class GlobalConfig {
     }
 
     private ServerImpl getServer(Method method) throws EtiqetException {
-        com.neueda.etiqet.core.config.annotations.Server serverAnnotation
-            = method.getAnnotation(com.neueda.etiqet.core.config.annotations.Server.class);
+        NamedServer serverAnnotation = method.getAnnotation(NamedServer.class);
         String serverName = serverAnnotation.name();
         Class<? extends Server> serverImpl = serverAnnotation.impl();
         String serverConfig = serverAnnotation.config();
 
         if (!method.getReturnType().equals(ServerImpl.class)) {
-            String error = String.format("Server %s does not return type com.neueda.etiqet.core.config.dtos.ServerImpl",
+            String error = String.format("NamedServer %s does not return type com.neueda.etiqet.core.config.dtos.ServerImpl",
                 serverName);
             throw new EtiqetException(error);
         }
@@ -145,7 +161,7 @@ public class GlobalConfig {
         try {
             server = (ServerImpl) method.invoke(configClass.newInstance());
         } catch (Exception e) {
-            throw new EtiqetException(String.format("Error creating Server %s", serverName), e);
+            throw new EtiqetException(String.format("Error creating NamedServer %s", serverName), e);
         }
 
         server.setName(serverName);
@@ -155,8 +171,7 @@ public class GlobalConfig {
     }
 
     private ClientImpl getClientImpl(Method method) throws EtiqetException {
-        com.neueda.etiqet.core.config.annotations.Client clientAnnotation
-            = method.getAnnotation(com.neueda.etiqet.core.config.annotations.Client.class);
+        NamedClient clientAnnotation = method.getAnnotation(NamedClient.class);
         String clientName = clientAnnotation.name();
         if (!method.getReturnType().equals(ClientImpl.class)) {
             String error = String.format("Client %s does not return type com.neueda.etiqet.core.config.dtos.ClientImpl",
@@ -187,8 +202,7 @@ public class GlobalConfig {
     }
 
     private Protocol getProtocol(Method method) throws EtiqetException {
-        com.neueda.etiqet.core.config.annotations.Protocol protocolAnnotation
-            = method.getAnnotation(com.neueda.etiqet.core.config.annotations.Protocol.class);
+        EtiqetProtocol protocolAnnotation = method.getAnnotation(EtiqetProtocol.class);
         String protocolName = protocolAnnotation.value();
         if (!method.getReturnType().equals(Protocol.class)) {
             String error = String.format("Protocol %s does not return type com.neueda.etiqet.core.config.dtos.Protocol",
@@ -209,6 +223,13 @@ public class GlobalConfig {
         return protocol;
     }
 
+    /**
+     * Validates that a protocol is valid for use in test cases
+     *
+     * @param protocol     protocol parsed from a configuration class
+     * @param protocolName name of the protocol
+     * @throws EtiqetException when the protocol is invalid
+     */
     private void validateProtocol(Protocol protocol, String protocolName) throws EtiqetException {
         com.neueda.etiqet.core.config.dtos.Client client = protocol.getClient();
         if (client == null) {

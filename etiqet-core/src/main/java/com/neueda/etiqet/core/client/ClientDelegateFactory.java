@@ -2,7 +2,6 @@ package com.neueda.etiqet.core.client;
 
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import com.neueda.etiqet.core.config.dtos.Delegate;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 
 import java.util.HashMap;
@@ -21,11 +20,8 @@ public class ClientDelegateFactory<U, M> {
 
     public ClientDelegateFactory(ProtocolConfig protocolConfig) {
         delegatesUriFromAction = new HashMap<>();
-        if (protocolConfig.getClientDelegates() != null && protocolConfig.getClientDelegates().getDelegate() != null) {
-            for(Delegate del: protocolConfig.getClientDelegates().getDelegate()) {
-                delegatesUriFromAction.put(del.getKey(), del.getImpl());
-            }
-        }
+        protocolConfig.getClientDelegates()
+                .forEach(del -> delegatesUriFromAction.put(del.getKey(), del.getImpl()));
     }
 
     /**

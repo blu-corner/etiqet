@@ -5,7 +5,6 @@ import com.neueda.etiqet.core.common.EtiqetConstants;
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,27 +21,19 @@ public class Client implements Serializable {
 
     private List<UrlExtension> urlExtensions = new ArrayList<>();
 
-	private Delegates delegates;
+	private List<Delegate> delegates = new ArrayList<>();
 
 	private StopEvent stopEvent;
 
-	@XmlElement(name = "delegates", namespace = EtiqetConstants.NAMESPACE)
-	public Delegates getDelegates() {
+	@XmlElementWrapper(name = "delegates", namespace = EtiqetConstants.NAMESPACE)
+	@XmlElement(name = "delegate", namespace = EtiqetConstants.NAMESPACE)
+	public List<Delegate> getDelegates() {
 		return delegates;
 	}
 
-	public void setDelegates(Delegates delegates) {
+	public void setDelegates(List<Delegate> delegates) {
 		this.delegates = delegates;
 	}
-
-    @XmlTransient
-    public List<Delegate> getDelegateList() {
-        return Arrays.asList(delegates.getDelegate());
-    }
-
-    public void setDelegates(List<Delegate> delegates) {
-        this.delegates = new Delegates();
-    }
 
 	@XmlElement(name = "stopEvent", namespace = EtiqetConstants.NAMESPACE)
 	public StopEvent getStopEvent() {

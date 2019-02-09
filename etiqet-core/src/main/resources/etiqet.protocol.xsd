@@ -43,7 +43,7 @@
                     <xs:documentation xml:lang="en">List of protocols to be included in Etiqet</xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
-                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:choice minOccurs="1" maxOccurs="unbounded">
                         <xs:element ref="protocol"/>
                     </xs:choice>
                 </xs:complexType>
@@ -55,7 +55,7 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="client" type="ClientDef" minOccurs="1" maxOccurs="unbounded"/>
+                        <xs:element name="client" type="ClientDef" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -66,7 +66,7 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="server" minOccurs="1" type="Server"/>
+                        <xs:element name="server" minOccurs="0" type="Server"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -208,7 +208,7 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="delegate" maxOccurs="unbounded" type="Delegate"/>
+                        <xs:element name="delegate" minOccurs="0" maxOccurs="unbounded" type="Delegate"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -228,7 +228,7 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="urlExtension" maxOccurs="unbounded" type="UrlExtension"/>
+                        <xs:element name="urlExtension" minOccurs="0" maxOccurs="unbounded" type="UrlExtension"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

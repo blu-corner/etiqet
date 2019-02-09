@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @Documented
-public @interface Client {
+public @interface NamedClient {
 
     /**
      * @return the name that this client can be accessed under. Defaults to {@link EtiqetHandlers#DEFAULT_CLIENT_NAME}
@@ -18,7 +18,7 @@ public @interface Client {
     String name() default EtiqetHandlers.DEFAULT_CLIENT_NAME;
 
     /**
-     * @return the {@link Protocol} name that this client uses
+     * @return the {@link EtiqetProtocol} name that this client uses
      */
     String impl();
 

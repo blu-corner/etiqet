@@ -3,19 +3,45 @@ package com.neueda.etiqet.core.config.annotations;
 import com.neueda.etiqet.core.client.Client;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.config.annotations.impl.EmptyConfiguration;
 import com.neueda.etiqet.core.config.annotations.impl.ExampleConfiguration;
+import com.neueda.etiqet.core.config.annotations.impl.IncompleteConfiguration;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.server.Server;
 import com.neueda.etiqet.core.testing.message.TestDictionary;
 import com.neueda.etiqet.core.testing.server.TestServer;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
+
 import static org.junit.Assert.*;
 
 public class ConfigurationTest {
 
     @Test
-    public void testExampleConfiguration() throws EtiqetException {
+    public void testIncompleteConfiguration() {
+        try {
+            GlobalConfig.getInstance(IncompleteConfiguration.class);
+        } catch (Exception e) {
+            assertTrue(e instanceof EtiqetException);
+            assertEquals("Protocol testProtocol does not have a client specified", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testEmptyConfiguration() {
+        try {
+            GlobalConfig.getInstance(EmptyConfiguration.class);
+            fail("Empty Configuration should not contain anything to allow successful configuration");
+        } catch (Exception e) {
+            assertTrue(e instanceof EtiqetException);
+            assertEquals("Could not find any protocols defined in " + EmptyConfiguration.class.getName(),
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void testExampleConfiguration() throws Exception {
         GlobalConfig config = GlobalConfig.getInstance(ExampleConfiguration.class);
         assertNotNull(config);
 
@@ -28,7 +54,7 @@ public class ConfigurationTest {
         assertNotNull(testProtocol);
         assertEquals(testProtocol, testClient1.getProtocolConfig());
         assertEquals("${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties",
-            testProtocol.getClient().getDefaultConfig());
+                testProtocol.getClient().getDefaultConfig());
 
         assertTrue(testProtocol.getDictionary() instanceof TestDictionary);
 
@@ -39,6 +65,12 @@ public class ConfigurationTest {
         TestServer server = (TestServer) testServer;
         assertNotNull(server.getConfigPath());
         assertEquals("${user.dir}/src/test/resources/fix-config/testServer.cfg", server.getConfigPath());
+
+        // because GlobalConfig is a singleton, we need to ensure that the instance is reset after each of these
+        // tests. Without exposing the instance, this involves using reflection to set the instance to null
+        Field field = GlobalConfig.class.getDeclaredField("instance");
+        field.setAccessible(true);
+        field.set(config, null);
     }
 
 }

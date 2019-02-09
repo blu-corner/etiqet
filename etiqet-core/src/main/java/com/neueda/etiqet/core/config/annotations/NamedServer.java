@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @Documented
-public @interface Server {
+public @interface NamedServer {
 
     /**
      * @return the name of the server. Defaults to {@link EtiqetHandlers#DEFAULT_SERVER_NAME}
