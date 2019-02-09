@@ -1,9 +1,11 @@
 package com.neueda.etiqet.core.config.annotations;
 
+import com.neueda.etiqet.core.config.dtos.Protocol;
+
 import java.lang.annotation.*;
 
 /**
- * Tells Etiqet that this method should return a ProtocolConfig
+ * Tells Etiqet that this method should return a {@link Protocol}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

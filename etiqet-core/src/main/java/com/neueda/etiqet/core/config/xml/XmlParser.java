@@ -19,6 +19,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
 
+/**
+ * Generic XML parser for Etiqet. This class can be used to parse {@link com.neueda.etiqet.core.config.dtos.EtiqetConfiguration}s,
+ * {@link com.neueda.etiqet.core.config.dtos.Messages}, and {@link com.neueda.etiqet.core.config.dtos.Protocol} objects
+ * as well as validating instances of each of these against the Etiqet schema when instantiated via other means
+ */
 public class XmlParser {
 
     private static final Logger LOG = LogManager.getLogger(XmlParser.class);
@@ -43,6 +48,7 @@ public class XmlParser {
      * @return instance of the class provided as parse from the XML
      * @throws EtiqetException
      *          when an error occurs trying to parse <code>xmlPath</code> as an instance of <code>clazz</code>
+     * @see #getSchemaFile()
      */
     @SuppressWarnings("unchecked")
     public <T> T parse(String xmlPath, Class<T> clazz) throws EtiqetException {
@@ -100,6 +106,13 @@ public class XmlParser {
         }
     }
 
+    /**
+     * Gets the Etiqet schema to be used when parsing XML
+     *
+     * @return Schema object referencing
+     * @throws EtiqetException when the schema file cannot be found or parsed.
+     * @see #getSchema()
+     */
     private Schema getSchema() throws EtiqetException {
         // Create the schema object using XSD 1.1 - use of <xs:assert> requires 1.1
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/XML/XMLSchema/v1.1");

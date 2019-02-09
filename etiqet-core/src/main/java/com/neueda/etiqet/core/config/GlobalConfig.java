@@ -2,6 +2,7 @@ package com.neueda.etiqet.core.config;
 
 import com.neueda.etiqet.core.client.Client;
 import com.neueda.etiqet.core.client.ClientFactory;
+import com.neueda.etiqet.core.common.ConfigConstants;
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.annotations.Configuration;
@@ -24,6 +25,11 @@ import java.util.Map;
 
 import static com.neueda.etiqet.core.common.ConfigConstants.DEFAULT_CONFIG_VARIABLE;
 
+/**
+ * Singleton instance of the Etiqet global configuration. Once initialised by one of the {@link #getInstance()},
+ * {@link #getInstance(String)}, or {@link #getInstance(Class)} methods, can be called from various points within Etiqet
+ * simply using the no-argument {@linkplain #getInstance()}
+ */
 public class GlobalConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalConfig.class);
@@ -41,17 +47,70 @@ public class GlobalConfig {
 
     private Map<String, Server> servers = new HashMap<>();
 
-    public static GlobalConfig getInstance() throws EtiqetException {
-        if(!Environment.isEnvVarSet(DEFAULT_CONFIG_VARIABLE)) {
-            throw new EtiqetException("Could not find system property " + DEFAULT_CONFIG_VARIABLE + " to create global"
-                                        + " configuration with");
+    private GlobalConfig(final String path) throws EtiqetException {
+        configPath = path;
+        try {
+            setConfig(new XmlParser().parse(path, EtiqetConfiguration.class));
+
+            for (Protocol protocol : config.getProtocols()) {
+                addProtocol(protocol);
+            }
+
+            for (ClientImpl clientImpl : config.getClients()) {
+                addClient(clientImpl);
+            }
+
+            for (ServerImpl serverDetail : config.getServers()) {
+                addServer(serverDetail);
+            }
+        } catch (Exception e) {
+            String msg = "Error reading global configuration file " + getConfigPath();
+            LOG.error(msg, e);
+            throw new EtiqetException(msg, e);
         }
+    }
+
+    /**
+     * <p>Gets the GlobalConfig for Etiqet.</p>
+     *
+     * <p>If not instantiated already, this will instantiate global config by looking for
+     * a file specified under the system property {@value ConfigConstants#DEFAULT_CONFIG_VARIABLE}</p>
+     *
+     * @return instance of GlobalConfig
+     * @throws EtiqetException when the GlobalConfig could not be instantiated via the file specified via the system
+     *                         property {@value ConfigConstants#DEFAULT_CONFIG_VARIABLE}
+     */
+    public static GlobalConfig getInstance() throws EtiqetException {
         if(instance == null) {
+            if (!Environment.isEnvVarSet(DEFAULT_CONFIG_VARIABLE)) {
+                throw new EtiqetException("Could not find system property " + DEFAULT_CONFIG_VARIABLE + " to create global"
+                        + " configuration with");
+            }
             if(LOG.isDebugEnabled()) {
                 LOG.debug(String.format("Creating default GlobalConfig from file %s",
-                            System.getProperty(DEFAULT_CONFIG_VARIABLE)));
+                        System.getProperty(DEFAULT_CONFIG_VARIABLE)));
             }
             instance = new GlobalConfig(Environment.resolveEnvVars(System.getProperty(DEFAULT_CONFIG_VARIABLE)));
+        }
+        return instance;
+    }
+
+    /**
+     * <p>Gets the GlobalConfig for Etiqet.</p>
+     *
+     * <p>If not instantiated already, this will instantiate global config by parsing the <code>configPath</code>
+     * specified</p>
+     *
+     * @param configPath path to an Etiqet configuration file
+     * @return instance of GlobalConfig
+     * @throws EtiqetException when the GlobalConfig could not be instantiated via the file specified
+     */
+    public static GlobalConfig getInstance(String configPath) throws EtiqetException {
+        if (instance == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(String.format("Creating default GlobalConfig from file %s", configPath));
+            }
+            instance = new GlobalConfig(Environment.resolveEnvVars(configPath));
         }
         return instance;
     }
@@ -102,39 +161,21 @@ public class GlobalConfig {
         }
     }
 
-    private GlobalConfig(final String path) throws EtiqetException {
-        configPath = path;
-        try {
-            setConfig(new XmlParser().parse(getConfigPath(), EtiqetConfiguration.class));
-
-            for(Protocol protocol : config.getProtocols()) {
-                addProtocol(protocol);
-            }
-
-            for (ClientImpl clientImpl : config.getClients()) {
-                addClient(clientImpl);
-            }
-
-            for (ServerImpl serverDetail : config.getServers()) {
-                addServer(serverDetail);
-            }
-        } catch (Exception e) {
-            String msg = "Error reading global configuration file " + getConfigPath();
-            LOG.error(msg, e);
-            throw new EtiqetException(msg, e);
-        }
-    }
-
-    public static GlobalConfig getInstance(String configPath) throws EtiqetException {
-        if (instance == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Creating default GlobalConfig from file %s", configPath));
-            }
-            instance = new GlobalConfig(Environment.resolveEnvVars(configPath));
-        }
-        return instance;
-    }
-
+    /**
+     * <p>Gets the GlobalConfig for Etiqet.</p>
+     *
+     * <p>If not instantiated already, this will instantiate global config by reading methods in the class that use the
+     * {@link EtiqetProtocol}, {@link NamedClient}, and {@link NamedServer} annotations.</p>
+     *
+     * <p>The <code>configurationClass</code> provided must be annotated with {@link Configuration}, and must provide
+     * at least one protocol. Once the configuration class has been processed, it is validated against the Etiqet
+     * XML schema to ensure that all required fields are available</p>
+     *
+     * @param configurationClass class that configures Etiqet
+     * @return instance of GlobalConfig
+     * @throws EtiqetException when the GlobalConfig could not be instantiated via the file specified via the system
+     *                         property {@value ConfigConstants#DEFAULT_CONFIG_VARIABLE}
+     */
     public static GlobalConfig getInstance(Class<?> configurationClass) throws EtiqetException {
         if (instance == null) {
             if (LOG.isDebugEnabled()) {
@@ -153,7 +194,7 @@ public class GlobalConfig {
 
         if (!method.getReturnType().equals(ServerImpl.class)) {
             String error = String.format("NamedServer %s does not return type com.neueda.etiqet.core.config.dtos.ServerImpl",
-                serverName);
+                    serverName);
             throw new EtiqetException(error);
         }
 
@@ -175,7 +216,7 @@ public class GlobalConfig {
         String clientName = clientAnnotation.name();
         if (!method.getReturnType().equals(ClientImpl.class)) {
             String error = String.format("Client %s does not return type com.neueda.etiqet.core.config.dtos.ClientImpl",
-                clientName);
+                    clientName);
             throw new EtiqetException(error);
         }
 
@@ -192,7 +233,7 @@ public class GlobalConfig {
         }
         if (client.getPrimaryConfig() == null || StringUtils.isNullOrEmpty(client.getPrimaryConfig().getConfigPath())) {
             throw new EtiqetException(
-                String.format("Client %s does not have a primary configuration file defined", clientName)
+                    String.format("Client %s does not have a primary configuration file defined", clientName)
             );
         }
 
@@ -206,7 +247,7 @@ public class GlobalConfig {
         String protocolName = protocolAnnotation.value();
         if (!method.getReturnType().equals(Protocol.class)) {
             String error = String.format("Protocol %s does not return type com.neueda.etiqet.core.config.dtos.Protocol",
-                protocolName);
+                    protocolName);
             throw new EtiqetException(error);
         }
 
@@ -270,10 +311,10 @@ public class GlobalConfig {
 
         ClientConfig secondaryConfig = clientImpl.getSecondaryConfig();
         Client client = ClientFactory.create(
-            clientClass,
-            clientImpl.getPrimaryConfig().getConfigPath(),
-            secondaryConfig != null ? secondaryConfig.getConfigPath() : null,
-            protocolConfig
+                clientClass,
+                clientImpl.getPrimaryConfig().getConfigPath(),
+                secondaryConfig != null ? secondaryConfig.getConfigPath() : null,
+                protocolConfig
         );
 
         clients.put(clientImpl.getName(), client);
@@ -319,5 +360,9 @@ public class GlobalConfig {
 
     public String getConfigPath() {
         return configPath;
+    }
+
+    public Class<?> getConfigClass() {
+        return configClass;
     }
 }

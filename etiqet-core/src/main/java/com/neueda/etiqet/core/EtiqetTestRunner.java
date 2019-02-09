@@ -4,6 +4,7 @@ import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.util.StringUtils;
+import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
@@ -28,13 +29,26 @@ import static com.neueda.etiqet.core.common.ConfigConstants.DEFAULT_CONFIG_VARIA
 
 /**
  * EtiqetTestRunner uses {@link Cucumber} as a delegate test runner. Before instantiating the Cucumber Test Runner,
- * we first configure the Etiqet Configuration based on the {@link EtiqetOptions} specified on the test class
+ * we first configure Etiqet based on the {@link EtiqetOptions} specified on the test class
  */
 public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
 
-    static final String FIXTURE_PACKAGE = "com.neueda.etiqet.fixture";
     private static final Logger LOG = LogManager.getLogger(EtiqetTestRunner.class);
+
+    /**
+     * Package that contains the Etiqet-specific fixtures
+     */
+    static final String FIXTURE_PACKAGE = "com.neueda.etiqet.fixture";
+    private GlobalConfig globalConfig;
+
+    /**
+     * Instance of {@link Cucumber} that will run the unit tests with the additional Etiqet configuration required
+     */
     private Cucumber cucumberDelegate;
+
+    /**
+     * {@link EtiqetOptions} used to configure this test runner
+     */
     private EtiqetOptions etiqetOptions;
 
     /**
@@ -67,7 +81,6 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
         }
 
         // As GlobalConfig is a singleton, if we instantiate it here then it will be set for all test runs
-        GlobalConfig globalConfig;
         if (!etiqetOptions.configClass().equals(EtiqetOptions.NullConfiguration.class)) {
             LOG.info("Initialising EtiqetTestRunner with configuration class " + etiqetOptions.configClass());
             globalConfig = GlobalConfig.getInstance(etiqetOptions.configClass());
@@ -115,27 +128,77 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
                 runtimeOptions.getFeaturePaths().clear();
                 runtimeOptions.getFeaturePaths().addAll(uniqueFeatures);
 
-                return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+                for (String plugin : etiqetOptions.plugin()) {
+                    runtimeOptions.addPlugin(plugin);
+                }
+
+                return getCucumberRuntime(resourceLoader, classFinder, classLoader, runtimeOptions);
             }
 
         };
     }
 
+    GlobalConfig getGlobalConfig() {
+        return globalConfig;
+    }
+
+    /**
+     * Gets an instance of {@link Runtime} for Cucumber to run the unit tests. This has been abstracted to assist with
+     * unit testing of the EtiqetTestRunner
+     *
+     * @param resourceLoader used to load resources
+     * @param classFinder    used to find classes
+     * @param classLoader    used to load classes
+     * @param runtimeOptions Runtime options specified via {@link EtiqetOptions} and {@link CucumberOptions}
+     * @return Cucumber runtime
+     */
+    Runtime getCucumberRuntime(ResourceLoader resourceLoader,
+                               ClassFinder classFinder,
+                               ClassLoader classLoader,
+                               RuntimeOptions runtimeOptions) {
+        return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return list of objects that define the children of this Runner
+     */
     @Override
     protected List<FeatureRunner> getChildren() {
         return cucumberDelegate.getChildren();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param child the child feature
+     * @return a {@link Description} for {@code child}, which can be assumed to be an element of the list returned
+     * by {@link ParentRunner#getChildren()}
+     */
     @Override
     protected Description describeChild(FeatureRunner child) {
         return child.getDescription();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param child    child feature to be run
+     * @param notifier {@link RunNotifier} to notify JUnit of running tests
+     */
     @Override
     protected void runChild(FeatureRunner child, RunNotifier notifier) {
         child.run(notifier);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>This uses the Cucumber delegate instantiated in the constructor</p>
+     *
+     * @param notifier {@link RunNotifier} to notify JUnit of running tests
+     */
     @Override
     public void run(RunNotifier notifier) {
         cucumberDelegate.run(notifier);

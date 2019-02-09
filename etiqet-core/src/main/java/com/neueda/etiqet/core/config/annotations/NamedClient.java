@@ -1,11 +1,12 @@
 package com.neueda.etiqet.core.config.annotations;
 
+import com.neueda.etiqet.core.config.dtos.ClientImpl;
 import com.neueda.etiqet.fixture.EtiqetHandlers;
 
 import java.lang.annotation.*;
 
 /**
- * Tells Etiqet that this method should return a {@link com.neueda.etiqet.core.config.dtos.ClientImpl}
+ * Tells Etiqet that this method should return a {@link ClientImpl}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

@@ -1,6 +1,7 @@
 package com.neueda.etiqet.core.config.annotations;
 
 import com.neueda.etiqet.core.config.dtos.ServerImpl;
+import com.neueda.etiqet.core.server.Server;
 import com.neueda.etiqet.fixture.EtiqetHandlers;
 
 import java.lang.annotation.*;
@@ -22,7 +23,7 @@ public @interface NamedServer {
     /**
      * @return class that implements the server
      */
-    Class<? extends com.neueda.etiqet.core.server.Server> impl();
+    Class<? extends Server> impl();
 
     /**
      * @return path to the configuration file for the server

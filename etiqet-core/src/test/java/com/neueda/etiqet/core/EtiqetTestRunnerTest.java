@@ -1,10 +1,18 @@
 package com.neueda.etiqet.core;
 
+import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.config.annotations.impl.ExampleConfiguration;
 import com.neueda.etiqet.core.testing.EmptyOptionsTestRun;
 import com.neueda.etiqet.core.testing.NoOptionsTestRun;
-import com.neueda.etiqet.core.testing.ValidTestRun;
+import com.neueda.etiqet.core.testing.ValidConfigurationClassTestRun;
+import com.neueda.etiqet.core.testing.ValidConfigurationFileTestRun;
 import cucumber.api.junit.Cucumber;
+import cucumber.runtime.ClassFinder;
+import cucumber.runtime.Runtime;
+import cucumber.runtime.RuntimeOptions;
+import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.junit.FeatureRunner;
 import org.junit.After;
 import org.junit.Before;
@@ -12,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +42,15 @@ public class EtiqetTestRunnerTest {
         if (defaultConfigVar != null) {
             System.setProperty(DEFAULT_CONFIG_VARIABLE, defaultConfigVar);
         }
+    }
+
+    private void resetGlobalConfig() throws Exception {
+        // because GlobalConfig is a singleton, we need to ensure that the instance is reset after each of these
+        // tests. Without exposing the instance, this involves using reflection to set the instance to null
+        GlobalConfig globalConfig = GlobalConfig.getInstance();
+        Field field = GlobalConfig.class.getDeclaredField("instance");
+        field.setAccessible(true);
+        field.set(globalConfig, null);
     }
 
     @Test
@@ -67,12 +85,65 @@ public class EtiqetTestRunnerTest {
     }
 
     @Test
+    public void testEtiqetOptionsParsedCorrectly() throws Exception {
+        resetGlobalConfig();
+
+        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidConfigurationClassTestRun.class) {
+            @Override
+            Runtime getCucumberRuntime(ResourceLoader resourceLoader,
+                                       ClassFinder classFinder,
+                                       ClassLoader classLoader,
+                                       RuntimeOptions runtimeOptions) {
+                assertTrue(runtimeOptions.getGlue().contains(EtiqetTestRunner.FIXTURE_PACKAGE));
+                assertTrue(runtimeOptions.getGlue().contains("com.example.other.fixtures"));
+                assertTrue(runtimeOptions.getFeaturePaths().contains("src/test/resources/features/test.feature"));
+                return mock(Runtime.class);
+            }
+        };
+
+        GlobalConfig globalConfig = testRunner.getGlobalConfig();
+        assertNotNull(globalConfig);
+        assertNotNull(globalConfig.getConfigClass());
+        assertEquals(ExampleConfiguration.class, globalConfig.getConfigClass());
+
+        resetGlobalConfig();
+    }
+
+    @Test
+    public void testEtiqetOptionsParsedCorrectlyWithConfigurationFile() throws Exception {
+        resetGlobalConfig();
+
+        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidConfigurationFileTestRun.class) {
+            @Override
+            Runtime getCucumberRuntime(ResourceLoader resourceLoader,
+                                       ClassFinder classFinder,
+                                       ClassLoader classLoader,
+                                       RuntimeOptions runtimeOptions) {
+                assertTrue(runtimeOptions.getGlue().contains(EtiqetTestRunner.FIXTURE_PACKAGE));
+                assertTrue(runtimeOptions.getGlue().contains("com.example.other.fixtures"));
+                assertTrue(runtimeOptions.getFeaturePaths().contains("src/test/resources/features/test.feature"));
+                return mock(Runtime.class);
+            }
+        };
+
+        GlobalConfig globalConfig = testRunner.getGlobalConfig();
+        assertNotNull(globalConfig);
+        assertNotNull(globalConfig.getConfigPath());
+        assertEquals(
+                Environment.resolveEnvVars("${etiqet.directory}/etiqet-core/src/test/resources/config/etiqet.config.xml"),
+                globalConfig.getConfigPath()
+        );
+
+        resetGlobalConfig();
+    }
+
+    @Test
     public void testGetChildren() throws Exception {
         FeatureRunner runner = mock(FeatureRunner.class);
         Cucumber cucumber = mock(Cucumber.class);
         when(cucumber.getChildren()).thenReturn(Collections.singletonList(runner));
 
-        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidTestRun.class) {
+        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidConfigurationClassTestRun.class) {
             @Override
             Cucumber getCucumberDelegate(Class clazz) {
                 return cucumber;
@@ -90,7 +161,7 @@ public class EtiqetTestRunnerTest {
         FeatureRunner child = mock(FeatureRunner.class);
         when(child.getDescription()).thenReturn(testDescription);
 
-        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidTestRun.class) {
+        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidConfigurationClassTestRun.class) {
             @Override
             Cucumber getCucumberDelegate(Class clazz) {
                 return mock(Cucumber.class);
@@ -105,7 +176,7 @@ public class EtiqetTestRunnerTest {
 
     @Test
     public void testRunChild() throws Exception {
-        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidTestRun.class) {
+        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidConfigurationClassTestRun.class) {
             @Override
             Cucumber getCucumberDelegate(Class clazz) {
                 return mock(Cucumber.class);
@@ -122,7 +193,7 @@ public class EtiqetTestRunnerTest {
     public void testRun() throws Exception {
         Cucumber cucumber = mock(Cucumber.class);
 
-        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidTestRun.class) {
+        EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidConfigurationClassTestRun.class) {
             @Override
             Cucumber getCucumberDelegate(Class clazz) {
                 return cucumber;
