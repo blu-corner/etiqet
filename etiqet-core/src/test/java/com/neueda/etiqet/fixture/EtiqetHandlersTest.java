@@ -19,6 +19,7 @@ import org.mockito.Mockito;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,9 +32,13 @@ import static org.junit.Assert.*;
 public class EtiqetHandlersTest {
 
     private EtiqetHandlers handlers;
+    private GlobalConfig globalConfig;
 
     @Before
     public void setUp() throws Exception {
+        URL resource = this.getClass().getClassLoader().getResource("config/etiqet.config.xml");
+        assertNotNull("Cannot find test Etiqet configuration file in classpath:config/etiqet.config.xml", resource);
+        globalConfig = GlobalConfig.getInstance(resource.getPath());
         handlers = new EtiqetHandlers() {
             @Override
             public Client createClient(String impl, String clientName) throws EtiqetException {
@@ -46,15 +51,23 @@ public class EtiqetHandlersTest {
                 String etiqetConfig = configDir + "/properties/test.properties";
                 String clientConfig = configDir + "/properties/testConfig.properties";
                 Client client = ClientFactory.create("testProtocol", etiqetConfig, clientConfig);
-                client.setProtocolConfig(GlobalConfig.getInstance().getProtocol("testProtocol"));
+                client.setProtocolConfig(globalConfig.getProtocol("testProtocol"));
                 addClient(clientName, client);
                 return client;
             }
         };
     }
 
+    /**
+     * Resets the global configuration to allow reconfiguration
+     *
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
+        Field field = GlobalConfig.class.getDeclaredField("instance");
+        field.setAccessible(true);
+        field.set(globalConfig, null);
     }
 
     @Test
