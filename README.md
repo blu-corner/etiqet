@@ -286,6 +286,8 @@ public class ExampleConfiguration {
      * The @EtiqetProtocol annotation tells Etiqet that this returns a protocol definition. This annotation requires a
      * value - this is the name that the protocol will be accessed under.
      * 
+     * Note that the name specified in the annotation will override any name given within the method itself
+     * 
      * Methods using this annotation *MUST* return the type `com.neueda.etiqet.core.config.dtos.Protocol` 
      */ 
     @EtiqetProtocol("testProtocol")
@@ -307,9 +309,9 @@ public class ExampleConfiguration {
     }
 
     /**
-     * This is a helper function to return an instance of `com.neueda.etiqet.core.config.dtos.Protocol` 
+     * This is a helper function to return an instance of `com.neueda.etiqet.core.config.dtos.Client` 
      * 
-     * @return client
+     * @return client DTO that specifies that Etiqet will use `TestClient` and will be configured with the file provided
      */
     private Client getFixClient() {
         Client client = new Client();
@@ -321,9 +323,12 @@ public class ExampleConfiguration {
     /**
      * The @NamedClient annotation tells Etiqet to instantiate a client with the name "testClient" that uses the
      * "testProtocol defined above, but overrides the default configuration file with the value defined with when
-     * setting the primary configuration
+     * setting the primary configuration.
      * 
-     * @return instance of `com.neueda.etiqet.core.config.dtos.ClientImpl` which specifies
+     * Note that the fields specified within the annotation will override any values for the same fields set within the
+     * method itself.
+     * 
+     * @return instance of `com.neueda.etiqet.core.config.dtos.ClientImpl`
      */
     @NamedClient(name = "testClient1", impl = "testProtocol")
     public ClientImpl getClient1() {
