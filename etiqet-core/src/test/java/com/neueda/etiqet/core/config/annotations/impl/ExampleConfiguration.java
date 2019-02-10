@@ -5,7 +5,10 @@ import com.neueda.etiqet.core.config.annotations.Configuration;
 import com.neueda.etiqet.core.config.annotations.EtiqetProtocol;
 import com.neueda.etiqet.core.config.annotations.NamedClient;
 import com.neueda.etiqet.core.config.annotations.NamedServer;
-import com.neueda.etiqet.core.config.dtos.*;
+import com.neueda.etiqet.core.config.dtos.Client;
+import com.neueda.etiqet.core.config.dtos.ClientImpl;
+import com.neueda.etiqet.core.config.dtos.Protocol;
+import com.neueda.etiqet.core.config.dtos.ServerImpl;
 import com.neueda.etiqet.core.testing.client.TestClient;
 import com.neueda.etiqet.core.testing.message.TestDictionary;
 import com.neueda.etiqet.core.testing.server.TestServer;
@@ -17,7 +20,7 @@ public class ExampleConfiguration {
     public Protocol getTestProtocol() throws EtiqetException {
         Protocol protocol = new Protocol();
         protocol.setClient(getFixClient());
-        protocol.setDictionary(new Dictionary(TestDictionary.class));
+        protocol.setDictionary(TestDictionary.class);
         String messageConfiguration = getClass().getClassLoader().getResource("protocols/testMessages.xml").getPath();
         protocol.setMessages(messageConfiguration);
         return protocol;

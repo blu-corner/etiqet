@@ -4,6 +4,7 @@ import com.neueda.etiqet.core.common.EtiqetConstants;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.xml.ProtocolAdapter;
 import com.neueda.etiqet.core.config.xml.XmlParser;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -46,6 +47,9 @@ public class Protocol implements Serializable {
 	@XmlElement(name = "dictionary", namespace = EtiqetConstants.NAMESPACE)
 	public Dictionary getDictionary() { return dictionary; }
 	public void setDictionary(Dictionary dictionary) { this.dictionary = dictionary; }
+	public void setDictionary(Class<? extends AbstractDictionary> dictionaryClass) {
+	    this.dictionary = new Dictionary(dictionaryClass);
+    }
 
 	@XmlElement(name = "components_package", namespace = EtiqetConstants.NAMESPACE)
 	public String getComponentsPackage() { return componentsPackage; }

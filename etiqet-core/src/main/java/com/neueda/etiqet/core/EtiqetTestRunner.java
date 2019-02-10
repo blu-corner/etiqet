@@ -80,6 +80,11 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
                 + "to a configuration file");
         }
 
+        if(!etiqetOptions.configClass().equals(EtiqetOptions.NullConfiguration.class)
+            && !StringUtils.isNullOrEmpty(etiqetOptions.configFile())) {
+            throw new EtiqetException("Etiqet cannot be configured with both a class and configuration file");
+        }
+
         // As GlobalConfig is a singleton, if we instantiate it here then it will be set for all test runs
         if (!etiqetOptions.configClass().equals(EtiqetOptions.NullConfiguration.class)) {
             LOG.info("Initialising EtiqetTestRunner with configuration class " + etiqetOptions.configClass());
@@ -121,9 +126,14 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
                     .forEach(glue -> runtimeOptions.getGlue().add(glue));
 
                 // ensure that list of features we provide Cucumber is unique
-                Set<String> uniqueFeatures = new HashSet<>();
-                uniqueFeatures.addAll(Arrays.asList(etiqetOptions.features()));
-                uniqueFeatures.addAll(runtimeOptions.getFeaturePaths());
+                Set<String> uniqueFeatures = new HashSet<>(runtimeOptions.getFeaturePaths());
+                for(String feature : etiqetOptions.features()) {
+                    try {
+                        uniqueFeatures.add(Environment.resolveEnvVars(feature));
+                    } catch (EtiqetException e) {
+                        LOG.error("Unable to add feature "+feature+" because of an inaccessible environment variable");
+                    }
+                }
 
                 runtimeOptions.getFeaturePaths().clear();
                 runtimeOptions.getFeaturePaths().addAll(uniqueFeatures);

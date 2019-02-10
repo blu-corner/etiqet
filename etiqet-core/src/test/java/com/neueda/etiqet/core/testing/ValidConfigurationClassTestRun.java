@@ -5,7 +5,7 @@ import com.neueda.etiqet.core.config.annotations.impl.ExampleConfiguration;
 
 @EtiqetOptions(
         configClass = ExampleConfiguration.class,
-        features = {"src/test/resources/features/test.feature"},
+        features = {"${etiqet.directory}/etiqet-core/src/test/resources/features/test.feature"},
         additionalFixtures = "com.example.other.fixtures",
         plugin = {"pretty", "html:target/cucumber"}
 )
