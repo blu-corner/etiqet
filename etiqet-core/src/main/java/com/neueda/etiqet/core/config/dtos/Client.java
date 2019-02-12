@@ -2,11 +2,9 @@ package com.neueda.etiqet.core.config.dtos;
 
 import com.neueda.etiqet.core.common.EtiqetConstants;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,20 +15,23 @@ public class Client implements Serializable {
 
 	private String impl;
 
+    private Class<?> implementationClass;
+
 	private String defaultConfig;
 
-	private List<UrlExtension> urlExtensions;
+    private List<UrlExtension> urlExtensions = new ArrayList<>();
 
-	private Delegates delegates;
+	private List<Delegate> delegates = new ArrayList<>();
 
 	private StopEvent stopEvent;
 
-	@XmlElement(name = "delegates", namespace = EtiqetConstants.NAMESPACE)
-	public Delegates getDelegates() {
+	@XmlElementWrapper(name = "delegates", namespace = EtiqetConstants.NAMESPACE)
+	@XmlElement(name = "delegate", namespace = EtiqetConstants.NAMESPACE)
+	public List<Delegate> getDelegates() {
 		return delegates;
 	}
 
-	public void setDelegates(Delegates delegates) {
+	public void setDelegates(List<Delegate> delegates) {
 		this.delegates = delegates;
 	}
 
@@ -51,6 +52,16 @@ public class Client implements Serializable {
 	public void setImpl(String impl) {
 		this.impl = impl;
 	}
+
+    @XmlTransient
+    public Class<?> getImplementationClass() {
+        return this.implementationClass;
+    }
+
+    public void setImplementationClass(Class<?> implementationClass) {
+        this.impl = implementationClass.getName();
+        this.implementationClass = implementationClass;
+    }
 
 	@XmlAttribute(required = true)
 	public String getDefaultConfig() {

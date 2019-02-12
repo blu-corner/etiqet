@@ -6,12 +6,33 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.testing.client.TestClient;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.net.URL;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class ClientFactoryTest {
+
+    private GlobalConfig globalConfig;
+
+    @Before
+    public void setUp() throws Exception {
+        URL resource = this.getClass().getClassLoader().getResource("config/etiqet.config.xml");
+        assertNotNull("Cannot find test Etiqet configuration file in classpath:config/etiqet.config.xml", resource);
+        globalConfig = GlobalConfig.getInstance(resource.getPath());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Field field = GlobalConfig.class.getDeclaredField("instance");
+        field.setAccessible(true);
+        field.set(globalConfig, null);
+    }
 
     @Test
     public void testCreate() throws EtiqetException {

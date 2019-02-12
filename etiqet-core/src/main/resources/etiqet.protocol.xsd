@@ -43,7 +43,7 @@
                     <xs:documentation xml:lang="en">List of protocols to be included in Etiqet</xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
-                    <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:choice minOccurs="1" maxOccurs="unbounded">
                         <xs:element ref="protocol"/>
                     </xs:choice>
                 </xs:complexType>
@@ -55,7 +55,7 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="client" type="ClientDef" minOccurs="1" maxOccurs="unbounded"/>
+                        <xs:element name="client" type="ClientDef" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -66,7 +66,7 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="server" minOccurs="1" type="Server"/>
+                        <xs:element name="server" minOccurs="0" type="Server"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -148,14 +148,9 @@
         <xs:sequence minOccurs="0">
             <xs:element name="client" type="Client"/>
             <xs:element name="dictionary" type="Dictionary" minOccurs="0" />
-            <xs:element name="components_package" type="xs:string">
+            <xs:element name="components_package" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Fully qualified package of message components</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="messageClass" type="xs:string">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">Fully qualified class name of the message class</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element ref="messages" minOccurs="0"/>
@@ -181,12 +176,11 @@
 
     <xs:complexType name="Messages">
         <xs:annotation>
-            <xs:documentation>List of messages used in the protocol with
-                optional default field values</xs:documentation>
+            <xs:documentation>List of messages used in the protocol with optional default field values
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="message" type="Message" minOccurs="0"
-                maxOccurs="unbounded"/>
+            <xs:element name="message" type="Message" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="ref" type="xs:string" use="optional">
             <xs:annotation>
@@ -214,7 +208,7 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="delegate" maxOccurs="unbounded" type="Delegate"/>
+                        <xs:element name="delegate" minOccurs="0" maxOccurs="unbounded" type="Delegate"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -234,7 +228,7 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="urlExtension" maxOccurs="unbounded" type="UrlExtension"/>
+                        <xs:element name="urlExtension" minOccurs="0" maxOccurs="unbounded" type="UrlExtension"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

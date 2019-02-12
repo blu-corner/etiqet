@@ -26,6 +26,9 @@ public class ProtocolConfig implements Serializable {
 	
 	private Map<String, Message> messageMap;
 
+	public ProtocolConfig() {
+	}
+
 	public ProtocolConfig(Protocol protocol) throws EtiqetException {
 		setProtocol(protocol);
 		commonInit();
@@ -126,7 +129,7 @@ public class ProtocolConfig implements Serializable {
 		return getProtocol().toString();
 	}
 
-	public Delegates getClientDelegates() {
+	public List<Delegate> getClientDelegates() {
 		return getProtocol().getClient().getDelegates();
 	}
 

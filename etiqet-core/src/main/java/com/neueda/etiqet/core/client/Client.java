@@ -330,8 +330,8 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
         if(protocolConf == null) return;
 
         Message message = protocolConf.getMessage(msgName);
-        if(message != null && message.getFields() != null && message.getFields().getField() != null) {
-            for (Field field: message.getFields().getField()){
+        if (message != null) {
+            for (Field field : message.getFields()) {
                 if(field != null && (field.getRequired()!= null )
                     && (field.getRequired().equalsIgnoreCase("Y"))
                     && !cdr.containsKey(field.getName()) ){

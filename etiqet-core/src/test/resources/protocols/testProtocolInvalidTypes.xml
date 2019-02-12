@@ -8,7 +8,6 @@
 	</client>
 	<dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
 	<components_package>quickfix.fix44.component</components_package>
-	<messageClass>com.neueda.etiqet.core.testing.message.TestMessage</messageClass>
 	<messages>
 		<message name="TestMsg">
 			<implementation>java.lang.String</implementation>

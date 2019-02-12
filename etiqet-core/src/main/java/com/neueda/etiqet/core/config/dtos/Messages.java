@@ -20,7 +20,18 @@ public class Messages implements Serializable {
 
 	private Message[] message;
 
-	@XmlAttribute(name = "ref")
+    public Messages() {
+    }
+
+    public Messages(Message[] message) {
+        this.message = message;
+    }
+
+    public Messages(List<Message> messages) {
+        this.message = messages.toArray(new Message[0]);
+    }
+
+    @XmlAttribute(name = "ref")
     public String getReference() {
         return reference;
     }

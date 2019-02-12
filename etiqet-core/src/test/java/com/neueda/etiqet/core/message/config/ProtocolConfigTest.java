@@ -6,6 +6,8 @@ import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.config.dtos.Protocol;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class ProtocolConfigTest {
@@ -17,17 +19,13 @@ public class ProtocolConfigTest {
         testCommonFields(protocolConfig);
         assertEquals("com.neueda.etiqet.core.testing.message.TestDictionary",
                 protocolConfig.getProtocol().getDictionary().getHandler());
-        assertEquals("quickfix.fix44.component.",
-                protocolConfig.getComponentPackage());
-        assertEquals("quickfix.fix44.component",
-                protocolConfig.getProtocol().getComponentsPackage());
 
-        Delegate[] delegates = protocolConfig.getClientDelegates().getDelegate();
-        assertEquals(2, delegates.length);
-        assertEquals("logger", delegates[0].getKey());
-        assertEquals("com.neueda.etiqet.core.client.delegate.LoggerClientDelegate", delegates[0].getImpl());
-        assertEquals("sink", delegates[1].getKey());
-        assertEquals("com.neueda.etiqet.core.client.delegate.SinkClientDelegate", delegates[1].getImpl());
+        List<Delegate> delegates = protocolConfig.getClientDelegates();
+        assertEquals(2, delegates.size());
+        assertEquals("logger", delegates.get(0).getKey());
+        assertEquals("com.neueda.etiqet.core.client.delegate.LoggerClientDelegate", delegates.get(0).getImpl());
+        assertEquals("sink", delegates.get(1).getKey());
+        assertEquals("com.neueda.etiqet.core.client.delegate.SinkClientDelegate", delegates.get(1).getImpl());
     }
 
     @Test
@@ -100,9 +98,6 @@ public class ProtocolConfigTest {
 
         assertEquals("com.neueda.etiqet.core.testing.client.TestClient",
                 protocolConfig.getClient().getImpl());
-
-        assertEquals("com.neueda.etiqet.core.testing.message.TestMessage",
-                protocol.getMessageClass());
 
         Message message = protocolConfig.getMessages()[0];
         assertNotNull(message);

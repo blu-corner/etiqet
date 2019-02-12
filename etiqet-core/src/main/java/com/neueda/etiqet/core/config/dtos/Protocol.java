@@ -1,13 +1,19 @@
 package com.neueda.etiqet.core.config.dtos;
 
 import com.neueda.etiqet.core.common.EtiqetConstants;
+import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.xml.ProtocolAdapter;
+import com.neueda.etiqet.core.config.xml.XmlParser;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -21,8 +27,6 @@ public class Protocol implements Serializable {
 
 	private String ref;
 
-	private String messageClass;
-
 	private Client client;
 
 	private Dictionary dictionary;
@@ -30,6 +34,7 @@ public class Protocol implements Serializable {
 	private String componentsPackage;
 
 	private Messages messages;
+	private String messagesFile;
 
 	@XmlAttribute
 	public String getName() { return name; }
@@ -42,6 +47,9 @@ public class Protocol implements Serializable {
 	@XmlElement(name = "dictionary", namespace = EtiqetConstants.NAMESPACE)
 	public Dictionary getDictionary() { return dictionary; }
 	public void setDictionary(Dictionary dictionary) { this.dictionary = dictionary; }
+	public void setDictionary(Class<? extends AbstractDictionary> dictionaryClass) {
+	    this.dictionary = new Dictionary(dictionaryClass);
+    }
 
 	@XmlElement(name = "components_package", namespace = EtiqetConstants.NAMESPACE)
 	public String getComponentsPackage() { return componentsPackage; }
@@ -51,9 +59,19 @@ public class Protocol implements Serializable {
 	public Messages getMessages() { return messages; }
 	public void setMessages(Messages messages) { this.messages = messages; }
 
-	@XmlElement(name = "messageClass", namespace = EtiqetConstants.NAMESPACE)
-	public String getMessageClass() { return messageClass; }
-	public void setMessageClass(String messageClass) { this.messageClass = messageClass; }
+	@XmlTransient
+	public List<Message> getMessageList() {
+		return Arrays.asList(messages.getMessage());
+	}
+
+	public void setMessages(List<Message> messages) {
+		this.messages = new Messages(messages);
+	}
+
+	public void setMessages(String messagesFile) throws EtiqetException {
+		this.messages = new XmlParser().parse(messagesFile, Messages.class);
+		this.messagesFile = messagesFile;
+	}
 
 	@XmlElement(name = "client", namespace = EtiqetConstants.NAMESPACE)
 	public Client getClient() {return client;}
@@ -83,13 +101,12 @@ public class Protocol implements Serializable {
 		return other.client.equals(this.client)
 				&& other.componentsPackage.equals(this.componentsPackage)
 				&& other.dictionary.equals(this.dictionary)
-				&& other.messageClass.equals(this.messageClass)
 				&& other.messages.equals(this.messages)
 				&& other.name.equals(this.name);
 	}
 
     @Override
     public int hashCode() {
-        return Objects.hash(client, componentsPackage, dictionary, messageClass, messages, name);
+		return Objects.hash(client, componentsPackage, dictionary, messages, name);
     }
 }

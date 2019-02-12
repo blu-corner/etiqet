@@ -257,10 +257,11 @@ public class ParserUtils {
 	 * @throws EtiqetException when a utility method cannot be used to populate the field
 	 */
 	public static void fillDefaultHeaders(Message message, Cdr cdr) throws EtiqetException {
-		if (message != null && message.getHeaders() != null && message.getHeaders().getField() != null) {
-			for(Field field : message.getHeaders().getField()) {
-				if(!field.getName().startsWith("$header."))
+		if (message != null) {
+			for (Field field : message.getHeaders()) {
+				if (!field.getName().startsWith("$header.")) {
 					field.setName("$header." + field.getName());
+				}
 				if(!cdr.containsKey(field.getName())) {
 					handleDefaultField(field, cdr);
 				}
@@ -272,12 +273,11 @@ public class ParserUtils {
 	 * This method is used to build a nested message generating default values for required params
 	 * @param message message type defaults from the ProtocolConfig
 	 * @param cdr message to populate with default values
-	 * @throws EtiqetException when a utility method cannot be used to populate the field
 	 */
 	public static void fillDefaultWithParams(Message message, Cdr cdr) {
-		if (message != null && message.getFields() != null && message.getFields().getField() != null) {
-			for(Field field : message.getFields().getField()) {
-				stringToCdr(cdr, field.getName(), Arrays.asList(field.getValue()));
+		if (message != null) {
+			for (Field field : message.getFields()) {
+				stringToCdr(cdr, field.getName(), Collections.singletonList(field.getValue()));
 			}
 		}
 	}
@@ -289,8 +289,8 @@ public class ParserUtils {
 	 * @throws EtiqetException when a utility method cannot be used to populate the field
 	 */
 	public static void fillDefault(Message message, Cdr cdr) throws EtiqetException {
-		if (message != null && message.getFields() != null && message.getFields().getField() != null) {
-			for(Field field : message.getFields().getField()) {
+		if (message != null) {
+			for (Field field : message.getFields()) {
 				if(!cdr.containsKey(field.getName())) {
 				    handleDefaultField(field, cdr);
                 }
