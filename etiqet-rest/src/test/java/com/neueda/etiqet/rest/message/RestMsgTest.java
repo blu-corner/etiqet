@@ -3,15 +3,35 @@ package com.neueda.etiqet.rest.message;
 import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.SerializeException;
+import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.rest.RestConfig;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.lang.reflect.Field;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RestMsgTest {
+
+    private GlobalConfig globalConfig;
+
+    @Before
+    public void setUp() throws EtiqetException {
+        globalConfig = GlobalConfig.getInstance(RestConfig.class);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Field field = GlobalConfig.class.getDeclaredField("instance");
+        field.setAccessible(true);
+        field.set(globalConfig, null);
+    }
 
     @Test
     public void testSerializeMessage() throws EtiqetException {
