@@ -12,12 +12,12 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.junit.FeatureRunner;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import static com.neueda.etiqet.core.common.ConfigConstants.DEFAULT_CONFIG_VARIA
  */
 public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
 
-    private static final Logger LOG = LogManager.getLogger(EtiqetTestRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EtiqetTestRunner.class);
 
     /**
      * Package that contains the Etiqet-specific fixtures
@@ -87,14 +87,14 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
 
         // As GlobalConfig is a singleton, if we instantiate it here then it will be set for all test runs
         if (!etiqetOptions.configClass().equals(EtiqetOptions.NullConfiguration.class)) {
-            LOG.info("Initialising EtiqetTestRunner with configuration class " + etiqetOptions.configClass());
+            LOG.info("Initialising EtiqetTestRunner with configuration class {}", etiqetOptions.configClass());
             globalConfig = GlobalConfig.getInstance(etiqetOptions.configClass());
         } else if (!StringUtils.isNullOrEmpty(etiqetOptions.configFile())) {
-            LOG.info("Initialising EtiqetTestRunner with configuration file " + etiqetOptions.configFile());
+            LOG.info("Initialising EtiqetTestRunner with configuration file {}", etiqetOptions.configFile());
             globalConfig = GlobalConfig.getInstance(etiqetOptions.configFile());
         } else {
-            LOG.info("Initialising EtiqetTestRunner with configuration file from System Variable " +
-                DEFAULT_CONFIG_VARIABLE + ": " + Environment.resolveEnvVars(DEFAULT_CONFIG_VARIABLE));
+            LOG.info("Initialising EtiqetTestRunner with configuration file from System Variable {}: {}",
+                DEFAULT_CONFIG_VARIABLE, Environment.resolveEnvVars(DEFAULT_CONFIG_VARIABLE));
             globalConfig = GlobalConfig.getInstance();
         }
 
@@ -131,7 +131,8 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
                     try {
                         uniqueFeatures.add(Environment.resolveEnvVars(feature));
                     } catch (EtiqetException e) {
-                        LOG.error("Unable to add feature "+feature+" because of an inaccessible environment variable");
+                        LOG.error("Unable to add feature {} because of an inaccessible environment variable",
+                            feature);
                     }
                 }
 

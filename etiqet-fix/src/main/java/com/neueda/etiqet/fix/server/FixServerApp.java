@@ -7,14 +7,14 @@ import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.message.Codec;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.fix.config.FixConfigConstants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.*;
 import quickfix.field.MsgType;
 
 public class FixServerApp extends MessageCracker implements Application, Codec<Message> {
 
-	public static final Logger LOG = LogManager.getLogger(FixServerApp.class);
+	public static final Logger LOG = LoggerFactory.getLogger(FixServerApp.class);
 
 	private ProtocolConfig protocolConfig;
 
@@ -24,7 +24,7 @@ public class FixServerApp extends MessageCracker implements Application, Codec<M
 
 	@Override
 	public void fromAdmin(Message arg0, SessionID arg1) {
-		LOG.info("Server: fromAdmin " + arg0);
+		LOG.info("Server: fromAdmin {}", arg0);
 	}
 
 	/**
@@ -44,8 +44,8 @@ public class FixServerApp extends MessageCracker implements Application, Codec<M
 	 * @throws UnsupportedMessageType exception thrown when the input message is not handled.
 	 */
 	private void handleMessage(Message input, SessionID sessionID) throws UnsupportedMessageType {
-		LOG.debug("type of message: " + input.getClass().getSimpleName());
-		String classSimpleName = input.getClass().getSimpleName();
+        String classSimpleName = input.getClass().getSimpleName();
+        LOG.debug("type of message: {}", classSimpleName);
 		if (classSimpleName.equalsIgnoreCase("NewOrderSingle")){
 			handleNewOrderSingle(input, sessionID);
 		} else {
@@ -63,7 +63,7 @@ public class FixServerApp extends MessageCracker implements Application, Codec<M
 			response = getExecutionReport(input);
 			Session.sendToTarget(response, sessionID);
 		} catch (SessionNotFound e) {
-			LOG.error("Session not found: " + sessionID.toString(), e);
+			LOG.error("Session not found: {}" + sessionID, e);
 		}
 	}
 	
@@ -80,11 +80,11 @@ public class FixServerApp extends MessageCracker implements Application, Codec<M
 			cdr.set("ClOrdID", clOrdId);
 			msg = encode(cdr);
 		} catch (UnknownTagException e) {
-			LOG.error("Unknown Tag", e);
+			LOG.error("Unknown Tag foundin message {}", input, e);
 		} catch (FieldNotFound e) {
-			LOG.error("Field Not Found", e);
+			LOG.error("Field Not Found in message {}", input, e);
 		} catch (EtiqetException e) {
-			LOG.error("General Exception", e);
+			LOG.error("Unhandled exception while parsing message {}", input, e);
 		}
 		return msg;
 	}
@@ -94,7 +94,7 @@ public class FixServerApp extends MessageCracker implements Application, Codec<M
 	 */
 	@Override
 	public void onCreate(SessionID sessionID) {
-		LOG.info("Server: onCreate " + sessionID.toString());
+		LOG.info("Server: onCreate {}", sessionID);
 	}
 
 	/**
@@ -103,22 +103,22 @@ public class FixServerApp extends MessageCracker implements Application, Codec<M
 	 */
 	@Override
 	public void onLogon(SessionID sessionID) {
-		LOG.info("Server: onLogon of "+ sessionID);
+		LOG.info("Server: onLogon of {}", sessionID);
 	}
 	
 	@Override
 	public void onLogout(SessionID sessionID) {
-		LOG.info("Server onLogout " + sessionID.toString());
+		LOG.info("Server onLogout {}", sessionID);
 	}
 
 	@Override
 	public void toAdmin(Message message, SessionID sessionID) {
-		LOG.info("Server toAdmin sessionId: " + sessionID.toString() + " , message: " + message.toString());
+		LOG.info("Server toAdmin sessionId: {} , message: {}", sessionID, message);
 	}
 
 	@Override
-	public void toApp(Message message, SessionID sessionID) throws DoNotSend {
-		LOG.info("Server toApp sessionId: " + sessionID.toString() + " , message: " + message.toString());
+	public void toApp(Message message, SessionID sessionID) {
+		LOG.info("Server toApp sessionId: {} , message: {}", sessionID, message);
 	}
 
 	@Override

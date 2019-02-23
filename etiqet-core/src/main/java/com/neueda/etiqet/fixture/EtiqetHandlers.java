@@ -17,9 +17,9 @@ import com.neueda.etiqet.core.util.ParserUtils;
 import com.neueda.etiqet.core.util.Separators;
 import com.neueda.etiqet.core.util.StringUtils;
 import gherkin.deps.com.google.gson.Gson;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.mina.util.ConcurrentHashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataOutputStream;
@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 
 public class EtiqetHandlers {
 
-    private static final Logger LOG = LogManager.getLogger(EtiqetHandlers.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EtiqetHandlers.class);
 
     public static final String DEFAULT_CLIENT_NAME = "default";
     public static final String DEFAULT_MESSAGE_NAME = "default";
@@ -191,9 +191,10 @@ public class EtiqetHandlers {
      * @param secondaryConfig
      * @return
      */
-    public Client createClientWithFailover(String clientType, String clientName, String primaryConfig, String secondaryConfig)throws EtiqetException {
+    public Client createClientWithFailover(String clientType, String clientName, String primaryConfig, String secondaryConfig)
+            throws EtiqetException {
         if(StringUtils.isNullOrEmpty(secondaryConfig)){
-            throw new EtiqetException( "Secondary Config must be provided when trying to create a client with failover capabilities");
+            throw new EtiqetException("Secondary Config must be provided when trying to create a client with failover capabilities");
         }
         Client client = ClientFactory.create(clientType, primaryConfig, secondaryConfig);
         addClient(clientName, client);
@@ -418,13 +419,13 @@ public class EtiqetHandlers {
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
             date = sdf.parse(dateString.substring(0,dateString.indexOf('.')));
         } catch (ParseException e) {
-            LOG.error("Error parsing date: " + e);
+            LOG.error("Error parsing date: {}", dateString, e);
             return -1;
         }
 
         //Remove the extra zeros from the nano portion
         long nano = Long.parseLong(dateString.substring(dateString.indexOf('.')+1,dateString.indexOf('.')+10));
-        LOG.info (String.format("time: %d %s", date.getTime()*MILLI_NANO_CONVERSION + nano, dateString));
+        LOG.info("time: {} {}", date.getTime()*MILLI_NANO_CONVERSION + nano, dateString);
         //convert millis to nano by multipling by 1 million
         return date.getTime()*MILLI_NANO_CONVERSION +(nano);
     }
@@ -700,17 +701,17 @@ public class EtiqetHandlers {
 
             assertNotNull("Dictionary does not contain a definition for received message type '" + rsp.getType() + "'",
                             receivedMsgType);
-            if (!filteredMsgs.contains(receivedMsgType) && (!skipOther || (skipOther && receivedMsgType.equals(messageType)))) {
+            if (!filteredMsgs.contains(receivedMsgType) && (!skipOther || receivedMsgType.equals(messageType))) {
                 if (!DEFAULT_MESSAGE_NAME.equals(messageType)) {
                     handleError("Expected message '" + messageType + "' but found message '" + rsp.getType() + "'.",
                             (receivedMsgType.equals(messageType)), "NoCorrectResponseException");
                 }
-                LOG.info("Validating msg of type: " + messageType);
+                LOG.info("Validating msg of type: {}", messageType);
                 client.validateMsg(receivedMsgType, rsp);
                 addResponse(messageName, rsp);
                 return;
             } else {
-                LOG.warn("Filtering received message " + receivedMsgType);
+                LOG.warn("Filtering received message {}", receivedMsgType);
             }
         } while (true);
     }
@@ -729,7 +730,7 @@ public class EtiqetHandlers {
             int remainingMs = Math.max(1, (int) (timeout - System.currentTimeMillis()));
             Cdr rsp = client.waitForNoMsgType(messageType, remainingMs);
             if (rsp != null) {
-                LOG.error("Expected no message response but received: " + rsp);
+                LOG.error("Expected no message response but received: {}", rsp);
             }
             addResponse(messageName, rsp);
             return;
@@ -788,11 +789,11 @@ public class EtiqetHandlers {
 
     public void addException(RuntimeException e, String cukeException) {
         if (!expectException && !e.toString().endsWith(cukeException)) {
-            LOG.error("Unexpected Exception: " + e);
+            LOG.error("Unexpected Exception: {}", e);
             throw e;
         }
         exceptionsList.add(e);
-        LOG.info("Exception caught: " + e);
+        LOG.info("Exception caught: {}", e);
     }
 
     public void checkResponseKeyPresenceAndValue(String messageName, String params, List<String> values, String part, int position, boolean checkValuesMatch) {
@@ -996,7 +997,7 @@ public class EtiqetHandlers {
                 .collect(Collectors.toList());
         assertTrue("There are not matches for responses '" + responseList + "' with same value of Field '" + fieldName + "' as message '" + messageName + "'",
                 !ArrayUtils.isNullOrEmpty(candidateResponses));
-        LOG.info("Matched response message: " + candidateResponses.get(0).toString());
+        LOG.info("Matched response message: {}", candidateResponses.get(0));
         addResponse(responseName, candidateResponses.get(0));
     }
 
@@ -1184,7 +1185,7 @@ public class EtiqetHandlers {
             }
         }
         if (anyMatch) {
-            LOG.info("Check for errors Result: " + out.toString());
+            LOG.info("Check for errors Result: {}", out);
             tryOn = false;
         } else {
             fail("No errors matching: " + exceptionList);
@@ -1323,7 +1324,7 @@ public class EtiqetHandlers {
             String resMsg = con.getResponseMessage();
             throw new EtiqetException("Did not receive 200 (OK) response. Response from server: " + resMsg);
         }
-        LOG.info("Rest request: " + httpVerb + " to: " + url.toString() + " " + payload );
+        LOG.info("Rest request: {} to: {} with payload {}", httpVerb, url, payload);
     }
 
     /**

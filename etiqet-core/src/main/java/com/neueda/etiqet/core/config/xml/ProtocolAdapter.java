@@ -1,5 +1,6 @@
 package com.neueda.etiqet.core.config.xml;
 
+import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Protocol;
 import com.neueda.etiqet.core.util.StringUtils;
 
@@ -17,10 +18,10 @@ public class ProtocolAdapter extends XmlAdapter<Protocol, Protocol> {
      *
      * @param protocolRef protocol object to be parsed
      * @return Messages object to form part of a protocol
-     * @throws Exception when unable to parse the Messages
+     * @throws EtiqetException when unable to parse the Messages
      */
     @Override
-    public Protocol unmarshal(Protocol protocolRef) throws Exception {
+    public Protocol unmarshal(Protocol protocolRef) throws EtiqetException {
         Protocol protocol;
         if(StringUtils.isNullOrEmpty(protocolRef.getReference())) {
             protocol = protocolRef;

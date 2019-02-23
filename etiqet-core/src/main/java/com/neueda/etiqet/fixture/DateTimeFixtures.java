@@ -36,14 +36,13 @@ public class DateTimeFixtures {
     @Then("^wait until (\\d{4})(\\d{2})(\\d{2})-(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d{3})$")
     public void waitUntilDateAndTime(int year, int month, int day, int hour, int minute, int seconds, int millis) {
         Interval interval = new Interval(new DateTime(), new DateTime(year, month, day, hour, minute, seconds, millis));
-        if(LOG.isDebugEnabled()) LOG.debug("{}",interval);
 
         long ms = interval.toDurationMillis();
-        if(LOG.isDebugEnabled()) LOG.debug("{}",new DateTime());
-        if(LOG.isDebugEnabled()) LOG.debug("Sleeping for {}", ms);
+        LOG.debug("Starting sleep at {}", new DateTime());
+        LOG.debug("Sleeping for {}", ms);
 
         waitForMilliseconds(ms);
-        if(LOG.isDebugEnabled()) LOG.debug("{}", new DateTime());
+        LOG.debug("Finished sleep at {}", new DateTime());
     }
 
     @Then("^wait for (\\d+) seconds?$")

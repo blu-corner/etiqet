@@ -2,8 +2,8 @@ package com.neueda.etiqet.core.config.xml;
 
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -26,7 +26,7 @@ import java.net.URL;
  */
 public class XmlParser {
 
-    private static final Logger LOG = LogManager.getLogger(XmlParser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmlParser.class);
 
     /**
      * Name of the Etiqet schema file stored within the classpath

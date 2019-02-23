@@ -4,8 +4,8 @@ import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class Server implements Runnable {
 	
 	/** Attribute LOG for logging executions. */
-	private static final Logger LOG = LogManager.getLogger(Server.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Server.class);
 	
 	/** Attribute serverConfig. */
 	protected String serverConfig;
@@ -44,7 +44,7 @@ public abstract class Server implements Runnable {
 		try {
 			this.setConfig(PropertiesFileReader.loadPropertiesFile(extraConfigPath));
 		} catch (Exception e) {
-				LOG.warn(String.format("Could not read %s, defaulting to empty configuration", extraConfigPath));
+            LOG.warn("Could not read {}, defaulting to empty configuration", extraConfigPath);
 			this.setConfig(new Config());
 		}
 	}

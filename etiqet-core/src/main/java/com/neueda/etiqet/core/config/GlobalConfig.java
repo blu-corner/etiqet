@@ -86,10 +86,7 @@ public class GlobalConfig {
                 throw new EtiqetException("Could not find system property " + DEFAULT_CONFIG_VARIABLE + " to create global"
                         + " configuration with");
             }
-            if(LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Creating default GlobalConfig from file %s",
-                        System.getProperty(DEFAULT_CONFIG_VARIABLE)));
-            }
+            LOG.debug("Creating default GlobalConfig from file {}", System.getProperty(DEFAULT_CONFIG_VARIABLE));
             instance = new GlobalConfig(Environment.resolveEnvVars(System.getProperty(DEFAULT_CONFIG_VARIABLE)));
         }
         return instance;
@@ -107,9 +104,7 @@ public class GlobalConfig {
      */
     public static GlobalConfig getInstance(String configPath) throws EtiqetException {
         if (instance == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Creating default GlobalConfig from file %s", configPath));
-            }
+            LOG.debug("Creating default GlobalConfig from file {}", configPath);
             instance = new GlobalConfig(Environment.resolveEnvVars(configPath));
         }
         return instance;
@@ -178,9 +173,7 @@ public class GlobalConfig {
      */
     public static GlobalConfig getInstance(Class<?> configurationClass) throws EtiqetException {
         if (instance == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Creating default GlobalConfig from file %s", configurationClass));
-            }
+            LOG.debug("Creating default GlobalConfig from file {}", configurationClass);
             instance = new GlobalConfig(configurationClass);
         }
         return instance;

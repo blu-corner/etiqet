@@ -5,8 +5,6 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.fix.config.FixConfigConstants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import quickfix.Field;
 import quickfix.FieldNotFound;
 import quickfix.Message;
@@ -22,12 +20,8 @@ import java.util.Random;
 
 public final class FIXUtils {
 
-	public FIXUtils()
-	{
+	public FIXUtils() {}
 
-	}
-
-	public static final Logger LOG = LogManager.getLogger(FIXUtils.class);
 	private static DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
 
 	public static String getDateTime() {

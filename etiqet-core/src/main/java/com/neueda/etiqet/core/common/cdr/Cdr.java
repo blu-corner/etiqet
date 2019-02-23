@@ -79,8 +79,13 @@ public class Cdr {
     public String toString() {
     	StringBuilder builder = new StringBuilder();
     	
-    	for (Map.Entry<String, CdrItem> entry : items.entrySet())
-    		builder.append("[key=").append(entry.getKey()).append(", value=").append(entry.getValue().toString()).append("]|");
+    	for (Map.Entry<String, CdrItem> entry : items.entrySet()) {
+            builder.append("[key=")
+                   .append(entry.getKey())
+                   .append(", value=")
+                   .append(entry.getValue().toString())
+                   .append("]|");
+        }
     	
     	return builder.toString();
     }
