@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages xmlns="http://www.neueda.com/etiqet">
+    <message name="NewOrderSingle" admin="N">
+        <implementation>quickfix.fix44.NewOrderSingle</implementation>
+        <fields>
+            <field name="ClOrdID" type="string"
+                   utilclass="com.neueda.etiqet.fix.message.FIXUtils" method="genClientOrderID"/>
+            <field name="Symbol" type="string">CSCO</field>
+            <field name="Side" type="integer">1</field>
+            <field name="OrderQty" type="integer">100</field>
+            <field name="OrdType" type="string">2</field>
+            <field name="TransactTime" type="string"
+                   utilclass="com.neueda.etiqet.fix.message.FIXUtils" method="getDateTime"/>
+            <field name="ReceivedDeptID">9</field>
+            <field name="AccountType">1</field>
+        </fields>
+    </message>
+    <message name='OrderCancelReplaceRequest' admin='N' msgtype='G'>
+        <implementation>quickfix.fix44.OrderCancelReplaceRequest</implementation>
+        <fields>
+            <field name="ClOrdID" type="string"
+                   utilclass="com.neueda.etiqet.fix.message.FIXUtils" method="genClientOrderID"/>
+            <field name="Symbol" type="string">CSCO</field>
+            <field name="Side" type="integer">1</field>
+            <field name="OrderQty" type="integer">100</field>
+            <field name="OrdType" type="string">2</field>
+            <field name="TransactTime" type="string"
+                   utilclass="com.neueda.etiqet.fix.message.FIXUtils" method="getDateTime"/>
+        </fields>
+    </message>
+    <message name="OrderCancelRequest" admin="N">
+        <implementation>quickfix.fix44.OrderCancelRequest</implementation>
+        <fields>
+            <field name="OrigClOrdID" type="string"
+                   utilclass="com.neueda.etiqet.fix.message.FIXUtils" method="genClientOrderID"/>
+            <field name="ClOrdID" type="integer"
+                   utilclass="com.neueda.etiqet.fix.message.FIXUtils" method="genClientOrderID"/>
+            <field name="Symbol" type="string">CSCO</field>
+            <field name="Side" type="integer">1</field>
+            <field name="TransactTime" type="string"
+                   utilclass="com.neueda.etiqet.fix.message.FIXUtils" method="getDateTime"/>
+        </fields>
+    </message>
+    <message name="ExecutionReport" admin="N">
+        <implementation>quickfix.fix44.ExecutionReport</implementation>
+        <fields>
+            <field name="SendingTime" type="date"
+                   utilclass="com.neueda.etiqet.fix.message.FIXUtils" method="getDateTime"/>
+                <field name="MsgSeqNum" type="integer" required="Y">0</field>
+                <field name="CumQty" type="integer" required="Y">0</field>
+                <field name="LeavesQty" type="integer">0</field>
+                <field name="ExecID" type="integer">0</field>
+                <field name="OrderID" type="integer">1</field>
+                <field name="OrdStatus" type="string" required="Y" allowedValues="0,1,2,3,4,5,6,7,8,9,A,B,C,D,E">A</field>
+                <field name="ExecType" type="string" required="Y" allowedValues="0,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I">A</field>
+                <field name="LeavesQty" type="integer" required="Y">0</field>
+                <field name="Side" type="integer" required="Y" allowedValues="1,2,3,4,5,6">1</field>
+        </fields>
+    </message>
+    <message name="Logon" admin="Y" msgtype="A">
+        <implementation>quickfix.fix44.Logon</implementation>
+        <fields>
+            <field name="HeartBtInt" required="Y">0</field>
+            <field name="RawDataLength" required="N" >0</field>
+            <field name="RawData" required="N">0</field>
+            <field name="ResetSeqNumFlag" required="N">0</field>
+            <field name="NextExpectedMsgSeqNum" required="N">0</field>
+            <field name="MaxMessageSize" required="N">0</field>
+            <field name="TestMessageIndicator" required="N">0</field>
+            <field name="Username" required="N">0</field>
+            <field name="Password" required="N">0</field>
+        </fields>
+    </message>
+    <message name="Logout" admin="Y" msgtype="5">
+        <implementation>quickfix.fix44.Logout</implementation>
+        <fields>
+            <field name="Text" required="Y">0</field>
+            <field name="EncodedTextLen" required="Y">0</field>
+        </fields>
+    </message>
+    <message name="Heartbeat" admin="Y">
+        <implementation>quickfix.fix44.Heartbeat</implementation>
+        <fields>
+            <field name="SendingTime" type="date"
+                   utilclass="com.neueda.etiqet.fix.message.FIXUtils" method="getDateTime"/>
+        </fields>
+    </message>
+</messages>
