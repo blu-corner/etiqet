@@ -7,10 +7,12 @@ Feature: Validations
   Scenario: Check inner text
     Given I select element by xpath using value "//*[@id='et-boc']/div/div/div[7]/div[2]/div[2]/div[1]/h2"
     Then I check the selected element's inner text is equal to "Login"
+      And I clear the selected element
 
   Scenario: Check inner text with explicit wait
     Given I select element by xpath using value "//*[@id='et-boc']/div/div/div[7]/div[2]/div[2]/div[1]/h2"
     Then I check the text "Login" is present in the selected element with a timeout of 5 seconds
+      And I clear the selected element
 
   Scenario: Check any element's inner text
     Then I check that any element's inner text is equal to "Login" with a timeout of 5 seconds
@@ -21,6 +23,7 @@ Feature: Validations
   Scenario: Check inner text contains
     Given I select element by xpath using value "//*[@id='et-boc']/div/div/div[7]/div[2]/div[2]/div[1]/h2"
     Then I check the selected element's inner text contains "Log"
+      And I clear the selected element
 
   Scenario: Check page contains
     Then I check the page contains the text "Skills"
@@ -28,14 +31,17 @@ Feature: Validations
   Scenario: Check attribute values
     Given I select element by id using value "main-header"
       And I check the element's attribute "id" is equal to "main-header"
+      And I clear the selected element
 
   Scenario: Check attribute value contains
     Given I select element by id using value "main-header"
       And I check the selected element's attribute "id" contains "main"
+      And I clear the selected element
 
   Scenario: Page does not contain
     Given I select element by id using value "main-header"
       And I check the page does not contain the text "nosuchword" with a timeout of 2 seconds
+      And I clear the selected element
 
   Scenario: Check page title
     Then I check the page title is "Complicated Page - Ultimate QA"
@@ -52,7 +58,9 @@ Feature: Validations
   Scenario: Check number of elements found
     Given I select elements by class name using value "et_pb_button"
       And I check the number of elements found is 17
+      And I clear the selected element
 
   Scenario: Check number of elements found is greater than
     Given I select elements by class name using value "et_pb_button"
       And I check the number of elements found is at least 2
+      And I clear the selected element

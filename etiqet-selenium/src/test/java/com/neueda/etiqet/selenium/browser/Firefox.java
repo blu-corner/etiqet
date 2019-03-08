@@ -21,7 +21,7 @@ public class Firefox extends Browser {
     @XmlElement
     private boolean headless;
 
-    @XmlElement
+    @XmlElement(name = "close_on_exit")
     private boolean closeOnExit;
 
     @XmlElement(name = "screenshot_on_exit")
