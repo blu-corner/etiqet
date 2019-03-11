@@ -4,15 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ryan</groupId>
-    <artifactId>SeleniumSteps</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
     <parent>
         <groupId>com.neueda.etiqet</groupId>
         <artifactId>etiqet-parent</artifactId>
         <version>1.1-SNAPSHOT</version>
     </parent>
+
+    <artifactId>etiqet-selenium</artifactId>
 
     <properties>
         <slf4j.version>1.7.25</slf4j.version>
@@ -28,7 +26,7 @@
             <id>default</id>
             <properties>
                 <etiqet.directory>${project.parent.basedir}</etiqet.directory>
-                <etiqet.global.config>${etiqet.directory}/etiqet-core/src/test/resources/config/etiqet.config.xml</etiqet.global.config>
+                <etiqet.global.config>${etiqet.directory}/config/etiqet.config.xml</etiqet.global.config>
             </properties>
         </profile>
     </profiles>
