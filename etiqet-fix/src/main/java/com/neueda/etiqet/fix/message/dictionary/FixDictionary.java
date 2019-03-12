@@ -4,8 +4,8 @@ import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class FixDictionary extends AbstractDictionary {
     
-	private static final Logger LOG = LogManager.getLogger(FixDictionary.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FixDictionary.class);
 
     private Map<Integer, String> names;
 
@@ -59,8 +59,7 @@ public class FixDictionary extends AbstractDictionary {
 				}
 			}
 		} catch (Exception e) {
-			String msg = "Unable to load protocol definition file: " + dictionaryPath ;
-			LOG.error(msg, e);
+			LOG.error("Unable to load protocol definition file: {}", dictionaryPath, e);
 		}
 	}
 

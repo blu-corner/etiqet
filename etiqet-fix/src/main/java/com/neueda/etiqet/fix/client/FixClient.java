@@ -12,8 +12,8 @@ import com.neueda.etiqet.fix.client.logger.LogAdapter;
 import com.neueda.etiqet.fix.client.logger.LogAdapterFactory;
 import com.neueda.etiqet.fix.config.FixConfigConstants;
 import com.neueda.etiqet.fix.message.FIXUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.*;
 
 import java.io.File;
@@ -31,7 +31,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class FixClient extends Client<Message, String> {
 
 	public static final String CONFIG_CLIENT_LOGGON_TIMEOUT = "config.client.loggon.timeout";
-	private static final Logger LOG = LogManager.getLogger(FixClient.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(FixClient.class.getName());
 
 	protected static final String[] DEFAULT_CLIENT_DELEGATES = {"fix", "fix-logger"};
 
@@ -131,7 +131,7 @@ public class FixClient extends Client<Message, String> {
 		setActiveConfig(configPath);
 		try {
 			if (!new File(Environment.resolveEnvVars(configPath)).exists())
-				LOG.fatal(primaryConfig + "not found");
+				LOG.error("Configuration file {} not found", configPath);
 
 			socketInitiator = getSocketInitiator(configPath);
 			socketInitiator.start();
@@ -143,7 +143,7 @@ public class FixClient extends Client<Message, String> {
 			} while ((!isLoggedOn()) && (i < this.getConfig().getInteger(CONFIG_CLIENT_LOGGON_TIMEOUT)));
 			interceptResponders();
 		} catch (Exception exp) {
-			LOG.fatal("Error launching FIX client: " + exp.getMessage(), exp);
+			LOG.error("Error launching FIX client: {}", exp.getMessage(), exp);
 		}
 	}
 

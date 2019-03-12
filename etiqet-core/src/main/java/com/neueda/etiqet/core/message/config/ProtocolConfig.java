@@ -5,8 +5,8 @@ import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.config.dtos.*;
 import com.neueda.etiqet.core.config.xml.XmlParser;
 import com.neueda.etiqet.core.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ public class ProtocolConfig implements Serializable {
 	/** serialVersionUID */
 	private static final long serialVersionUID = -3777143195512896407L;
 
-	private static final transient Logger LOG = LogManager.getLogger(ProtocolConfig.class);
+	private static final transient Logger LOG = LoggerFactory.getLogger(ProtocolConfig.class);
 	
 	private Protocol protocol;
 	
@@ -63,7 +63,7 @@ public class ProtocolConfig implements Serializable {
 												 		.getConstructor(String.class)
 												 		.newInstance(protocolDictionary.getValue()));
 			} catch (Exception e) {
-				LOG.error("Error loading dictionaryHandler: " + handlerPath);
+				LOG.error("Error loading dictionaryHandler: {}", handlerPath);
 				throw new EtiqetException("Error loading dictionaryHandler: " + handlerPath, e);
 			}
 		}

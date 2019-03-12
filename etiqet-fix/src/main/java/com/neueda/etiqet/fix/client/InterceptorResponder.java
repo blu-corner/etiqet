@@ -2,8 +2,8 @@ package com.neueda.etiqet.fix.client;
 
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.StopEncodingException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.Message;
 import quickfix.Responder;
 
@@ -11,7 +11,7 @@ import quickfix.Responder;
  * This class follows the decorator pattern to intercept and process messages before being sent to the server.
  */
 public class InterceptorResponder implements Responder{
-    private static final Logger LOG = LogManager.getLogger(InterceptorResponder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InterceptorResponder.class);
 
     private Responder responder;
     private ClientDelegate<Message, String> delegate;

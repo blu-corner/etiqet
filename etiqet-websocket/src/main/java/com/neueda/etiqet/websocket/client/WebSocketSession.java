@@ -5,21 +5,19 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.core.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 
-
 @WebSocket(maxTextMessageSize = 64 * 1024)
-public class WebSocketSession
-{
-    private static final Logger LOG = LogManager.getLogger(WebSocketSession.class);
+public class WebSocketSession {
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketSession.class);
 
     private Session session;
 
@@ -27,15 +25,13 @@ public class WebSocketSession
 
     private BlockingQueue<Cdr> msgQueue;
 
-    public WebSocketSession(BlockingQueue<Cdr> msgQueue)
-    {
+    public WebSocketSession(BlockingQueue<Cdr> msgQueue) {
         this.connected = false;
         this.msgQueue = msgQueue;
     }
 
     @OnWebSocketConnect
-    public void onConnect(Session session)
-    {
+    public void onConnect(Session session) {
         this.session = session;
         this.connected = true;
     }
@@ -45,28 +41,24 @@ public class WebSocketSession
     }
 
     public void close() throws EtiqetException {
-        try
-        {
+        try {
             session.close(StatusCode.NORMAL, "Closing");
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             t.printStackTrace();
             throw new EtiqetException("Failed to close websocket connection");
         }
     }
 
     @OnWebSocketMessage
-    public void onMessage(String msg)
-    {
-        LOG.info("Exchange message: " + msg);
+    public void onMessage(String msg) {
+        LOG.info("Exchange message: {}", msg);
         receiveMsg(this.msgQueue, msg);
     }
 
     private void receiveMsg(BlockingQueue<Cdr> queue, String msg) {
         try {
             Cdr responseData;
-            if(StringUtils.isNullOrEmpty(msg)) {
+            if (StringUtils.isNullOrEmpty(msg)) {
                 responseData = new Cdr(Cdr.class.getName());
             } else {
                 Cdr parsedData = JsonUtils.jsonToCdr(msg);

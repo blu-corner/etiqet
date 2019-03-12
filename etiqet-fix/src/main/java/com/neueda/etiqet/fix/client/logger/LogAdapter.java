@@ -44,9 +44,7 @@ public class LogAdapter implements Log {
 
 	@Override
 	public void clear() {
-		/**
-		 * Method required to fulfil implementation - however functionality is not required
-		 */
+		// Method required to fulfil implementation - however functionality is not required
 	}
 
 	@Override

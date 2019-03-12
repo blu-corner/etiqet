@@ -7,21 +7,19 @@ import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.websocket.config.WebSocketConfigConstants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebSocketMsg extends Cdr {
 
-    private static final Logger LOG = LogManager.getLogger(WebSocketMsg.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketMsg.class);
 
-    public WebSocketMsg(String msgType, Cdr cdr) throws EtiqetException {
+    public WebSocketMsg(String msgType, Cdr cdr) {
         super(msgType);
         update(cdr);
     }
 
     public String serialize() throws EtiqetException {
-
-        String result = "";
         try {
             ProtocolConfig protocolConfig = GlobalConfig.getInstance().getProtocol(WebSocketConfigConstants.DEFAULT_PROTOCOL_NAME);
             Message messageConfig = protocolConfig.getMessage(msgType);
@@ -33,15 +31,13 @@ public class WebSocketMsg extends Cdr {
 
             Cdr resultCdr = new Cdr(msgType);
 
-            getItems().entrySet().stream()
-                    .forEach(entry -> resultCdr.setItem(entry.getKey(), entry.getValue()));
+            getItems().entrySet().forEach(entry -> resultCdr.setItem(entry.getKey(), entry.getValue()));
 
-            result = JsonUtils.cdrToJson(resultCdr);
+            return JsonUtils.cdrToJson(resultCdr);
         } catch (EtiqetException e) {
             LOG.error("Exception thrown serializing WebSocketMsg", e);
             throw e;
         }
-        return result;
     }
 
 }

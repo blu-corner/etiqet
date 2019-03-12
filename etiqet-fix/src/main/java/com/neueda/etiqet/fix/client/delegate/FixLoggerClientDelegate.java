@@ -9,8 +9,8 @@ import com.neueda.etiqet.core.common.exceptions.StopStringDecodingException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.fix.config.FixConfigConstants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.Field;
 import quickfix.Message;
 import quickfix.StringField;
@@ -21,7 +21,7 @@ import java.util.Iterator;
  * Logger for quickfix describing the messages in a more verbose way.
  */
 public class FixLoggerClientDelegate extends LoggerClientDelegate<Message, String> {
-    private static final Logger LOG = LogManager.getLogger(FixLoggerClientDelegate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FixLoggerClientDelegate.class);
 
     /**
      * Constructor.
@@ -59,8 +59,7 @@ public class FixLoggerClientDelegate extends LoggerClientDelegate<Message, Strin
     private void printFields(Iterator<Field<?>> itr, String direction, ProtocolConfig protocolConfig) {
         while (itr.hasNext()) {
             StringField f = (StringField) itr.next();
-            LOG.info("    " + direction + ": " + protocolConfig.getNameForTag(f.getTag()) + " = "
-                    + f.getValue());
+            LOG.info("\t{}: {} = {}", direction, protocolConfig.getNameForTag(f.getTag()), f.getValue());
         }
     }
 
@@ -70,7 +69,7 @@ public class FixLoggerClientDelegate extends LoggerClientDelegate<Message, Strin
      * @param direction the direction of the message (inbound, outbound).
      */
     private synchronized void printFixMsg(Message msg, String direction) {
-        LOG.info("--- msg " + direction + " ---");
+        LOG.info("--- msg {} ---", direction);
         try {
             // Prints header, body and trailer
             ProtocolConfig protocolConfig = GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME);

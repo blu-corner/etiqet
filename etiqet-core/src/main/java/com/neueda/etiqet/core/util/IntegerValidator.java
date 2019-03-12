@@ -1,7 +1,7 @@
 package com.neueda.etiqet.core.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to store different integer validations.
@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class IntegerValidator {
 
-	private static final Logger LOG = LogManager.getLogger(IntegerValidator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(IntegerValidator.class);
 
 	private IntegerValidator() {}
 
@@ -23,7 +23,7 @@ public class IntegerValidator {
 		try {
 			Integer.parseInt(input);			
 		} catch (NumberFormatException lne) {
-			LOG.debug("Input: " + input + " can not be parsed into an Integer");
+			LOG.debug("Input: {} can not be parsed into an Integer", input);
 			isParseable = false;
 		}		
 		return isParseable;
@@ -39,7 +39,7 @@ public class IntegerValidator {
 		try {
 			out = Integer.parseInt(input);			
 		} catch (NumberFormatException lne) {
-			LOG.error("Input: " + input + " can not be parsed into an Integer");
+			LOG.error("Input: {} can not be parsed into an Integer", input);
 		}		
 		return out;
 	}
