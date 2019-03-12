@@ -84,6 +84,18 @@
             <version>1.1-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.neueda.etiqet</groupId>
+            <artifactId>etiqet-rest</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neueda.etiqet</groupId>
+            <artifactId>etiqet-websocket</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
