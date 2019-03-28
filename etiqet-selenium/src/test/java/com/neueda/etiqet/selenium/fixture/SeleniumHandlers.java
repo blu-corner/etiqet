@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
-
 
 /**
  * Implements functionality of the step definitions.
@@ -38,22 +38,31 @@ public class SeleniumHandlers {
     private static WebDriver driver;
 
     private static HashMap<String, WebElement> namedElements;
+    private static HashMap<String, String> namedValues;
     private static List<WebElement> selectedElements;
     private static WebElement selectedElement;
+
+    private static String attributeValue;
+    private static HashMap<String, WebElement> attributesWebElements;
 
     private static ExplicitWait explicitWait;
     private static long explicitWaitTimeout;
 
+    private static Integer index;
+
     static {
         SeleniumHandlers.namedElements = new HashMap<>();
         SeleniumHandlers.selectedElements = new ArrayList<>();
+        SeleniumHandlers.attributesWebElements = new HashMap<>();
+        SeleniumHandlers.namedValues = new HashMap<>();
     }
 
     /**
      * Browsers will be loaded from the config before any tests run and can be selected using this method
      * @param browserName The name of the browser which should be defined as a name attribute in config
      */
-    public static void openBrowser(String browserName) {
+
+    public static void openBrowser(String browserName){
         BrowserBase.selectBrowser(browserName);
         openBrowser();
     }
@@ -122,6 +131,7 @@ public class SeleniumHandlers {
 
     /**
      * Opens a url
+     *
      * @param url should be a fully qualified url such as https://www.google.com rather than google.com
      */
     public static void goToUrl(String url) {
@@ -147,10 +157,11 @@ public class SeleniumHandlers {
             selectedElement = selectedElement == null ?
                 explicitWait.applyWait(driver, SelectorMethod.CSS, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, SelectorMethod.CSS, locator, explicitWaitTimeout, selectedElement).get(0);
-            return;
         }
-        selectedElement = selectedElement == null ? driver.findElement(By.cssSelector(locator)) :
-            selectedElement.findElement(By.cssSelector(locator));
+        else {
+            selectedElement = selectedElement == null ? driver.findElement(By.cssSelector(locator)) :
+                selectedElement.findElement(By.cssSelector(locator));
+        }
         if (alias != null) {
             namedElements.put(alias, selectedElement);
         }
@@ -193,10 +204,11 @@ public class SeleniumHandlers {
             selectedElement = selectedElement == null ?
                 explicitWait.applyWait(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout, selectedElement).get(0);
-            return;
         }
-        selectedElement = selectedElement == null ? driver.findElement(By.xpath(locator)) :
-            selectedElement.findElement(By.xpath(locator));
+        else {
+            selectedElement = selectedElement == null ? driver.findElement(By.xpath(locator)) :
+                selectedElement.findElement(By.xpath(locator));
+        }
         if (alias != null) {
             namedElements.put(alias, selectedElement);
         }
@@ -239,10 +251,11 @@ public class SeleniumHandlers {
             selectedElement = selectedElement == null ?
                 explicitWait.applyWait(driver, SelectorMethod.ID, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, SelectorMethod.ID, locator, explicitWaitTimeout, selectedElement).get(0);
-            return;
         }
-        selectedElement = selectedElement == null ? driver.findElement(By.id(locator)) :
-            selectedElement.findElement(By.id(locator));
+        else {
+            selectedElement = selectedElement == null ? driver.findElement(By.id(locator)) :
+                selectedElement.findElement(By.id(locator));
+        }
         if (alias != null) {
             namedElements.put(alias, selectedElement);
         }
@@ -263,10 +276,11 @@ public class SeleniumHandlers {
             selectedElement = selectedElement == null ?
                 explicitWait.applyWait(driver, SelectorMethod.TAG, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, SelectorMethod.TAG, locator, explicitWaitTimeout, selectedElement).get(0);
-            return;
         }
-        selectedElement = selectedElement == null ? driver.findElement(By.tagName(locator)) :
-            selectedElement.findElement(By.tagName(locator));
+        else {
+            selectedElement = selectedElement == null ? driver.findElement(By.tagName(locator)) :
+                selectedElement.findElement(By.tagName(locator));
+        }
         if (alias != null) {
             namedElements.put(alias, selectedElement);
         }
@@ -310,10 +324,11 @@ public class SeleniumHandlers {
             selectedElement = selectedElement == null ?
                 explicitWait.applyWait(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout, selectedElement).get(0);
-            return;
         }
-        selectedElement = selectedElement == null ? driver.findElement(By.className(locator)) :
-            selectedElement.findElement(By.className(locator));
+        else {
+            selectedElement = selectedElement == null ? driver.findElement(By.className(locator)) :
+                selectedElement.findElement(By.className(locator));
+        }
         if (alias != null) {
             namedElements.put(alias, selectedElement);
         }
@@ -356,10 +371,11 @@ public class SeleniumHandlers {
             selectedElement = selectedElement == null ?
                 explicitWait.applyWait(driver, SelectorMethod.LINK, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, SelectorMethod.LINK, locator, explicitWaitTimeout, selectedElement).get(0);
-            return;
         }
-        selectedElement = selectedElement == null ? driver.findElement(By.linkText(locator)) :
-            selectedElement.findElement(By.linkText(locator));
+        else {
+            selectedElement = selectedElement == null ? driver.findElement(By.linkText(locator)) :
+                selectedElement.findElement(By.linkText(locator));
+        }
         if (alias != null) {
             namedElements.put(alias, selectedElement);
         }
@@ -380,11 +396,24 @@ public class SeleniumHandlers {
             selectedElement = selectedElement == null ?
                 explicitWait.applyWait(driver, SelectorMethod.PARTIAL_LINK, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, SelectorMethod.PARTIAL_LINK, locator, explicitWaitTimeout, selectedElement).get(0);
-            return;
         }
-        selectedElement = selectedElement == null ? driver.findElement(By.partialLinkText(locator)) :
-            selectedElement.findElement(By.partialLinkText(locator));
+        else {
+            selectedElement = selectedElement == null ? driver.findElement(By.partialLinkText(locator)) :
+                selectedElement.findElement(By.partialLinkText(locator));
+        }
         if (alias != null) {
+            namedElements.put(alias, selectedElement);
+        }
+    }
+
+    public static void selectFirstElementByContainedText(String text, String alias) {
+        for(WebElement element : selectedElements) {
+            if(element.getText().contains(text)) {
+                selectedElement = element;
+                break;
+            }
+        }
+        if(alias != null) {
             namedElements.put(alias, selectedElement);
         }
     }
@@ -416,19 +445,36 @@ public class SeleniumHandlers {
         selectedElement = selectedElements.get(index);
     }
 
+    public static void saveSelectedElementsInnerTextAs(String alias) {
+        namedValues.put(alias, selectedElement.getText());
+    }
+
+    public static void saveSelectedElementsAttributeValueAs(String attributeName, String alias) {
+        namedValues.put(alias, selectedElement.getAttribute(attributeName));
+    }
+
+    public static void saveSelectedElementsCountAs(String alias) {
+        namedValues.put(alias, Integer.toString(selectedElements.size()));
+    }
+
+    public static void getElementAtIndex() {
+        selectedElement = selectedElements.get(index);
+    }
+
     /**
      * Filters the selectedElements by removing elements that are not found using an xpath expression
-     * @param filter the xpath expression
+     * @param filter the xpath selection
      */
+
     public static void filterSelectedElementsByXPath(String filter) {
 
         if (explicitWait != null) {
 
-            int i = selectedElements.size();
+            int i = selectedElements.size(); // todo - better solution
             while (i != 0) {
                 i--;
                 try {
-                    List<WebElement> ignore = explicitWait.applyWait(driver, SelectorMethod.XPATH, ".//*[contains(text(),'" + filter + "')]", explicitWaitTimeout, selectedElements.get(i));
+                    List<WebElement> ignore = explicitWait.applyWait(driver, SelectorMethod.XPATH, ".//*[contains(text(),'" + filter + "')]", explicitWaitTimeout, selectedElement);
 
                 } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException e) {
                     selectedElements.remove(i);
@@ -458,6 +504,115 @@ public class SeleniumHandlers {
             return;
         }
         selectedElements.removeIf(element -> element.findElements(By.xpath(".//*[contains(text(),'" + filterText + "')]")).size() == 0);
+    }
+
+    /**
+     * Select convenience methods for navigating tree structure of nodes
+     */
+
+    public static void getAllChildrenForSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./child::*"));
+    }
+
+    public static void getAllChildrenForParentOfSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("../child::*"));
+    }
+
+    public static void getAllDescendantsForSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./descendant::*"));
+    }
+
+    public static void getAllDescendantsIncludingSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./descendant-or-self::*"));
+    }
+
+    public static void getAllDescendantsForParentofSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("../descendant::*"));
+    }
+
+    public static void getEverythingFollowingTheSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./following::*"));
+    }
+
+    public static void getEverythingFollowingTheParentOfSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("../following::*"));
+    }
+
+    public static void getTheSiblingsFollowingTheSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./following-sibling::*"));
+    }
+
+    public static void getTheSiblingsFollowingTheParentOfSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("../following-sibling::*"));
+    }
+
+    public static void getTheSiblingsPrecedingTheSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./preceding-sibling::*"));
+    }
+
+    public static void getTheSiblingsPrecedingTheParentOfSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("../preceding-sibling::*"));
+    }
+
+    public static void getTheParentOfSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./parent::*"));
+    }
+
+    public static void getTheParentOfTheParentOfSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("../parent::*"));
+    }
+
+    public static void getAllAncestorsForSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./ancestor::*"));
+    }
+
+    public static void getAllAncestorsForParentOfSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("../ancestor::*"));
+    }
+
+    public static void getAllAncestorsIncludingTheSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./ancestor-or-self::*"));
+    }
+
+    /**
+     * Select Properties Methods
+     * @param text
+     */
+
+    public static void getIndexOfElementContaining(String text) {
+        for(WebElement element : selectedElements) {
+            if (element.getText().equals(text)) {
+                index = selectedElements.indexOf(element);
+            }
+        }
+    }
+
+    public static void getAttribute(String attributeName, String alias) {
+        attributeValue = alias != null ? namedElements.get(alias).getAttribute(attributeName) : selectedElement.getAttribute(attributeName);
+        if(alias!=null) {
+            attributesWebElements.put(attributeName, namedElements.get(alias));
+        }
+        else{
+            attributesWebElements.put(attributeName, selectedElement);}
+    }
+
+    /**
+     * Change Properties Methods
+     * @param attributeName
+     * @param alias
+     * @param value
+     */
+    public static void changeAttribute(String attributeName, @Nullable String alias, String value){
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        if(alias != null){
+            js.executeScript("argument[0].setAttribute(argument[1],argument[2])",namedElements.get(alias), attributeName, value);
+        }
+        else{js.executeScript("argument[0].setAttribute(argument[1],argument[2])", selectedElement, attributeName, value);}
+    }
+
+    public static void changeAttributeOf(String attribute, String value){
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("argument[0].setAttribute(argument[1],argument[2])", attributesWebElements.get(attribute), attribute, value);
     }
 
     /**
@@ -885,6 +1040,18 @@ public class SeleniumHandlers {
             namedElements.get(secondElement).getAttribute(secondAttr));
     }
 
+    public static void checkNamedValuesAreEqual(String firstAlias, String secondAlias) {
+        Assert.assertEquals(namedValues.get(firstAlias), namedValues.get(secondAlias));
+    }
+
+    public static void checkNamedValueIsLessThan(String firstAlias, String secondAlias) {
+        Assert.assertTrue(Integer.parseInt(namedValues.get(firstAlias)) < Integer.parseInt(namedValues.get(secondAlias)));
+    }
+
+    public static void checkNamedValueIsGreaterThan(String firstAlias, String secondAlias) {
+        Assert.assertTrue(Integer.parseInt(namedValues.get(firstAlias)) > Integer.parseInt(namedValues.get(secondAlias)));
+    }
+
     /**
      * Clears only the single selectedElement
      */
@@ -905,6 +1072,10 @@ public class SeleniumHandlers {
      */
     public static void clearNamedElements() {
         namedElements = new HashMap<>();
+    }
+
+    public static void clearNamedValues() {
+        namedValues = new HashMap<>();
     }
 
     public static void closeBrowser() {

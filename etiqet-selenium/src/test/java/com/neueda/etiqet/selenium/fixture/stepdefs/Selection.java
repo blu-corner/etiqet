@@ -13,7 +13,7 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by css selector using value \"([^\"]*)\"(?: as (\"[^\"]*\")?)?$")
+    @When("^I? ?select element by css selector using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
     public void selectElementByCss(String locator, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByCss(locator, alias);
     }
@@ -37,7 +37,7 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by xpath using value \"([^\"]*)\"(?: as (\"[^\"]*\")?)?$")
+    @When("^I? ?select element by xpath using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
     public void selectElementByXpath(String locator, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByXpath(locator, alias);
     }
@@ -61,7 +61,7 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by id using value \"([^\"]*)\"(?: as (\"[^\"]*\")?)?$")
+    @When("^I? ?select element by id using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
     public void selectElementById(String locator, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementById(locator, alias);
     }
@@ -72,7 +72,7 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by tag using value \"([^\"]*)\"(?: as (\"[^\"]*\")?)?$")
+    @When("^I? ?select element by tag using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
     public void selectElementByTag(String locator, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByTag(locator, alias);
     }
@@ -97,7 +97,7 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by class name using value \"([^\"]*)\"(?: as (\"[^\"]*\")?)?$")
+    @When("^I? ?select element by class name using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
     public void selectElementByClassName(String locator, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByClassName(locator, alias);
     }
@@ -121,7 +121,7 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by link text using value \"([^\"]*)\"(?: as (\"[^\"]*\")?)?$")
+    @When("^I? ?select element by link text using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
     public void selectElementByLinkText(String locator, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByLinkText(locator, alias);
     }
@@ -132,9 +132,14 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by partial link text using value \"([^\"]*)\"(?: as (\"[^\"]*\")?)?$")
+    @When("^I? ?select element by partial link text using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
     public void selectElementByPartialLinkText(String locator, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByPartialLinkText(locator, alias);
+    }
+
+    @When("^I? ?select first element from elements by contained text \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
+    public void selectFirstElementByContainedText(String text, String alias){
+        SeleniumHandlers.selectFirstElementByContainedText(text, alias);
     }
 
     @When("^I? ?select element from dropdown by (?:the)? ?label \"([^\"]*)\"$")
@@ -161,6 +166,11 @@ public class Selection {
         SeleniumHandlers.selectFromElements(index);
     }
 
+    @When("^I select element at current index from selected elements$")
+    public void checkEntryInSpecificCell() {
+        SeleniumHandlers.getElementAtIndex();
+    }
+
     @When("^I? ?filter selected elements by xpath using value \"([^\"]*)\"$")
     public void filterSelectedElementsByXPath(String filter) {
         SeleniumHandlers.filterSelectedElementsByXPath(filter);
@@ -169,6 +179,86 @@ public class Selection {
     @When("^I? ?filter selected elements based on if their descendents contain the text \"([^\"]*)\"$")
     public void filterSelectedElementsDescendentsText(String filterText) {
         SeleniumHandlers.filterSelectedElementsDescendentsText(filterText);
+    }
+
+    @When("^I? ?get (?:the)? ?children of selected element$")
+    public void getChildrenForSelectedElement(){
+        SeleniumHandlers.getAllChildrenForSelectedElement();
+    }
+
+    @When("^I? ?get (?:the)? ?children of (?:the)? ?parent of the selected element$")
+    public void getAllChildrenForParentOfSelectedElement(){
+        SeleniumHandlers.getAllChildrenForParentOfSelectedElement();
+    }
+
+    @When("^I? ?get (?:the)? ?descendants of (?:the)? ?selected element$")
+    public void getAllDescendantsForSelectedElement(){
+        SeleniumHandlers.getAllDescendantsForSelectedElement();
+    }
+
+    @When("^I? ?get both (?:the)? ?selected elements and all it's selected elements descendants$")
+    public void getAllDescendantsIncludingSelectedElement(){
+        SeleniumHandlers.getAllDescendantsIncludingSelectedElement();
+    }
+
+    @When("^I? ?get all (?:the)? ?descendants for (?:the)? ?parent of the selected element$")
+    public void getAllDescendantsForParentofSelectedElement(){
+        SeleniumHandlers.getAllDescendantsForParentofSelectedElement();
+    }
+
+    @When("^I? ?get everything following (?:the)? ?closing tag of the selected element$")
+    public void getEverythingFollowingTheSelectedElement(){
+        SeleniumHandlers.getEverythingFollowingTheSelectedElement();
+    }
+
+    @When("^I? ?get everything following (?:the)? ?closing tag of (?:the)? ?parent of the selected element$")
+    public void getEverythingFollowingTheParentOfSelectedElement(){
+        SeleniumHandlers.getEverythingFollowingTheParentOfSelectedElement();
+    }
+
+    @When("^I? ?get all siblings following (?:the)? ?selected element$")
+    public void getTheSiblingsFollowingTheSelectedElement(){
+        SeleniumHandlers.getTheSiblingsFollowingTheSelectedElement();
+    }
+
+    @When("^I? ?get all siblings following (?:the)? ?parent of (?:the)? ?selected element$")
+    public void getTheSiblingsFollowingTheParentOfSelectedElement(){
+        SeleniumHandlers.getTheSiblingsFollowingTheParentOfSelectedElement();
+    }
+
+    @When("^I? ?get all siblings preceding (?:the)? ?selected element$")
+    public void getTheSiblingsPrecedingTheSelectedElement(){
+        SeleniumHandlers.getTheSiblingsPrecedingTheSelectedElement();
+    }
+
+    @When("^I? ?get all siblings preceding (?:the)? ?parent of (?:the)? ?selected element$")
+    public void getTheSiblingsPrecedingTheParentOfSelectedElement(){
+        SeleniumHandlers.getTheSiblingsPrecedingTheParentOfSelectedElement();
+    }
+
+    @When("^I? ?get (?:the)? ?parent of (?:the)? ?selected element$")
+    public void getTheParentOfSelectedElement(){
+        SeleniumHandlers.getTheParentOfSelectedElement();
+    }
+
+    @When("^I? ?get (?:the)? ?grandparent of (?:the)? ?selected element$")
+    public void getTheParentOfTheParentOfSelectedElement(){
+        SeleniumHandlers.getTheParentOfTheParentOfSelectedElement();
+    }
+
+    @When("^I? ?get all ancestors of (?:the)? ?selected element$")
+    public void getAllAncestorsForSelectedElement(){
+        SeleniumHandlers.getAllAncestorsForSelectedElement();
+    }
+
+    @When("^I? ?get all ancestors of (?:the)? ?parent of (?:the)? ?selected element$")
+    public void getAllAncestorsForParentOfSelectedElement(){
+        SeleniumHandlers.getAllAncestorsForParentOfSelectedElement();
+    }
+
+    @When("^I? ?get (?:the)? ?selected element and all its ancestors$")
+    public void getAllAncestorsIncludingTheSelectedElement(){
+        SeleniumHandlers.getAllAncestorsIncludingTheSelectedElement();
     }
 
     /**
@@ -183,6 +273,21 @@ public class Selection {
     @When("^I? ?name (?:the)? ?selected element as \"([^\"]*)\"$")
     public void nameSelectedElement(String elementName) {
         SeleniumHandlers.nameSelectedElement(elementName);
+    }
+
+    @When("^I? ?save selected elements text as \"([^\"]*)\"$")
+    public void saveSelectedElementsInnerTextAs(String alias) {
+        SeleniumHandlers.saveSelectedElementsInnerTextAs(alias);
+    }
+
+    @When("^I? ?save selected elements count as \"([^\"]*)\"$")
+    public void saveSelectedElementsCountAs(String alias) {
+        SeleniumHandlers.saveSelectedElementsCountAs(alias);
+    }
+
+    @When("^I? ?save selected element's attribute \"([^\"]*)\" value as \"([^\"]*)\"$")
+    public void saveSelectedElementsInnerTextAs(String attributeName, String alias) {
+        SeleniumHandlers.saveSelectedElementsAttributeValueAs(attributeName, alias);
     }
 
     /**
@@ -207,6 +312,11 @@ public class Selection {
     @Then("^I? ?clear (?:the)? ?named elements$")
     public void clearNamedElements() {
         SeleniumHandlers.clearNamedElements();
+    }
+
+    @Then("^I? ?clear (?:the)? ?named values$")
+    public void clearNamedValues() {
+        SeleniumHandlers.clearNamedValues();
     }
 
     // ALIASES
