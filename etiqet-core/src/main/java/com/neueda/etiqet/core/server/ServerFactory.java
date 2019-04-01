@@ -1,8 +1,8 @@
 package com.neueda.etiqet.core.server;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ServerFactory {
 
-	private static final Logger LOG = LogManager.getLogger(ServerFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ServerFactory.class);
     private static final String ERROR_CREATING_SERVER = "Error creating server of type: ";
 	private ServerFactory() {}
 	
@@ -27,7 +27,7 @@ public class ServerFactory {
         try {
             instance = (Server) Class.forName(serverType).newInstance();
         } catch (Exception e) {
-            LOG.error(ERROR_CREATING_SERVER+ serverType, e);
+            LOG.error(ERROR_CREATING_SERVER + serverType, e);
             throw new EtiqetException(ERROR_CREATING_SERVER + serverType, e);
         }
         return instance;

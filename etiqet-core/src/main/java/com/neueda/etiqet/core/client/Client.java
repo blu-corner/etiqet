@@ -137,7 +137,7 @@ public abstract class Client<U, M> implements Codec<U>, Runnable {
         try {
             launchClient();
         } catch (EtiqetException e) {
-            LOG.error("Error starting Client: " + e.getMessage(), e);
+            LOG.error("Error starting Client: {}", e.getMessage(), e);
             throw new EtiqetRuntimeException("Error starting Client: " + e.getMessage(), e);
         }
     }

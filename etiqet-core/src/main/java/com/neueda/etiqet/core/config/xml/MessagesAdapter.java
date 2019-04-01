@@ -1,5 +1,6 @@
 package com.neueda.etiqet.core.config.xml;
 
+import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Messages;
 import com.neueda.etiqet.core.util.StringUtils;
 
@@ -18,10 +19,10 @@ public class MessagesAdapter extends XmlAdapter<Messages, Messages> {
      *
      * @param ref Messages object to be parsed
      * @return Messages object to form part of a protocol
-     * @throws Exception when unable to parse the Messages
+     * @throws EtiqetException when unable to parse the Messages
      */
     @Override
-    public Messages unmarshal(Messages ref) throws Exception {
+    public Messages unmarshal(Messages ref) throws EtiqetException {
         Messages messages;
         if(StringUtils.isNullOrEmpty(ref.getReference())) {
             messages = ref;
