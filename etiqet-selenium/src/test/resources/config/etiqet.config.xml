@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
+    <protocols>
+        <protocol name="fix" xmlns="http://www.neueda.com/etiqet">
+            <client impl="com.neueda.etiqet.fix.client.FixClient"
+                    defaultConfig="${etiqet.directory}/etiqet-fix/src/test/resources/config/client.cfg">
+                <delegates>
+                    <delegate key="logger" impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"/>
+                    <delegate key="fix" impl="com.neueda.etiqet.fix.client.delegate.FixClientDelegate"/>
+                    <delegate key="fix-logger" impl="com.neueda.etiqet.fix.client.delegate.FixLoggerClientDelegate"/>
+                    <delegate key="ordering" impl="com.neueda.etiqet.fix.client.delegate.OrderParamFixClientDelegate"/>
+                    <delegate key="ordering" impl="com.neueda.etiqet.fix.client.delegate.ReplaceParamFixClientDelegate"/>
+                </delegates>
+                <urlExtensions>
+                    <urlExtension name="neueda" uri="http://localhost:5000/"/>
+                    <urlExtension name="test" uri="http://localhost:5001/"/>
+                </urlExtensions>
+            </client>
+            <dictionary handler="com.neueda.etiqet.fix.message.dictionary.FixDictionary">${etiqet.directory}/etiqet-fix/src/test/resources/config/FIX50SP2.xml</dictionary>
+            <components_package>quickfix.fix44.component</components_package>
+            <messages ref="${etiqet.directory}/etiqet-fix/src/test/resources/config/etiqet-fix-messages.xml"/>
+        </protocol>
+        <protocol name="fix-wrongfield" xmlns="http://www.neueda.com/etiqet">
+            <client impl = "com.neueda.etiqet.fix.client.FixClient"
+                    defaultConfig="${etiqet.directory}/etiqet-fix/src/test/resources/config/client.cfg"
+                    >
+                <delegates>
+                    <delegate key="default" impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate"/>
+                    <delegate key="logger" impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"/>
+                    <delegate key="fix" impl="com.neueda.etiqet.fix.client.delegate.FixClientDelegate"/>
+                    <delegate key="fix-logger" impl="com.neueda.etiqet.fix.client.delegate.FixLoggerClientDelegate"/>
+                    <delegate key="ordering" impl="com.neueda.etiqet.fix.client.delegate.OrderParamFixClientDelegate"/>
+                    <delegate key="ordering" impl="com.neueda.etiqet.fix.client.delegate.ReplaceParamFixClientDelegate"/>
+                </delegates>
+                <urlExtensions>
+                    <urlExtension name="neueda" uri="http://localhost:5001/"/>
+                </urlExtensions>
+            </client>
+            <dictionary handler="com.neueda.etiqet.fix.message.dictionary.FixDictionary">${etiqet.directory}/etiqet-fix/src/test/resources/config/FIX50SP2.xml</dictionary>
+            <components_package>quickfix.fix44.component</components_package>
+            <messages ref="${etiqet.directory}/etiqet-fix/src/test/resources/config/etiqet-fix-messages-wrongfield.xml"/>
+        </protocol>
+        <protocol name="fix-wrongvalue" xmlns="http://www.neueda.com/etiqet">
+            <client impl = "com.neueda.etiqet.fix.client.FixClient"
+                    defaultConfig="${etiqet.directory}/etiqet-fix/src/test/resources/config/client.cfg">
+                <delegates>
+                    <delegate key="logger" impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"/>
+                    <delegate key="fix" impl="com.neueda.etiqet.fix.client.delegate.FixClientDelegate"/>
+                    <delegate key="fix-logger" impl="com.neueda.etiqet.fix.client.delegate.FixLoggerClientDelegate"/>
+                    <delegate key="ordering" impl="com.neueda.etiqet.fix.client.delegate.OrderParamFixClientDelegate"/>
+                    <delegate key="ordering" impl="com.neueda.etiqet.fix.client.delegate.ReplaceParamFixClientDelegate"/>
+                </delegates>
+            </client>
+            <dictionary handler="com.neueda.etiqet.fix.message.dictionary.FixDictionary">${etiqet.directory}/etiqet-fix/src/test/resources/config/FIX50SP2.xml</dictionary>
+            <components_package>quickfix.fix44.component</components_package>
+            <messages ref="${etiqet.directory}/etiqet-fix/src/test/resources/config/etiqet-fix-messages-wrongvalue.xml"/>
+        </protocol>
+        <protocol name="rest" xmlns="http://www.neueda.com/etiqet">
+            <client impl = "com.neueda.etiqet.rest.client.RestClient"
+                    defaultConfig="${etiqet.directory}/etiqet-selenium/src/test/resources/config/selenium_rest_client.cfg">
+            </client>
+            <messages>
+                <message name="rest-example-message">
+                    <implementation>com.neueda.etiqet.rest.message.impl.HttpRequestMsg</implementation>
+                    <fields>
+                        <field name="userId" required="N">1</field>
+                        <field name="id" required="N">0</field>
+                        <field name="title" required="N">random title</field>
+                        <field name="body" required="N">quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto</field>
+                    </fields>
+                </message>
+            </messages>
+        </protocol>
+    </protocols>
+</etiqetConfiguration>
