@@ -5,8 +5,8 @@ import com.neueda.etiqet.core.common.cdr.CdrItem;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.text.ParseException;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class ParserUtils {
 
-	private static final Logger LOG = LogManager.getLogger(ParserUtils.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ParserUtils.class);
 
 	private ParserUtils(){}
 
@@ -38,10 +38,10 @@ public class ParserUtils {
 			String[] tag = rest.split(Separators.LEVEL_SEPARATOR);
 			String restTags = getRestTags(tag, rest);
 
-			Cdr cdrChild = null;
+			Cdr cdrChild;
 			if (item != null) {
 				List<Cdr> children = item.getCdrs().stream().filter(x -> x.containsKey(tag[0])).collect(Collectors.toList());
-				if (children != null && !children.isEmpty()) {
+				if (!children.isEmpty()) {
 					cdrChild = children.get(0);
 					CdrItem cdrItem = getCdrItem(tag[0], restTags, value, cdrChild);
 					correctCdrItemType(cdrItem);
@@ -138,7 +138,7 @@ public class ParserUtils {
 				String[] keyValue = param[i].split(Separators.KEY_VALUE_SEPARATOR);
 				// Skip parameters without value
 				if(keyValue.length != 2 && values == null) {
-					LOG.warn("Skipping parameter [" + param[i] + "]. No value or separator found");
+					LOG.warn("Skipping parameter [{}]. No value or separator found", param[i]);
 					continue;
 				}
 				String key = keyValue[0].trim();

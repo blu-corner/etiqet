@@ -13,11 +13,11 @@ import com.neueda.etiqet.core.util.PropertiesFileReader;
 import com.neueda.etiqet.core.util.StringUtils;
 import com.neueda.etiqet.websocket.config.WebSocketConfigConstants;
 import com.neueda.etiqet.websocket.messsage.WebSocketMsg;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public class WebSocketClient extends Client<WebSocketMsg, String> {
 
-    private static final Logger LOG = LogManager.getLogger(WebSocketClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketClient.class);
 
     private String activeConfig;
 
@@ -75,7 +75,7 @@ public class WebSocketClient extends Client<WebSocketMsg, String> {
                 socketUrl += "?filter=" + messageFilter;
             }
             ClientUpgradeRequest request = new ClientUpgradeRequest();
-            LOG.info("Starting websocket client: " + socketUrl);
+            LOG.info("Starting websocket client: {}", socketUrl);
             Future<Session> fut = client.connect(instance, new URI(socketUrl),request);
             this.remoteEndpoint = fut.get(5, TimeUnit.SECONDS).getRemote();
 

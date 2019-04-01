@@ -3,8 +3,8 @@ package com.neueda.etiqet.core.client.delegate;
 import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.StopEncodingException;
 import com.neueda.etiqet.core.common.exceptions.StopStringDecodingException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Client that logs the message by using toString method.
@@ -12,7 +12,8 @@ import org.apache.logging.log4j.Logger;
  * @param <M> The class containing the marshalled message.
  */
 public class LoggerClientDelegate<U, M> extends BaseClientDelegate<U, M> {
-    private static final Logger LOG = LogManager.getLogger(LoggerClientDelegate.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(LoggerClientDelegate.class);
 
     /**
      * Constructor.
@@ -31,37 +32,37 @@ public class LoggerClientDelegate<U, M> extends BaseClientDelegate<U, M> {
 
     @Override
     public Cdr transformBeforeSendMessage(Cdr msg) {
-        LOG.info("transformBeforeSendUnmarshalled received for message: " + msg.toString());
+        LOG.info("transformBeforeSendUnmarshalled received for message: {}", msg);
         return super.transformBeforeSendMessage(msg);
     }
 
     @Override
     public Cdr transformAfterReceiveMessage(Cdr msg) {
-        LOG.info("transformAfterReceiveUnmarshalled received for message: " + msg.toString());
+        LOG.info("transformAfterReceiveUnmarshalled received for message: {}", msg);
         return super.transformAfterReceiveMessage(msg);
     }
 
     @Override
     public U transformBeforeEncoding(U msg) throws StopEncodingException {
-        LOG.info("transformBeforeEncoding received for message: " + msg.toString());
+        LOG.info("transformBeforeEncoding received for message: {}", msg);
         return super.transformBeforeEncoding(msg);
     }
 
     @Override
     public M transformAfterEncoding(M msg) throws StopEncodingException {
-        LOG.info("transformAfterEncoding received for message: " + msg);
+        LOG.info("transformAfterEncoding received for message: {}", msg);
         return super.transformAfterEncoding(msg);
     }
 
     @Override
     public M transformBeforeDecoding(M msg) throws StopStringDecodingException {
-        LOG.info("transformBeforeDecoding received for message: " + msg);
+        LOG.info("transformBeforeDecoding received for message: {}", msg);
         return super.transformBeforeDecoding(msg);
     }
 
     @Override
     public U transformAfterDecoding(U msg) throws StopStringDecodingException {
-        LOG.info("transformAfterDecoding received for message: " + msg.toString());
+        LOG.info("transformAfterDecoding received for message: {}", msg);
         return super.transformAfterDecoding(msg);
     }
 }

@@ -11,8 +11,8 @@ import com.neueda.etiqet.core.config.dtos.Delegate;
 import com.neueda.etiqet.core.config.dtos.Observer;
 import com.neueda.etiqet.core.config.dtos.StopEvent;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class ClientFactory {
 
-	private static final Logger LOG = LogManager.getLogger(ClientFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ClientFactory.class);
 
 	static final String CLIENT_CREATION_ERROR = "Error creating client type %s";
 	static final String PROTOCOL_ERROR = "Could not find protocol for %s";

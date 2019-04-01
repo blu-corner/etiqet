@@ -8,8 +8,6 @@ import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.testing.util.TestUtils;
 import com.neueda.etiqet.core.util.ParserUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -19,9 +17,6 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class ParserUtilsTest {
-
-	/** tool for loggin the exectution. */
-	private static final Logger LOG = LogManager.getLogger(ParserUtilsTest.class);
 	
 	private static final String params = "campo1=1,campo2->campo21->campo211=2,"
                   + "campo2->campo21->campo212=3,campo2->campo21->campo213=4,"

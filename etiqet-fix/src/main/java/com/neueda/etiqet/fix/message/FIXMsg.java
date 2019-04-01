@@ -11,8 +11,8 @@ import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.IntegerValidator;
 import com.neueda.etiqet.core.util.ParserUtils;
 import com.neueda.etiqet.fix.config.FixConfigConstants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.*;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class FIXMsg {
-	private static final Logger LOG = LogManager.getLogger(FIXMsg.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FIXMsg.class);
 
 	private FieldMap instance;
 	private List<Integer> fieldsIgnored = new ArrayList<>();
@@ -66,10 +66,10 @@ public class FIXMsg {
 			instance = (Message) Class.forName(messageConfig.getImplementation()).getConstructor().newInstance();
 			this.encode(cdr);
 		} catch (EtiqetException e) {
-			LOG.error(e);
+			LOG.error("EtiqetException occurred while serializing FIXMsg", e);
 			throw e;
 		} catch (Exception e) {
-			LOG.error(e);
+			LOG.error("Unable to serialize FIXMsg", e);
 			throw new SerializeException(e);
 		}
 
@@ -146,7 +146,7 @@ public class FIXMsg {
 		HashMap.Entry<String, CdrItem> entry
 	) throws EtiqetException {
         String className = protocolConfig.getComponentPackage() + entry.getKey();
-        MessageComponent msg = null;
+        MessageComponent msg;
         try {
             msg = (MessageComponent) Class.forName(className).getConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
@@ -158,7 +158,7 @@ public class FIXMsg {
 			try {
 				msg.setFields(component.serialize(cdr2));
 			} catch (EtiqetException e) {
-				LOG.error("Error serializing component: " + cdr2.toString());
+				LOG.error("Error serializing component: {}", cdr2);
 			}
 		}
 		instance.setFields(msg);

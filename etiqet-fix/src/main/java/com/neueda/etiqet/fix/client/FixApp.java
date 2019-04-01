@@ -8,14 +8,14 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.common.exceptions.StopEncodingException;
 import com.neueda.etiqet.fix.client.delegate.FixClientDelegate;
 import com.neueda.etiqet.fix.message.FIXUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.*;
 
 import java.util.concurrent.BlockingQueue;
 
 public class FixApp extends MessageCracker implements Application {
-    public static final Logger LOG = LogManager.getLogger(FixApp.class);
+    public static final Logger LOG = LoggerFactory.getLogger(FixApp.class);
 
     private BlockingQueue<Cdr> sessionQueue;
     private BlockingQueue<Cdr> msgQueue;
@@ -51,7 +51,7 @@ public class FixApp extends MessageCracker implements Application {
     }
 
     public void onCreate(SessionID sessionId) {
-        LOG.info("Successfully called onCreate for sessionId : " + sessionId);
+        LOG.info("Successfully called onCreate for sessionId : {}", sessionId);
         FixClientDelegate del = (FixClientDelegate)delegate;
         try {
             del.init(sessionSettings.get(sessionId).getString("TargetSubID"),
@@ -91,7 +91,7 @@ public class FixApp extends MessageCracker implements Application {
     }
 
     public void onLogon(SessionID sessionID) {
-        LOG.info("session logged on : " + sessionID);
+        LOG.info("session logged on : {}", sessionID);
         synchronized(logonEvent) {
             logonEvent.completeEvent();
             logonEvent.notifyAll();
@@ -99,7 +99,7 @@ public class FixApp extends MessageCracker implements Application {
     }
 
     public void onLogout(SessionID sessionID) {
-        LOG.info("session logged out : " + sessionID);
+        LOG.info("session logged out : {}", sessionID);
     }
 
     public void toAdmin(Message msg, SessionID sessionId) {

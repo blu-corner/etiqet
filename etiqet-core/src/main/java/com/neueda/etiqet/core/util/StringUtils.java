@@ -2,9 +2,7 @@ package com.neueda.etiqet.core.util;
 
 public final class StringUtils {
 
-	public StringUtils()
-	{
-	}
+	public StringUtils() {}
 
 	/**
 	 * Method to check if a string is null or empty.
@@ -17,9 +15,9 @@ public final class StringUtils {
 
     /**
      * Method to remove the last instance of a
-     * @param input
-     * @param toRemove
-     * @return
+     * @param input    input string
+     * @param toRemove trailing string to be removed
+     * @return input string without the trailing suffix
      */
 	public static String removeTrailing(String input, String toRemove) {
 	    if(isNullOrEmpty(input) || (input.length() - toRemove.length() != input.lastIndexOf(toRemove)))

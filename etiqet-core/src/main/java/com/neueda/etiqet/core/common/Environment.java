@@ -3,8 +3,8 @@ package com.neueda.etiqet.core.common;
 import com.neueda.etiqet.core.common.exceptions.EnvironmentVariableNotFoundException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -25,7 +25,7 @@ public class Environment {
 	/**
 	 * Logger attribute
 	 */
-	private static final Logger LOG = LogManager.getLogger(Environment.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Environment.class.getName());
 	
 	/**
 	 *
@@ -87,7 +87,7 @@ public class Environment {
 				res = new ByteArrayInputStream(sbr.toString().replace("/", File.separator).getBytes(StandardCharsets.UTF_8.name()));
 
 			} catch (IOException e) {
-				LOG.error(e);
+				LOG.error("Exception occurred while reading file {}", path, e);
 			}
 
 		}
@@ -99,10 +99,12 @@ public class Environment {
         while (m.find()) {
             String envVarName = null == m.group(1) ? m.group(2) : m.group(1);
             String envVarValue = System.getProperty(envVarName);
-            if(StringUtils.isNullOrEmpty(envVarValue))
+            if(StringUtils.isNullOrEmpty(envVarValue)) {
                 envVarValue = System.getenv(envVarName);
-            if(StringUtils.isNullOrEmpty(envVarValue))
+            }
+            if(StringUtils.isNullOrEmpty(envVarValue)) {
                 throw new EnvironmentVariableNotFoundException("Environment variable not found: " + envVarName);
+            }
             envVarValue = envVarValue.replace(File.separator,"/");
             m.appendReplacement(sb, envVarValue);
         }

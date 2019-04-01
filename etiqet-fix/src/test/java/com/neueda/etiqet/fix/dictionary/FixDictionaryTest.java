@@ -3,23 +3,22 @@ package com.neueda.etiqet.fix.dictionary;
 import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.fix.message.dictionary.FixDictionary;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.net.URL;
 
 import static org.junit.Assert.*;
 
 public class FixDictionaryTest {
 
-	/** Logger. */
-	private static Logger LOG = LogManager.getLogger(FixDictionaryTest.class);
-
 	private AbstractDictionary dictionary;
 
 	@Before
 	public void setUp() {
-        dictionary = new FixDictionary("${etiqet.directory}/config/fix/FIX50SP2.xml");
+        URL resource = getClass().getClassLoader().getResource("config/FIX50SP2.xml");
+        assertNotNull("Unable to read FIX Dictionary config/FIX50SP2.xml", resource);
+        dictionary = new FixDictionary(resource.getPath());
     }
 	
 	@Test
