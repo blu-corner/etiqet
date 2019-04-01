@@ -859,11 +859,13 @@ public class SeleniumHandlers {
     public static void pauseMs(long milliseconds) {
         Actions actions = new Actions(driver);
         actions.pause(Duration.ofMillis(milliseconds));
+        actions.build().perform();
     }
 
     public static void pauseSecs(long seconds) {
         Actions actions = new Actions(driver);
         actions.pause(Duration.ofSeconds(seconds));
+        actions.build().perform();
     }
 
     public static void nameSelectedElement(String elementName) {
