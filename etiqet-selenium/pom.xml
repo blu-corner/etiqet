@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.neueda.etiqet</groupId>
         <artifactId>etiqet-parent</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.1</version>
     </parent>
 
     <artifactId>etiqet-selenium</artifactId>
@@ -73,25 +73,25 @@
         <dependency>
             <groupId>com.neueda.etiqet</groupId>
             <artifactId>etiqet-core</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.neueda.etiqet</groupId>
             <artifactId>etiqet-fix</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.neueda.etiqet</groupId>
             <artifactId>etiqet-rest</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.neueda.etiqet</groupId>
             <artifactId>etiqet-websocket</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
