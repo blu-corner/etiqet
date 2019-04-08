@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.neueda.etiqet</groupId>
         <artifactId>etiqet-parent</artifactId>
-        <version>1.1</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>etiqet-websocket</artifactId>
@@ -13,7 +13,7 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <etiqet.core.version>1.1</etiqet.core.version>
+        <etiqet.core.version>1.2-SNAPSHOT</etiqet.core.version>
         <jetty.websocket.version>9.4.12.v20180830</jetty.websocket.version>
         <additionalparam>-Xdoclint:none</additionalparam>
     </properties>

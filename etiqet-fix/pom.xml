@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.neueda.etiqet</groupId>
 		<artifactId>etiqet-parent</artifactId>
-		<version>1.1</version>
+		<version>1.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>etiqet-fix</artifactId>
@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>com.neueda.etiqet</groupId>
 			<artifactId>etiqet-core</artifactId>
-			<version>1.1</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.quickfixj</groupId>
