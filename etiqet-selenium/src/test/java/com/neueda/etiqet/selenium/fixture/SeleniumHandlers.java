@@ -1,7 +1,6 @@
 package com.neueda.etiqet.selenium.fixture;
 
 import com.neueda.etiqet.selenium.browser.BrowserBase;
-import org.apache.log4j.Logger;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.openqa.selenium.*;
@@ -9,6 +8,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.time.Duration;
@@ -33,7 +34,7 @@ import static org.junit.Assert.*;
 
 public class SeleniumHandlers {
 
-    private final static org.apache.log4j.Logger logger = Logger.getLogger(SeleniumHandlers.class);
+    private final static Logger logger = LoggerFactory.getLogger(SeleniumHandlers.class);
 
     private static WebDriver driver;
 

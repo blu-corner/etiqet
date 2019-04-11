@@ -1,6 +1,7 @@
 package com.neueda.etiqet.selenium.browser;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
@@ -13,7 +14,7 @@ import java.util.List;
 @XmlRootElement(name="Browsers")
 public class BrowserBase {
 
-    private static Logger logger = Logger.getLogger(BrowserBase.class);
+    private static Logger logger = LoggerFactory.getLogger(BrowserBase.class);
 
     @XmlElements({
         @XmlElement(name = "Firefox", type = Firefox.class),
