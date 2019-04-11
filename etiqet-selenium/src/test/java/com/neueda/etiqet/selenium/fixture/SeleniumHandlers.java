@@ -942,6 +942,18 @@ public class SeleniumHandlers {
         assertThat(selectedElement.getText(), CoreMatchers.containsString(expectedSubText));
     }
 
+    public static void checkMultipleElementsInnerTextEquals(ArrayList<String> expectedValues) {
+        for (int i = 0; i < selectedElements.size(); i++) {
+            assertEquals(expectedValues.get(i), selectedElements.get(i).getText());
+        }
+    }
+
+    public static void checkMultipleElementsInnerTextContains(ArrayList<String> expectedValues) {
+        for (int i = 0; i < selectedElements.size(); i++) {
+            assertTrue(selectedElements.get(i).getText().contains(expectedValues.get(i)));
+        }
+    }
+
     public static void checkDescendents(String expectedText) {
         assertTrue(selectedElement == null ?
             driver.findElements(By.xpath("//*[contains(text(),'" + expectedText + "')]")).size() > 0 :

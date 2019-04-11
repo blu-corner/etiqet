@@ -3,6 +3,8 @@ package com.neueda.etiqet.selenium.fixture.stepdefs;
 import cucumber.api.java.en.Then;
 import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
 
+import java.util.ArrayList;
+
 public class Validations {
 
     @Then("^I? ?check (?:the)? ?current url is \"([^\"]*)\"$")
@@ -53,6 +55,16 @@ public class Validations {
     @Then("^I? ?check (?:the)? ?selected element's inner text contains \"([^\"]*)\"$")
     public void checkInnerTextContains(String expectedSubText) {
         SeleniumHandlers.checkInnerTextContains(expectedSubText);
+    }
+
+    @Then("^I? ?check multiple (?:the)? ?selected elements' inner text is equal to \"([^\"]*)\"$")
+    public void checkMultipleElementsInnerTextEquals(ArrayList<String> expectedText) {
+        SeleniumHandlers.checkMultipleElementsInnerTextEquals(expectedText);
+    }
+
+    @Then("^I? ?check multiple (?:the)? ?selected elements' inner text contains \"([^\"]*)\"$")
+    public void checkMultipleElementsInnerTextContains(ArrayList<String> expectedSubText) {
+        SeleniumHandlers.checkMultipleElementsInnerTextContains(expectedSubText);
     }
 
     @Then("^I? ?check if (?:the)? ?selected element's descendents contain the text \"([^\"]*)\"$")
