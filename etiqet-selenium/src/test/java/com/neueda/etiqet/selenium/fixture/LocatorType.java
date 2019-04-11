@@ -1,6 +1,6 @@
 package com.neueda.etiqet.selenium.fixture;
 
-public enum SelectorMethod {
+public enum LocatorType {
 
     CSS,
     XPATH,

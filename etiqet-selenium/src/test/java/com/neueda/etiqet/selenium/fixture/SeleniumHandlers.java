@@ -156,8 +156,8 @@ public class SeleniumHandlers {
     public static void selectElementByCss(String locator, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.CSS, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.CSS, locator, explicitWaitTimeout, selectedElement).get(0);
+                explicitWait.applyWait(driver, LocatorType.CSS, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.CSS, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
             selectedElement = selectedElement == null ? driver.findElement(By.cssSelector(locator)) :
@@ -182,8 +182,8 @@ public class SeleniumHandlers {
     public static void selectElementsByCss(String locator) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElements = selectedElement == null ?
-                explicitWait.applyWaitAll(driver, SelectorMethod.CSS, locator, explicitWaitTimeout) :
-                explicitWait.applyWaitAll(driver, SelectorMethod.CSS, locator, explicitWaitTimeout, selectedElement);
+                explicitWait.applyWaitAll(driver, LocatorType.CSS, locator, explicitWaitTimeout) :
+                explicitWait.applyWaitAll(driver, LocatorType.CSS, locator, explicitWaitTimeout, selectedElement);
             return;
         }
         selectedElements = selectedElement == null ? driver.findElements(By.cssSelector(locator)) :
@@ -203,8 +203,8 @@ public class SeleniumHandlers {
     public static void selectElementByXpath(String locator, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout, selectedElement).get(0);
+                explicitWait.applyWait(driver, LocatorType.XPATH, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.XPATH, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
             selectedElement = selectedElement == null ? driver.findElement(By.xpath(locator)) :
@@ -229,8 +229,8 @@ public class SeleniumHandlers {
     public static void selectElementsByXpath(String locator) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElements = selectedElement == null ?
-                explicitWait.applyWaitAll(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout) :
-                explicitWait.applyWaitAll(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout, selectedElement);
+                explicitWait.applyWaitAll(driver, LocatorType.XPATH, locator, explicitWaitTimeout) :
+                explicitWait.applyWaitAll(driver, LocatorType.XPATH, locator, explicitWaitTimeout, selectedElement);
             return;
         }
         selectedElements = selectedElement == null ? driver.findElements(By.xpath(locator)) :
@@ -250,8 +250,8 @@ public class SeleniumHandlers {
     public static void selectElementById(String locator, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.ID, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.ID, locator, explicitWaitTimeout, selectedElement).get(0);
+                explicitWait.applyWait(driver, LocatorType.ID, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.ID, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
             selectedElement = selectedElement == null ? driver.findElement(By.id(locator)) :
@@ -275,8 +275,8 @@ public class SeleniumHandlers {
     public static void selectElementByTag(String locator, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.TAG, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.TAG, locator, explicitWaitTimeout, selectedElement).get(0);
+                explicitWait.applyWait(driver, LocatorType.TAG, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.TAG, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
             selectedElement = selectedElement == null ? driver.findElement(By.tagName(locator)) :
@@ -301,8 +301,8 @@ public class SeleniumHandlers {
     public static void selectElementsByTag(String locator) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElements = selectedElement == null ?
-                explicitWait.applyWaitAll(driver, SelectorMethod.TAG, locator, explicitWaitTimeout) :
-                explicitWait.applyWaitAll(driver, SelectorMethod.TAG, locator, explicitWaitTimeout, selectedElement);
+                explicitWait.applyWaitAll(driver, LocatorType.TAG, locator, explicitWaitTimeout) :
+                explicitWait.applyWaitAll(driver, LocatorType.TAG, locator, explicitWaitTimeout, selectedElement);
             return;
         }
         selectedElements = selectedElement == null ? driver.findElements(By.tagName(locator)) :
@@ -323,8 +323,8 @@ public class SeleniumHandlers {
     public static void selectElementByClassName(String locator, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout, selectedElement).get(0);
+                explicitWait.applyWait(driver, LocatorType.CLASS, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.CLASS, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
             selectedElement = selectedElement == null ? driver.findElement(By.className(locator)) :
@@ -349,8 +349,8 @@ public class SeleniumHandlers {
     public static void selectElementsByClassName(String locator) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElements = selectedElement == null ?
-                explicitWait.applyWaitAll(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout) :
-                explicitWait.applyWaitAll(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout, selectedElement);
+                explicitWait.applyWaitAll(driver, LocatorType.CLASS, locator, explicitWaitTimeout) :
+                explicitWait.applyWaitAll(driver, LocatorType.CLASS, locator, explicitWaitTimeout, selectedElement);
             return;
         }
         selectedElements = selectedElement == null ? driver.findElements(By.className(locator)) :
@@ -370,8 +370,8 @@ public class SeleniumHandlers {
     public static void selectElementByLinkText(String locator, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.LINK, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.LINK, locator, explicitWaitTimeout, selectedElement).get(0);
+                explicitWait.applyWait(driver, LocatorType.LINK, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.LINK, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
             selectedElement = selectedElement == null ? driver.findElement(By.linkText(locator)) :
@@ -395,8 +395,8 @@ public class SeleniumHandlers {
     public static void selectElementByPartialLinkText(String locator, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
             selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.PARTIAL_LINK, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.PARTIAL_LINK, locator, explicitWaitTimeout, selectedElement).get(0);
+                explicitWait.applyWait(driver, LocatorType.PARTIAL_LINK, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.PARTIAL_LINK, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
             selectedElement = selectedElement == null ? driver.findElement(By.partialLinkText(locator)) :
@@ -475,7 +475,7 @@ public class SeleniumHandlers {
             while (i != 0) {
                 i--;
                 try {
-                    List<WebElement> ignore = explicitWait.applyWait(driver, SelectorMethod.XPATH, ".//*[contains(text(),'" + filter + "')]", explicitWaitTimeout, selectedElement);
+                    List<WebElement> ignore = explicitWait.applyWait(driver, LocatorType.XPATH, ".//*[contains(text(),'" + filter + "')]", explicitWaitTimeout, selectedElement);
 
                 } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException e) {
                     selectedElements.remove(i);
@@ -497,7 +497,7 @@ public class SeleniumHandlers {
             while (i != 0) {
                 i--;
                 try {
-                    List<WebElement> ignore = explicitWait.applyWait(driver, SelectorMethod.XPATH, ".//*[contains(text(),'" + filterText + "')]", explicitWaitTimeout, selectedElements.get(i));
+                    List<WebElement> ignore = explicitWait.applyWait(driver, LocatorType.XPATH, ".//*[contains(text(),'" + filterText + "')]", explicitWaitTimeout, selectedElements.get(i));
                 } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException e) {
                     selectedElements.remove(i);
                 }
@@ -891,7 +891,7 @@ public class SeleniumHandlers {
 
     public static void checkPageContainsText(String expectedText, Long timeout) {
         if (timeout != null) {
-            ExplicitWait.PRESENT.applyWait(driver, SelectorMethod.XPATH, "//*[contains(text(),'" + expectedText + "')]", timeout);
+            ExplicitWait.PRESENT.applyWait(driver, LocatorType.XPATH, "//*[contains(text(),'" + expectedText + "')]", timeout);
             return;
         }
         List<WebElement> elementsFound = driver.findElements(By.xpath("//*[contains(text(),'" + expectedText + "')]"));
@@ -901,7 +901,7 @@ public class SeleniumHandlers {
     public static void checkPageDoesNotContainText(String unexpectedText, Long timeout) {
         if (timeout != null) {
             try {
-                ExplicitWait.PRESENT.applyWait(driver, SelectorMethod.XPATH, "//*[contains(text(),'" + unexpectedText + "')]", timeout);
+                ExplicitWait.PRESENT.applyWait(driver, LocatorType.XPATH, "//*[contains(text(),'" + unexpectedText + "')]", timeout);
                 throw new UnexpectedElementFoundException("Unexpected element with text " + unexpectedText + " was found on page");
             } catch (TimeoutException e) {
                 assert (true);
@@ -914,7 +914,7 @@ public class SeleniumHandlers {
 
     public static void checkPageElementHasInnerText(String expectedText, Long timeout) {
         if (timeout != null) {
-            ExplicitWait.PRESENT.applyWait(driver, SelectorMethod.XPATH, "//*[text()='" + expectedText + "']", timeout);
+            ExplicitWait.PRESENT.applyWait(driver, LocatorType.XPATH, "//*[text()='" + expectedText + "']", timeout);
             return;
         }
         List<WebElement> elementsFound = driver.findElements(By.xpath("//*[text()='" + expectedText + "']"));
@@ -924,7 +924,7 @@ public class SeleniumHandlers {
     public static void checkNoPageElementHasInnerText(String unexpectedText, Long timeout) {
         if (timeout != null) {
             try {
-                ExplicitWait.PRESENT.applyWait(driver, SelectorMethod.XPATH, "//*[text()='" + unexpectedText + "']", timeout);
+                ExplicitWait.PRESENT.applyWait(driver, LocatorType.XPATH, "//*[text()='" + unexpectedText + "']", timeout);
                 throw new UnexpectedElementFoundException("Unexpected element with text " + unexpectedText + " was found on page");
             } catch (TimeoutException e) {
                 assert (true);

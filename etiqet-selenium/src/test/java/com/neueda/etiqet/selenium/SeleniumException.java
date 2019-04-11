@@ -1,4 +1,4 @@
-package com.neueda.etiqet.selenium.fixture;
+package com.neueda.etiqet.selenium;
 
 public class SeleniumException extends Exception {
 
