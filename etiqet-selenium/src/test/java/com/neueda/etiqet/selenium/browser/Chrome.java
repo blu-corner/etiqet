@@ -1,5 +1,6 @@
 package com.neueda.etiqet.selenium.browser;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -48,7 +49,7 @@ public class Chrome extends Browser {
 
     @Override
     public void setupDriver() {
-        System.setProperty("webdriver.chrome.driver", driverPath);
+        WebDriverManager.chromedriver().setup();
         org.openqa.selenium.chrome.ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments(options.getStartupArgs());
         chromeOptions.addEncodedExtensions(options.getStartupArgs());

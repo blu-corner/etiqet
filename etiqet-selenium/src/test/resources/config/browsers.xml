@@ -10,4 +10,9 @@
         <screenshot_on_exit>true</screenshot_on_exit>
         <close_on_exit>true</close_on_exit>
     </Chrome>
+    <Edge name="edge">
+        <headless>false</headless>
+        <screenshot_on_exit>true</screenshot_on_exit>
+        <close_on_exit>true</close_on_exit>
+    </Edge>
 </Browsers>

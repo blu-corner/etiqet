@@ -1,5 +1,6 @@
 package com.neueda.etiqet.selenium.browser;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -51,7 +52,7 @@ public class Firefox extends Browser {
 
     @Override
     public void setupDriver() {
-        System.setProperty("webdriver.gecko.driver", driverPath);
+        WebDriverManager.firefoxdriver().setup();
 
         org.openqa.selenium.firefox.FirefoxOptions firefoxOptions = new org.openqa.selenium.firefox.FirefoxOptions();
         firefoxOptions.addArguments(options.getStartupArgs());
