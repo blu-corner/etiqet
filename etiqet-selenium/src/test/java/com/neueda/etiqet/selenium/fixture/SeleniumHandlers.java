@@ -153,14 +153,14 @@ public class SeleniumHandlers {
      * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByCss(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByCss(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
+            selectedElement = relative == null || selectedElement == null  ?
                 explicitWait.applyWait(driver, LocatorType.CSS, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, LocatorType.CSS, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
-            selectedElement = selectedElement == null ? driver.findElement(By.cssSelector(locator)) :
+            selectedElement = relative == null || selectedElement == null  ? driver.findElement(By.cssSelector(locator)) :
                 selectedElement.findElement(By.cssSelector(locator));
         }
         if (alias != null) {
@@ -179,14 +179,14 @@ public class SeleniumHandlers {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementsByCss(String locator) throws NoSuchElementException {
+    public static void selectElementsByCss(String locator, String relative) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElements = selectedElement == null ?
+            selectedElements = relative == null || selectedElement == null  ?
                 explicitWait.applyWaitAll(driver, LocatorType.CSS, locator, explicitWaitTimeout) :
                 explicitWait.applyWaitAll(driver, LocatorType.CSS, locator, explicitWaitTimeout, selectedElement);
             return;
         }
-        selectedElements = selectedElement == null ? driver.findElements(By.cssSelector(locator)) :
+        selectedElements = relative == null || selectedElement == null ? driver.findElements(By.cssSelector(locator)) :
             selectedElement.findElements(By.cssSelector(locator));
     }
 
@@ -200,14 +200,14 @@ public class SeleniumHandlers {
      * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByXpath(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByXpath(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
+            selectedElement = relative == null || selectedElement == null ?
                 explicitWait.applyWait(driver, LocatorType.XPATH, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, LocatorType.XPATH, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
-            selectedElement = selectedElement == null ? driver.findElement(By.xpath(locator)) :
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.xpath(locator)) :
                 selectedElement.findElement(By.xpath(locator));
         }
         if (alias != null) {
@@ -226,14 +226,14 @@ public class SeleniumHandlers {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementsByXpath(String locator) throws NoSuchElementException {
+    public static void selectElementsByXpath(String locator, String relative) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElements = selectedElement == null ?
+            selectedElements = relative == null || selectedElement == null ?
                 explicitWait.applyWaitAll(driver, LocatorType.XPATH, locator, explicitWaitTimeout) :
                 explicitWait.applyWaitAll(driver, LocatorType.XPATH, locator, explicitWaitTimeout, selectedElement);
             return;
         }
-        selectedElements = selectedElement == null ? driver.findElements(By.xpath(locator)) :
+        selectedElements = relative == null || selectedElement == null ? driver.findElements(By.xpath(locator)) :
             selectedElement.findElements(By.xpath(locator));
     }
 
@@ -247,14 +247,14 @@ public class SeleniumHandlers {
      * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementById(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementById(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
+            selectedElement = relative == null || selectedElement == null ?
                 explicitWait.applyWait(driver, LocatorType.ID, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, LocatorType.ID, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
-            selectedElement = selectedElement == null ? driver.findElement(By.id(locator)) :
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.id(locator)) :
                 selectedElement.findElement(By.id(locator));
         }
         if (alias != null) {
@@ -272,15 +272,16 @@ public class SeleniumHandlers {
      * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByTag(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByTag(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
+            selectedElement = relative == null || selectedElement == null ?
                 explicitWait.applyWait(driver, LocatorType.TAG, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, LocatorType.TAG, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
-            selectedElement = selectedElement == null ? driver.findElement(By.tagName(locator)) :
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.tagName(locator)) :
                 selectedElement.findElement(By.tagName(locator));
+            System.out.println(selectedElement.getText());
         }
         if (alias != null) {
             namedElements.put(alias, selectedElement);
@@ -298,14 +299,14 @@ public class SeleniumHandlers {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementsByTag(String locator) throws NoSuchElementException {
+    public static void selectElementsByTag(String locator, String relative) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElements = selectedElement == null ?
+            selectedElements = relative == null || selectedElement == null ?
                 explicitWait.applyWaitAll(driver, LocatorType.TAG, locator, explicitWaitTimeout) :
                 explicitWait.applyWaitAll(driver, LocatorType.TAG, locator, explicitWaitTimeout, selectedElement);
             return;
         }
-        selectedElements = selectedElement == null ? driver.findElements(By.tagName(locator)) :
+        selectedElements = relative == null || selectedElement == null ? driver.findElements(By.tagName(locator)) :
             selectedElement.findElements(By.tagName(locator));
     }
 
@@ -320,14 +321,14 @@ public class SeleniumHandlers {
      * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByClassName(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByClassName(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
+            selectedElement = relative == null || selectedElement == null ?
                 explicitWait.applyWait(driver, LocatorType.CLASS, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, LocatorType.CLASS, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
-            selectedElement = selectedElement == null ? driver.findElement(By.className(locator)) :
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.className(locator)) :
                 selectedElement.findElement(By.className(locator));
         }
         if (alias != null) {
@@ -346,14 +347,14 @@ public class SeleniumHandlers {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementsByClassName(String locator) throws NoSuchElementException {
+    public static void selectElementsByClassName(String locator, String relative) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElements = selectedElement == null ?
+            selectedElements = relative == null || selectedElement == null ?
                 explicitWait.applyWaitAll(driver, LocatorType.CLASS, locator, explicitWaitTimeout) :
                 explicitWait.applyWaitAll(driver, LocatorType.CLASS, locator, explicitWaitTimeout, selectedElement);
             return;
         }
-        selectedElements = selectedElement == null ? driver.findElements(By.className(locator)) :
+        selectedElements = relative == null || selectedElement == null ? driver.findElements(By.className(locator)) :
             selectedElement.findElements(By.className(locator));
     }
 
@@ -367,14 +368,14 @@ public class SeleniumHandlers {
      * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByLinkText(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByLinkText(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
+            selectedElement = relative == null || selectedElement == null ?
                 explicitWait.applyWait(driver, LocatorType.LINK, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, LocatorType.LINK, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
-            selectedElement = selectedElement == null ? driver.findElement(By.linkText(locator)) :
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.linkText(locator)) :
                 selectedElement.findElement(By.linkText(locator));
         }
         if (alias != null) {
@@ -392,14 +393,14 @@ public class SeleniumHandlers {
      * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByPartialLinkText(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByPartialLinkText(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
+            selectedElement = relative == null || selectedElement == null ?
                 explicitWait.applyWait(driver, LocatorType.PARTIAL_LINK, locator, explicitWaitTimeout).get(0) :
                 explicitWait.applyWait(driver, LocatorType.PARTIAL_LINK, locator, explicitWaitTimeout, selectedElement).get(0);
         }
         else {
-            selectedElement = selectedElement == null ? driver.findElement(By.partialLinkText(locator)) :
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.partialLinkText(locator)) :
                 selectedElement.findElement(By.partialLinkText(locator));
         }
         if (alias != null) {

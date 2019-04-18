@@ -13,9 +13,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by css selector using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
-    public void selectElementByCss(String locator, String alias) throws NoSuchElementException {
-        SeleniumHandlers.selectElementByCss(locator, alias);
+    @When("^I? ?select element by css selector using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    public void selectElementByCss(String locator, String relative, String alias) throws NoSuchElementException {
+        SeleniumHandlers.selectElementByCss(locator, relative, alias);
     }
 
     /**
@@ -26,9 +26,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select elements by css selector using value \"([^\"]*)\"$")
-    public void selectElementsByCss(String locator) throws NoSuchElementException {
-        SeleniumHandlers.selectElementsByCss(locator);
+    @When("^I? ?select elements by css selector using value \"([^\"]*)\"( relative to previously selected element)?$")
+    public void selectElementsByCss(String locator, String relative) throws NoSuchElementException {
+        SeleniumHandlers.selectElementsByCss(locator, relative);
     }
 
     /**
@@ -37,9 +37,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by xpath using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
-    public void selectElementByXpath(String locator, String alias) throws NoSuchElementException {
-        SeleniumHandlers.selectElementByXpath(locator, alias);
+    @When("^I? ?select element by xpath using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    public void selectElementByXpath(String locator, String relative, String alias) throws NoSuchElementException {
+        SeleniumHandlers.selectElementByXpath(locator, relative, alias);
     }
 
     /**
@@ -50,9 +50,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select elements by xpath using value \"([^\"]*)\"$")
-    public void selectElementsByXpath(String locator) throws NoSuchElementException {
-        SeleniumHandlers.selectElementsByXpath(locator);
+    @When("^I? ?select elements by xpath using value \"([^\"]*)\"( relative to previously selected element)?$")
+    public void selectElementsByXpath(String locator, String relative) throws NoSuchElementException {
+        SeleniumHandlers.selectElementsByXpath(locator, relative);
     }
 
     /**
@@ -61,9 +61,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by id using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
-    public void selectElementById(String locator, String alias) throws NoSuchElementException {
-        SeleniumHandlers.selectElementById(locator, alias);
+    @When("^I? ?select element by id using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    public void selectElementById(String locator, String relative, String alias) throws NoSuchElementException {
+        SeleniumHandlers.selectElementById(locator, relative, alias);
     }
 
     /**
@@ -72,9 +72,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by tag using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
-    public void selectElementByTag(String locator, String alias) throws NoSuchElementException {
-        SeleniumHandlers.selectElementByTag(locator, alias);
+    @When("^I? ?select element by tag using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    public void selectElementByTag(String locator, String relative, String alias) throws NoSuchElementException {
+        SeleniumHandlers.selectElementByTag(locator, relative, alias);
     }
 
     /**
@@ -85,9 +85,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select elements by tag using value \"([^\"]*)\"$")
-    public void selectElementsByTag(String locator) throws NoSuchElementException {
-        SeleniumHandlers.selectElementsByTag(locator);
+    @When("^I? ?select elements by tag using value \"([^\"]*)\"( relative to previously selected element)?$")
+    public void selectElementsByTag(String locator, String relative) throws NoSuchElementException {
+        SeleniumHandlers.selectElementsByTag(locator, relative);
     }
 
     /**
@@ -97,9 +97,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by class name using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
-    public void selectElementByClassName(String locator, String alias) throws NoSuchElementException {
-        SeleniumHandlers.selectElementByClassName(locator, alias);
+    @When("^I? ?select element by class name using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    public void selectElementByClassName(String locator, String relative, String alias) throws NoSuchElementException {
+        SeleniumHandlers.selectElementByClassName(locator, relative, alias);
     }
 
     /**
@@ -110,9 +110,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select elements by class name using value \"([^\"]*)\"$")
-    public void selectElementsByClassName(String locator) throws NoSuchElementException {
-        SeleniumHandlers.selectElementsByClassName(locator);
+    @When("^I? ?select elements by class name using value \"([^\"]*)\"( relative to previously selected element)?$")
+    public void selectElementsByClassName(String locator, String relative) throws NoSuchElementException {
+        SeleniumHandlers.selectElementsByClassName(locator, relative);
     }
 
     /**
@@ -121,9 +121,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by link text using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
-    public void selectElementByLinkText(String locator, String alias) throws NoSuchElementException {
-        SeleniumHandlers.selectElementByLinkText(locator, alias);
+    @When("^I? ?select element by link text using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    public void selectElementByLinkText(String locator, String relative, String alias) throws NoSuchElementException {
+        SeleniumHandlers.selectElementByLinkText(locator, relative, alias);
     }
 
     /**
@@ -132,9 +132,9 @@ public class Selection {
      * @param locator a string that targets an element in the dom.
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by partial link text using value \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
-    public void selectElementByPartialLinkText(String locator, String alias) throws NoSuchElementException {
-        SeleniumHandlers.selectElementByPartialLinkText(locator, alias);
+    @When("^I? ?select element by partial link text using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    public void selectElementByPartialLinkText(String locator, String relative, String alias) throws NoSuchElementException {
+        SeleniumHandlers.selectElementByPartialLinkText(locator, relative, alias);
     }
 
     @When("^I? ?select first element from elements by contained text \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
