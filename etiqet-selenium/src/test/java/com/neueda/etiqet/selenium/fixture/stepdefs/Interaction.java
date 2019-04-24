@@ -32,9 +32,6 @@ public class Interaction {
         SeleniumHandlers.clickAndHold();
     }
 
-    /**
-     * Convenience method - Submit a form if element is contained within a form
-     */
     @When("^I? ?submit(?: form)?$")
     public void submit() {
         SeleniumHandlers.submit();
