@@ -25,8 +25,11 @@ import static org.junit.Assert.*;
  * Implements functionality of the step definitions.
  * Actions are performed on the selectedElement by default.
  *
- * When Selecting elements, if an element is already selected, the search will look for elements relative to
- * the currently selected element. If no element is currently selected then the whole DOM will be searched.
+ * When Selecting elements, there are optional lines at the end of each selection method. One optional feature is to
+ * include 'relative to the selected element' that will cause selenium to search for the element relative to the
+ * currently selected element rather than from the root of the DOM. You can also include an alias that will save
+ * the element in a map with the alias name as the key. To do this end the selection method with 'as [alias name]'.
+ * Aliases only apply when selecting a single element rather than multiple elements.
  *
  * Explicit and implicit wait when set will be used on applicable handlers until they are disabled. i.e. implicit wait
  * is set to 0 or explicit wait is disabled. If a search method returns multiple elements explicit wait will wait for
@@ -147,11 +150,9 @@ public class SeleniumHandlers {
     /**
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementByCss(String locator, String relative, String alias) throws NoSuchElementException {
@@ -174,10 +175,8 @@ public class SeleniumHandlers {
      * by calling selectFromElements(int index) step definition.
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementsByCss(String locator, String relative) throws NoSuchElementException {
@@ -194,11 +193,9 @@ public class SeleniumHandlers {
     /**
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementByXpath(String locator, String relative, String alias) throws NoSuchElementException {
@@ -221,10 +218,8 @@ public class SeleniumHandlers {
      * by calling selectFromElements(int index) step definition.
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementsByXpath(String locator, String relative) throws NoSuchElementException {
@@ -241,11 +236,9 @@ public class SeleniumHandlers {
     /**
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementById(String locator, String relative, String alias) throws NoSuchElementException {
@@ -266,11 +259,9 @@ public class SeleniumHandlers {
     /**
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementByTag(String locator, String relative, String alias) throws NoSuchElementException {
@@ -294,10 +285,8 @@ public class SeleniumHandlers {
      * by calling selectFromElements(int index) step definition.
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementsByTag(String locator, String relative) throws NoSuchElementException {
@@ -315,11 +304,9 @@ public class SeleniumHandlers {
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * If multiple elements are found the first element will be assigned to selectedElement
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementByClassName(String locator, String relative, String alias) throws NoSuchElementException {
@@ -342,10 +329,8 @@ public class SeleniumHandlers {
      * by calling selectFromElements(int index) step definition.
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementsByClassName(String locator, String relative) throws NoSuchElementException {
@@ -362,11 +347,9 @@ public class SeleniumHandlers {
     /**
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementByLinkText(String locator, String relative, String alias) throws NoSuchElementException {
@@ -387,11 +370,9 @@ public class SeleniumHandlers {
     /**
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
     public static void selectElementByPartialLinkText(String locator, String relative, String alias) throws NoSuchElementException {
@@ -448,14 +429,27 @@ public class SeleniumHandlers {
         selectedElement = selectedElements.get(index);
     }
 
+    /**
+     * Saves selected elements inner text that other methods can then use
+     * @param alias name that references the text
+     */
     public static void saveSelectedElementsInnerTextAs(String alias) {
         namedValues.put(alias, selectedElement.getText());
     }
 
+    /**
+     * Saves selected element's attribute value that other methods can then use
+     * @param attributeName name of attribute
+     * @param alias name that references the attribute value
+     */
     public static void saveSelectedElementsAttributeValueAs(String attributeName, String alias) {
         namedValues.put(alias, selectedElement.getAttribute(attributeName));
     }
 
+    /**
+     * Saves selected elements count that other methods can thenuse
+     * @param alias name that references the count
+     */
     public static void saveSelectedElementsCountAs(String alias) {
         namedValues.put(alias, Integer.toString(selectedElements.size()));
     }
@@ -588,7 +582,6 @@ public class SeleniumHandlers {
 
     /**
      * If the named element exists it will become the selectedElement so that actions can be performed on it
-     *
      * @param elementName alias to be selected
      */
     public static void selectNamedElement(String elementName) throws SeleniumException {
@@ -795,6 +788,10 @@ public class SeleniumHandlers {
         actions.build().perform();
     }
 
+    /**
+     * Creates an alias to the element after the element has been selected
+     * @param alias
+     */
     public static void nameSelectedElement(String alias) {
         namedElements.put(alias, selectedElement);
     }
