@@ -15,15 +15,8 @@ public class Navigation {
         SeleniumHandlers.forward();
     }
 
-    // ALIASES
-
-    @When("^I? ?(?:press|select|click|click on|go) back$")
-    public void backAlias() {
-        back();
-    }
-
-    @When("^I? ?(?:press|select|click|click on|go) forward$")
-    public void forwardAlias() {
-        forward();
+    @When("^I? ?(?:press|select|click|click on)? ?(?:refresh|reload) ?(?:the)? ?(?:page)?$")
+    public void refresh() {
+        SeleniumHandlers.refresh();
     }
 }

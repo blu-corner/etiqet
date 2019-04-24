@@ -8,13 +8,13 @@ Feature: Working with Grid Structures
         When I select element by xpath using value "//div[@class='field-item even']//table[2]//tbody[1]"
 
         #Get an array list of the tables rows
-        Then I get the children of selected element
+        Then I select the children of selected element
 
         #Select the tables header row by a piece of text contained in it
         Then I select first element from elements by contained text "Season"
 
         #Break the header row down into it's constituent cells
-        Then I get the children of selected element
+        Then I select the children of selected element
 
         #Grab the column index for the column you want and save it to the index variable
         Then I get index for element amongst selected elements containing "Season"
@@ -27,7 +27,7 @@ Feature: Working with Grid Structures
         Then I select first element from elements by contained text "Sweet Sixteen"
 
         #Get an array list of the cells within the currently selected table row
-        Then I get the children of selected element
+        Then I select the children of selected element
 
         #Select from current array list element located in position corresponding to column index
         Then I select element at current index from selected elements

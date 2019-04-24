@@ -1,5 +1,6 @@
 package com.neueda.etiqet.selenium.fixture.stepdefs;
 
+import com.neueda.etiqet.selenium.SeleniumException;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
@@ -11,9 +12,11 @@ public class Selection {
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by css selector using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    @When("^I? ?select element by css selector using value \"([^\"]*)\"( relative to the selected element)?(?: as \"([^\"]*)\"?)?$")
     public void selectElementByCss(String locator, String relative, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByCss(locator, relative, alias);
     }
@@ -24,9 +27,10 @@ public class Selection {
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select elements by css selector using value \"([^\"]*)\"( relative to previously selected element)?$")
+    @When("^I? ?select elements by css selector using value \"([^\"]*)\"( relative to the selected element)?$")
     public void selectElementsByCss(String locator, String relative) throws NoSuchElementException {
         SeleniumHandlers.selectElementsByCss(locator, relative);
     }
@@ -35,9 +39,11 @@ public class Selection {
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by xpath using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    @When("^I? ?select element by xpath using value \"([^\"]*)\"( relative to the selected element)?(?: as \"([^\"]*)\"?)?$")
     public void selectElementByXpath(String locator, String relative, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByXpath(locator, relative, alias);
     }
@@ -48,9 +54,10 @@ public class Selection {
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select elements by xpath using value \"([^\"]*)\"( relative to previously selected element)?$")
+    @When("^I? ?select elements by xpath using value \"([^\"]*)\"( relative to the selected element)?$")
     public void selectElementsByXpath(String locator, String relative) throws NoSuchElementException {
         SeleniumHandlers.selectElementsByXpath(locator, relative);
     }
@@ -59,9 +66,11 @@ public class Selection {
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by id using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    @When("^I? ?select element by id using value \"([^\"]*)\"( relative to the selected element)?(?: as \"([^\"]*)\"?)?$")
     public void selectElementById(String locator, String relative, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementById(locator, relative, alias);
     }
@@ -70,9 +79,11 @@ public class Selection {
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by tag using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    @When("^I? ?select element by tag using value \"([^\"]*)\"( relative to the selected element)?(?: as \"([^\"]*)\"?)?$")
     public void selectElementByTag(String locator, String relative, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByTag(locator, relative, alias);
     }
@@ -83,9 +94,10 @@ public class Selection {
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select elements by tag using value \"([^\"]*)\"( relative to previously selected element)?$")
+    @When("^I? ?select elements by tag using value \"([^\"]*)\"( relative to the selected element)?$")
     public void selectElementsByTag(String locator, String relative) throws NoSuchElementException {
         SeleniumHandlers.selectElementsByTag(locator, relative);
     }
@@ -95,9 +107,11 @@ public class Selection {
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * If multiple elements are found the first element will be assigned to selectedElement
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by class name using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    @When("^I? ?select element by class name using value \"([^\"]*)\"( relative to the selected element)?(?: as \"([^\"]*)\"?)?$")
     public void selectElementByClassName(String locator, String relative, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByClassName(locator, relative, alias);
     }
@@ -108,9 +122,10 @@ public class Selection {
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select elements by class name using value \"([^\"]*)\"( relative to previously selected element)?$")
+    @When("^I? ?select elements by class name using value \"([^\"]*)\"( relative to the selected element)?$")
     public void selectElementsByClassName(String locator, String relative) throws NoSuchElementException {
         SeleniumHandlers.selectElementsByClassName(locator, relative);
     }
@@ -119,9 +134,11 @@ public class Selection {
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by link text using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    @When("^I? ?select element by link text using value \"([^\"]*)\"( relative to the selected element)?(?: as \"([^\"]*)\"?)?$")
     public void selectElementByLinkText(String locator, String relative, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByLinkText(locator, relative, alias);
     }
@@ -130,9 +147,11 @@ public class Selection {
      * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
      * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    @When("^I? ?select element by partial link text using value \"([^\"]*)\"( relative to previously selected element)?(?: as \"([^\"]*)\"?)?$")
+    @When("^I? ?select element by partial link text using value \"([^\"]*)\"( relative to the selected element)?(?: as \"([^\"]*)\"?)?$")
     public void selectElementByPartialLinkText(String locator, String relative, String alias) throws NoSuchElementException {
         SeleniumHandlers.selectElementByPartialLinkText(locator, relative, alias);
     }
@@ -166,7 +185,7 @@ public class Selection {
         SeleniumHandlers.selectFromElements(index);
     }
 
-    @When("^I select element at current index from selected elements$")
+    @When("^I? ?select (?:the)? ?element at (?:the)? ?current index from selected elements$")
     public void checkEntryInSpecificCell() {
         SeleniumHandlers.getElementAtIndex();
     }
@@ -181,84 +200,44 @@ public class Selection {
         SeleniumHandlers.filterSelectedElementsDescendentsText(filterText);
     }
 
-    @When("^I? ?get (?:the)? ?children of selected element$")
-    public void getChildrenForSelectedElement(){
-        SeleniumHandlers.getAllChildrenForSelectedElement();
+    @When("^I? ?select (?:the)? ?children of selected element$")
+    public void selectChildrenForSelectedElement(){
+        SeleniumHandlers.selectAllChildrenForSelectedElement();
     }
 
-    @When("^I? ?get (?:the)? ?children of (?:the)? ?parent of the selected element$")
-    public void getAllChildrenForParentOfSelectedElement(){
-        SeleniumHandlers.getAllChildrenForParentOfSelectedElement();
+    @When("^I? ?select (?:the)? ?descendants of (?:the)? ?selected element$")
+    public void selectAllDescendantsForSelectedElement(){
+        SeleniumHandlers.selectAllDescendantsForSelectedElement();
     }
 
-    @When("^I? ?get (?:the)? ?descendants of (?:the)? ?selected element$")
-    public void getAllDescendantsForSelectedElement(){
-        SeleniumHandlers.getAllDescendantsForSelectedElement();
+    @When("^I? ?select everything following (?:the)? ?closing tag of the selected element$")
+    public void selectEverythingFollowingTheSelectedElement(){
+        SeleniumHandlers.selectEverythingFollowingTheSelectedElement();
     }
 
-    @When("^I? ?get both (?:the)? ?selected elements and all it's selected elements descendants$")
-    public void getAllDescendantsIncludingSelectedElement(){
-        SeleniumHandlers.getAllDescendantsIncludingSelectedElement();
+    @When("^I? ?select all siblings preceding (?:the)? ?selected element$")
+    public void selectTheSiblingsPrecedingTheSelectedElement(){
+        SeleniumHandlers.selectTheSiblingsPrecedingTheSelectedElement();
     }
 
-    @When("^I? ?get all (?:the)? ?descendants for (?:the)? ?parent of the selected element$")
-    public void getAllDescendantsForParentofSelectedElement(){
-        SeleniumHandlers.getAllDescendantsForParentofSelectedElement();
+    @When("^I? ?select all siblings following (?:the)? ?selected element$")
+    public void selectTheSiblingsFollowingTheSelectedElement(){
+        SeleniumHandlers.selectTheSiblingsFollowingTheSelectedElement();
     }
 
-    @When("^I? ?get everything following (?:the)? ?closing tag of the selected element$")
-    public void getEverythingFollowingTheSelectedElement(){
-        SeleniumHandlers.getEverythingFollowingTheSelectedElement();
+    @When("^I? ?select all siblings of (?:the)? ?selected element$")
+    public void selectTheSiblingsOfTheSelectedElement(){
+        SeleniumHandlers.selectTheSiblingsOfTheSelectedElement();
     }
 
-    @When("^I? ?get everything following (?:the)? ?closing tag of (?:the)? ?parent of the selected element$")
-    public void getEverythingFollowingTheParentOfSelectedElement(){
-        SeleniumHandlers.getEverythingFollowingTheParentOfSelectedElement();
+    @When("^I? ?select (?:the)? ?parent of (?:the)? ?selected element$")
+    public void selectTheParentOfSelectedElement(){
+        SeleniumHandlers.selectTheParentOfSelectedElement();
     }
 
-    @When("^I? ?get all siblings following (?:the)? ?selected element$")
-    public void getTheSiblingsFollowingTheSelectedElement(){
-        SeleniumHandlers.getTheSiblingsFollowingTheSelectedElement();
-    }
-
-    @When("^I? ?get all siblings following (?:the)? ?parent of (?:the)? ?selected element$")
-    public void getTheSiblingsFollowingTheParentOfSelectedElement(){
-        SeleniumHandlers.getTheSiblingsFollowingTheParentOfSelectedElement();
-    }
-
-    @When("^I? ?get all siblings preceding (?:the)? ?selected element$")
-    public void getTheSiblingsPrecedingTheSelectedElement(){
-        SeleniumHandlers.getTheSiblingsPrecedingTheSelectedElement();
-    }
-
-    @When("^I? ?get all siblings preceding (?:the)? ?parent of (?:the)? ?selected element$")
-    public void getTheSiblingsPrecedingTheParentOfSelectedElement(){
-        SeleniumHandlers.getTheSiblingsPrecedingTheParentOfSelectedElement();
-    }
-
-    @When("^I? ?get (?:the)? ?parent of (?:the)? ?selected element$")
-    public void getTheParentOfSelectedElement(){
-        SeleniumHandlers.getTheParentOfSelectedElement();
-    }
-
-    @When("^I? ?get (?:the)? ?grandparent of (?:the)? ?selected element$")
-    public void getTheParentOfTheParentOfSelectedElement(){
-        SeleniumHandlers.getTheParentOfTheParentOfSelectedElement();
-    }
-
-    @When("^I? ?get all ancestors of (?:the)? ?selected element$")
-    public void getAllAncestorsForSelectedElement(){
-        SeleniumHandlers.getAllAncestorsForSelectedElement();
-    }
-
-    @When("^I? ?get all ancestors of (?:the)? ?parent of (?:the)? ?selected element$")
-    public void getAllAncestorsForParentOfSelectedElement(){
-        SeleniumHandlers.getAllAncestorsForParentOfSelectedElement();
-    }
-
-    @When("^I? ?get (?:the)? ?selected element and all its ancestors$")
-    public void getAllAncestorsIncludingTheSelectedElement(){
-        SeleniumHandlers.getAllAncestorsIncludingTheSelectedElement();
+    @When("^I? ?select all ancestors of (?:the)? ?selected element$")
+    public void selectAllAncestorsForSelectedElement(){
+        SeleniumHandlers.selectAllAncestorsForSelectedElement();
     }
 
     /**
@@ -266,25 +245,42 @@ public class Selection {
      * @param elementName alias to be selected
      */
     @When("^I? ?select (?:the)? ?named element \"([^\"]*)\"$")
-    public void selectNamedElement(String elementName) {
+    public void selectNamedElement(String elementName) throws SeleniumException {
         SeleniumHandlers.selectNamedElement(elementName);
     }
 
+    /**
+     * Creates an alias to the element after the element has been selected
+     * @param alias
+     */
     @When("^I? ?name (?:the)? ?selected element as \"([^\"]*)\"$")
-    public void nameSelectedElement(String elementName) {
-        SeleniumHandlers.nameSelectedElement(elementName);
+    public void nameSelectedElement(String alias) {
+        SeleniumHandlers.nameSelectedElement(alias);
     }
 
+    /**
+     * Saves selected elements inner text that other methods can then use
+     * @param alias name that references the text
+     */
     @When("^I? ?save selected elements text as \"([^\"]*)\"$")
     public void saveSelectedElementsInnerTextAs(String alias) {
         SeleniumHandlers.saveSelectedElementsInnerTextAs(alias);
     }
 
+    /**
+     * Saves selected elements count that other methods can thenuse
+     * @param alias name that references the count
+     */
     @When("^I? ?save selected elements count as \"([^\"]*)\"$")
     public void saveSelectedElementsCountAs(String alias) {
         SeleniumHandlers.saveSelectedElementsCountAs(alias);
     }
 
+    /**
+     * Saves selected element's attribute value that other methods can then use
+     * @param attributeName name of attribute
+     * @param alias name that references the attribute value
+     */
     @When("^I? ?save selected element's attribute \"([^\"]*)\" value as \"([^\"]*)\"$")
     public void saveSelectedElementsInnerTextAs(String attributeName, String alias) {
         SeleniumHandlers.saveSelectedElementsAttributeValueAs(attributeName, alias);
@@ -317,17 +313,5 @@ public class Selection {
     @Then("^I? ?clear (?:the)? ?named values$")
     public void clearNamedValues() {
         SeleniumHandlers.clearNamedValues();
-    }
-
-    // ALIASES
-
-    @When("^element at index (\\d+) (?:is selected|from results is selected)$")
-    public void selectFromElementsAlias(Integer index) {
-        selectFromElements(index);
-    }
-
-    @When("^I (?:select|choose|get|grab|fetch|focus in on) element number (\\d+) from (?:results|selected elements|list|elements|group)$")
-    public void selectFromElementsAlias2(Integer index) {
-        selectFromElements(index);
     }
 }

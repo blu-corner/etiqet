@@ -73,7 +73,7 @@ public class Validations {
     }
 
     @Then("^I? ?check (?:the)? ?attribute \"([^\"]*)\" exists$")
-    public void iCheckAttributeExists(String attribute) {
+    public void checkAttributeExists(String attribute) {
         SeleniumHandlers.checkAttributeExists(attribute);
     }
 

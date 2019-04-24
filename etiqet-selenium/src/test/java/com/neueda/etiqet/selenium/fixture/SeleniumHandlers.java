@@ -1,5 +1,6 @@
 package com.neueda.etiqet.selenium.fixture;
 
+import com.neueda.etiqet.selenium.SeleniumException;
 import com.neueda.etiqet.selenium.browser.BrowserBase;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -512,68 +513,36 @@ public class SeleniumHandlers {
      * Select convenience methods for navigating tree structure of nodes
      */
 
-    public static void getAllChildrenForSelectedElement(){
+    public static void selectAllChildrenForSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./child::*"));
     }
 
-    public static void getAllChildrenForParentOfSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("../child::*"));
-    }
-
-    public static void getAllDescendantsForSelectedElement(){
+    public static void selectAllDescendantsForSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./descendant::*"));
     }
 
-    public static void getAllDescendantsIncludingSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("./descendant-or-self::*"));
-    }
-
-    public static void getAllDescendantsForParentofSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("../descendant::*"));
-    }
-
-    public static void getEverythingFollowingTheSelectedElement(){
+    public static void selectEverythingFollowingTheSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./following::*"));
     }
 
-    public static void getEverythingFollowingTheParentOfSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("../following::*"));
-    }
-
-    public static void getTheSiblingsFollowingTheSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("./following-sibling::*"));
-    }
-
-    public static void getTheSiblingsFollowingTheParentOfSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("../following-sibling::*"));
-    }
-
-    public static void getTheSiblingsPrecedingTheSelectedElement(){
+    public static void selectTheSiblingsPrecedingTheSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./preceding-sibling::*"));
     }
 
-    public static void getTheSiblingsPrecedingTheParentOfSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("../preceding-sibling::*"));
+    public static void selectTheSiblingsFollowingTheSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./following-sibling::*"));
     }
 
-    public static void getTheParentOfSelectedElement(){
+    public static void selectTheSiblingsOfTheSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./preceding-sibling::*|./following-sibling::*"));
+    }
+
+    public static void selectTheParentOfSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./parent::*"));
     }
 
-    public static void getTheParentOfTheParentOfSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("../parent::*"));
-    }
-
-    public static void getAllAncestorsForSelectedElement(){
+    public static void selectAllAncestorsForSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./ancestor::*"));
-    }
-
-    public static void getAllAncestorsForParentOfSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("../ancestor::*"));
-    }
-
-    public static void getAllAncestorsIncludingTheSelectedElement(){
-        selectedElements = selectedElement.findElements(By.xpath("./ancestor-or-self::*"));
     }
 
     /**
@@ -622,7 +591,10 @@ public class SeleniumHandlers {
      *
      * @param elementName alias to be selected
      */
-    public static void selectNamedElement(String elementName) {
+    public static void selectNamedElement(String elementName) throws SeleniumException {
+        if (!namedElements.containsKey(elementName)) {
+            throw new SeleniumException("Named element '" + elementName + "' does not exist");
+        }
         selectedElement = namedElements.get(elementName);
     }
 
@@ -797,53 +769,6 @@ public class SeleniumHandlers {
         actions.perform();
     }
 
-    public static void pressF1Key(){
-        selectedElement.sendKeys(Keys.F1);
-    }
-
-    public static void pressF2Key(){
-        selectedElement.sendKeys(Keys.F2);
-    }
-
-    public static void pressF3Key(){
-        selectedElement.sendKeys(Keys.F3);
-    }
-
-    public static void pressF4Key(){
-        selectedElement.sendKeys(Keys.F4);
-    }
-
-    public static void pressF5Key(){
-        selectedElement.sendKeys(Keys.F5);
-    }
-    public static void pressF6Key(){
-        selectedElement.sendKeys(Keys.F6);
-    }
-
-    public static void pressF7Key(){
-        selectedElement.sendKeys(Keys.F7);
-    }
-
-    public static void pressF8Key(){
-        selectedElement.sendKeys(Keys.F8);
-    }
-
-    public static void pressF9Key(){
-        selectedElement.sendKeys(Keys.F9);
-    }
-
-    public static void pressF10Key(){
-        selectedElement.sendKeys(Keys.F10);
-    }
-
-    public static void pressF11Key(){
-        selectedElement.sendKeys(Keys.F11);
-    }
-
-    public static void pressF12Key(){
-        selectedElement.sendKeys(Keys.F12);
-    }
-
     /**End of sendKeys*/
 
     public static void refresh() {
@@ -870,8 +795,8 @@ public class SeleniumHandlers {
         actions.build().perform();
     }
 
-    public static void nameSelectedElement(String elementName) {
-        namedElements.put(elementName, selectedElement);
+    public static void nameSelectedElement(String alias) {
+        namedElements.put(alias, selectedElement);
     }
 
     public static void checkCurrentUrl(String expectedUrl) {
