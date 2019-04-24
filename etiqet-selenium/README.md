@@ -88,7 +88,7 @@ There are step definitions to cover navigation. The most common being visiting a
 There are also navigation step definitions to go back a page, forward a page and to
 refresh the page.
 
-##Tables
+## Tables
 
 This framework allows for tables to be inspected at the level of a particular cell through
 the introduction of an index variable. The cell is specified through it's cartesian co-ordinate.
