@@ -18,7 +18,7 @@ public class BrowserBase {
 
     @XmlElements({
         @XmlElement(name = "Firefox", type = Firefox.class),
-        @XmlElement(name = "Chrome", type = Chrome.class)
+        @XmlElement(name = "Chrome", type = Chrome.class),
         @XmlElement(name = "Edge", type = Edge.class),
     })
     private List<Browser> browsers;
