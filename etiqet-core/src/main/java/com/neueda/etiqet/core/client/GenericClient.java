@@ -10,44 +10,69 @@ import org.slf4j.LoggerFactory;
 
 public class GenericClient extends Client implements TransportDelegate<String, Cdr> {
 
-  private static final Logger logger = LoggerFactory.getLogger(Client.class);
+    private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
-  public Set<String> logged = new HashSet<>();
+    public Set<String> logged = new HashSet<>();
 
-  public GenericClient(String clientConfig, String secondaryConfig) throws EtiqetException {
-    super(clientConfig, secondaryConfig);
-  }
+    public GenericClient(String clientConfig, String secondaryConfig) throws EtiqetException {
+        super(clientConfig, secondaryConfig);
+    }
 
-  @Override
-  public boolean isLoggedOn() {
-    return !logged.isEmpty();
-  }
+    @Override
+    public String getDefaultSessionId() {
+        return transport.getDefaultSessionId();
+    }
+
+    @Override
+    public void stop() {
+        transport.stop();
+    }
+
+    @Override
+    public boolean isLoggedOn() {
+        return !logged.isEmpty();
+    }
+
+    @Override
+    public String getMsgType(String messageType) {
+        return getProtocolConfig().getMsgType(messageType);
+    }
+
+    @Override
+    public String getMsgName(String messageName) {
+        return getProtocolConfig().getMsgName(messageName);
+    }
+
+    @Override
+    public Cdr waitForNoMsgType(String msgType, Integer timeoutMillis) throws EtiqetException {
+        return waitForNoMsg(msgQueue, timeoutMillis);
+    }
 
 
-  @Override
-  public void onCreate(String sid) {
-    logger.info("Created session with id [" + sid + "]");
-  }
+    @Override
+    public void onCreate(String sid) {
+        logger.info("Created session with id [" + sid + "]");
+    }
 
-  @Override
-  public void onLogon(String sid) {
-    logger.info("Logged in session id [" + sid + "]");
-    logged.add(sid);
-  }
+    @Override
+    public void onLogon(String sid) {
+        logger.info("Logged in session id [" + sid + "]");
+        logged.add(sid);
+    }
 
-  @Override
-  public void onLogout(String sid) {
-    logger.info("Logged out from session id [" + sid + "]");
-    logged.remove(sid);
-  }
+    @Override
+    public void onLogout(String sid) {
+        logger.info("Logged out from session id [" + sid + "]");
+        logged.remove(sid);
+    }
 
-  @Override
-  public void toApp(Cdr msg, String sid) {
-    logger.info(">>> Sending to session id [" + sid + "] message [" + msg.toString() + "]");
-  }
+    @Override
+    public void toApp(Cdr msg, String sid) {
+        logger.info(">>> Sending to session id [" + sid + "] message [" + msg.toString() + "]");
+    }
 
-  @Override
-  public void fromApp(Cdr msg, String sid)  {
-    logger.info("<<< Received from session id [" + sid + "] message [" + msg.toString() + "]");
-  }
+    @Override
+    public void fromApp(Cdr msg, String sid) {
+        logger.info("<<< Received from session id [" + sid + "] message [" + msg.toString() + "]");
+    }
 }
