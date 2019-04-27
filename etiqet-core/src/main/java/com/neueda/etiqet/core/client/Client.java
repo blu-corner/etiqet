@@ -369,7 +369,7 @@ public abstract class Client implements Transport, Runnable {
     }
 
     Message message = protocolConf.getMessage(msgName);
-    if (message != null && message.getFields() != null && message.getFields().getField() != null) {
+    if (message != null && message.getFields() != null && message.getFields() != null) {
       for (Field field : message.getFields()) {
         if (field != null && (field.getRequired() != null)
             && (field.getRequired().equalsIgnoreCase("Y"))
