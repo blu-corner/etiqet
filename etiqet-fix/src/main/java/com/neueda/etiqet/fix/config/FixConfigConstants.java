@@ -4,9 +4,10 @@ import com.neueda.etiqet.core.common.ConfigConstants;
 
 public final class FixConfigConstants extends ConfigConstants {
 
-    private FixConfigConstants() {}
-
     public static final String PROTOCOL_NAME = "fix";
+
+    private FixConfigConstants() {
+    }
 
 }
 

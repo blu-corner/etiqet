@@ -1,39 +1,58 @@
 package com.neueda.etiqet.fixture;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.neueda.etiqet.core.client.Client;
 import com.neueda.etiqet.core.client.ClientFactory;
-import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.core.message.cdr.CdrItem;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.UrlExtension;
+import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.CdrItem;
 import com.neueda.etiqet.core.testing.client.TestClient;
 import com.neueda.etiqet.core.testing.server.TestServer;
 import com.neueda.etiqet.core.util.Separators;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.HttpsURLConnection;
 import org.awaitility.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.*;
-
 public class EtiqetHandlersTest {
 
     private EtiqetHandlers handlers;
+    private GlobalConfig globalConfig;
 
     @Before
     public void setUp() throws Exception {
+        URL resource = this.getClass().getClassLoader().getResource("config/etiqet.config.xml");
+        assertNotNull("Cannot find test Etiqet configuration file in classpath:config/etiqet.config.xml", resource);
+        globalConfig = GlobalConfig.getInstance(resource.getPath());
         handlers = new EtiqetHandlers() {
             @Override
             public Client createClient(String impl, String clientName) throws EtiqetException {
@@ -46,15 +65,21 @@ public class EtiqetHandlersTest {
                 String etiqetConfig = configDir + "/properties/test.properties";
                 String clientConfig = configDir + "/properties/testConfig.properties";
                 Client client = ClientFactory.create("testProtocol", etiqetConfig, clientConfig);
-                client.setProtocolConfig(GlobalConfig.getInstance().getProtocol("testProtocol"));
+                client.setProtocolConfig(globalConfig.getProtocol("testProtocol"));
                 addClient(clientName, client);
                 return client;
             }
         };
     }
 
+    /**
+     * Resets the global configuration to allow reconfiguration
+     */
     @After
     public void tearDown() throws Exception {
+        Field field = GlobalConfig.class.getDeclaredField("instance");
+        field.setAccessible(true);
+        field.set(globalConfig, null);
     }
 
     @Test
@@ -90,10 +115,10 @@ public class EtiqetHandlersTest {
         EtiqetHandlers handlers = new EtiqetHandlers();
         String serverName = "testCaseServer";
         assertNull("Server should be null before and after calling closeServer in testCloseServerNotStarted",
-                handlers.getServer(serverName));
+            handlers.getServer(serverName));
         handlers.closeServer(serverName);
         assertNull("Server should be null before and after calling closeServer in testCloseServerNotStarted",
-                handlers.getServer(serverName));
+            handlers.getServer(serverName));
     }
 
     @Test
@@ -104,7 +129,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-                "message1", "test=null,messageId=123");
+            "message1", "test=null,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
         handlers.compareTimestampEqualsCukeVar("test", "response1", "");
@@ -124,7 +149,7 @@ public class EtiqetHandlersTest {
         Client client = handler.getClient(clientName);
         assertEquals("testValue", client.getConfig().getString("testProperty"));
         handler.createMessageForClient("TestMsg", clientName,
-                "message1", "test=null,messageId=123");
+            "message1", "test=null,messageId=123");
 
         assertNotNull(clientName + " should exist but doesn\'t", client);
         assertTrue(clientName + " should be able to failover but cannot", client.canFailover());
@@ -149,7 +174,8 @@ public class EtiqetHandlersTest {
             failedToFailover = false;
             message = e.getMessage();
         }
-        assertTrue("Incorrect error message: " + message, message == "Secondary Config must be provided when trying to create a client with failover capabilities");
+        assertTrue("Incorrect error message: " + message,
+            message == "Secondary Config must be provided when trying to create a client with failover capabilities");
         assertFalse("Failover should have failed", failedToFailover);
 
     }
@@ -175,7 +201,8 @@ public class EtiqetHandlersTest {
             message = e.getMessage();
         }
         assertFalse("Client should not be able to failover", failedToFailover);
-        assertTrue("Client should have failed however message is: " + message, message.equalsIgnoreCase("Client: " + clientName + " not enabled for failover"));
+        assertTrue("Client should have failed however message is: " + message,
+            message.equalsIgnoreCase("Client: " + clientName + " not enabled for failover"));
 
     }
 
@@ -196,18 +223,22 @@ public class EtiqetHandlersTest {
         String firstField = "TransactTime";
         String secondField = "TransactTime";
 
-        Mockito.doReturn("=20180101-01:01:02.000").when(mock).preTreatParams("=" + firstMessageAlias + "->" + firstField);
+        Mockito.doReturn("=20180101-01:01:02.000").when(mock)
+            .preTreatParams("=" + firstMessageAlias + "->" + firstField);
         Mockito.doReturn(10006000L).when(mock).dateToNanos("20180101-01:01:02.000");
 
-        Mockito.doReturn("=20180101-01:01:01.000").when(mock).preTreatParams("=" + secondMessageAlias + "->" + secondField);
+        Mockito.doReturn("=20180101-01:01:01.000").when(mock)
+            .preTreatParams("=" + secondMessageAlias + "->" + secondField);
         Mockito.doReturn(10005000L).when(mock).dateToNanos("20180101-01:01:01.000");
 
         mock.compareValues(firstField, firstMessageAlias, secondField, secondMessageAlias, 5000L);
 
-        Mockito.doReturn("=20180101-01:01:01.000").when(mock).preTreatParams("=" + firstMessageAlias + "->" + firstField);
+        Mockito.doReturn("=20180101-01:01:01.000").when(mock)
+            .preTreatParams("=" + firstMessageAlias + "->" + firstField);
         Mockito.doReturn(10005000L).when(mock).dateToNanos("20180101-01:01:01.000");
 
-        Mockito.doReturn("=20180101-01:01:02.000").when(mock).preTreatParams("=" + secondMessageAlias + "->" + secondField);
+        Mockito.doReturn("=20180101-01:01:02.000").when(mock)
+            .preTreatParams("=" + secondMessageAlias + "->" + secondField);
         Mockito.doReturn(10006000L).when(mock).dateToNanos("20180101-01:01:02.000");
 
         try {
@@ -215,7 +246,7 @@ public class EtiqetHandlersTest {
             fail("Reversing timestamps should have raised an AssertionError");
         } catch (AssertionError e) {
             assertEquals("Expected " + firstField + " in " + firstMessageAlias
-                    + " to be greater than or equal to " + secondField + " in " + secondMessageAlias, e.getMessage());
+                + " to be greater than or equal to " + secondField + " in " + secondMessageAlias, e.getMessage());
         }
     }
 
@@ -228,25 +259,29 @@ public class EtiqetHandlersTest {
 
         EtiqetHandlers mock = Mockito.spy(EtiqetHandlers.class);
 
-        Mockito.doReturn("=20180101-01:01:02.000").when(mock).preTreatParams("=" + firstMessageAlias + "->" + firstField);
+        Mockito.doReturn("=20180101-01:01:02.000").when(mock)
+            .preTreatParams("=" + firstMessageAlias + "->" + firstField);
         Mockito.doReturn(10006000L).when(mock).dateToNanos("20180101-01:01:02.000");
 
-        Mockito.doReturn("=20180101-01:01:01.000").when(mock).preTreatParams("=" + secondMessageAlias + "->" + secondField);
+        Mockito.doReturn("=20180101-01:01:01.000").when(mock)
+            .preTreatParams("=" + secondMessageAlias + "->" + secondField);
         Mockito.doReturn(10005000L).when(mock).dateToNanos("20180101-01:01:01.000");
 
         mock.compareValues(firstField, firstMessageAlias, secondField, secondMessageAlias, null);
 
-        Mockito.doReturn("=20180101-01:01:01.100").when(mock).preTreatParams("=" + firstMessageAlias + "->" + firstField);
+        Mockito.doReturn("=20180101-01:01:01.100").when(mock)
+            .preTreatParams("=" + firstMessageAlias + "->" + firstField);
         Mockito.doReturn(10006000L).when(mock).dateToNanos("20180101-01:01:02.000");
 
-        Mockito.doReturn("=20180101-01:01:01.000").when(mock).preTreatParams("=" + secondMessageAlias + "->" + secondField);
+        Mockito.doReturn("=20180101-01:01:01.000").when(mock)
+            .preTreatParams("=" + secondMessageAlias + "->" + secondField);
         Mockito.doReturn(10005000L).when(mock).dateToNanos("20180101-01:01:01.000");
 
         try {
             mock.compareValues(firstField, firstMessageAlias, secondField, secondMessageAlias, 50L);
         } catch (AssertionError e) {
             assertEquals("Expected " + firstField + " in " + firstMessageAlias + " to be greater than or equal to " +
-                    secondField + " in " + secondMessageAlias + " by no more than 50ms", e.getMessage());
+                secondField + " in " + secondMessageAlias + " by no more than 50ms", e.getMessage());
         }
     }
 
@@ -274,9 +309,11 @@ public class EtiqetHandlersTest {
 
         EtiqetHandlers mock = Mockito.spy(EtiqetHandlers.class);
 
-        Mockito.doReturn("=99999999-01:01:02.000").when(mock).preTreatParams("=" + firstMessageAlias + "->" + firstField);
+        Mockito.doReturn("=99999999-01:01:02.000").when(mock)
+            .preTreatParams("=" + firstMessageAlias + "->" + firstField);
         Mockito.doReturn(-1L).when(mock).dateToNanos("99999999-01:01:02.000");
-        Mockito.doReturn("=20180101-01:01:01.000").when(mock).preTreatParams("=" + secondMessageAlias + "->" + secondField);
+        Mockito.doReturn("=20180101-01:01:01.000").when(mock)
+            .preTreatParams("=" + secondMessageAlias + "->" + secondField);
         Mockito.doReturn(10005000L).when(mock).dateToNanos("20180101-01:01:01.000");
 
         try {
@@ -286,9 +323,11 @@ public class EtiqetHandlersTest {
             assertEquals("Could not read " + firstField + " in " + firstMessageAlias, e.getMessage());
         }
 
-        Mockito.doReturn("=20180101-01:01:01.000").when(mock).preTreatParams("=" + firstMessageAlias + "->" + firstField);
+        Mockito.doReturn("=20180101-01:01:01.000").when(mock)
+            .preTreatParams("=" + firstMessageAlias + "->" + firstField);
         Mockito.doReturn(10005000L).when(mock).dateToNanos("20180101-01:01:01.000");
-        Mockito.doReturn("=99999999-01:01:02.000").when(mock).preTreatParams("=" + secondMessageAlias + "->" + secondField);
+        Mockito.doReturn("=99999999-01:01:02.000").when(mock)
+            .preTreatParams("=" + secondMessageAlias + "->" + secondField);
         Mockito.doReturn(-1L).when(mock).dateToNanos("99999999-01:01:02.000");
 
         try {
@@ -349,14 +388,14 @@ public class EtiqetHandlersTest {
     public void testPreTreatParamsNullEmpty() {
         EtiqetHandlers handlers = new EtiqetHandlers();
         assertEquals("Empty string parameters should return an empty string",
-                "", handlers.preTreatParams(""));
+            "", handlers.preTreatParams(""));
         assertEquals("Null parameters should return null", "", handlers.preTreatParams(null));
         assertEquals("Parameters less than 3 characters should return null",
-                "", handlers.preTreatParams("="));
+            "", handlers.preTreatParams("="));
         assertEquals("Parameters less than 3 characters should return null",
-                "", handlers.preTreatParams("x="));
+            "", handlers.preTreatParams("x="));
         assertEquals("Parameters less than 3 characters should return null",
-                "", handlers.preTreatParams("=y"));
+            "", handlers.preTreatParams("=y"));
     }
 
     private Cdr createNestedCdr() {
@@ -387,7 +426,7 @@ public class EtiqetHandlersTest {
         handlers.addMessage("inputMsg", inputMsg);
 
         assertEquals("value=testValue,value2=test",
-                handlers.preTreatParams("value=inputMsg->testField,value2=test"));
+            handlers.preTreatParams("value=inputMsg->testField,value2=test"));
 
         Cdr responseMsg = new Cdr("responseMsg");
         responseMsg.set("testResponseField", "testValue2");
@@ -410,7 +449,7 @@ public class EtiqetHandlersTest {
 
         String params = handlers.preTreatParams("TransactTime=now");
         assertFalse("TransactTime=now should replace the value now with current timestamp",
-                params.contains("now"));
+            params.contains("now"));
         String timestamp = params.split(Separators.KEY_VALUE_SEPARATOR)[1];
         try {
             // Can't ocmpare the exact time because it's down to milliseconds, so best result is to test format matches
@@ -453,7 +492,7 @@ public class EtiqetHandlersTest {
 
         String messageName = "testMessage";
         mock.createMessage("TestMsg", "testProtocol", messageName,
-                "test=value,TransactTime=" + firstTimestamp);
+            "test=value,TransactTime=" + firstTimestamp);
         mock.sendMessage(messageName, clientName);
 
         mock.waitForResponseOfType("testResponse", clientName, "testResponse");
@@ -517,8 +556,8 @@ public class EtiqetHandlersTest {
             mock.compareValuesEqual(sFirstField, firstMessageAlias, sSecondField, secondMessageAlias);
         } catch (AssertionError e) {
             assertEquals("Test for equality: " + sFirstField + " in " + firstMessageAlias +
-                    " is 201, in " + secondMessageAlias +
-                    " it is 200", e.getMessage());
+                " is 201, in " + secondMessageAlias +
+                " it is 200", e.getMessage());
         }
     }
 
@@ -555,8 +594,8 @@ public class EtiqetHandlersTest {
             mock.compareValuesNotEqual(firstField, firstMessageAlias, secondField, secondMessageAlias);
         } catch (AssertionError e) {
             assertEquals("Test for inequality: " + firstField + " in " + firstMessageAlias +
-                    " is 200, in " + secondMessageAlias +
-                    " it is 200", e.getMessage());
+                " is 200, in " + secondMessageAlias +
+                " it is 200", e.getMessage());
         }
     }
 
@@ -568,7 +607,8 @@ public class EtiqetHandlersTest {
 
         EtiqetHandlers mock = Mockito.spy(EtiqetHandlers.class);
 
-        Mockito.doReturn(new Long[]{1234567L, 1234566L}).when(mock).extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
+        Mockito.doReturn(new Long[]{1234567L, 1234566L}).when(mock)
+            .extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
 
         mock.compareTimestampGreaterCukeVar(field, messageAlias, sSecondTimestamp);
     }
@@ -581,7 +621,8 @@ public class EtiqetHandlersTest {
 
         EtiqetHandlers mock = Mockito.spy(EtiqetHandlers.class);
 
-        Mockito.doReturn(new Long[]{1234566L, 1234567L}).when(mock).extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
+        Mockito.doReturn(new Long[]{1234566L, 1234567L}).when(mock)
+            .extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
 
         mock.compareTimestampGreaterCukeVar(field, messageAlias, sSecondTimestamp);
     }
@@ -594,7 +635,8 @@ public class EtiqetHandlersTest {
 
         EtiqetHandlers mock = Mockito.spy(EtiqetHandlers.class);
 
-        Mockito.doReturn(new Long[]{1234566L, 1234567L}).when(mock).extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
+        Mockito.doReturn(new Long[]{1234566L, 1234567L}).when(mock)
+            .extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
 
         mock.compareTimestampLesserCukeVar(field, messageAlias, sSecondTimestamp);
     }
@@ -607,7 +649,8 @@ public class EtiqetHandlersTest {
 
         EtiqetHandlers mock = Mockito.spy(EtiqetHandlers.class);
 
-        Mockito.doReturn(new Long[]{1234567L, 1234566L}).when(mock).extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
+        Mockito.doReturn(new Long[]{1234567L, 1234566L}).when(mock)
+            .extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
 
         mock.compareTimestampLesserCukeVar(field, messageAlias, sSecondTimestamp);
     }
@@ -664,7 +707,7 @@ public class EtiqetHandlersTest {
             fail("Parsing date 99999999-01:01:01.000 should have resulted in an AssertionError");
         } catch (AssertionError e) {
             assertEquals("Error parsing date from field " + field + " in message " + messageAlias + ".",
-                    e.getMessage());
+                e.getMessage());
         }
     }
 
@@ -761,17 +804,21 @@ public class EtiqetHandlersTest {
         try {
             handlers.assertFoundOrExists(true, true, messageCheck, noMatch, messageList);
         } catch (AssertionError e) {
-            assertEquals("neither matching", "Messages 'Test' do not exist and Params 'DidnotMatch' do not match in messages 'msg1,msg2'", e.getMessage());
+            assertEquals("neither matching",
+                "Messages 'Test' do not exist and Params 'DidnotMatch' do not match in messages 'msg1,msg2'",
+                e.getMessage());
         }
         try {
             handlers.assertFoundOrExists(false, false, messageCheck, noMatch, messageList);
         } catch (AssertionError e) {
-            assertEquals("Params shouldn't match", "Params 'DidnotMatch' do not match in messages 'msg1,msg2", e.getMessage());
+            assertEquals("Params shouldn't match", "Params 'DidnotMatch' do not match in messages 'msg1,msg2",
+                e.getMessage());
         }
         try {
             handlers.assertFoundOrExists(false, true, messageCheck, noMatch, messageList);
         } catch (AssertionError e) {
-            assertEquals("params not equals?", "Params 'DidnotMatch' do not match in messages 'msg1,msg2'", e.getMessage());
+            assertEquals("params not equals?", "Params 'DidnotMatch' do not match in messages 'msg1,msg2'",
+                e.getMessage());
         }
 
     }
@@ -839,7 +886,9 @@ public class EtiqetHandlersTest {
             handlers.checkResponseKeyPresenceAndValue("testResponse", responseParams);
             fail("Should have thrown an AssertionError");
         } catch (AssertionError e) {
-            assertEquals("checkResponseKeyPresenceAndValue: testResponse Msg: 'test=value' found, expected: 'test=value2'", e.getMessage());
+            assertEquals(
+                "checkResponseKeyPresenceAndValue: testResponse Msg: 'test=value' found, expected: 'test=value2'",
+                e.getMessage());
         }
 
     }
@@ -988,22 +1037,22 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-                "message1", "test=value,messageId=123");
+            "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message2",
-                "test=otherValue,messageId=234");
+            "test=otherValue,messageId=234");
         handlers.sendMessage("message2", clientName);
         handlers.waitForResponseOfType("response2", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message3",
-                "test=thirdValue,messageId=123");
+            "test=thirdValue,messageId=123");
         handlers.getResponseToMessageFromListByField
-                ("response3", "message3", "response2,response1", "messageId");
+            ("response3", "message3", "response2,response1", "messageId");
 
         String paramsToCheck = "test=value,messageId=123,sent="
-                + new SimpleDateFormat("yyyyMMdd").format(new Date());
+            + new SimpleDateFormat("yyyyMMdd").format(new Date());
         handlers.checkResponseKeyPresenceAndValue("response3", paramsToCheck);
     }
 
@@ -1091,8 +1140,9 @@ public class EtiqetHandlersTest {
             handlers.checkThatListOfParamsMatchInListOfMessages("field1,field2", "msg1,msg2,msg3");
             fail("field1 and field2 do not match, this should cause an AssertionError");
         } catch (AssertionError e) {
-            assertEquals("Messages 'msg3' do not exist and Params 'field1,field2' do not match in messages 'msg1,msg2,msg3'",
-                    e.getMessage());
+            assertEquals(
+                "Messages 'msg3' do not exist and Params 'field1,field2' do not match in messages 'msg1,msg2,msg3'",
+                e.getMessage());
         }
     }
 
@@ -1110,7 +1160,7 @@ public class EtiqetHandlersTest {
             fail("Empty messageList in checkThatListOfParamsMatchInListOfMessages should have thrown AssertionError");
         } catch (AssertionError e) {
             assertEquals("checkThatListOfParamsMatchInListOfMessages: No messages where to find matches",
-                    e.getMessage());
+                e.getMessage());
         }
     }
 
@@ -1196,7 +1246,7 @@ public class EtiqetHandlersTest {
             fail("field1 in msg1 doesn't match field2 in msg2 so should have caused an AssertionError");
         } catch (AssertionError e) {
             assertEquals("No matches found in 'msg1->field1=msg2->field2,msg1->field2=msg2->field1'",
-                    e.getMessage());
+                e.getMessage());
         }
 
         try {
@@ -1236,21 +1286,21 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-                "message1", "test=value,messageId=123");
+            "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message2",
-                "test=otherValue,messageId=234");
+            "test=otherValue,messageId=234");
         handlers.sendMessage("message2", clientName);
         handlers.waitForResponseOfType("response2", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message3",
-                "test=thirdValue,messageId=456");
+            "test=thirdValue,messageId=456");
 
         // this should thrown an assertion error because neither response1 or response2 will have the same messageId
         handlers.getResponseToMessageFromListByField
-                ("response3", "message3", "response2,response1", "messageId");
+            ("response3", "message3", "response2,response1", "messageId");
     }
 
     @Test
@@ -1281,7 +1331,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-                "message1", "test=value,messageId=123");
+            "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
         handlers.validateMessageTypeExistInResponseMap("response1");
@@ -1335,7 +1385,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-                "message1", "test=value,messageId=123");
+            "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
@@ -1354,20 +1404,22 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-                "message1", "test=value,messageId=123");
+            "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
         try {
             handlers.checkTimeStampPrecision("sentTime", "response1", null);
         } catch (AssertionError e) {
-            assertEquals("Level of time precision must be provided e.g 0,3,6,9,second,milli,micro or nano", e.getMessage());
+            assertEquals("Level of time precision must be provided e.g 0,3,6,9,second,milli,micro or nano",
+                e.getMessage());
         }
 
         try {
             handlers.checkTimeStampPrecision("sentTime", "response1", "");
         } catch (AssertionError e) {
-            assertEquals("Level of time precision must be provided e.g 0,3,6,9,second,milli,micro or nano", e.getMessage());
+            assertEquals("Level of time precision must be provided e.g 0,3,6,9,second,milli,micro or nano",
+                e.getMessage());
         }
     }
 
@@ -1378,7 +1430,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-                "message1", "test=value,messageId=123");
+            "message1", "test=value,messageId=123");
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
@@ -1396,7 +1448,8 @@ public class EtiqetHandlersTest {
         try {
             handlers.checkTimeStampPrecision("sentTime", "response1", "mini");
         } catch (AssertionError e) {
-            assertEquals("Level of time precision must be provided e.g 0,3,6,9,second,milli,micro or nano", e.getMessage());
+            assertEquals("Level of time precision must be provided e.g 0,3,6,9,second,milli,micro or nano",
+                e.getMessage());
         }
     }
 
@@ -1410,10 +1463,11 @@ public class EtiqetHandlersTest {
                     @Override
                     protected URLConnection openConnection(URL u) throws IOException {
                         HttpURLConnection connection;
-                        if (u.toString().startsWith("https://"))
+                        if (u.toString().startsWith("https://")) {
                             connection = Mockito.mock(HttpsURLConnection.class);
-                        else
+                        } else {
                             connection = Mockito.mock(HttpURLConnection.class);
+                        }
 
                         Mockito.when(connection.getResponseCode()).thenReturn(responseCode);
                         Mockito.when(connection.getResponseMessage()).thenReturn(response);
@@ -1443,21 +1497,21 @@ public class EtiqetHandlersTest {
         mockHandlers.startClient(clientName);
 
         mockHandlers.sendNamedRestMessageWithPayloadHeaders(
-                EtiqetHandlers.HTTP_POST,
-                new HashMap<>(),
-                "testPayload",
-                "/testEndpoint",
-                new UrlExtension() {
-                    @Override
-                    public String getName() {
-                        return "Test";
-                    }
-
-                    @Override
-                    public String getUri() {
-                        return "https://localhost:5000";
-                    }
+            EtiqetHandlers.HTTP_POST,
+            new HashMap<>(),
+            "testPayload",
+            "/testEndpoint",
+            new UrlExtension() {
+                @Override
+                public String getName() {
+                    return "Test";
                 }
+
+                @Override
+                public String getUri() {
+                    return "https://localhost:5000";
+                }
+            }
         );
     }
 
@@ -1473,21 +1527,21 @@ public class EtiqetHandlersTest {
             HashMap<String, String> headers = new HashMap<>();
             headers.put("Authorization", "Bearer sdfasdfgs-sd245sdf-45aaasd");
             mockHandlers.sendNamedRestMessageWithPayloadHeaders(
-                    EtiqetHandlers.HTTP_POST,
-                    headers,
-                    "testPayload",
-                    "/testEndpoint",
-                    new UrlExtension() {
-                        @Override
-                        public String getName() {
-                            return "Test";
-                        }
-
-                        @Override
-                        public String getUri() {
-                            return "http://localhost:5000";
-                        }
+                EtiqetHandlers.HTTP_POST,
+                headers,
+                "testPayload",
+                "/testEndpoint",
+                new UrlExtension() {
+                    @Override
+                    public String getName() {
+                        return "Test";
                     }
+
+                    @Override
+                    public String getUri() {
+                        return "http://localhost:5000";
+                    }
+                }
             );
             fail("sendNamedRestMessageWithPayloadHeaders should have thrown an exception due to the 403 error code");
         } catch (Exception e) {
@@ -1519,21 +1573,21 @@ public class EtiqetHandlersTest {
 
         try {
             mockHandlers.sendNamedRestMessageWithPayloadHeaders(
-                    EtiqetHandlers.HTTP_POST,
-                    new HashMap<>(),
-                    "testPayload",
-                    "/testEndpoint",
-                    new UrlExtension() {
-                        @Override
-                        public String getName() {
-                            return "Test";
-                        }
-
-                        @Override
-                        public String getUri() {
-                            return "https://localhost:5000";
-                        }
+                EtiqetHandlers.HTTP_POST,
+                new HashMap<>(),
+                "testPayload",
+                "/testEndpoint",
+                new UrlExtension() {
+                    @Override
+                    public String getName() {
+                        return "Test";
                     }
+
+                    @Override
+                    public String getUri() {
+                        return "https://localhost:5000";
+                    }
+                }
             );
             fail("sendNamedRestMessageWithPayloadHeaders should have failed because of a null HTTP connection");
         } catch (AssertionError e) {
@@ -1551,21 +1605,21 @@ public class EtiqetHandlersTest {
 
         try {
             handlers.sendNamedRestMessageWithPayloadHeaders(
-                    EtiqetHandlers.HTTP_POST,
-                    new HashMap<>(),
-                    "testPayload",
-                    null,
-                    new UrlExtension() {
-                        @Override
-                        public String getName() {
-                            return "Test";
-                        }
-
-                        @Override
-                        public String getUri() {
-                            return "http://localhost:5000";
-                        }
+                EtiqetHandlers.HTTP_POST,
+                new HashMap<>(),
+                "testPayload",
+                null,
+                new UrlExtension() {
+                    @Override
+                    public String getName() {
+                        return "Test";
                     }
+
+                    @Override
+                    public String getUri() {
+                        return "http://localhost:5000";
+                    }
+                }
             );
         } catch (Exception e) {
             assertTrue(e instanceof EtiqetException);
@@ -1574,11 +1628,11 @@ public class EtiqetHandlersTest {
 
         try {
             handlers.sendNamedRestMessageWithPayloadHeaders(
-                    EtiqetHandlers.HTTP_POST,
-                    new HashMap<>(),
-                    "testPayload",
-                    "/testEndpoint",
-                    handlers.getExtension("testClient", "neueda3")
+                EtiqetHandlers.HTTP_POST,
+                new HashMap<>(),
+                "testPayload",
+                "/testEndpoint",
+                handlers.getExtension("testClient", "neueda3")
             );
         } catch (AssertionError e) {
             assertEquals("Extension: neueda3 Not found", e.getMessage());

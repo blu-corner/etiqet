@@ -1,10 +1,13 @@
 package com.neueda.etiqet.core.server;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.testing.server.TestServer;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ServerFactoryTest {
 
@@ -75,7 +78,7 @@ public class ServerFactoryTest {
         assertEquals(Long.valueOf(20), server.getConfig().getLong("test.int"));
         assertEquals(Double.valueOf(25.3), server.getConfig().getDouble("test.double"));
         assertEquals("etiqet-core/src/test/resources/properties/testConfig.properties",
-                        server.getConfig().getString("config.client.file.path"));
+            server.getConfig().getString("config.client.file.path"));
     }
 
     @Test

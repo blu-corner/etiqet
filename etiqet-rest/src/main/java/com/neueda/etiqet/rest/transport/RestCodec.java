@@ -12,30 +12,30 @@ import java.util.Map;
 
 public class RestCodec implements Codec<Cdr, HttpRequestMsg> {
 
-  @Override
-  public HttpRequestMsg encode(Cdr message) throws EtiqetException {
-    return new RestMsg(message.getType()).serialize(message);
-  }
-
-  @Override
-  public Cdr decode(HttpRequestMsg message) throws EtiqetException {
-    HttpResponse httpResponse = message.getResponse();
-    Cdr responseData = null;
-    if (httpResponse.getStatusCode() != 404) {
-      try {
-        responseData = JsonUtils.jsonToCdr(httpResponse.parseAsString());
-      } catch (IOException e) {
-        throw new EtiqetException("Could not decode message [" + message.toString() + "]", e);
-      }
-    }
-    if (responseData == null) {
-      responseData = new Cdr(Cdr.class.getName());
+    @Override
+    public HttpRequestMsg encode(Cdr message) throws EtiqetException {
+        return new RestMsg(message.getType()).serialize(message);
     }
 
-    for (Map.Entry<String, Object> header : httpResponse.getHeaders().entrySet()) {
-      responseData.set("$header." + header.getKey(), String.valueOf(header.getValue()));
-    }
+    @Override
+    public Cdr decode(HttpRequestMsg message) throws EtiqetException {
+        HttpResponse httpResponse = message.getResponse();
+        Cdr responseData = null;
+        if (httpResponse.getStatusCode() != 404) {
+            try {
+                responseData = JsonUtils.jsonToCdr(httpResponse.parseAsString());
+            } catch (IOException e) {
+                throw new EtiqetException("Could not decode message [" + message.toString() + "]", e);
+            }
+        }
+        if (responseData == null) {
+            responseData = new Cdr(Cdr.class.getName());
+        }
 
-    return new RestMsg(String.valueOf(httpResponse.getStatusCode())).update(responseData);
-  }
+        for (Map.Entry<String, Object> header : httpResponse.getHeaders().entrySet()) {
+            responseData.set("$header." + header.getKey(), String.valueOf(header.getValue()));
+        }
+
+        return new RestMsg(String.valueOf(httpResponse.getStatusCode())).update(responseData);
+    }
 }

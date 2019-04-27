@@ -1,11 +1,18 @@
 package com.neueda.etiqet.core.config.dtos;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAttribute;
 
 public class ClientConfig implements Serializable {
 
     private String configPath;
+
+    public ClientConfig() {
+    }
+
+    public ClientConfig(String configPath) {
+        this.configPath = configPath;
+    }
 
     @XmlAttribute(name = "configPath")
     public String getConfigPath() {

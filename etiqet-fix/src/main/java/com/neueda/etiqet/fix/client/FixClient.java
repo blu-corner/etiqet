@@ -21,157 +21,157 @@ import org.slf4j.LoggerFactory;
  */
 public class FixClient extends Client implements TransportDelegate<String, Cdr> {
 
-  private static final String[] DEFAULT_CLIENT_DELEGATES = {"fix", "logger"};
-  private static final Logger logger = LoggerFactory.getLogger(FixClient.class.getName());
+    private static final String[] DEFAULT_CLIENT_DELEGATES = {"fix", "logger"};
+    private static final Logger logger = LoggerFactory.getLogger(FixClient.class.getName());
 
-  /**
-   * Attribute sessionQueue.
-   */
-  private BlockingQueue<Cdr> sessionQueue;
+    /**
+     * Attribute sessionQueue.
+     */
+    private BlockingQueue<Cdr> sessionQueue;
 
 
-  /**
-   * Constructor.
-   *
-   * @param clientConfig the client's configuration.
-   * @throws EtiqetException when an issue occurs setting up the FixClient
-   */
-  public FixClient(String clientConfig) throws EtiqetException {
-    this(clientConfig, null);
-  }
-
-  /**
-   * Constructor.
-   *
-   * @param primaryConfig the client's configuration.
-   * @param secondaryConfig the client's secondary configuration for failover.
-   * @throws EtiqetException when an issue occurs setting up the FixClient
-   */
-  public FixClient(String primaryConfig, String secondaryConfig) throws EtiqetException {
-    super(primaryConfig, secondaryConfig,
-        GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME));
-    sessionQueue = new LinkedBlockingQueue<>();
-    setActions(DEFAULT_CLIENT_DELEGATES);
-  }
-
-  @Override
-  public void setDelegate(ClientDelegate delegate) {
-    super.setDelegate(
-        (delegate instanceof FixClientDelegate) ? delegate : new FixClientDelegate(delegate));
-  }
-
-  public void stop() {
-    // Stops the transport
-    transport.stop();
-
-    // clear the msg queues
-    msgQueue.clear();
-    sessionQueue.clear();
-  }
-
-  @Override
-  public void send(Cdr msg, String sessionId) throws EtiqetException {
-    transport.send(msg, sessionId);
-  }
-
-  @Override
-  public boolean isLoggedOn() {
-    return (transport != null) && (transport.isLoggedOn());
-  }
-
-  @Override
-  public void init(String config) throws EtiqetException {
-    super.init(config);
-    transport.setTransportDelegate(this);
-    activeConfig = config;
-  }
-
-  @Override
-  public String getDefaultSessionId() {
-    return transport.getDefaultSessionId();
-  }
-
-  @Override
-  public void setCodec(Codec c) {
-    transport.setCodec(c);
-  }
-
-  public boolean isAdmin(String msgType) {
-    return getProtocolConfig().isAdmin(msgType);
-  }
-
-  @Override
-  public String getMsgType(String messageName) {
-    return getProtocolConfig().getMsgType(messageName);
-  }
-
-  @Override
-  public String getMsgName(String messageType) {
-    return getProtocolConfig().getMsgName(messageType);
-  }
-
-  /**
-   * Method to check type of received message
-   *
-   * @param msgType type of msg requested
-   * @param timeoutMillis the maximum timeout to wait for the message in milliseconds
-   */
-  @Override
-  public Cdr waitForMsgType(String msgType, Integer timeoutMillis) throws EtiqetException {
-    return waitForMsg(isAdmin(msgType) ? sessionQueue : msgQueue, timeoutMillis);
-  }
-
-  @Override
-  public Cdr waitForNoMsgType(String msgType, Integer timeoutMillis) throws EtiqetException {
-    return waitForNoMsg(isAdmin(msgType) ? sessionQueue : msgQueue, timeoutMillis);
-  }
-
-  // -----------------------------------------------------------------------------------------------
-  // Application interface
-  // -----------------------------------------------------------------------------------------------
-
-  @Override
-  public void start() {
-    // Nothing to do here ...
-  }
-
-  @Override
-  public void onCreate(String sessionId) {
-    logger.info("Successfully called onCreate for sessionId : " + sessionId);
-  }
-
-  @Override
-  public void fromAdmin(Cdr msg, String sessionID) {
-    sessionQueue.add(msg);
-  }
-
-  @Override
-  public void fromApp(Cdr msg, String sessionID) {
-    msgQueue.add(msg);
-  }
-
-  @Override
-  public void onLogon(String sessionID) {
-    logger.info("session logged on : " + sessionID);
-    synchronized (logonEvent) {
-      logonEvent.completeEvent();
-      logonEvent.notifyAll();
+    /**
+     * Constructor.
+     *
+     * @param clientConfig the client's configuration.
+     * @throws EtiqetException when an issue occurs setting up the FixClient
+     */
+    public FixClient(String clientConfig) throws EtiqetException {
+        this(clientConfig, null);
     }
-  }
 
-  @Override
-  public void onLogout(String sessionID) {
-    logger.info("session logged out : " + sessionID);
-  }
+    /**
+     * Constructor.
+     *
+     * @param primaryConfig the client's configuration.
+     * @param secondaryConfig the client's secondary configuration for failover.
+     * @throws EtiqetException when an issue occurs setting up the FixClient
+     */
+    public FixClient(String primaryConfig, String secondaryConfig) throws EtiqetException {
+        super(primaryConfig, secondaryConfig,
+            GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME));
+        sessionQueue = new LinkedBlockingQueue<>();
+        setActions(DEFAULT_CLIENT_DELEGATES);
+    }
 
-  @Override
-  public void toAdmin(Cdr msg, String sessionId) {
-    // Nothing to do here
-  }
+    @Override
+    public void setDelegate(ClientDelegate delegate) {
+        super.setDelegate(
+            (delegate instanceof FixClientDelegate) ? delegate : new FixClientDelegate(delegate));
+    }
 
-  @Override
-  public void toApp(Cdr msg, String sessionID) {
-    // Nothing to do here
-  }
+    public void stop() {
+        // Stops the transport
+        transport.stop();
+
+        // clear the msg queues
+        msgQueue.clear();
+        sessionQueue.clear();
+    }
+
+    @Override
+    public void send(Cdr msg, String sessionId) throws EtiqetException {
+        transport.send(msg, sessionId);
+    }
+
+    @Override
+    public boolean isLoggedOn() {
+        return (transport != null) && (transport.isLoggedOn());
+    }
+
+    @Override
+    public void init(String config) throws EtiqetException {
+        super.init(config);
+        transport.setTransportDelegate(this);
+        activeConfig = config;
+    }
+
+    @Override
+    public String getDefaultSessionId() {
+        return transport.getDefaultSessionId();
+    }
+
+    @Override
+    public void setCodec(Codec c) {
+        transport.setCodec(c);
+    }
+
+    public boolean isAdmin(String msgType) {
+        return getProtocolConfig().isAdmin(msgType);
+    }
+
+    @Override
+    public String getMsgType(String messageName) {
+        return getProtocolConfig().getMsgType(messageName);
+    }
+
+    @Override
+    public String getMsgName(String messageType) {
+        return getProtocolConfig().getMsgName(messageType);
+    }
+
+    /**
+     * Method to check type of received message
+     *
+     * @param msgType type of msg requested
+     * @param timeoutMillis the maximum timeout to wait for the message in milliseconds
+     */
+    @Override
+    public Cdr waitForMsgType(String msgType, Integer timeoutMillis) throws EtiqetException {
+        return waitForMsg(isAdmin(msgType) ? sessionQueue : msgQueue, timeoutMillis);
+    }
+
+    @Override
+    public Cdr waitForNoMsgType(String msgType, Integer timeoutMillis) throws EtiqetException {
+        return waitForNoMsg(isAdmin(msgType) ? sessionQueue : msgQueue, timeoutMillis);
+    }
+
+    // -----------------------------------------------------------------------------------------------
+    // Application interface
+    // -----------------------------------------------------------------------------------------------
+
+    @Override
+    public void start() {
+        // Nothing to do here ...
+    }
+
+    @Override
+    public void onCreate(String sessionId) {
+        logger.info("Successfully called onCreate for sessionId : " + sessionId);
+    }
+
+    @Override
+    public void fromAdmin(Cdr msg, String sessionID) {
+        sessionQueue.add(msg);
+    }
+
+    @Override
+    public void fromApp(Cdr msg, String sessionID) {
+        msgQueue.add(msg);
+    }
+
+    @Override
+    public void onLogon(String sessionID) {
+        logger.info("session logged on : " + sessionID);
+        synchronized (logonEvent) {
+            logonEvent.completeEvent();
+            logonEvent.notifyAll();
+        }
+    }
+
+    @Override
+    public void onLogout(String sessionID) {
+        logger.info("session logged out : " + sessionID);
+    }
+
+    @Override
+    public void toAdmin(Cdr msg, String sessionId) {
+        // Nothing to do here
+    }
+
+    @Override
+    public void toApp(Cdr msg, String sessionID) {
+        // Nothing to do here
+    }
 
 }

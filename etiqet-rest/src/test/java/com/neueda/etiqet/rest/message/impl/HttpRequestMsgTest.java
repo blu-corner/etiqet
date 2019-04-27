@@ -1,5 +1,7 @@
 package com.neueda.etiqet.rest.message.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.LowLevelHttpRequest;
@@ -7,21 +9,17 @@ import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
-import org.junit.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class HttpRequestMsgTest {
 
-    public static HttpRequestFactory getHttpRequestFactory()
-    {
+    public static HttpRequestFactory getHttpRequestFactory() {
         return new MockHttpTransport() {
             @Override
             public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
@@ -31,15 +29,17 @@ public class HttpRequestMsgTest {
                         MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
                         Map<String, List<String>> headers = getHeaders();
                         String responseCode = headers.get("responsecode").get(0);
-                        if("-1".equals(responseCode)) {
+                        if ("-1".equals(responseCode)) {
                             throw new IOException("ResponseCode -1 sent");
                         }
 
                         String responseBody = "";
-                        if(headers.containsKey("responsebody"))
+                        if (headers.containsKey("responsebody")) {
                             responseBody = headers.get("responsebody").get(0);
-                        if(headers.containsKey("authorization"))
+                        }
+                        if (headers.containsKey("authorization")) {
                             response.addHeader("authorization", headers.get("authorization").get(0));
+                        }
                         response.setContent(responseBody);
                         response.setStatusCode(Integer.parseInt(responseCode));
                         return response;
@@ -53,16 +53,19 @@ public class HttpRequestMsgTest {
     public void testVerb() {
         HttpRequestMsg httpMsg = new HttpRequestMsg();
         httpMsg.setVerb("POST");
-        assertEquals("POST", httpMsg.getVerb());;
+        assertEquals("POST", httpMsg.getVerb());
+        ;
         httpMsg.setVerb("GET");
-        assertEquals("GET", httpMsg.getVerb());;
+        assertEquals("GET", httpMsg.getVerb());
+        ;
     }
 
     @Test
     public void testtUrl() {
         HttpRequestMsg httpMsg = new HttpRequestMsg();
         httpMsg.setUrl("http://google.com");
-        assertEquals("http://google.com", httpMsg.getUrl());;
+        assertEquals("http://google.com", httpMsg.getUrl());
+        ;
     }
 
     @Test

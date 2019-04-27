@@ -1,25 +1,26 @@
 package com.neueda.etiqet.core.config.dtos;
 
 import com.neueda.etiqet.core.common.EtiqetConstants;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * XPath: /etiqetConfiguration
  */
+@XmlType(propOrder = {"protocols", "clients", "servers"}, namespace = EtiqetConstants.NAMESPACE)
 @XmlRootElement(name = "etiqetConfiguration", namespace = EtiqetConstants.NAMESPACE)
 public class EtiqetConfiguration implements Serializable {
 
-    private List<Protocol> protocols;
+    private List<Protocol> protocols = new ArrayList<>();
 
     private List<ClientImpl> clients = new ArrayList<>();
 
-    private List<Server> servers = new ArrayList<>();
+    private List<ServerImpl> servers = new ArrayList<>();
 
     /**
      * Gets all defined protocols in the configuration.
@@ -36,6 +37,7 @@ public class EtiqetConfiguration implements Serializable {
 
     /**
      * Sets the protocols in the configuration
+     *
      * @param protocols list of protocol DTOs to be prepared for use
      */
     public void setProtocols(List<Protocol> protocols) {
@@ -57,6 +59,7 @@ public class EtiqetConfiguration implements Serializable {
 
     /**
      * Sets pre-defined clients for use in test steps
+     *
      * @param clients list of client names / implementations
      */
     public void setClients(List<ClientImpl> clients) {
@@ -72,15 +75,16 @@ public class EtiqetConfiguration implements Serializable {
      */
     @XmlElementWrapper(name = "servers", namespace = EtiqetConstants.NAMESPACE, required = false)
     @XmlElement(name = "server", namespace = EtiqetConstants.NAMESPACE, required = false)
-    public List<Server> getServers() {
+    public List<ServerImpl> getServers() {
         return servers;
     }
 
     /**
      * Sets pre-defined servers to be used in test steps
+     *
      * @param servers list of server names, implementations and configurations
      */
-    public void setServers(List<Server> servers) {
+    public void setServers(List<ServerImpl> servers) {
         this.servers = servers;
     }
 }

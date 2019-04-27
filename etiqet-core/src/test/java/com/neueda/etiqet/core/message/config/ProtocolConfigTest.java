@@ -1,12 +1,17 @@
 package com.neueda.etiqet.core.message.config;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Delegate;
 import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.config.dtos.Protocol;
+import java.util.List;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ProtocolConfigTest {
 
@@ -16,18 +21,14 @@ public class ProtocolConfigTest {
         ProtocolConfig protocolConfig = new ProtocolConfig(protocolPath);
         testCommonFields(protocolConfig);
         assertEquals("com.neueda.etiqet.core.testing.message.TestDictionary",
-                protocolConfig.getProtocol().getDictionary().getHandler());
-        assertEquals("quickfix.fix44.component.",
-                protocolConfig.getComponentPackage());
-        assertEquals("quickfix.fix44.component",
-                protocolConfig.getProtocol().getComponentsPackage());
+            protocolConfig.getProtocol().getDictionary().getHandler());
 
-        Delegate[] delegates = protocolConfig.getClientDelegates().getDelegate();
-        assertEquals(2, delegates.length);
-        assertEquals("logger", delegates[0].getKey());
-        assertEquals("com.neueda.etiqet.core.client.delegate.LoggerClientDelegate", delegates[0].getImpl());
-        assertEquals("sink", delegates[1].getKey());
-        assertEquals("com.neueda.etiqet.core.client.delegate.SinkClientDelegate", delegates[1].getImpl());
+        List<Delegate> delegates = protocolConfig.getClientDelegates();
+        assertEquals(2, delegates.size());
+        assertEquals("logger", delegates.get(0).getKey());
+        assertEquals("com.neueda.etiqet.core.client.delegate.LoggerClientDelegate", delegates.get(0).getImpl());
+        assertEquals("sink", delegates.get(1).getKey());
+        assertEquals("com.neueda.etiqet.core.client.delegate.SinkClientDelegate", delegates.get(1).getImpl());
     }
 
     @Test
@@ -40,7 +41,7 @@ public class ProtocolConfigTest {
             assertTrue(e instanceof EtiqetException);
             assertEquals("Unable to load messages configuration: " + protocolPath, e.getMessage());
             assertEquals("Error loading dictionaryHandler: com.neueda.etiqet.core.TestDictionary",
-                            e.getCause().getMessage());
+                e.getCause().getMessage());
         }
     }
 
@@ -70,7 +71,7 @@ public class ProtocolConfigTest {
     @Test
     public void testNoDictionaryHandlerProtocol() throws EtiqetException {
         String protocolPath = "${etiqet.directory}/etiqet-core/src/test/" +
-                                "resources/protocols/testNoDictionaryHandlerProtocol.xml";
+            "resources/protocols/testNoDictionaryHandlerProtocol.xml";
         try {
             ProtocolConfig protocolConfig = new ProtocolConfig(protocolPath);
         } catch (Exception e) {
@@ -83,14 +84,14 @@ public class ProtocolConfigTest {
     @Test
     public void testComponentsPackageTrailingDot() throws EtiqetException {
         String protocolPath = "${etiqet.directory}/etiqet-core/src/test/" +
-                "resources/protocols/testComponentsPackageTrailingDotProtocol.xml";
+            "resources/protocols/testComponentsPackageTrailingDotProtocol.xml";
         ProtocolConfig protocolConfig = new ProtocolConfig(protocolPath);
         assertNotNull(protocolConfig);
         testCommonFields(protocolConfig);
         assertEquals("quickfix.fix44.component.",
-                protocolConfig.getComponentPackage());
+            protocolConfig.getComponentPackage());
         assertEquals("quickfix.fix44.component.",
-                protocolConfig.getProtocol().getComponentsPackage());
+            protocolConfig.getProtocol().getComponentsPackage());
     }
 
     private void testCommonFields(ProtocolConfig protocolConfig) {
@@ -99,10 +100,7 @@ public class ProtocolConfigTest {
         assertEquals("test", protocolConfig.getProtocol().getName());
 
         assertEquals("com.neueda.etiqet.core.testing.client.TestClient",
-                protocolConfig.getClient().getImpl());
-
-        assertEquals("com.neueda.etiqet.core.testing.message.TestMessage",
-                protocol.getMessageClass());
+            protocolConfig.getClient().getImpl());
 
         Message message = protocolConfig.getMessages()[0];
         assertNotNull(message);

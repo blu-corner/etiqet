@@ -3,40 +3,41 @@ package com.neueda.etiqet.fix.message.dictionary;
 import javax.xml.bind.annotation.XmlAttribute;
 
 public class Group {
-	private Field[] field;
 
-	private String name;
+    private Field[] field;
 
-	private String required;
+    private String name;
 
-	public Field[] getField() {
-		return field;
-	}
+    private String required;
 
-	public void setField(Field[] field) {
-		this.field = field;
-	}
+    public Field[] getField() {
+        return field;
+    }
 
-	@XmlAttribute
-	public String getName() {
-		return name;
-	}
+    public void setField(Field[] field) {
+        this.field = field;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @XmlAttribute
+    public String getName() {
+        return name;
+    }
 
-	@XmlAttribute
-	public String getRequired() {
-		return required;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setRequired(String required) {
-		this.required = required;
-	}
+    @XmlAttribute
+    public String getRequired() {
+        return required;
+    }
 
-	@Override
-	public String toString() {
-		return "Group [field = " + field + ", name = " + name + ", required = " + required + "]";
-	}
+    public void setRequired(String required) {
+        this.required = required;
+    }
+
+    @Override
+    public String toString() {
+        return "Group [field = " + field + ", name = " + name + ", required = " + required + "]";
+    }
 }

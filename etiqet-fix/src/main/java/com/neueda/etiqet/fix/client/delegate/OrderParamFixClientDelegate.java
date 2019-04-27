@@ -31,7 +31,7 @@ public class OrderParamFixClientDelegate extends MessageFixClientDelegate {
         msg.getItems().forEach(transformed::setItem);
 
         // If message with params has been defined then replace with message's values.
-        if(message != null) {
+        if (message != null) {
             // Copy the cdr
             message.getItems().forEach(transformed::setItem);
         }

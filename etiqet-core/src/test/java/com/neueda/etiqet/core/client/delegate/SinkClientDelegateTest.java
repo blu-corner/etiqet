@@ -1,11 +1,11 @@
 package com.neueda.etiqet.core.client.delegate;
 
-import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
+import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.message.cdr.Cdr;
+import org.junit.Test;
 
 public class SinkClientDelegateTest {
 

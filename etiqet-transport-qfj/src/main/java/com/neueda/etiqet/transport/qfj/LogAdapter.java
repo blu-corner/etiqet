@@ -6,67 +6,64 @@ import quickfix.Log;
 
 public class LogAdapter implements Log {
 
-	public enum Level {
-		TRACE, DEBUG, INFO, WARN, ERROR
-	}
+    private final Logger logger;
+    private Level level;
+    public LogAdapter(String context, Level level) {
+        this.level = level;
+        logger = LoggerFactory.getLogger("FIX [" + context + "]");
+    }
 
-	private final Logger logger;
-	private Level level;
+    private void callLogger(String message) {
+        switch (level) {
+            case TRACE:
+                logger.trace(message);
+                break;
 
-	public LogAdapter(String context, Level level) {
-		this.level = level;
-		logger = LoggerFactory.getLogger("FIX ["+context+"]");
-	}
+            case DEBUG:
+                logger.debug(message);
+                break;
 
-	private void callLogger(String message) {
-		switch (level) {
-			case TRACE:
-				logger.trace(message);
-				break;
+            case INFO:
+                logger.info(message);
+                break;
 
-			case DEBUG:
-				logger.debug(message);
-				break;
+            case WARN:
+                logger.warn(message);
+                break;
 
-			case INFO:
-				logger.info(message);
-				break;
+            case ERROR:
+                logger.error(message);
+                break;
+        }
+    }
 
-			case WARN:
-				logger.warn(message);
-				break;
+    @Override
+    public void clear() {
+        // Method required to fulfil implementation - however functionality is not required
+    }
 
-			case ERROR:
-				logger.error(message);
-				break;
-		}
-	}
+    @Override
+    public void onErrorEvent(String text) {
+        logger.error(text);
+    }
 
-	@Override
-	public void clear() {
-		/**
-		 * Method required to fulfil implementation - however functionality is not required
-		 */
-	}
+    @Override
+    public void onEvent(String text) {
+        callLogger(text);
+    }
 
-	@Override
-	public void onErrorEvent(String text) {
-		logger.error(text);
-	}
+    @Override
+    public void onIncoming(String message) {
+        callLogger("<< " + message);
+    }
 
-	@Override
-	public void onEvent(String text) {
-		callLogger(text);
-	}
+    @Override
+    public void onOutgoing(String message) {
+        callLogger(">> " + message);
+    }
 
-	@Override
-	public void onIncoming(String message) {
-		callLogger("<< " + message);
-	}
-
-	@Override
-	public void onOutgoing(String message) {
-		callLogger(">> " + message);
-	}
+    public enum Level {
+        TRACE, DEBUG, INFO, WARN, ERROR
+    }
 
 }

@@ -23,6 +23,7 @@ public class FixClientDelegate extends BaseClientDelegate {
 
     /**
      * Constructor.
+     *
      * @param next the next delegate on the chain to process the message.
      */
     public FixClientDelegate(ClientDelegate next) {
@@ -31,22 +32,22 @@ public class FixClientDelegate extends BaseClientDelegate {
 
     /**
      * Initialise the delegate with some message required by quickfix.
+     *
      * @param targetSubID the target identifier
      * @param senderSubID the sender identifier
      */
-    public void init(String targetSubID, String senderSubID)
-    {
+    public void init(String targetSubID, String senderSubID) {
         init(targetSubID, senderSubID, null);
     }
 
     /**
      * Initialise the delegate with some message required by quickfix.
+     *
      * @param targetSubID the target identifier
      * @param senderSubID the sender identifier
      * @param password the password for the client to connect
      */
-    public void init(String targetSubID, String senderSubID, String password)
-    {
+    public void init(String targetSubID, String senderSubID, String password) {
         this.targetSubID = targetSubID;
         this.senderSubID = senderSubID;
         this.password = password;
@@ -54,15 +55,15 @@ public class FixClientDelegate extends BaseClientDelegate {
 
     @Override
     public Cdr processMessage(Cdr msg) {
-        if(!StringUtils.isNullOrEmpty(targetSubID)) {
+        if (!StringUtils.isNullOrEmpty(targetSubID)) {
             msg.set("TargetSubID", targetSubID);
         }
-        if(!StringUtils.isNullOrEmpty(senderSubID)) {
+        if (!StringUtils.isNullOrEmpty(senderSubID)) {
             msg.set("SenderSubID", senderSubID);
         }
-        if(!StringUtils.isNullOrEmpty(password)) {
+        if (!StringUtils.isNullOrEmpty(password)) {
             msg.set("Password", password);
         }
-        return (next != null)? next.processMessage(msg): msg;
+        return (next != null) ? next.processMessage(msg) : msg;
     }
 }

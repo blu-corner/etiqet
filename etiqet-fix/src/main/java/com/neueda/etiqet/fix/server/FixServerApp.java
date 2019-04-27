@@ -21,115 +21,115 @@ import quickfix.field.MsgType;
 
 public class FixServerApp extends MessageCracker implements Application {
 
-  public static final Logger LOG = LoggerFactory.getLogger(FixServerApp.class);
+    public static final Logger LOG = LoggerFactory.getLogger(FixServerApp.class);
 
-  private ProtocolConfig protocolConfig;
+    private ProtocolConfig protocolConfig;
 
-  public FixServerApp() throws EtiqetException {
-    protocolConfig = GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME);
-  }
-
-  @Override
-  public void fromAdmin(Message arg0, SessionID arg1) {
-    LOG.info("Server: fromAdmin " + arg0);
-  }
-
-  /**
-   * Method to handle incoming messages from client.
-   *
-   * @param message incoming message.
-   * @param sessionID session identifier.
-   * @throws UnsupportedMessageType exception throw when a messagetype is not allowed.
-   */
-  @Override
-  public void fromApp(Message message, SessionID sessionID) throws UnsupportedMessageType {
-    handleMessage(message, sessionID);
-  }
-
-  /**
-   * Method that process input message and return a response.
-   *
-   * @param input message to process.
-   * @throws UnsupportedMessageType exception thrown when the input message is not handled.
-   */
-  private void handleMessage(Message input, SessionID sessionID) throws UnsupportedMessageType {
-    LOG.debug("type of message: " + input.getClass().getSimpleName());
-    String classSimpleName = input.getClass().getSimpleName();
-    if (classSimpleName.equalsIgnoreCase("NewOrderSingle")) {
-      handleNewOrderSingle(input, sessionID);
-    } else {
-      throw new UnsupportedMessageType();
+    public FixServerApp() throws EtiqetException {
+        protocolConfig = GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME);
     }
-  }
 
-  /**
-   * Method to handle NewOrderSingle message.
-   *
-   * @param input newOrderSingle message
-   */
-  private void handleNewOrderSingle(Message input, SessionID sessionID) {
-    Message response;
-    try {
-      response = getExecutionReport(input);
-      Session.sendToTarget(response, sessionID);
-    } catch (SessionNotFound e) {
-      LOG.error("Session not found: " + sessionID.toString(), e);
+    @Override
+    public void fromAdmin(Message arg0, SessionID arg1) {
+        LOG.info("Server: fromAdmin " + arg0);
     }
-  }
 
-  /**
-   * Method to create a Execution Report message
-   *
-   * @param input base
-   * @return an execution Report message.
-   */
-  private Message getExecutionReport(Message input) {
-    Message msg = null;
-    try {
-      String clOrdId = input.getString(protocolConfig.getTagForName("ClOrdID"));
-      Cdr cdr = new Cdr(MsgType.ORDER_SINGLE);
-      cdr.set("ClOrdID", clOrdId);
-    } catch (UnknownTagException e) {
-      LOG.error("Unknown Tag", e);
-    } catch (FieldNotFound e) {
-      LOG.error("Field Not Found", e);
+    /**
+     * Method to handle incoming messages from client.
+     *
+     * @param message incoming message.
+     * @param sessionID session identifier.
+     * @throws UnsupportedMessageType exception throw when a messagetype is not allowed.
+     */
+    @Override
+    public void fromApp(Message message, SessionID sessionID) throws UnsupportedMessageType {
+        handleMessage(message, sessionID);
     }
-    return msg;
-  }
 
-  /**
-   * Method to handle session creation.
-   */
-  @Override
-  public void onCreate(SessionID sessionID) {
-    LOG.info("Server: onCreate " + sessionID.toString());
-  }
+    /**
+     * Method that process input message and return a response.
+     *
+     * @param input message to process.
+     * @throws UnsupportedMessageType exception thrown when the input message is not handled.
+     */
+    private void handleMessage(Message input, SessionID sessionID) throws UnsupportedMessageType {
+        LOG.debug("type of message: " + input.getClass().getSimpleName());
+        String classSimpleName = input.getClass().getSimpleName();
+        if (classSimpleName.equalsIgnoreCase("NewOrderSingle")) {
+            handleNewOrderSingle(input, sessionID);
+        } else {
+            throw new UnsupportedMessageType();
+        }
+    }
 
-  /**
-   * Method to handle when a client tries to create logged on.
-   *
-   * @param sessionID identifier of session.
-   */
-  @Override
-  public void onLogon(SessionID sessionID) {
-    LOG.info("Server: onLogon of " + sessionID);
-  }
+    /**
+     * Method to handle NewOrderSingle message.
+     *
+     * @param input newOrderSingle message
+     */
+    private void handleNewOrderSingle(Message input, SessionID sessionID) {
+        Message response;
+        try {
+            response = getExecutionReport(input);
+            Session.sendToTarget(response, sessionID);
+        } catch (SessionNotFound e) {
+            LOG.error("Session not found: " + sessionID.toString(), e);
+        }
+    }
 
-  @Override
-  public void onLogout(SessionID sessionID) {
-    LOG.info("Server onLogout " + sessionID.toString());
-  }
+    /**
+     * Method to create a Execution Report message
+     *
+     * @param input base
+     * @return an execution Report message.
+     */
+    private Message getExecutionReport(Message input) {
+        Message msg = null;
+        try {
+            String clOrdId = input.getString(protocolConfig.getTagForName("ClOrdID"));
+            Cdr cdr = new Cdr(MsgType.ORDER_SINGLE);
+            cdr.set("ClOrdID", clOrdId);
+        } catch (UnknownTagException e) {
+            LOG.error("Unknown Tag", e);
+        } catch (FieldNotFound e) {
+            LOG.error("Field Not Found", e);
+        }
+        return msg;
+    }
 
-  @Override
-  public void toAdmin(Message message, SessionID sessionID) {
-    LOG.info(
-        "Server toAdmin sessionId: " + sessionID.toString() + " , message: " + message.toString());
-  }
+    /**
+     * Method to handle session creation.
+     */
+    @Override
+    public void onCreate(SessionID sessionID) {
+        LOG.info("Server: onCreate " + sessionID.toString());
+    }
 
-  @Override
-  public void toApp(Message message, SessionID sessionID) throws DoNotSend {
-    LOG.info(
-        "Server toApp sessionId: " + sessionID.toString() + " , message: " + message.toString());
-  }
+    /**
+     * Method to handle when a client tries to create logged on.
+     *
+     * @param sessionID identifier of session.
+     */
+    @Override
+    public void onLogon(SessionID sessionID) {
+        LOG.info("Server: onLogon of " + sessionID);
+    }
+
+    @Override
+    public void onLogout(SessionID sessionID) {
+        LOG.info("Server onLogout " + sessionID.toString());
+    }
+
+    @Override
+    public void toAdmin(Message message, SessionID sessionID) {
+        LOG.info(
+            "Server toAdmin sessionId: " + sessionID.toString() + " , message: " + message.toString());
+    }
+
+    @Override
+    public void toApp(Message message, SessionID sessionID) throws DoNotSend {
+        LOG.info(
+            "Server toApp sessionId: " + sessionID.toString() + " , message: " + message.toString());
+    }
 
 }

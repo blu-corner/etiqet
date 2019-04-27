@@ -1,14 +1,14 @@
 package com.neueda.etiqet.fixture;
 
-import com.neueda.etiqet.core.message.cdr.Cdr;
+import static com.neueda.etiqet.fixture.EtiqetHandlers.DEFAULT_CLIENT_NAME;
+import static com.neueda.etiqet.fixture.EtiqetHandlers.DEFAULT_MESSAGE_NAME;
+
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.util.ParserUtils;
 import com.neueda.etiqet.core.util.StringUtils;
 import cucumber.api.java.en.Then;
-
-import static com.neueda.etiqet.fixture.EtiqetHandlers.DEFAULT_CLIENT_NAME;
-import static com.neueda.etiqet.fixture.EtiqetHandlers.DEFAULT_MESSAGE_NAME;
 
 public class WebSocketFixtures {
 
@@ -19,7 +19,8 @@ public class WebSocketFixtures {
     }
 
     @Then("send a \"(\\S+)\" websocket message with payload (\\S+)\" as \"(\\S+)\" using client \"(\\S+)\"$")
-    public void sendMessageWithPayloadAndClient(String testName, String payload, String responseName, String clientName) throws EtiqetException {
+    public void sendMessageWithPayloadAndClient(String testName, String payload, String responseName, String clientName)
+        throws EtiqetException {
         Message protocolMsg = handlers.getClient(clientName).getProtocolConfig().getMessage(testName);
 
         Cdr webSocketMsg = new Cdr(testName);
@@ -49,9 +50,10 @@ public class WebSocketFixtures {
 
     @Then("^wait for \"([^\"]*)\" to receive a websocket message ? \"([^\"]*)\\\" as \"([^\"]*)\"$")
     public void namedClientExchangeResponse(String clientName, String t, String responseName) throws EtiqetException {
-        if (EtiqetHandlers.RESPONSE.equals(t))
+        if (EtiqetHandlers.RESPONSE.equals(t)) {
             handlers.waitForResponse(responseName, clientName);
-        else
+        } else {
             handlers.waitForResponseOfType(responseName, clientName, t, 10000, true);
+        }
     }
 }

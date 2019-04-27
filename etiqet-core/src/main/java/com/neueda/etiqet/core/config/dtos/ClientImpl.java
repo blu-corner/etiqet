@@ -1,11 +1,10 @@
 package com.neueda.etiqet.core.config.dtos;
 
 import com.neueda.etiqet.core.common.EtiqetConstants;
-
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
 
 /**
  * XPath element: /etiqetConfiguration/clients/client
@@ -59,6 +58,10 @@ public class ClientImpl implements Serializable {
         this.primaryConfig = primaryConfig;
     }
 
+    public void setPrimaryConfig(String primaryConfig) {
+        this.primaryConfig = new ClientConfig(primaryConfig);
+    }
+
     @XmlElement(name = "secondary", namespace = EtiqetConstants.NAMESPACE)
     public ClientConfig getSecondaryConfig() {
         return secondaryConfig;
@@ -66,5 +69,9 @@ public class ClientImpl implements Serializable {
 
     public void setSecondaryConfig(ClientConfig secondaryConfig) {
         this.secondaryConfig = secondaryConfig;
+    }
+
+    public void setSecondaryConfig(String secondaryConfig) {
+        this.secondaryConfig = new ClientConfig(secondaryConfig);
     }
 }

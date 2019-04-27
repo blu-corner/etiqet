@@ -1,17 +1,38 @@
 package com.neueda.etiqet.rest.message;
 
-import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import com.neueda.etiqet.core.common.exceptions.SerializeException;
-import com.neueda.etiqet.core.config.dtos.Message;
-import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.common.exceptions.SerializeException;
+import com.neueda.etiqet.core.config.GlobalConfig;
+import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.rest.RestConfig;
+import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
+import java.lang.reflect.Field;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 public class RestMsgTest {
+
+    private GlobalConfig globalConfig;
+
+    @Before
+    public void setUp() throws EtiqetException {
+        globalConfig = GlobalConfig.getInstance(RestConfig.class);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Field field = GlobalConfig.class.getDeclaredField("instance");
+        field.setAccessible(true);
+        field.set(globalConfig, null);
+    }
 
     @Test
     public void testSerializeMessage() throws EtiqetException {

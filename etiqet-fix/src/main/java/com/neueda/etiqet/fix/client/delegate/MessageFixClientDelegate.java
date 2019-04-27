@@ -12,7 +12,9 @@ public class MessageFixClientDelegate extends BaseClientDelegate {
     static final String FIELD_SEPARATOR = "\u0001";
     static final String KEY_VALUE_SEPARATOR = "=";
 
-    /** The message containing the values to be overwritten when intercepting the send operation. */
+    /**
+     * The message containing the values to be overwritten when intercepting the send operation.
+     */
     protected Cdr message;
 
     /**
@@ -33,6 +35,7 @@ public class MessageFixClientDelegate extends BaseClientDelegate {
 
     /**
      * Sets the message with the parameter values to be replaced just before send.
+     *
      * @param msg the message containing the values by default.
      */
     public void setMessage(Cdr msg) {
@@ -41,8 +44,8 @@ public class MessageFixClientDelegate extends BaseClientDelegate {
 
     @Override
     public Cdr processMessage(Cdr msg) {
-        if(next instanceof MessageFixClientDelegate) {
-            ((MessageFixClientDelegate)next).setMessage(message);
+        if (next instanceof MessageFixClientDelegate) {
+            ((MessageFixClientDelegate) next).setMessage(message);
         }
         message = null;
         return super.processMessage(msg);

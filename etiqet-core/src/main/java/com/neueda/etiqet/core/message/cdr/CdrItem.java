@@ -1,14 +1,9 @@
 package com.neueda.etiqet.core.message.cdr;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
-
 import java.util.List;
 
 public class CdrItem {
-
-    public enum CdrItemType {
-        CDR_STRING, CDR_INTEGER, CDR_DOUBLE, CDR_BOOLEAN, CDR_ARRAY, CDR_NULL
-    }
 
     private CdrItemType type;
     private Long intval;
@@ -16,7 +11,6 @@ public class CdrItem {
     private Double doubleval;
     private Boolean boolVal;
     private List<Cdr> cdrs;
-
     public CdrItem(CdrItemType t) {
         type = t;
     }
@@ -100,5 +94,9 @@ public class CdrItem {
             default:
                 throw new EtiqetRuntimeException(String.format("Unsupported type '%s' for getAsString", type));
         }
+    }
+
+    public enum CdrItemType {
+        CDR_STRING, CDR_INTEGER, CDR_DOUBLE, CDR_BOOLEAN, CDR_ARRAY, CDR_NULL
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Browsers>
+    <Firefox driver_path="src/test/resources/drivers/geckodriver.exe" name="default">
+        <headless>false</headless>
+        <screenshot_on_exit>true</screenshot_on_exit>
+        <close_on_exit>true</close_on_exit>
+    </Firefox>
+    <Chrome driver_path="src/test/resources/drivers/chromedriver.exe" name="chrome">
+        <headless>false</headless>
+        <screenshot_on_exit>true</screenshot_on_exit>
+        <close_on_exit>true</close_on_exit>
+    </Chrome>
+</Browsers>

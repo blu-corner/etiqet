@@ -2,8 +2,8 @@ package com.neueda.etiqet.fix.message.dictionary;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-public class Message
-{
+public class Message {
+
     private Field[] field;
 
     private String msgcat;
@@ -14,62 +14,52 @@ public class Message
 
     private String name;
 
-    public Field[] getField ()
-    {
+    public Field[] getField() {
         return field;
     }
 
-    public void setField (Field[] field)
-    {
+    public void setField(Field[] field) {
         this.field = field;
     }
 
     @XmlAttribute
-    public String getMsgcat ()
-    {
+    public String getMsgcat() {
         return msgcat;
     }
 
-    public void setMsgcat (String msgcat)
-    {
+    public void setMsgcat(String msgcat) {
         this.msgcat = msgcat;
     }
 
-    public Component[] getComponent ()
-    {
+    public Component[] getComponent() {
         return component;
     }
 
-    public void setComponent (Component[] component)
-    {
+    public void setComponent(Component[] component) {
         this.component = component;
     }
 
     @XmlAttribute
-    public String getMsgtype ()
-    {
+    public String getMsgtype() {
         return msgtype;
     }
 
-    public void setMsgtype (String msgtype)
-    {
+    public void setMsgtype(String msgtype) {
         this.msgtype = msgtype;
     }
 
     @XmlAttribute
-    public String getName ()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName (String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
     @Override
-    public String toString()
-    {
-        return "Message [field = "+field+", msgcat = "+msgcat+", component = "+component+", msgtype = "+msgtype+", name = "+name+"]";
+    public String toString() {
+        return "Message [field = " + field + ", msgcat = " + msgcat + ", component = " + component + ", msgtype = "
+            + msgtype + ", name = " + name + "]";
     }
 }

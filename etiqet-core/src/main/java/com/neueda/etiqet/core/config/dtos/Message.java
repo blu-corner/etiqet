@@ -1,114 +1,152 @@
 package com.neueda.etiqet.core.config.dtos;
 
 import com.neueda.etiqet.core.common.EtiqetConstants;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-import java.util.Objects;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
+@XmlType(propOrder = {"implementation", "headers", "fields"}, namespace = EtiqetConstants.NAMESPACE)
 @XmlRootElement(namespace = EtiqetConstants.NAMESPACE)
 public class Message implements Serializable {
-	private String admin;
-	
-	private String implementation;
 
-	private String name;
-	
-	private String msgtype;
+    private String admin;
 
-	private Fields headers;
-	
-	private Fields fields;
+    private String implementation;
+    private Class<?> implementationClass;
 
-	@XmlAttribute
-	public String getAdmin() {
-		return admin;
-	}
+    private String name;
 
-	public void setAdmin(String admin) {
-		this.admin = admin;
-	}
+    private String msgtype;
 
-	@XmlElement(name = "implementation", namespace = EtiqetConstants.NAMESPACE)
-	public String getImplementation() {
-		return implementation;
-	}
+    private List<Field> headers = new ArrayList<>();
 
-	public void setImplementation(String implementation) {
-		this.implementation = implementation;
-	}
+    private List<Field> fields = new ArrayList<>();
 
-	@XmlAttribute
-	public String getName() {
-		return name;
-	}
+    public Message() {
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}	
+    public Message(String name, String implementation) {
+        this.name = name;
+        this.implementation = implementation;
+    }
 
-	@XmlAttribute
-	public String getMsgtype() {
-		return msgtype;
-	}
+    public Message(String name, Class<?> implementation) {
+        this.name = name;
+        this.implementation = implementation.getName();
+        this.implementationClass = implementation;
+    }
 
-	public void setMsgtype(String msgtype) {
-		this.msgtype = msgtype;
-	}
+    @XmlAttribute
+    public String getAdmin() {
+        return admin;
+    }
 
-	@XmlElement(name = "headers", namespace = EtiqetConstants.NAMESPACE)
-	public Fields getHeaders() {
-		return headers;
-	}
+    public void setAdmin(String admin) {
+        this.admin = admin;
+    }
 
-	public void setHeaders(Fields headers) {
-		this.headers = headers;
-	}
+    @XmlElement(name = "implementation", namespace = EtiqetConstants.NAMESPACE)
+    public String getImplementation() {
+        return implementation;
+    }
 
-	@XmlElement(name = "fields", namespace = EtiqetConstants.NAMESPACE)
-	public Fields getFields() {
-		return fields;
-	}
+    public void setImplementation(String implementation) {
+        this.implementation = implementation;
+    }
 
-	public void setFields(Fields fields) {
-		this.fields = fields;
-	}
+    public void setImplementation(Class<?> implementationClass) {
+        this.implementation = implementationClass.getName();
+        this.implementationClass = implementationClass;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder out = new StringBuilder();
-		out.append( "Message [admin = " + admin + ", implementation = " + implementation
-				+ ", name = " + name + ", msgtype = " + msgtype + ", fields = {");
-		if (getFields() != null && getFields().getField() != null && getFields().getField().length > 0) {
-			for (Field field: getFields().getField()) {			
-				out.append( "\r\n" + field.toString());
-			}
-		}
-		out.append("}");
-		out.append("]");
-		return out.toString();
-	}
+    @XmlTransient
+    public Class<?> getImplementationClass() {
+        return this.implementationClass;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if(!(obj instanceof Message)) {
-			return false;
-		}
+    @XmlAttribute
+    public String getName() {
+        return name;
+    }
 
-		Message otherMsg = (Message) obj;
+    public void setName(String name) {
+        this.name = name;
+    }
 
-		return otherMsg.admin.equals(this.admin)
-				&& otherMsg.implementation.equals(this.implementation)
-				&& otherMsg.msgtype.equals(this.msgtype)
-				&& otherMsg.name.equals(this.name)
-				&& otherMsg.fields.equals(this.fields);
-	}
+    @XmlAttribute
+    public String getMsgtype() {
+        return msgtype;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(admin, implementation, msgtype, name, fields);
-	}
+    public void setMsgtype(String msgtype) {
+        this.msgtype = msgtype;
+    }
+
+    @XmlElementWrapper(name = "headers", namespace = EtiqetConstants.NAMESPACE)
+    @XmlElement(name = "field", namespace = EtiqetConstants.NAMESPACE)
+    public List<Field> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(List<Field> headers) {
+        this.headers = headers;
+    }
+
+    @XmlElementWrapper(name = "fields", namespace = EtiqetConstants.NAMESPACE)
+    @XmlElement(name = "field", namespace = EtiqetConstants.NAMESPACE)
+    public List<Field> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<Field> fields) {
+        this.fields = fields;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        out.append("Message [admin = ")
+            .append(admin)
+            .append(", implementation = ")
+            .append(implementation)
+            .append(", name = ")
+            .append(name)
+            .append(", msgtype = ")
+            .append(msgtype)
+            .append(", fields = {");
+        for (Field field : getFields()) {
+            out.append("\r\n").append(field.toString());
+        }
+        out.append("}");
+        out.append("]");
+        return out.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Message)) {
+            return false;
+        }
+
+        Message otherMsg = (Message) obj;
+
+        return otherMsg.admin.equals(this.admin)
+            && otherMsg.implementation.equals(this.implementation)
+            && otherMsg.msgtype.equals(this.msgtype)
+            && otherMsg.name.equals(this.name)
+            && otherMsg.fields.equals(this.fields);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(admin, implementation, msgtype, name, fields);
+    }
 
 }

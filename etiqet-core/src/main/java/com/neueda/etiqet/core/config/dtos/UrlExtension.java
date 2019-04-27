@@ -1,33 +1,33 @@
 package com.neueda.etiqet.core.config.dtos;
 
 import com.neueda.etiqet.core.common.EtiqetConstants;
-
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
 
 @XmlRootElement(namespace = EtiqetConstants.NAMESPACE)
 public class UrlExtension implements Serializable {
-	private String name;
 
-	private String uri;
+    private String name;
 
-	@XmlAttribute
-	public String getName() {
-		return name;
-	}
+    private String uri;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @XmlAttribute
+    public String getName() {
+        return name;
+    }
 
-	@XmlAttribute
-	public String getUri() {
-		return this.uri;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
+    @XmlAttribute
+    public String getUri() {
+        return this.uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
 }

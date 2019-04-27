@@ -1,13 +1,14 @@
 package com.neueda.etiqet.core.config.dtos;
 
 import com.neueda.etiqet.core.common.EtiqetConstants;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-import java.util.List;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * XPath element: /etiqetConfiguration/protocols/protocol/client
@@ -15,79 +16,92 @@ import java.util.List;
 @XmlRootElement(namespace = EtiqetConstants.NAMESPACE)
 public class Client implements Serializable {
 
-	private String impl;
-	private String transportImpl;
-	private String codecImpl;
+    private String impl;
+    private String transportImpl;
+    private String codecImpl;
 
-	private String defaultConfig;
+    private Class<?> implementationClass;
 
-	private List<UrlExtension> urlExtensions;
+    private String defaultConfig;
 
-	private Delegates delegates;
+    private List<UrlExtension> urlExtensions = new ArrayList<>();
 
-	private StopEvent stopEvent;
+    private List<Delegate> delegates = new ArrayList<>();
 
-	@XmlElement(name = "delegates", namespace = EtiqetConstants.NAMESPACE)
-	public Delegates getDelegates() {
-		return delegates;
-	}
+    private StopEvent stopEvent;
 
-	public void setDelegates(Delegates delegates) {
-		this.delegates = delegates;
-	}
+    @XmlElementWrapper(name = "delegates", namespace = EtiqetConstants.NAMESPACE)
+    @XmlElement(name = "delegate", namespace = EtiqetConstants.NAMESPACE)
+    public List<Delegate> getDelegates() {
+        return delegates;
+    }
 
-	@XmlElement(name = "stopEvent", namespace = EtiqetConstants.NAMESPACE)
-	public StopEvent getStopEvent() {
-		return stopEvent;
-	}
+    public void setDelegates(List<Delegate> delegates) {
+        this.delegates = delegates;
+    }
 
-	public void setStopEvent(StopEvent stopEvent) {
-		this.stopEvent = stopEvent;
-	}
+    @XmlElement(name = "stopEvent", namespace = EtiqetConstants.NAMESPACE)
+    public StopEvent getStopEvent() {
+        return stopEvent;
+    }
 
-	@XmlAttribute(required = true)
-	public String getImpl() {
-		return impl;
-	}
+    public void setStopEvent(StopEvent stopEvent) {
+        this.stopEvent = stopEvent;
+    }
 
-	@XmlAttribute(required = true)
-	public String getCodecImpl() {
-		return codecImpl;
-	}
+    @XmlAttribute(required = true)
+    public String getImpl() {
+        return impl;
+    }
 
-	public void setCodecImpl(String codecImpl) {
-		this.codecImpl = codecImpl;
-	}
+    public void setImpl(String impl) {
+        this.impl = impl;
+    }
 
-	@XmlAttribute(required = true)
-	public String getTransportImpl() {
-		return transportImpl;
-	}
+    @XmlAttribute(required = true)
+    public String getCodecImpl() {
+        return codecImpl;
+    }
 
-	public void setTransportImpl(String transportImpl) {
-		this.transportImpl = transportImpl;
-	}
+    public void setCodecImpl(String codecImpl) {
+        this.codecImpl = codecImpl;
+    }
 
-	public void setImpl(String impl) {
-		this.impl = impl;
-	}
+    @XmlAttribute(required = true)
+    public String getTransportImpl() {
+        return transportImpl;
+    }
 
-	@XmlAttribute(required = true)
-	public String getDefaultConfig() {
-		return defaultConfig;
-	}
+    public void setTransportImpl(String transportImpl) {
+        this.transportImpl = transportImpl;
+    }
 
-	public void setDefaultConfig(String defaultConfig) {
-		this.defaultConfig = defaultConfig;
-	}
+    @XmlTransient
+    public Class<?> getImplementationClass() {
+        return this.implementationClass;
+    }
 
-	@XmlElementWrapper(name = "urlExtensions", namespace = EtiqetConstants.NAMESPACE, required = false)
+    public void setImplementationClass(Class<?> implementationClass) {
+        this.impl = implementationClass.getName();
+        this.implementationClass = implementationClass;
+    }
+
+    @XmlAttribute(required = true)
+    public String getDefaultConfig() {
+        return defaultConfig;
+    }
+
+    public void setDefaultConfig(String defaultConfig) {
+        this.defaultConfig = defaultConfig;
+    }
+
+    @XmlElementWrapper(name = "urlExtensions", namespace = EtiqetConstants.NAMESPACE, required = false)
     @XmlElement(name = "urlExtension", namespace = EtiqetConstants.NAMESPACE, required = false)
     public List<UrlExtension> getUrlExtensions() {
         return this.urlExtensions;
-	}
+    }
 
-	public void setUrlExtensions(List<UrlExtension> urlExtensions) {
-		this.urlExtensions = urlExtensions;
-	}
+    public void setUrlExtensions(List<UrlExtension> urlExtensions) {
+        this.urlExtensions = urlExtensions;
+    }
 }

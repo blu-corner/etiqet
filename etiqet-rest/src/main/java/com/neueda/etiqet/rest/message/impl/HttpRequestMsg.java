@@ -1,8 +1,14 @@
 package com.neueda.etiqet.rest.message.impl;
 
-import com.google.api.client.http.*;
+import com.google.api.client.http.EmptyContent;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpContent;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.util.FieldInfo;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -60,13 +66,13 @@ public class HttpRequestMsg {
 
     public HttpRequest createHttpRequest(HttpRequestFactory requestFactory, String baseUrl) throws IOException {
         HttpContent requestContent = new EmptyContent();
-        if(payload != null) {
+        if (payload != null) {
             ByteArrayInputStream payloadStream = new ByteArrayInputStream(payload.getBytes(StandardCharsets.UTF_8));
             requestContent = new InputStreamContent("application/json", payloadStream);
         }
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        for(Map.Entry<String, String> header : headers.entrySet()) {
+        for (Map.Entry<String, String> header : headers.entrySet()) {
             String headerName = header.getKey();
             Object headerValue = header.getValue();
 
@@ -75,7 +81,7 @@ public class HttpRequestMsg {
              * checks this and creates a singleton list on these headers.
              */
             FieldInfo fieldInfo = httpHeaders.getClassInfo().getFieldInfo(headerName);
-            if(fieldInfo != null) {
+            if (fieldInfo != null) {
                 headerValue = Collections.singletonList(headerValue);
             }
             httpHeaders.set(headerName, headerValue);
@@ -89,11 +95,11 @@ public class HttpRequestMsg {
         return request;
     }
 
-    public void setResponse(HttpResponse response) {
-        this.response = response;
-    }
-
     public HttpResponse getResponse() {
         return this.response;
+    }
+
+    public void setResponse(HttpResponse response) {
+        this.response = response;
     }
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
  * Client that logs the message by using toString method.
  */
 public class LoggerClientDelegate extends BaseClientDelegate {
+
     private static final Logger logger = LoggerFactory.getLogger(LoggerClientDelegate.class);
 
     /**
@@ -19,6 +20,7 @@ public class LoggerClientDelegate extends BaseClientDelegate {
 
     /**
      * Constructor.
+     *
      * @param next the next delegate on the chain to process the message.
      */
     public LoggerClientDelegate(ClientDelegate next) {

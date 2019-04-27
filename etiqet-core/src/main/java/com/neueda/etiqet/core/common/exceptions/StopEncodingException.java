@@ -12,6 +12,7 @@ public class StopEncodingException extends EtiqetException {
 
     /**
      * Constructor from error message.
+     *
      * @param msg the message describing the exception.
      * @param reason the message describing the exception.
      */
@@ -21,6 +22,7 @@ public class StopEncodingException extends EtiqetException {
 
     /**
      * Constructor from throwable exception.
+     *
      * @param e the throwable exception.
      */
     public StopEncodingException(Throwable e) {
@@ -29,6 +31,7 @@ public class StopEncodingException extends EtiqetException {
 
     /**
      * Constructor from throwable exception.
+     *
      * @param e the throwable exception.
      */
     public StopEncodingException(Cdr msg, Throwable e) {
@@ -37,6 +40,7 @@ public class StopEncodingException extends EtiqetException {
 
     /**
      * Constructor from error message and exception.
+     *
      * @param msg the message describing the exception.
      * @param reason the message describing the exception.
      */

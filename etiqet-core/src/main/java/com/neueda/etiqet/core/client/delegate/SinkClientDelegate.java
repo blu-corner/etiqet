@@ -7,18 +7,18 @@ import com.neueda.etiqet.core.message.cdr.Cdr;
  */
 public class SinkClientDelegate implements ClientDelegate {
 
-  @Override
-  public void setNextDelegate(ClientDelegate next) {
-    // Nothing to be done since the sink is the last step of the chain
-  }
+    @Override
+    public void setNextDelegate(ClientDelegate next) {
+        // Nothing to be done since the sink is the last step of the chain
+    }
 
-  @Override
-  public ClientDelegate findDelegate(Class<? extends ClientDelegate> delegateClass) {
-    return null;
-  }
+    @Override
+    public ClientDelegate findDelegate(Class<? extends ClientDelegate> delegateClass) {
+        return null;
+    }
 
-  @Override
-  public Cdr processMessage(Cdr msg) {
-    return msg;
-  }
+    @Override
+    public Cdr processMessage(Cdr msg) {
+        return msg;
+    }
 }
