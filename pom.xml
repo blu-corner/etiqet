@@ -22,7 +22,6 @@
     <module>etiqet-fix</module>
     <module>etiqet-rest</module>
     <module>etiqet-websocket</module>
-    <module>etiqet-selenium</module>
     <module>etiqet-transport-qfj</module>
     <module>etiqet-transport-rabbitmq-gpb</module>
   </modules>

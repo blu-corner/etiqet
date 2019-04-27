@@ -60,6 +60,7 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
         (delegate instanceof FixClientDelegate) ? delegate : new FixClientDelegate(delegate));
   }
 
+  @Override
   public void stop() {
     // Stops the transport
     transport.stop();
