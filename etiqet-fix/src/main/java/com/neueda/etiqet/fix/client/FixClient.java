@@ -82,7 +82,7 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
   @Override
   public void init(String config) throws EtiqetException {
     super.init(config);
-    transport.setTransDel(this);
+    transport.setTransportDelegate(this);
     activeConfig = config;
   }
 
