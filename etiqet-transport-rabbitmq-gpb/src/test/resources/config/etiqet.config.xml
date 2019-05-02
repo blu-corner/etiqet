@@ -12,7 +12,7 @@
         </delegates>
       </client>
       <components_package/>
-      <messageClass>com.neueda.etiqet.core.message.cdr.Cdr</messageClass>
+      <messages>com.neueda.etiqet.core.message.cdr.Cdr</messages>
     </protocol>
   </protocols>
 </etiqetConfiguration>
