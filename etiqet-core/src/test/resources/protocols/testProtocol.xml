@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocol name="test" xmlns="http://www.neueda.com/etiqet">
-    <client defaultConfig="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"
-        impl="com.neueda.etiqet.core.testing.client.TestClient">
+    <client defaultConfig="${user.dir}/src/test/resources/fix-config/client.cfg"
+        impl="com.neueda.etiqet.core.testing.client.TestClient"
+        codecImpl=""
+        transportImpl="">
         <delegates>
             <delegate impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"
                 key="logger"/>

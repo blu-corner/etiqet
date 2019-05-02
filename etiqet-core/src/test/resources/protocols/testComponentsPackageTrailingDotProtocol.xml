@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocol name="test"
     xmlns="http://www.neueda.com/etiqet">
-    <client defaultConfig="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"
-        impl="com.neueda.etiqet.core.testing.client.TestClient"/>
+    <client defaultConfig="${user.dir}/src/test/resources/fix-config/client.cfg"
+        impl="com.neueda.etiqet.core.testing.client.TestClient"
+        codecImpl=""
+        transportImpl=""
+    />
     <dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
     <components_package>quickfix.fix44.component.</components_package>
     <messages>
