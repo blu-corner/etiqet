@@ -42,10 +42,10 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.net.ssl.HttpsURLConnection;
-import org.apache.mina.util.ConcurrentHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +97,7 @@ public class EtiqetHandlers {
 
     private NavigableMap<String, Cdr> responseMap = new TreeMap<>();
 
-    private Set<String> filteredMsgs = new ConcurrentHashSet<>();
+    private Set<String> filteredMsgs = ConcurrentHashMap.newKeySet();
 
     private boolean tryOn;
 
