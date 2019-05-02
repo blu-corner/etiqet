@@ -6,7 +6,6 @@
                 defaultConfig="${user.dir}/src/test/resources/config/client.cfg"
                 impl="com.neueda.etiqet.fix.client.FixClient"
                 transportImpl="com.neueda.etiqet.transport.qfj.QfjTransport">
-                codecImpl=""
                 <delegates>
                     <delegate impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"
                         key="logger"/>
