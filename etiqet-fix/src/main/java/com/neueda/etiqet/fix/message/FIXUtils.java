@@ -44,7 +44,7 @@ public final class FIXUtils {
 	}
 
 	public static Message encode(Cdr cdr) throws EtiqetException {
-		return new FIXMsg().serialize(cdr);
+		return (Message) new FIXMsg().serialize(cdr);
 	}
 
 	public static Cdr decode(Message msg) throws EtiqetException {

@@ -1,11 +1,14 @@
 package com.neueda.etiqet.fix.message.dictionary;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 public class Component {
 	private String name;
 
 	private String required;
+
+	private Group group;
 
 	@XmlAttribute
 	public String getName() {
@@ -25,7 +28,16 @@ public class Component {
 		this.required = required;
 	}
 
-	@Override
+	@XmlElement
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    @Override
 	public String toString() {
 		return "Component [name = " + name + ", required = " + required + "]";
 	}

@@ -41,7 +41,7 @@ public class ReplaceParamFixClientDelegate extends MessageFixClientDelegate {
                 FIXMsg fixMsg = new FIXMsg(fixMessage);
                 fixMessage = fixMsg.updateWithCdr(message);
 
-                for (Integer removeTag: fixMsg.getFieldsInogred()){
+                for (Integer removeTag: fixMsg.getFieldsIgnored()){
                     ProtocolConfig protocolConfig = GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME);
                     if (protocolConfig.isHeaderField(removeTag)){
                         fixMessage.getHeader().removeField(removeTag);

@@ -27,15 +27,14 @@ public class FixDictionary extends AbstractDictionary {
 	
 	private transient Map<String, Message> messageMapByType;
 
+	private Fix dictionary;
+
 	public FixDictionary(String dictionaryPath) {
 		super(dictionaryPath);
 
 		try {
-			JAXBContext jaxbContext;
-
-			jaxbContext = JAXBContext.newInstance(Fix.class);
-			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            Fix dictionary = (Fix) jaxbUnmarshaller.unmarshal(new File(Environment.resolveEnvVars(dictionaryPath)));
+			Unmarshaller jaxbUnmarshaller = JAXBContext.newInstance(Fix.class).createUnmarshaller();
+            dictionary = (Fix) jaxbUnmarshaller.unmarshal(new File(Environment.resolveEnvVars(dictionaryPath)));
 
 			names = new HashMap<>();
 			tags = new HashMap<>();
@@ -63,24 +62,26 @@ public class FixDictionary extends AbstractDictionary {
 		}
 	}
 
+	public Fix getFixDictionary() {
+	    return dictionary;
+    }
+
 	@Override
 	public String getMsgType(String messageName) {
-		String msgType = null;
 		Message message = messageMap.get(messageName);
 		if (message != null) {
-			msgType = message.getMsgtype();	
+			return message.getMsgtype();
 		}		
-		return msgType;
+		return null;
 	}
 	
 	@Override
 	public String getMsgName(String messageType) {
-		String msgName = null;
 		Message message = messageMapByType.get(messageType);
 		if (message != null) {
-			msgName = message.getName();	
+			return message.getName();
 		}		
-		return msgName;
+		return null;
 	}
 
 	@Override
@@ -93,8 +94,9 @@ public class FixDictionary extends AbstractDictionary {
 
 	@Override
 	public Integer getTagForName(String n) throws UnknownTagException {
-		if (!tags.containsKey(n))
-			throw new UnknownTagException("failed to find tag for " + n);
+		if (!tags.containsKey(n)) {
+            throw new UnknownTagException("failed to find tag for " + n);
+        }
 
 		return tags.get(n);
 	}
@@ -111,20 +113,19 @@ public class FixDictionary extends AbstractDictionary {
 	
 	@Override
 	public boolean isHeaderField(Integer tag) {
-		boolean isHeaderField = false;
 		String fieldName = names.get(tag);
 		if (!StringUtils.isNullOrEmpty(fieldName)) {
-			isHeaderField = headerFieldsMap.containsKey(fieldName);
+			return headerFieldsMap.containsKey(fieldName);
 		}
-		return isHeaderField;
+		return false;
 	}
-	
+
+	@Override
 	public boolean isAdmin(String messageName) {
-		boolean out = false;
 		Message message = messageMap.get(messageName);
 		if (message != null) {
-			out = "admin".equals(message.getMsgcat());
+			return  "admin".equals(message.getMsgcat());
 		}
-		return out;
+		return false;
 	}
 }

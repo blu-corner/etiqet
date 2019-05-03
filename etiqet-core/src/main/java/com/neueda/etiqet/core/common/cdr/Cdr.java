@@ -2,6 +2,7 @@ package com.neueda.etiqet.core.common.cdr;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Cdr {
     protected String msgType;
@@ -75,7 +76,24 @@ public class Cdr {
 		return items;
 	}
 
-	@Override
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cdr cdr = (Cdr) o;
+        return Objects.equals(msgType, cdr.msgType) &&
+            items.keySet().containsAll(cdr.items.keySet()) &&
+            items.values().containsAll(cdr.items.values()) &&
+            cdr.items.keySet().containsAll(items.keySet()) &&
+            cdr.items.values().containsAll(items.values());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(msgType, items);
+    }
+
+    @Override
     public String toString() {
     	StringBuilder builder = new StringBuilder();
     	

@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 public class Group {
 	private Field[] field;
 
+	private Component[] component;
+
 	private String name;
 
 	private String required;
@@ -17,7 +19,15 @@ public class Group {
 		this.field = field;
 	}
 
-	@XmlAttribute
+    public Component[] getComponent() {
+        return component;
+    }
+
+    public void setComponent(Component[] component) {
+        this.component = component;
+    }
+
+    @XmlAttribute
 	public String getName() {
 		return name;
 	}
