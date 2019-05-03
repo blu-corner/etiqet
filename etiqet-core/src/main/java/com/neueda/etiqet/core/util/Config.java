@@ -39,6 +39,11 @@ public class Config {
         properties = new HashMap<>();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Config && (((Config)obj).properties).equals(this.properties);
+    }
+
     /**
      * Setter of attribute properties.
      *
