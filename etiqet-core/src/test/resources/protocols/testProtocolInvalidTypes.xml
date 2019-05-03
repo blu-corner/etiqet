@@ -2,8 +2,8 @@
 <protocol name="test" xmlns="http://www.neueda.com/etiqet">
     <client defaultConfig="${user.dir}/src/test/resources/fix-config/client.cfg"
         impl="com.neueda.etiqet.core.testing.client.TestClient"
-        codecImpl=""
-        transportImpl="">
+        codecImpl="com.neueda.etiqet.core.transport.ToStringCodec"
+        transportImpl="com.neueda.etiqet.core.transport.ConsoleTransport">
         <delegates>
             <delegate impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate" key="sink"/>
         </delegates>
