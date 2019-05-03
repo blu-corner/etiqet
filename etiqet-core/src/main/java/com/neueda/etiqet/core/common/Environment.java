@@ -49,7 +49,7 @@ public class Environment {
             Matcher m = p.matcher(input); // create a matcher object
             StringBuffer sb = new StringBuffer();
             resolveEnvVars(m, sb);
-            res = sb.toString().replace("/", File.separator);
+            res = sb.toString().replace("/", File.separator).trim();
         }
 
         return res;
