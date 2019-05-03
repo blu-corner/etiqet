@@ -211,7 +211,9 @@ public class EtiqetHandlers {
     public void failover(String clientName) throws EtiqetException {
         Client client = clientMap.get(clientName);
         if (client.canFailover()) {
+            client.stop();
             client.failover();
+            client.start();
         } else {
             throw new EtiqetException("Client: " + clientName + " not enabled for failover");
         }
