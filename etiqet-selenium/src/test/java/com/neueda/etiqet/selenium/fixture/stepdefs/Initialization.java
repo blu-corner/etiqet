@@ -15,10 +15,6 @@ public class Initialization {
         SeleniumHandlers.openBrowser(browserName);
     }
 
-    /**
-     * Opens a url
-     * @param url should be a fully qualified url such as https://www.google.com rather than google.com
-     */
     @Given("^I? ?(?:(?:go to)|(?:visit)) (?:the)? ?(?:website|url) \"([^\"]*)\"$")
     public void goToUrl(String url) {
         SeleniumHandlers.goToUrl(url);

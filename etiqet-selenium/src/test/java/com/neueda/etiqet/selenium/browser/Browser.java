@@ -1,10 +1,11 @@
 package com.neueda.etiqet.selenium.browser;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
@@ -19,7 +20,7 @@ import java.util.Calendar;
 @XmlRootElement(name="Browser")
 public abstract class Browser {
 
-    protected static Logger logger = Logger.getLogger(Browser.class);
+    protected static Logger logger = LoggerFactory.getLogger(Browser.class);
 
     public abstract void setupDriver();
     public abstract String getName();

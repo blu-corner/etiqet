@@ -44,7 +44,13 @@ Feature: Selecting
     Then I name the selected element as "copy of my container"
       And I clear the selected element
 
-    Scenario: Clearing elements
+  Scenario: Selecting elements relative to selected element
+    Given I select element by id using value "page-container" as "my container"
+    And I select the named element "my container"
+    Then I name the selected element as "copy of my container"
+    And I clear the selected element
+
+  Scenario: Clearing elements
     Given I select element by id using value "page-container" as "my container"
       And I select the named element "my container"
     Then I clear the named elements

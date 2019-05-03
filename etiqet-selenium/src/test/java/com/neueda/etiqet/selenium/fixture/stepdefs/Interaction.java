@@ -17,7 +17,7 @@ public class Interaction {
         SeleniumHandlers.clearSelectedElements();
     }
 
-    @Then("^I right click the selected element$")
+    @When("^I? ?right click (?:on)? ?(?:the)? ?selected element$")
     public void rightClick(){
         SeleniumHandlers.rightClickElement();
     }
@@ -32,9 +32,6 @@ public class Interaction {
         SeleniumHandlers.clickAndHold();
     }
 
-    /**
-     * Convenience method - Submit a form if element is contained within a form
-     */
     @When("^I? ?submit(?: form)?$")
     public void submit() {
         SeleniumHandlers.submit();
@@ -44,11 +41,4 @@ public class Interaction {
     public void hoverElement() {
         SeleniumHandlers.hoverElement();
     }
-
-    @When("^I? ?(?:press|select|click|click on)? ?(?:refresh|reload) ?(?:the)? ?(?:page)?$")
-    public void refresh() {
-        SeleniumHandlers.refresh();
-    }
-
-
 }
