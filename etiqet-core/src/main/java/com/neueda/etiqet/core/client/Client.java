@@ -139,6 +139,7 @@ public abstract class Client implements Transport, Runnable {
       setProtocolName(protocolConfig.getProtocolName());
     }
     setClientConfig(primaryConfig, secondaryConfig);
+    activeConfig = Environment.resolveEnvVars(primaryConfig);
     this.stopEvent = new StopEvent(this);
   }
 
@@ -469,11 +470,12 @@ public abstract class Client implements Transport, Runnable {
    */
   public void failover() throws EtiqetException {
     if (canFailover()) {
-      stop();
-      if (activeConfig.equals(primaryConfig)) {
-        launchClient(secondaryConfig);
+      if(activeConfig.equals(primaryConfig)) {
+        this.setConfig(PropertiesFileReader.loadPropertiesFile(this.secondaryConfig));
+        activeConfig = secondaryConfig;
       } else {
-        launchClient();
+        this.setConfig(PropertiesFileReader.loadPropertiesFile(this.primaryConfig));
+        activeConfig = primaryConfig;
       }
     } else {
       String error = "No secondary config to failover";
