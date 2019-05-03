@@ -6,10 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all browsers. This class should be extended when adding another browser
@@ -17,7 +18,7 @@ import org.openqa.selenium.WebDriver;
 @XmlRootElement(name = "Browser")
 public abstract class Browser {
 
-    protected static Logger logger = Logger.getLogger(Browser.class);
+    protected static Logger logger = LoggerFactory.getLogger(Browser.class);
 
     public abstract void setupDriver();
 

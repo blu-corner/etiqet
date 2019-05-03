@@ -1,17 +1,19 @@
 package com.neueda.etiqet.selenium.config;
 
 import com.neueda.etiqet.selenium.browser.BrowserBase;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.apache.log4j.Logger;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class Config {
 
-    private static Logger logger = Logger.getLogger(BrowserBase.class);
+    private static Logger logger = LoggerFactory.getLogger(BrowserBase.class);
 
     public static void init() {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -25,10 +27,12 @@ public class Config {
             JAXBContext jaxbContext = JAXBContext.newInstance(BrowserBase.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             jaxbUnmarshaller.unmarshal(file);
-        } catch (URISyntaxException e) {
+        }
+        catch (URISyntaxException e) {
             logger.error("Unable to find config file with path " + configUrl);
             e.printStackTrace();
-        } catch (JAXBException e) {
+        }
+        catch (JAXBException e) {
             logger.error("Failed to unmarshall BrowserBase to setup browser configs");
             e.printStackTrace();
         }

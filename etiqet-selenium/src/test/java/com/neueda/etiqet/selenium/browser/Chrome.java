@@ -1,12 +1,14 @@
 package com.neueda.etiqet.selenium.browser;
 
-import java.util.concurrent.TimeUnit;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.concurrent.TimeUnit;
 
 @XmlRootElement(name = "Chrome")
 public class Chrome extends Browser {
@@ -14,7 +16,7 @@ public class Chrome extends Browser {
     @XmlAttribute
     private String name;
 
-    @XmlAttribute(name = "driver_path")
+    @XmlAttribute(name="driver_path")
     private String driverPath;
 
     @XmlElement
@@ -40,7 +42,7 @@ public class Chrome extends Browser {
     @XmlElement(name = "Options")
     private Options options;
 
-    public Chrome() {
+    public Chrome(){
         options = new ChromeSettings();
         pageLoadTimeout = -1;
     }

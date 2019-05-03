@@ -1,7 +1,7 @@
 package com.neueda.etiqet.selenium.fixture.stepdefs;
 
-import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
 import cucumber.api.java.en.Given;
+import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
 
 public class Initialization {
 
@@ -15,11 +15,6 @@ public class Initialization {
         SeleniumHandlers.openBrowser(browserName);
     }
 
-    /**
-     * Opens a url
-     *
-     * @param url should be a fully qualified url such as https://www.google.com rather than google.com
-     */
     @Given("^I? ?(?:(?:go to)|(?:visit)) (?:the)? ?(?:website|url) \"([^\"]*)\"$")
     public void goToUrl(String url) {
         SeleniumHandlers.goToUrl(url);

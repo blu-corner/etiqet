@@ -1,12 +1,14 @@
 package com.neueda.etiqet.selenium.browser;
 
-import java.util.concurrent.TimeUnit;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import java.util.concurrent.TimeUnit;
 
 @XmlRootElement
 public class Firefox extends Browser {
@@ -14,7 +16,7 @@ public class Firefox extends Browser {
     @XmlAttribute
     private String name;
 
-    @XmlAttribute(name = "driver_path")
+    @XmlAttribute(name="driver_path")
     private String driverPath;
 
     @XmlElement
@@ -43,14 +45,14 @@ public class Firefox extends Browser {
     })
     private Options options;
 
-    public Firefox() {
+    public Firefox(){
         options = new FirefoxSettings();
         pageLoadTimeout = -1;
     }
 
     @Override
     public void setupDriver() {
-        System.setProperty("webdriver.gecko.driver", driverPath);
+        WebDriverManager.firefoxdriver().setup();
 
         org.openqa.selenium.firefox.FirefoxOptions firefoxOptions = new org.openqa.selenium.firefox.FirefoxOptions();
         firefoxOptions.addArguments(options.getStartupArgs());

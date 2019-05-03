@@ -68,17 +68,12 @@ public class FlowControl {
         setImplicitWaitSeconds(seconds);
     }
 
-    @Given("^I? ?set explicit wait to 0$")
-    public void clearExplicitWaitAlias1() {
-        clearExplicitWait();
-    }
-
     @Given("^I? ?disable explicit wait$")
     public void clearExplicitWaitAlias2() {
         clearExplicitWait();
     }
 
-    @Given("^Explicit wait is disabled$")
+    @Given("^explicit wait is disabled$")
     public void clearExplicitWaitAlias3() {
         SeleniumHandlers.clearExplicitWait();
     }

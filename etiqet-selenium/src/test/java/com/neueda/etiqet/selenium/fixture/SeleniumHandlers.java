@@ -1,38 +1,35 @@
 package com.neueda.etiqet.selenium.fixture;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
+import com.neueda.etiqet.selenium.SeleniumException;
 import com.neueda.etiqet.selenium.browser.BrowserBase;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
-import org.apache.log4j.Logger;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static org.junit.Assert.*;
 
 /**
- * Implements functionality of the step definitions. Actions are performed on the selectedElement by default.
+ * Implements functionality of the step definitions.
+ * Actions are performed on the selectedElement by default.
  *
- * When Selecting elements, if an element is already selected, the search will look for elements relative to the
- * currently selected element. If no element is currently selected then the whole DOM will be searched.
+ * When Selecting elements, there are optional lines at the end of each selection method. One optional feature is to
+ * include 'relative to the selected element' that will cause selenium to search for the element relative to the
+ * currently selected element rather than from the root of the DOM. You can also include an alias that will save
+ * the element in a map with the alias name as the key. To do this end the selection method with 'as [alias name]'.
+ * Aliases only apply when selecting a single element rather than multiple elements.
  *
  * Explicit and implicit wait when set will be used on applicable handlers until they are disabled. i.e. implicit wait
  * is set to 0 or explicit wait is disabled. If a search method returns multiple elements explicit wait will wait for
@@ -41,7 +38,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SeleniumHandlers {
 
-    private final static org.apache.log4j.Logger logger = Logger.getLogger(SeleniumHandlers.class);
+    private final static Logger logger = LoggerFactory.getLogger(SeleniumHandlers.class);
 
     private static WebDriver driver;
 
@@ -67,11 +64,10 @@ public class SeleniumHandlers {
 
     /**
      * Browsers will be loaded from the config before any tests run and can be selected using this method
-     *
      * @param browserName The name of the browser which should be defined as a name attribute in config
      */
 
-    public static void openBrowser(String browserName) {
+    public static void openBrowser(String browserName){
         BrowserBase.selectBrowser(browserName);
         openBrowser();
     }
@@ -97,10 +93,10 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Will only be applied to wait for individual elements, unlike other wait conditions that will wait for multiple
-     * elements if multiple elements are being selected After being called it must be explicitly disabled by calling the
-     * relevant method if you no longer want to use it.
-     *
+     * Will only be applied to wait for individual elements, unlike other wait conditions that
+     * will wait for multiple elements if multiple elements are being selected
+     * After being called it must be explicitly disabled by calling the relevant method if you
+     * no longer want to use it.
      * @param timout in seconds
      */
     public static void setExplicitWaitToClickable(int timout) {
@@ -109,9 +105,9 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Will be automatically applied to multiple elements if multiple elements are being selected After being called it
-     * must be explicitly disabled by calling the relevant method if you no longer want to use it.
-     *
+     * Will be automatically applied to multiple elements if multiple elements are being selected
+     * After being called it must be explicitly disabled by calling the relevant method if you
+     * no longer want to use it.
      * @param timout in seconds
      */
     public static void setExplicitWaitToPresent(int timout) {
@@ -120,9 +116,9 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Will be automatically applied to multiple elements if multiple elements are being selected After being called it
-     * must be explicitly disabled by calling the relevant method if you no longer want to use it.
-     *
+     * Will be automatically applied to multiple elements if multiple elements are being selected
+     * After being called it must be explicitly disabled by calling the relevant method if you
+     * no longer want to use it.
      * @param timout in seconds
      */
     public static void setExplicitWaitToVisibility(int timout) {
@@ -152,23 +148,21 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs An
-     * exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
+     * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByCss(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByCss(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.CSS, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.CSS, locator, explicitWaitTimeout, selectedElement)
-                    .get(0);
-        } else {
-            selectedElement = selectedElement == null ? driver.findElement(By.cssSelector(locator)) :
+            selectedElement = relative == null || selectedElement == null  ?
+                explicitWait.applyWait(driver, LocatorType.CSS, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.CSS, locator, explicitWaitTimeout, selectedElement).get(0);
+        }
+        else {
+            selectedElement = relative == null || selectedElement == null  ? driver.findElement(By.cssSelector(locator)) :
                 selectedElement.findElement(By.cssSelector(locator));
         }
         if (alias != null) {
@@ -177,44 +171,41 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement by calling
-     * selectFromElements(int index) step definition. Selenium returns an empty list if no elements found, however
-     * NoSuchElementException is thrown to remain consistent with the selectElementBy... methods.
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement
+     * by calling selectFromElements(int index) step definition.
+     * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
+     * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementsByCss(String locator) throws NoSuchElementException {
+    public static void selectElementsByCss(String locator, String relative) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElements = selectedElement == null ?
-                explicitWait.applyWaitAll(driver, SelectorMethod.CSS, locator, explicitWaitTimeout) :
-                explicitWait.applyWaitAll(driver, SelectorMethod.CSS, locator, explicitWaitTimeout, selectedElement);
+            selectedElements = relative == null || selectedElement == null  ?
+                explicitWait.applyWaitAll(driver, LocatorType.CSS, locator, explicitWaitTimeout) :
+                explicitWait.applyWaitAll(driver, LocatorType.CSS, locator, explicitWaitTimeout, selectedElement);
             return;
         }
-        selectedElements = selectedElement == null ? driver.findElements(By.cssSelector(locator)) :
+        selectedElements = relative == null || selectedElement == null ? driver.findElements(By.cssSelector(locator)) :
             selectedElement.findElements(By.cssSelector(locator));
     }
 
     /**
-     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs An
-     * exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
+     * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByXpath(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByXpath(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout, selectedElement)
-                    .get(0);
-        } else {
-            selectedElement = selectedElement == null ? driver.findElement(By.xpath(locator)) :
+            selectedElement = relative == null || selectedElement == null ?
+                explicitWait.applyWait(driver, LocatorType.XPATH, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.XPATH, locator, explicitWaitTimeout, selectedElement).get(0);
+        }
+        else {
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.xpath(locator)) :
                 selectedElement.findElement(By.xpath(locator));
         }
         if (alias != null) {
@@ -223,43 +214,41 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement by calling
-     * selectFromElements(int index) step definition. Selenium returns an empty list if no elements found, however
-     * NoSuchElementException is thrown to remain consistent with the selectElementBy... methods.
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement
+     * by calling selectFromElements(int index) step definition.
+     * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
+     * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementsByXpath(String locator) throws NoSuchElementException {
+    public static void selectElementsByXpath(String locator, String relative) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElements = selectedElement == null ?
-                explicitWait.applyWaitAll(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout) :
-                explicitWait.applyWaitAll(driver, SelectorMethod.XPATH, locator, explicitWaitTimeout, selectedElement);
+            selectedElements = relative == null || selectedElement == null ?
+                explicitWait.applyWaitAll(driver, LocatorType.XPATH, locator, explicitWaitTimeout) :
+                explicitWait.applyWaitAll(driver, LocatorType.XPATH, locator, explicitWaitTimeout, selectedElement);
             return;
         }
-        selectedElements = selectedElement == null ? driver.findElements(By.xpath(locator)) :
+        selectedElements = relative == null || selectedElement == null ? driver.findElements(By.xpath(locator)) :
             selectedElement.findElements(By.xpath(locator));
     }
 
     /**
-     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs An
-     * exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
+     * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementById(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementById(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.ID, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.ID, locator, explicitWaitTimeout, selectedElement).get(0);
-        } else {
-            selectedElement = selectedElement == null ? driver.findElement(By.id(locator)) :
+            selectedElement = relative == null || selectedElement == null ?
+                explicitWait.applyWait(driver, LocatorType.ID, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.ID, locator, explicitWaitTimeout, selectedElement).get(0);
+        }
+        else {
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.id(locator)) :
                 selectedElement.findElement(By.id(locator));
         }
         if (alias != null) {
@@ -268,24 +257,23 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs An
-     * exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
+     * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByTag(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByTag(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.TAG, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.TAG, locator, explicitWaitTimeout, selectedElement)
-                    .get(0);
-        } else {
-            selectedElement = selectedElement == null ? driver.findElement(By.tagName(locator)) :
+            selectedElement = relative == null || selectedElement == null ?
+                explicitWait.applyWait(driver, LocatorType.TAG, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.TAG, locator, explicitWaitTimeout, selectedElement).get(0);
+        }
+        else {
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.tagName(locator)) :
                 selectedElement.findElement(By.tagName(locator));
+            System.out.println(selectedElement.getText());
         }
         if (alias != null) {
             namedElements.put(alias, selectedElement);
@@ -293,45 +281,42 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement by calling
-     * selectFromElements(int index) step definition. Selenium returns an empty list if no elements found, however
-     * NoSuchElementException is thrown to remain consistent with the selectElementBy... methods.
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement
+     * by calling selectFromElements(int index) step definition.
+     * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
+     * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementsByTag(String locator) throws NoSuchElementException {
+    public static void selectElementsByTag(String locator, String relative) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElements = selectedElement == null ?
-                explicitWait.applyWaitAll(driver, SelectorMethod.TAG, locator, explicitWaitTimeout) :
-                explicitWait.applyWaitAll(driver, SelectorMethod.TAG, locator, explicitWaitTimeout, selectedElement);
+            selectedElements = relative == null || selectedElement == null ?
+                explicitWait.applyWaitAll(driver, LocatorType.TAG, locator, explicitWaitTimeout) :
+                explicitWait.applyWaitAll(driver, LocatorType.TAG, locator, explicitWaitTimeout, selectedElement);
             return;
         }
-        selectedElements = selectedElement == null ? driver.findElements(By.tagName(locator)) :
+        selectedElements = relative == null || selectedElement == null ? driver.findElements(By.tagName(locator)) :
             selectedElement.findElements(By.tagName(locator));
     }
 
     /**
-     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs An
-     * exception is thrown if no element is found and the value of selectedElement will remain unchanged If multiple
-     * elements are found the first element will be assigned to selectedElement
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
+     * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
+     * If multiple elements are found the first element will be assigned to selectedElement
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByClassName(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByClassName(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout, selectedElement)
-                    .get(0);
-        } else {
-            selectedElement = selectedElement == null ? driver.findElement(By.className(locator)) :
+            selectedElement = relative == null || selectedElement == null ?
+                explicitWait.applyWait(driver, LocatorType.CLASS, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.CLASS, locator, explicitWaitTimeout, selectedElement).get(0);
+        }
+        else {
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.className(locator)) :
                 selectedElement.findElement(By.className(locator));
         }
         if (alias != null) {
@@ -340,44 +325,41 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement by calling
-     * selectFromElements(int index) step definition. Selenium returns an empty list if no elements found, however
-     * NoSuchElementException is thrown to remain consistent with the selectElementBy... methods.
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement
+     * by calling selectFromElements(int index) step definition.
+     * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
+     * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementsByClassName(String locator) throws NoSuchElementException {
+    public static void selectElementsByClassName(String locator, String relative) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElements = selectedElement == null ?
-                explicitWait.applyWaitAll(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout) :
-                explicitWait.applyWaitAll(driver, SelectorMethod.CLASS, locator, explicitWaitTimeout, selectedElement);
+            selectedElements = relative == null || selectedElement == null ?
+                explicitWait.applyWaitAll(driver, LocatorType.CLASS, locator, explicitWaitTimeout) :
+                explicitWait.applyWaitAll(driver, LocatorType.CLASS, locator, explicitWaitTimeout, selectedElement);
             return;
         }
-        selectedElements = selectedElement == null ? driver.findElements(By.className(locator)) :
+        selectedElements = relative == null || selectedElement == null ? driver.findElements(By.className(locator)) :
             selectedElement.findElements(By.className(locator));
     }
 
     /**
-     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs An
-     * exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
+     * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByLinkText(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByLinkText(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.LINK, locator, explicitWaitTimeout).get(0) :
-                explicitWait.applyWait(driver, SelectorMethod.LINK, locator, explicitWaitTimeout, selectedElement)
-                    .get(0);
-        } else {
-            selectedElement = selectedElement == null ? driver.findElement(By.linkText(locator)) :
+            selectedElement = relative == null || selectedElement == null ?
+                explicitWait.applyWait(driver, LocatorType.LINK, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.LINK, locator, explicitWaitTimeout, selectedElement).get(0);
+        }
+        else {
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.linkText(locator)) :
                 selectedElement.findElement(By.linkText(locator));
         }
         if (alias != null) {
@@ -386,24 +368,21 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs An
-     * exception is thrown if no element is found and the value of selectedElement will remain unchanged
-     *
-     * If explicit wait is not null it will be used where applicable
-     *
+     * Selected element will be stored in selectedElement which is the webElement used by default for most step defs
+     * An exception is thrown if no element is found and the value of selectedElement will remain unchanged
      * @param locator a string that targets an element in the dom.
-     * @param alias (optional) add an alias to the element and a reference will be saved in namedElements
+     * @param relative [optional] if expression matched then traverse DOM relative to selected element
+     * @param alias [optional] if included a named reference will be saved to element for later use
      * @throws NoSuchElementException when no element is not found
      */
-    public static void selectElementByPartialLinkText(String locator, String alias) throws NoSuchElementException {
+    public static void selectElementByPartialLinkText(String locator, String relative, String alias) throws NoSuchElementException {
         if (explicitWait != null) {
-            selectedElement = selectedElement == null ?
-                explicitWait.applyWait(driver, SelectorMethod.PARTIAL_LINK, locator, explicitWaitTimeout).get(0) :
-                explicitWait
-                    .applyWait(driver, SelectorMethod.PARTIAL_LINK, locator, explicitWaitTimeout, selectedElement)
-                    .get(0);
-        } else {
-            selectedElement = selectedElement == null ? driver.findElement(By.partialLinkText(locator)) :
+            selectedElement = relative == null || selectedElement == null ?
+                explicitWait.applyWait(driver, LocatorType.PARTIAL_LINK, locator, explicitWaitTimeout).get(0) :
+                explicitWait.applyWait(driver, LocatorType.PARTIAL_LINK, locator, explicitWaitTimeout, selectedElement).get(0);
+        }
+        else {
+            selectedElement = relative == null || selectedElement == null ? driver.findElement(By.partialLinkText(locator)) :
                 selectedElement.findElement(By.partialLinkText(locator));
         }
         if (alias != null) {
@@ -412,13 +391,13 @@ public class SeleniumHandlers {
     }
 
     public static void selectFirstElementByContainedText(String text, String alias) {
-        for (WebElement element : selectedElements) {
-            if (element.getText().contains(text)) {
+        for(WebElement element : selectedElements) {
+            if(element.getText().contains(text)) {
                 selectedElement = element;
                 break;
             }
         }
-        if (alias != null) {
+        if(alias != null) {
             namedElements.put(alias, selectedElement);
         }
     }
@@ -450,14 +429,27 @@ public class SeleniumHandlers {
         selectedElement = selectedElements.get(index);
     }
 
+    /**
+     * Saves selected elements inner text that other methods can then use
+     * @param alias name that references the text
+     */
     public static void saveSelectedElementsInnerTextAs(String alias) {
         namedValues.put(alias, selectedElement.getText());
     }
 
+    /**
+     * Saves selected element's attribute value that other methods can then use
+     * @param attributeName name of attribute
+     * @param alias name that references the attribute value
+     */
     public static void saveSelectedElementsAttributeValueAs(String attributeName, String alias) {
         namedValues.put(alias, selectedElement.getAttribute(attributeName));
     }
 
+    /**
+     * Saves selected elements count that other methods can thenuse
+     * @param alias name that references the count
+     */
     public static void saveSelectedElementsCountAs(String alias) {
         namedValues.put(alias, Integer.toString(selectedElements.size()));
     }
@@ -468,7 +460,6 @@ public class SeleniumHandlers {
 
     /**
      * Filters the selectedElements by removing elements that are not found using an xpath expression
-     *
      * @param filter the xpath selection
      */
 
@@ -480,9 +471,7 @@ public class SeleniumHandlers {
             while (i != 0) {
                 i--;
                 try {
-                    List<WebElement> ignore = explicitWait
-                        .applyWait(driver, SelectorMethod.XPATH, ".//*[contains(text(),'" + filter + "')]",
-                            explicitWaitTimeout, selectedElement);
+                    List<WebElement> ignore = explicitWait.applyWait(driver, LocatorType.XPATH, ".//*[contains(text(),'" + filter + "')]", explicitWaitTimeout, selectedElement);
 
                 } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException e) {
                     selectedElements.remove(i);
@@ -495,7 +484,6 @@ public class SeleniumHandlers {
 
     /**
      * Filters elements from selectedElements if their descendents do not contain filterText
-     *
      * @param filterText text to be searched
      */
     public static void filterSelectedElementsDescendentsText(String filterText) {
@@ -505,93 +493,59 @@ public class SeleniumHandlers {
             while (i != 0) {
                 i--;
                 try {
-                    List<WebElement> ignore = explicitWait
-                        .applyWait(driver, SelectorMethod.XPATH, ".//*[contains(text(),'" + filterText + "')]",
-                            explicitWaitTimeout, selectedElements.get(i));
+                    List<WebElement> ignore = explicitWait.applyWait(driver, LocatorType.XPATH, ".//*[contains(text(),'" + filterText + "')]", explicitWaitTimeout, selectedElements.get(i));
                 } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException e) {
                     selectedElements.remove(i);
                 }
             }
             return;
         }
-        selectedElements.removeIf(
-            element -> element.findElements(By.xpath(".//*[contains(text(),'" + filterText + "')]")).size() == 0);
+        selectedElements.removeIf(element -> element.findElements(By.xpath(".//*[contains(text(),'" + filterText + "')]")).size() == 0);
     }
 
     /**
      * Select convenience methods for navigating tree structure of nodes
      */
 
-    public static void getAllChildrenForSelectedElement() {
+    public static void selectAllChildrenForSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./child::*"));
     }
 
-    public static void getAllChildrenForParentOfSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("../child::*"));
-    }
-
-    public static void getAllDescendantsForSelectedElement() {
+    public static void selectAllDescendantsForSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./descendant::*"));
     }
 
-    public static void getAllDescendantsIncludingSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("./descendant-or-self::*"));
-    }
-
-    public static void getAllDescendantsForParentofSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("../descendant::*"));
-    }
-
-    public static void getEverythingFollowingTheSelectedElement() {
+    public static void selectEverythingFollowingTheSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./following::*"));
     }
 
-    public static void getEverythingFollowingTheParentOfSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("../following::*"));
-    }
-
-    public static void getTheSiblingsFollowingTheSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("./following-sibling::*"));
-    }
-
-    public static void getTheSiblingsFollowingTheParentOfSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("../following-sibling::*"));
-    }
-
-    public static void getTheSiblingsPrecedingTheSelectedElement() {
+    public static void selectTheSiblingsPrecedingTheSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./preceding-sibling::*"));
     }
 
-    public static void getTheSiblingsPrecedingTheParentOfSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("../preceding-sibling::*"));
+    public static void selectTheSiblingsFollowingTheSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./following-sibling::*"));
     }
 
-    public static void getTheParentOfSelectedElement() {
+    public static void selectTheSiblingsOfTheSelectedElement(){
+        selectedElements = selectedElement.findElements(By.xpath("./preceding-sibling::*|./following-sibling::*"));
+    }
+
+    public static void selectTheParentOfSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./parent::*"));
     }
 
-    public static void getTheParentOfTheParentOfSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("../parent::*"));
-    }
-
-    public static void getAllAncestorsForSelectedElement() {
+    public static void selectAllAncestorsForSelectedElement(){
         selectedElements = selectedElement.findElements(By.xpath("./ancestor::*"));
-    }
-
-    public static void getAllAncestorsForParentOfSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("../ancestor::*"));
-    }
-
-    public static void getAllAncestorsIncludingTheSelectedElement() {
-        selectedElements = selectedElement.findElements(By.xpath("./ancestor-or-self::*"));
     }
 
     /**
      * Select Properties Methods
+     * @param text
      */
 
     public static void getIndexOfElementContaining(String text) {
-        for (WebElement element : selectedElements) {
+        for(WebElement element : selectedElements) {
             if (element.getText().equals(text)) {
                 index = selectedElements.indexOf(element);
             }
@@ -599,41 +553,41 @@ public class SeleniumHandlers {
     }
 
     public static void getAttribute(String attributeName, String alias) {
-        attributeValue = alias != null ? namedElements.get(alias).getAttribute(attributeName)
-            : selectedElement.getAttribute(attributeName);
-        if (alias != null) {
+        attributeValue = alias != null ? namedElements.get(alias).getAttribute(attributeName) : selectedElement.getAttribute(attributeName);
+        if(alias!=null) {
             attributesWebElements.put(attributeName, namedElements.get(alias));
-        } else {
-            attributesWebElements.put(attributeName, selectedElement);
         }
+        else{
+            attributesWebElements.put(attributeName, selectedElement);}
     }
 
     /**
      * Change Properties Methods
+     * @param attributeName
+     * @param alias
+     * @param value
      */
-    public static void changeAttribute(String attributeName, @Nullable String alias, String value) {
+    public static void changeAttribute(String attributeName, @Nullable String alias, String value){
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        if (alias != null) {
-            js.executeScript("argument[0].setAttribute(argument[1],argument[2])", namedElements.get(alias),
-                attributeName, value);
-        } else {
-            js.executeScript("argument[0].setAttribute(argument[1],argument[2])", selectedElement, attributeName,
-                value);
+        if(alias != null){
+            js.executeScript("argument[0].setAttribute(argument[1],argument[2])",namedElements.get(alias), attributeName, value);
         }
+        else{js.executeScript("argument[0].setAttribute(argument[1],argument[2])", selectedElement, attributeName, value);}
     }
 
-    public static void changeAttributeOf(String attribute, String value) {
+    public static void changeAttributeOf(String attribute, String value){
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("argument[0].setAttribute(argument[1],argument[2])", attributesWebElements.get(attribute),
-            attribute, value);
+        js.executeScript("argument[0].setAttribute(argument[1],argument[2])", attributesWebElements.get(attribute), attribute, value);
     }
 
     /**
      * If the named element exists it will become the selectedElement so that actions can be performed on it
-     *
      * @param elementName alias to be selected
      */
-    public static void selectNamedElement(String elementName) {
+    public static void selectNamedElement(String elementName) throws SeleniumException {
+        if (!namedElements.containsKey(elementName)) {
+            throw new SeleniumException("Named element '" + elementName + "' does not exist");
+        }
         selectedElement = namedElements.get(elementName);
     }
 
@@ -675,8 +629,7 @@ public class SeleniumHandlers {
     public static void pressEnter() {
         Actions actions = new Actions(driver);
         actions.sendKeys(Keys.ENTER);
-        actions.perform();
-    }
+        actions.perform();    }
 
     public static void pressArrowDownKeyTimes(Integer times) {
         if (times == null) {
@@ -741,15 +694,15 @@ public class SeleniumHandlers {
         selectedElement.sendKeys(Keys.DELETE);
     }
 
-    public static void pressCtrlKey() {
+    public static void pressCtrlKey(){
         selectedElement.sendKeys(Keys.CONTROL);
     }
 
-    public static void pressAltKey() {
+    public static void pressAltKey(){
         selectedElement.sendKeys(Keys.ALT);
     }
 
-    public static void pressShiftKey() {
+    public static void pressShiftKey(){
         selectedElement.sendKeys(Keys.SHIFT);
     }
 
@@ -775,15 +728,15 @@ public class SeleniumHandlers {
         actions.perform();
     }
 
-    public static void pressEqualsKey() {
+    public static void pressEqualsKey(){
         selectedElement.sendKeys(Keys.EQUALS);
     }
 
-    public static void pressHomeKey() {
+    public static void pressHomeKey(){
         selectedElement.sendKeys(Keys.HOME);
     }
 
-    public static void pressInsertKey() {
+    public static void pressInsertKey(){
         selectedElement.sendKeys(Keys.INSERT);
     }
 
@@ -809,57 +762,7 @@ public class SeleniumHandlers {
         actions.perform();
     }
 
-    public static void pressF1Key() {
-        selectedElement.sendKeys(Keys.F1);
-    }
-
-    public static void pressF2Key() {
-        selectedElement.sendKeys(Keys.F2);
-    }
-
-    public static void pressF3Key() {
-        selectedElement.sendKeys(Keys.F3);
-    }
-
-    public static void pressF4Key() {
-        selectedElement.sendKeys(Keys.F4);
-    }
-
-    public static void pressF5Key() {
-        selectedElement.sendKeys(Keys.F5);
-    }
-
-    public static void pressF6Key() {
-        selectedElement.sendKeys(Keys.F6);
-    }
-
-    public static void pressF7Key() {
-        selectedElement.sendKeys(Keys.F7);
-    }
-
-    public static void pressF8Key() {
-        selectedElement.sendKeys(Keys.F8);
-    }
-
-    public static void pressF9Key() {
-        selectedElement.sendKeys(Keys.F9);
-    }
-
-    public static void pressF10Key() {
-        selectedElement.sendKeys(Keys.F10);
-    }
-
-    public static void pressF11Key() {
-        selectedElement.sendKeys(Keys.F11);
-    }
-
-    public static void pressF12Key() {
-        selectedElement.sendKeys(Keys.F12);
-    }
-
-    /**
-     * End of sendKeys
-     */
+    /**End of sendKeys*/
 
     public static void refresh() {
         driver.navigate().refresh();
@@ -876,15 +779,21 @@ public class SeleniumHandlers {
     public static void pauseMs(long milliseconds) {
         Actions actions = new Actions(driver);
         actions.pause(Duration.ofMillis(milliseconds));
+        actions.build().perform();
     }
 
     public static void pauseSecs(long seconds) {
         Actions actions = new Actions(driver);
         actions.pause(Duration.ofSeconds(seconds));
+        actions.build().perform();
     }
 
-    public static void nameSelectedElement(String elementName) {
-        namedElements.put(elementName, selectedElement);
+    /**
+     * Creates an alias to the element after the element has been selected
+     * @param alias
+     */
+    public static void nameSelectedElement(String alias) {
+        namedElements.put(alias, selectedElement);
     }
 
     public static void checkCurrentUrl(String expectedUrl) {
@@ -905,8 +814,7 @@ public class SeleniumHandlers {
 
     public static void checkPageContainsText(String expectedText, Long timeout) {
         if (timeout != null) {
-            ExplicitWait.PRESENT
-                .applyWait(driver, SelectorMethod.XPATH, "//*[contains(text(),'" + expectedText + "')]", timeout);
+            ExplicitWait.PRESENT.applyWait(driver, LocatorType.XPATH, "//*[contains(text(),'" + expectedText + "')]", timeout);
             return;
         }
         List<WebElement> elementsFound = driver.findElements(By.xpath("//*[contains(text(),'" + expectedText + "')]"));
@@ -916,23 +824,20 @@ public class SeleniumHandlers {
     public static void checkPageDoesNotContainText(String unexpectedText, Long timeout) {
         if (timeout != null) {
             try {
-                ExplicitWait.PRESENT
-                    .applyWait(driver, SelectorMethod.XPATH, "//*[contains(text(),'" + unexpectedText + "')]", timeout);
-                throw new UnexpectedElementFoundException(
-                    "Unexpected element with text " + unexpectedText + " was found on page");
+                ExplicitWait.PRESENT.applyWait(driver, LocatorType.XPATH, "//*[contains(text(),'" + unexpectedText + "')]", timeout);
+                throw new UnexpectedElementFoundException("Unexpected element with text " + unexpectedText + " was found on page");
             } catch (TimeoutException e) {
                 assert (true);
             }
             return;
         }
-        List<WebElement> elementsFound = driver
-            .findElements(By.xpath("//*[contains(text(),'" + unexpectedText + "')]"));
+        List<WebElement> elementsFound = driver.findElements(By.xpath("//*[contains(text(),'" + unexpectedText + "')]"));
         assertEquals(0, elementsFound.size());
     }
 
     public static void checkPageElementHasInnerText(String expectedText, Long timeout) {
         if (timeout != null) {
-            ExplicitWait.PRESENT.applyWait(driver, SelectorMethod.XPATH, "//*[text()='" + expectedText + "']", timeout);
+            ExplicitWait.PRESENT.applyWait(driver, LocatorType.XPATH, "//*[text()='" + expectedText + "']", timeout);
             return;
         }
         List<WebElement> elementsFound = driver.findElements(By.xpath("//*[text()='" + expectedText + "']"));
@@ -942,10 +847,8 @@ public class SeleniumHandlers {
     public static void checkNoPageElementHasInnerText(String unexpectedText, Long timeout) {
         if (timeout != null) {
             try {
-                ExplicitWait.PRESENT
-                    .applyWait(driver, SelectorMethod.XPATH, "//*[text()='" + unexpectedText + "']", timeout);
-                throw new UnexpectedElementFoundException(
-                    "Unexpected element with text " + unexpectedText + " was found on page");
+                ExplicitWait.PRESENT.applyWait(driver, LocatorType.XPATH, "//*[text()='" + unexpectedText + "']", timeout);
+                throw new UnexpectedElementFoundException("Unexpected element with text " + unexpectedText + " was found on page");
             } catch (TimeoutException e) {
                 assert (true);
             }
@@ -961,6 +864,18 @@ public class SeleniumHandlers {
 
     public static void checkInnerTextContains(String expectedSubText) {
         assertThat(selectedElement.getText(), CoreMatchers.containsString(expectedSubText));
+    }
+
+    public static void checkMultipleElementsInnerTextEquals(ArrayList<String> expectedValues) {
+        for (int i = 0; i < selectedElements.size(); i++) {
+            assertEquals(expectedValues.get(i), selectedElements.get(i).getText());
+        }
+    }
+
+    public static void checkMultipleElementsInnerTextContains(ArrayList<String> expectedValues) {
+        for (int i = 0; i < selectedElements.size(); i++) {
+            assertTrue(selectedElements.get(i).getText().contains(expectedValues.get(i)));
+        }
     }
 
     public static void checkDescendents(String expectedText) {
@@ -1054,12 +969,11 @@ public class SeleniumHandlers {
     }
 
     public static void checkTwoElementsTextIsEqual(String firstElementText, String secondElementText) {
-        Assert.assertEquals(namedElements.get(firstElementText).getText(),
-            namedElements.get(secondElementText).getText());
+        Assert.assertEquals(namedElements.get(firstElementText).getText(), namedElements.get(secondElementText).getText());
     }
 
     public static void checkTwoElementsAttrValIsEqual(String firstElement, String firstAttr, String secondElement,
-        String secondAttr) {
+                                                      String secondAttr) {
         Assert.assertEquals(namedElements.get(firstElement).getAttribute(firstAttr),
             namedElements.get(secondElement).getAttribute(secondAttr));
     }
@@ -1069,13 +983,11 @@ public class SeleniumHandlers {
     }
 
     public static void checkNamedValueIsLessThan(String firstAlias, String secondAlias) {
-        Assert
-            .assertTrue(Integer.parseInt(namedValues.get(firstAlias)) < Integer.parseInt(namedValues.get(secondAlias)));
+        Assert.assertTrue(Integer.parseInt(namedValues.get(firstAlias)) < Integer.parseInt(namedValues.get(secondAlias)));
     }
 
     public static void checkNamedValueIsGreaterThan(String firstAlias, String secondAlias) {
-        Assert
-            .assertTrue(Integer.parseInt(namedValues.get(firstAlias)) > Integer.parseInt(namedValues.get(secondAlias)));
+        Assert.assertTrue(Integer.parseInt(namedValues.get(firstAlias)) > Integer.parseInt(namedValues.get(secondAlias)));
     }
 
     /**
@@ -1112,8 +1024,7 @@ public class SeleniumHandlers {
     }
 
     public static void autoCloseBrowser() {
-        if (BrowserBase.getCurrentBrowser().shouldCloseOnExit()
-            && BrowserBase.getCurrentBrowser().getDriver() != null) {
+        if (BrowserBase.getCurrentBrowser().shouldCloseOnExit() && BrowserBase.getCurrentBrowser().getDriver() != null) {
             logger.info("Performing closing down operations...");
             BrowserBase.getCurrentBrowser().close();
         }

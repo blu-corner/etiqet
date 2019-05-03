@@ -1,28 +1,41 @@
 package com.neueda.etiqet.selenium.browser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-@XmlRootElement(name = "Browsers")
+@XmlRootElement(name="Browsers")
 public class BrowserBase {
 
-    private static Logger logger = Logger.getLogger(BrowserBase.class);
-    private static HashMap<String, Browser> browserMap;
-    private static List<Browser> allBrowsers;
-    private static String currentBrowser = "default";
+    private static Logger logger = LoggerFactory.getLogger(BrowserBase.class);
+
     @XmlElements({
         @XmlElement(name = "Firefox", type = Firefox.class),
         @XmlElement(name = "Chrome", type = Chrome.class)
     })
     private List<Browser> browsers;
+    private static HashMap<String, Browser> browserMap;
+    private static List<Browser> allBrowsers;
+    private static String currentBrowser = "default";
 
     private BrowserBase() {
+    }
+
+    private void afterUnmarshal(Unmarshaller u, Object parent) {
+        browserMap = new HashMap<>();
+        allBrowsers = new ArrayList<>();
+        for (Browser browser : browsers) {
+            browserMap.put(browser.getName(), browser);
+            allBrowsers.add(browser);
+            logger.info("Browser registered: " + browser.getName());
+        }
     }
 
     public static void selectBrowser(String browserName) {
@@ -43,15 +56,5 @@ public class BrowserBase {
 
     public static Browser getBrowserByName(String name) {
         return browserMap.get(name);
-    }
-
-    private void afterUnmarshal(Unmarshaller u, Object parent) {
-        browserMap = new HashMap<>();
-        allBrowsers = new ArrayList<>();
-        for (Browser browser : browsers) {
-            browserMap.put(browser.getName(), browser);
-            allBrowsers.add(browser);
-            logger.info("Browser registered: " + browser.getName());
-        }
     }
 }
