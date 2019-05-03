@@ -1,36 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <groupId>com.neueda.etiqet</groupId>
         <artifactId>etiqet-parent</artifactId>
+        <groupId>com.neueda.etiqet</groupId>
         <version>1.2-SNAPSHOT</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>etiqet-fix</artifactId>
-
-    <properties>
-        <quickfixj.version>2.0.0</quickfixj.version>
-        <additionalparam>-Xdoclint:none</additionalparam>
-    </properties>
-
-    <profiles>
-        <profile>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <id>default</id>
-            <properties>
-                <etiqet.directory>${project.parent.basedir}</etiqet.directory>
-                <etiqet.global.config>
-                    ${etiqet.directory}/etiqet-fix/src/test/resources/config/etiqet.config.xml
-                </etiqet.global.config>
-            </properties>
-        </profile>
-    </profiles>
+    <artifactId>etiqet-fix-common</artifactId>
 
     <dependencies>
         <dependency>
@@ -38,24 +17,7 @@
             <artifactId>etiqet-core</artifactId>
             <version>1.2-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.neueda.etiqet</groupId>
-            <artifactId>etiqet-fix-common</artifactId>
-            <version>1.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.quickfixj</groupId>
-            <artifactId>quickfixj-all</artifactId>
-            <version>${quickfixj.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.neueda.etiqet</groupId>
-            <artifactId>etiqet-transport-qfj</artifactId>
-            <version>1.2-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -90,7 +52,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.14.1</version>
                 <configuration>
-                    <argLine>-Detiqet.directory=${project.parent.basedir} -Detiqet.global.config=${etiqet.directory}/etiqet-fix/src/test/resources/config/etiqet.config.xml ${argLine}
+                    <argLine>-Detiqet.directory=${project.parent.basedir}
+                        -Detiqet.global.config=${etiqet.directory}/etiqet-fix/src/test/resources/config/etiqet.config.xml
+                        ${argLine}
                     </argLine>
                 </configuration>
             </plugin>
