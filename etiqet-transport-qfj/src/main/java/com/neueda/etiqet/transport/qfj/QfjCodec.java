@@ -6,23 +6,18 @@ import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
-import com.neueda.etiqet.core.message.cdr.CdrItem.CdrItemType;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.util.IntegerValidator;
 import com.neueda.etiqet.core.util.ParserUtils;
-import java.util.HashMap;
-import java.util.Iterator;
+
+import java.util.*;
+
+import com.neueda.etiqet.fix.message.dictionary.Component;
+import com.neueda.etiqet.fix.message.dictionary.FixDictionary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import quickfix.DoubleField;
-import quickfix.Field;
-import quickfix.FieldMap;
-import quickfix.FieldNotFound;
-import quickfix.IntField;
-import quickfix.Message;
-import quickfix.MessageComponent;
-import quickfix.StringField;
+import quickfix.*;
 import quickfix.field.MsgType;
 
 public class QfjCodec implements Codec<Cdr, Message> {
@@ -30,8 +25,18 @@ public class QfjCodec implements Codec<Cdr, Message> {
     private static final Logger logger = LogManager.getLogger(QfjCodec.class);
     private ProtocolConfig protocolConfig;
 
+    /**
+     * Constructor for the codec. Suppressing unused warnings as this will typically be instantiated via reflection
+     *
+     * @throws EtiqetException when we can't get the default FIX protocol
+     */
+    @SuppressWarnings("unused")
     public QfjCodec() throws EtiqetException {
         protocolConfig = GlobalConfig.getInstance().getProtocol("fix");
+    }
+
+    public QfjCodec(ProtocolConfig protocolConfig) {
+        this.protocolConfig = protocolConfig;
     }
 
     /**
@@ -68,30 +73,17 @@ public class QfjCodec implements Codec<Cdr, Message> {
                     message.setField(sf);
                 }
                 break;
+            case CDR_BOOLEAN:
+                BooleanField bf = new BooleanField(tag.intValue(), entry.getValue().getBoolVal());
+                if (isHeaderField) {
+                    ((Message) message).getHeader().setField(bf);
+                } else {
+                    message.setField(bf);
+                }
+            case CDR_ARRAY:
+                message.addGroup(parseGroup(tag, entry.getValue()));
             default:
-                throw new UnknownTagException();
-        }
-    }
-
-    /**
-     * Encode msg of type Array
-     *
-     * @param entry entry to populate the values from
-     * @throws EtiqetException When the MessageComponent couldn't be instantiated
-     */
-    private void encodeArrayType(HashMap.Entry<String, CdrItem> entry,
-        FieldMap message) throws EtiqetException {
-        String className = protocolConfig.getComponentPackage() + entry.getKey();
-        try {
-            MessageComponent msg = (MessageComponent) Class.forName(className).getConstructor()
-                .newInstance();
-            for (Cdr cdr2 : entry.getValue().getCdrs()) {
-                msg.setFields(encode(cdr2, message));
-            }
-            message.setFields(msg);
-        } catch (ReflectiveOperationException e) {
-            throw new EtiqetException(String.format("Could not create message component %s", className),
-                e);
+                throw new UnknownTagException("Unhandled tag " + tag + " with type " + entry.getValue().getType());
         }
     }
 
@@ -102,22 +94,53 @@ public class QfjCodec implements Codec<Cdr, Message> {
         throws UnknownTagException {
         switch (entry.getValue().getType()) {
             case CDR_INTEGER:
-                IntField intf = new IntField(tag);
-                intf.setValue(entry.getValue().getIntval().intValue());
-                message.setField(intf);
+                message.setField(new IntField(tag.intValue(), entry.getValue().getIntval().intValue()));
                 break;
             case CDR_DOUBLE:
-                DoubleField df = new DoubleField(tag);
-                df.setValue(entry.getValue().getDoubleval());
-                message.setField(df);
+                message.setField(new DoubleField(tag.intValue(), entry.getValue().getDoubleval()));
                 break;
             case CDR_STRING:
                 message.setField(new StringField(tag, entry.getValue().getStrval()));
                 break;
-
+            case CDR_BOOLEAN:
+                message.setField(new BooleanField(tag.intValue(), entry.getValue().getBoolVal()));
+            case CDR_ARRAY:
+                message.addGroup(parseGroup(tag, entry.getValue()));
             default:
-                throw new UnknownTagException();
+                throw new UnknownTagException("Unhandled tag " + tag + " with type " + entry.getValue().getType());
         }
+    }
+
+    /**
+     * Attempts to parse a group from the CdrItem passed
+     * @param tag  Tag that begins the group
+     * @param item CdrItem containing the nested fields
+     * @return {@link Group} to be added to the FIX message
+     * @throws UnknownTagException when there is no group matching the input tag, or we're unable to parse one of the
+     *                             children
+     */
+    Group parseGroup(Integer tag, CdrItem item) throws UnknownTagException {
+        // This needs to assume that we're using the FixDictionary
+        FixDictionary dictionary = (FixDictionary) protocolConfig.getDictionary();
+        String fieldName = dictionary.getNameForTag(tag);
+        com.neueda.etiqet.fix.message.dictionary.Group groupDef
+            = Arrays.stream(dictionary.getFixDictionary().getComponents().getComponent())
+                    .map(Component::getGroup)
+                    .filter(group -> group.getName().equalsIgnoreCase(fieldName))
+                    .findFirst()
+                    .orElseThrow(() -> new UnknownTagException("Unknown group definition for tag " + tag));
+
+        // Delimiter of the group is always the first field
+        Group group = new Group(tag, groupDef.getField()[0].getNumber());
+
+        // Iterate through the CDR children to allow for groups within groups
+        for (Cdr cdr : item.getCdrs()) {
+            for (Map.Entry<String, CdrItem> cdrItemEntry : cdr.getItems().entrySet()) {
+                encodeKnownMsg(getIntegerTag(cdrItemEntry.getKey()), cdrItemEntry, group);
+            }
+        }
+
+        return group;
     }
 
 
@@ -145,20 +168,14 @@ public class QfjCodec implements Codec<Cdr, Message> {
                 continue;
             }
 
-            if (entry.getValue().getType() != CdrItemType.CDR_ARRAY) {
-                // Get tag
-                Integer tag = getIntegerTag(key);
+            Integer tag = getIntegerTag(key);
 
-                if (message instanceof Message) {
-                    // Determine field type and assign correctly
-                    encodeKnownMsg(tag, entry, message);
-                } else {
-                    // Determine field type and assign correctly
-                    encodeUnknownMsg(entry, tag, message);
-                }
+            if (message instanceof Message) {
+                // Determine field type and assign correctly
+                encodeKnownMsg(tag, entry, message);
             } else {
-                // TYPE CDR_ARRAY
-                encodeArrayType(entry, message);
+                // Determine field type and assign correctly
+                encodeUnknownMsg(entry, tag, message);
             }
         }
         return (Message) message;
@@ -171,7 +188,7 @@ public class QfjCodec implements Codec<Cdr, Message> {
                 protocolConfig.getMessage(cdr.getType());
             ParserUtils.fillDefault(messageConfig, cdr);
             return encode(cdr, (Message) Class.forName(messageConfig.getImplementation()).getConstructor()
-                .newInstance());
+                                              .newInstance());
         } catch (Exception e) {
             logger.error(e);
             throw new SerializeException(e);
