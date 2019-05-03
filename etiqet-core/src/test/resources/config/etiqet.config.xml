@@ -4,7 +4,7 @@
         <protocol name="testProtocol"
             ref="${etiqet.directory}/etiqet-core/src/test/resources/protocols/testProtocol.xml"/>
         <protocol name="otherTestProtocol">
-            <client defaultConfig="${user.dir}/src/test/resources/fix-config/client.cfg"
+            <client defaultConfig="${user.dir}/src/test/resources/properties/test.properties"
                 impl="com.neueda.etiqet.core.testing.client.TestClient"
                 codecImpl="com.neueda.etiqet.core.transport.ToStringCodec"
                 transportImpl="com.neueda.etiqet.core.transport.ConsoleTransport"
@@ -29,7 +29,7 @@
     </clients>
     <servers>
         <!-- pre-defined servers that can be referenced in tests without being explicitly created -->
-        <server config="${user.dir}/src/test/resources/fix-config/testServer.cfg"
+        <server config="${user.dir}/src/test/resources/properties/testConfig.properties"
             impl="com.neueda.etiqet.core.testing.server.TestServer"
             name="testServer"/>
     </servers>
