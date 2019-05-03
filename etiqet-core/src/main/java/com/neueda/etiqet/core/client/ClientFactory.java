@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class ClientFactory {
 
     static final String CLIENT_CREATION_ERROR = "Error creating client type %s";
-    private static final String PROTOCOL_ERROR = "Could not find protocol for %s";
+    static final String PROTOCOL_ERROR = "Could not find protocol for %s";
     private static final Logger LOG = LoggerFactory.getLogger(ClientFactory.class);
 
     private ClientFactory() {
@@ -36,8 +36,11 @@ public class ClientFactory {
      * @throws EtiqetException if client type is not found.
      */
     public static Client create(String clientType) throws EtiqetException {
-        return create(clientType,
-            GlobalConfig.getInstance().getProtocol(clientType).getClient().getDefaultConfig());
+        ProtocolConfig protocol = GlobalConfig.getInstance().getProtocol(clientType);
+        if (protocol == null) {
+            throw new UnhandledProtocolException(String.format(PROTOCOL_ERROR, clientType));
+        }
+        return create(clientType, protocol.getClient().getDefaultConfig());
     }
 
     /**

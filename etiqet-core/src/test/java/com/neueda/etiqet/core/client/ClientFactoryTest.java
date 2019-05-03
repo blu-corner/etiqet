@@ -56,7 +56,7 @@ public class ClientFactoryTest {
             fail("'badProtocol' should not exist for this test.");
         } catch (Exception e) {
             assertTrue(e instanceof EtiqetException);
-            assertEquals(String.format(ClientFactory.CLIENT_CREATION_ERROR, clientType), e.getMessage());
+            assertEquals(String.format(ClientFactory.PROTOCOL_ERROR, clientType), e.getMessage());
         }
 
     }

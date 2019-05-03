@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocol name="test" xmlns="http://www.neueda.com/etiqet">
-    <client defaultConfig="${user.dir}/src/test/resources/fix-config/client.cfg"
+    <client defaultConfig="${user.dir}/src/test/resources/properties/test.properties"
         impl="com.neueda.etiqet.core.testing.client.TestClient"
         codecImpl=""
         transportImpl="">

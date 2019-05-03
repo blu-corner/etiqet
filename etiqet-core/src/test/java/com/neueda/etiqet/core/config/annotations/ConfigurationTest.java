@@ -55,7 +55,7 @@ public class ConfigurationTest {
         ProtocolConfig testProtocol = config.getProtocol("testProtocol");
         assertNotNull(testProtocol);
         assertEquals(testProtocol, testClient1.getProtocolConfig());
-        assertEquals("${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties",
+        assertEquals("${user.dir}/src/test/resources/properties/test.properties",
             testProtocol.getClient().getDefaultConfig());
 
         assertTrue(testProtocol.getDictionary() instanceof TestDictionary);
@@ -66,7 +66,7 @@ public class ConfigurationTest {
         assertTrue(testServer instanceof TestServer);
         TestServer server = (TestServer) testServer;
         assertNotNull(server.getConfigPath());
-        assertEquals("${user.dir}/src/test/resources/fix-config/testServer.cfg", server.getConfigPath());
+        assertEquals("${user.dir}/src/test/resources/properties/testConfig.properties", server.getConfigPath());
 
         // because GlobalConfig is a singleton, we need to ensure that the instance is reset after each of these
         // tests. Without exposing the instance, this involves using reflection to set the instance to null
