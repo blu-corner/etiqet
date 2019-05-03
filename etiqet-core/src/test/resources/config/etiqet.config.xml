@@ -6,8 +6,8 @@
         <protocol name="otherTestProtocol">
             <client defaultConfig="${user.dir}/src/test/resources/fix-config/client.cfg"
                 impl="com.neueda.etiqet.core.testing.client.TestClient"
-                codecImpl=""
-                transportImpl=""
+                codecImpl="com.neueda.etiqet.core.transport.ToStringCodec"
+                transportImpl="com.neueda.etiqet.core.transport.ConsoleTransport"
             />
             <dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
             <messages
