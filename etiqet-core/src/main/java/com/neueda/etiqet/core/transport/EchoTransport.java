@@ -41,7 +41,7 @@ public class EchoTransport<T> implements Transport {
   }
 
   @Override
-  public void setTransDel(TransportDelegate<String, Cdr> transDel) {
+  public void setTransportDelegate(TransportDelegate<String, Cdr> transDel) {
     this.transDel = transDel;
   }
 

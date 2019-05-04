@@ -10,12 +10,10 @@
         <version>1.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>etiqet-transport-rabbitmq</artifactId>
+    <artifactId>etiqet-transport-rabbitmq-gpb</artifactId>
 
     <properties>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <etiqet.core.version>1.0-SNAPSHOT</etiqet.core.version>
+        <etiqet.core.version>1.2-SNAPSHOT</etiqet.core.version>
     </properties>
 
     <profiles>
@@ -123,12 +121,6 @@
             <groupId>com.googlecode.protobuf-java-format</groupId>
             <artifactId>protobuf-java-format</artifactId>
             <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.neueda.etiqet</groupId>
-            <artifactId>etiqet-core</artifactId>
-            <version>1.2-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

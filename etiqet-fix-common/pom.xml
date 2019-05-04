@@ -11,11 +11,15 @@
 
     <artifactId>etiqet-fix-common</artifactId>
 
+    <properties>
+        <etiqet.core.version>1.2-SNAPSHOT</etiqet.core.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.neueda.etiqet</groupId>
             <artifactId>etiqet-core</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>${etiqet.core.version}</version>
         </dependency>
     </dependencies>
     <build>
