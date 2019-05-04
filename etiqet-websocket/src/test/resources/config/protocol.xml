@@ -2,5 +2,8 @@
 <protocol name="websocket"
     xmlns="http://www.neueda.com/etiqet">
     <client defaultConfig="${etiqet.directory}/etiqet-websocket/src/test/resources/config/client.cfg"
-        impl="com.neueda.etiqet.websocket.client.RabbitMqClient"/>
+        impl="com.neueda.etiqet.websocket.client.WebSocketClient"
+        transportImpl="com.neueda.etiqet.core.transport.ConsoleTransport"
+        codecImpl="com.neueda.etiqet.core.transport.ToStringCodec"
+    />
 </protocol>

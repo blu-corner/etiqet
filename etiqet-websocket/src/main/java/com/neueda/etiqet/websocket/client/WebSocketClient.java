@@ -51,14 +51,8 @@ public class WebSocketClient extends Client {
   }
 
   @Override
-  public void launchClient() throws EtiqetException {
-    launchClient(primaryConfig);
-  }
-
-  @Override
   public void launchClient(String configPath) throws EtiqetException {
-    this.activeConfig = configPath;
-    this.config = PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(activeConfig));
+    super.launchClient(configPath);
 
     try {
       this.client = new org.eclipse.jetty.websocket.client.WebSocketClient();
