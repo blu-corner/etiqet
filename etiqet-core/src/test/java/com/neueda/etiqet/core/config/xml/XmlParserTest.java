@@ -1,10 +1,13 @@
 package com.neueda.etiqet.core.config.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.EtiqetConfiguration;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class XmlParserTest {
 
@@ -45,9 +48,9 @@ public class XmlParserTest {
             fail("Using " + badSchemaFile + ", parsing should have thrown an EtiqetException");
         } catch (Exception e) {
             assertTrue("Using " + badSchemaFile + ", parsing should have thrown an EtiqetException",
-                            e instanceof EtiqetException);
+                e instanceof EtiqetException);
             assertEquals("Could not read " + badSchemaFile + ", please check your classpath configuration"
-                            , e.getMessage());
+                , e.getMessage());
         }
     }
 }

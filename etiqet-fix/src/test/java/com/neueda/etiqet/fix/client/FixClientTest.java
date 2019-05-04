@@ -1,81 +1,54 @@
 package com.neueda.etiqet.fix.client;
 
+import static junit.framework.TestCase.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.util.PropertiesFileReader;
 import org.junit.Test;
-import org.mockito.Mockito;
 import quickfix.ConfigError;
-import quickfix.SocketInitiator;
-
-import static org.junit.Assert.*;
 
 public class FixClientTest {
-
-    private FixClient client;
-
-    private SocketInitiator mockSocketInitiator;
 
     private final String PRIMARY_CONFIG = "${etiqet.directory}/etiqet-fix/src/test/resources/config/client.cfg";
     private final String SECONDARY_CONFIG = "${etiqet.directory}/etiqet-fix/src/test/resources/config/secondary_client.cfg";
 
-    private boolean socketInitiatorStarted = false;
-
-    private String activeConfig = "";
-
-    private void createClient(boolean withSecondary) throws EtiqetException, ConfigError {
-        mockSocketInitiator = Mockito.mock(SocketInitiator.class);
-        Mockito.doAnswer(invocationOnMock -> { socketInitiatorStarted = true; return null; })
-            .when(mockSocketInitiator).start();
-        Mockito.doAnswer(invocationOnMock -> { socketInitiatorStarted = false; return null; })
-            .when(mockSocketInitiator).stop();
-
-        String secondary = null;
-        if(withSecondary) {
-            secondary = SECONDARY_CONFIG;
-        }
-
-        client = new FixClient(PRIMARY_CONFIG, secondary) {
-            @Override
-            protected SocketInitiator getSocketInitiator(String configPath) throws EtiqetException {
-                activeConfig = configPath;
-                return mockSocketInitiator;
-            }
-        };
-    }
+    private FixClient client;
 
     @Test
-    public void testLaunchClient() throws EtiqetException, ConfigError {
-        createClient(true);
+    public void testLaunchClient() throws EtiqetException {
+        client = new FixClient(PRIMARY_CONFIG, SECONDARY_CONFIG);
+        assertNull("FixClient should have been started", client.getTransport());
         client.launchClient();
-        assertTrue("FixClient should have been started", socketInitiatorStarted);
-        assertEquals("Should have started FixClient with the primary config",
-            Environment.resolveEnvVars(PRIMARY_CONFIG), this.activeConfig);
+        assertNotNull("FixClient should have been started", client.getTransport());
         client.stop();
-        assertFalse("FixClient should have been stopped", socketInitiatorStarted);
     }
 
     @Test
-    public void testFailover() throws EtiqetException, ConfigError {
-        createClient(true);
-        client.launchClient();
-        assertTrue("FixClient should have been started", socketInitiatorStarted);
-        assertEquals("Should be started FixClient with the primary config",
-            Environment.resolveEnvVars(PRIMARY_CONFIG), this.activeConfig);
+    public void testFailover() throws EtiqetException {
+        client = new FixClient(PRIMARY_CONFIG, SECONDARY_CONFIG);
+        assertEquals("Should have started FixClient with the primary config",
+            PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(PRIMARY_CONFIG)),
+            this.client.getConfig());
 
         client.failover();
-        assertTrue("FixClient should still be started", socketInitiatorStarted);
         assertEquals("Should be started with secondary config",
-            Environment.resolveEnvVars(SECONDARY_CONFIG), this.activeConfig);
+            PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(SECONDARY_CONFIG)),
+            this.client.getConfig());
 
         client.failover();
-        assertTrue("FixClient should still be started", socketInitiatorStarted);
-        assertEquals("Should be started FixClient with the primary config",
-            Environment.resolveEnvVars(PRIMARY_CONFIG), this.activeConfig);
+        assertEquals("Should have started FixClient with the primary config",
+            PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(PRIMARY_CONFIG)),
+            this.client.getConfig());
     }
 
     @Test
     public void testFailoverFails() throws EtiqetException, ConfigError {
-        createClient(false);
+        client = new FixClient(PRIMARY_CONFIG);
         client.launchClient();
         try {
             client.failover();

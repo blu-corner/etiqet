@@ -1,9 +1,9 @@
 package com.neueda.etiqet.selenium.fixture.stepdefs;
 
 import com.neueda.etiqet.selenium.browser.BrowserBase;
+import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
 import cucumber.api.java.After;
 import cucumber.api.java.en.Then;
-import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
 
 public class Exiting {
 

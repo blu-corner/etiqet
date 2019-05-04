@@ -1,12 +1,15 @@
 package com.neueda.etiqet.core.util;
 
-import org.junit.Test;
-
-import java.util.*;
-
 import static com.neueda.etiqet.core.util.ArrayUtils.isNullOrEmpty;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.Test;
 
 public class ArrayUtilsTest {
 

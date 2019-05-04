@@ -1,18 +1,17 @@
 package com.neueda.etiqet.core.message.config;
 
 import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
-
 import java.io.Serializable;
 
 public abstract class AbstractDictionary implements Serializable {
 
     protected final String configPath;
 
-	public AbstractDictionary(String configPath) {
+    public AbstractDictionary(String configPath) {
         this.configPath = configPath;
-	}
-	
-	public abstract String getMsgType(String messageName);
+    }
+
+    public abstract String getMsgType(String messageName);
 
     public abstract String getMsgName(String messageType);
 

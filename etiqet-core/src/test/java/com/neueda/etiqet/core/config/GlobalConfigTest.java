@@ -1,5 +1,11 @@
 package com.neueda.etiqet.core.config;
 
+import static com.neueda.etiqet.core.common.ConfigConstants.DEFAULT_CONFIG_VARIABLE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.neueda.etiqet.core.client.Client;
 import com.neueda.etiqet.core.common.ConfigConstants;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
@@ -8,9 +14,6 @@ import com.neueda.etiqet.core.server.Server;
 import com.neueda.etiqet.core.testing.client.TestClient;
 import com.neueda.etiqet.core.testing.server.TestServer;
 import org.junit.Test;
-
-import static com.neueda.etiqet.core.common.ConfigConstants.DEFAULT_CONFIG_VARIABLE;
-import static org.junit.Assert.*;
 
 public class GlobalConfigTest {
 

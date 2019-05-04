@@ -9,6 +9,7 @@ public class StopStringDecodingException extends EtiqetException {
 
     /**
      * Constructor from error message.
+     *
      * @param msg the cdr message containing the data.
      * @param reason the message describing the exception.
      */
@@ -18,6 +19,7 @@ public class StopStringDecodingException extends EtiqetException {
 
     /**
      * Constructor from throwable exception.
+     *
      * @param msg the cdr message containing the data.
      * @param e the throwable exception.
      */
@@ -27,6 +29,7 @@ public class StopStringDecodingException extends EtiqetException {
 
     /**
      * Constructor from error message and exception.
+     *
      * @param msg the cdr message containing the data.
      * @param reason the message describing the exception.
      * @param e the throwable exception.

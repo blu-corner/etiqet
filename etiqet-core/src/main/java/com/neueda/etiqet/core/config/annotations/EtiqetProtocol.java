@@ -1,8 +1,11 @@
 package com.neueda.etiqet.core.config.annotations;
 
 import com.neueda.etiqet.core.config.dtos.Protocol;
-
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Tells Etiqet that this method should return a {@link Protocol}

@@ -49,7 +49,7 @@ public class Chrome extends Browser {
 
     @Override
     public void setupDriver() {
-        WebDriverManager.chromedriver().setup();
+        System.setProperty("webdriver.chrome.driver", driverPath);
         org.openqa.selenium.chrome.ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments(options.getStartupArgs());
         chromeOptions.addEncodedExtensions(options.getStartupArgs());

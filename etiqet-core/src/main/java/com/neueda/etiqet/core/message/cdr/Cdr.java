@@ -1,13 +1,14 @@
-package com.neueda.etiqet.core.common.cdr;
+package com.neueda.etiqet.core.message.cdr;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Cdr {
-    protected String msgType;
-    private final Map<String, CdrItem> items = new LinkedHashMap<>();
 
-    public Cdr (String typeId) {
+    private final Map<String, CdrItem> items = new LinkedHashMap<>();
+    protected String msgType;
+
+    public Cdr(String typeId) {
         this.msgType = typeId;
     }
 
@@ -51,9 +52,9 @@ public class Cdr {
 
     public String getAsString(String key) {
         CdrItem i = getItem(key);
-        return (i != null)? i.toString (): null;
+        return (i != null) ? i.toString() : null;
     }
-    
+
     public CdrItem getItem(String key) {
         return items.get(key);
     }
@@ -63,30 +64,33 @@ public class Cdr {
     }
 
     public Cdr update(Cdr d) {
-        d.getItems().forEach(this::setItem);
+        d.items.forEach(this::setItem);
         return this;
+    }
+
+    public Cdr replace(Cdr d) {
+        items.clear();
+        msgType = d.msgType;
+        return update(d);
     }
 
     public void clear() {
         items.clear();
     }
-    
-    public Map<String, CdrItem> getItems() {
-		return items;
-	}
 
-	@Override
+    public Map<String, CdrItem> getItems() {
+        return items;
+    }
+
+    @Override
     public String toString() {
-    	StringBuilder builder = new StringBuilder();
-    	
-    	for (Map.Entry<String, CdrItem> entry : items.entrySet()) {
-            builder.append("[key=")
-                   .append(entry.getKey())
-                   .append(", value=")
-                   .append(entry.getValue().toString())
-                   .append("]|");
+        StringBuilder builder = new StringBuilder();
+
+        for (Map.Entry<String, CdrItem> entry : items.entrySet()) {
+            builder.append("[key=").append(entry.getKey()).append(", value=")
+                .append(entry.getValue().toString()).append("]|");
         }
-    	
-    	return builder.toString();
+
+        return builder.toString();
     }
 }

@@ -7,8 +7,8 @@
             <field name="testInt" type="integer">1</field>
             <field name="testBool" type="boolean">true</field>
             <field name="testDouble" type="double">1.1</field>
-            <field name="testUtilClass" utilclass="com.neueda.etiqet.core.testing.util.TestUtils"
-                   method="defaultValue" type="string"/>
+            <field method="defaultValue" name="testUtilClass"
+                type="string" utilclass="com.neueda.etiqet.core.testing.util.TestUtils"/>
         </fields>
     </message>
 </messages>

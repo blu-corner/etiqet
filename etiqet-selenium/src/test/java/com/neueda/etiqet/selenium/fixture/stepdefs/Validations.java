@@ -1,7 +1,7 @@
 package com.neueda.etiqet.selenium.fixture.stepdefs;
 
-import cucumber.api.java.en.Then;
 import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
+import cucumber.api.java.en.Then;
 
 import java.util.ArrayList;
 
@@ -171,7 +171,7 @@ public class Validations {
     @Then("^I? ?check the element \"([^\"]*)\"'s attribute \"([^\"]*)\"'s value is equal to " +
         "the element \"([^\"]*)\"'s attribute \"([^\"]*)\"'s value$")
     public void checkTwoElementsAttrValIsEqual(String firstElement, String firstAttr, String secondElement,
-                                               String secondAttr) {
+        String secondAttr) {
         SeleniumHandlers.checkTwoElementsAttrValIsEqual(firstElement, firstAttr, secondElement, secondAttr);
     }
 

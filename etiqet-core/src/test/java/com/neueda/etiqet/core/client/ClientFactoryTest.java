@@ -1,20 +1,23 @@
 package com.neueda.etiqet.core.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+
 import com.neueda.etiqet.core.client.delegate.LoggerClientDelegate;
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.testing.client.TestClient;
+import java.lang.reflect.Field;
+import java.net.URL;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.reflect.Field;
-import java.net.URL;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 public class ClientFactoryTest {
 
@@ -53,7 +56,7 @@ public class ClientFactoryTest {
             fail("'badProtocol' should not exist for this test.");
         } catch (Exception e) {
             assertTrue(e instanceof EtiqetException);
-            assertEquals(String.format(ClientFactory.CLIENT_CREATION_ERROR, clientType), e.getMessage());
+            assertEquals(String.format(ClientFactory.PROTOCOL_ERROR, clientType), e.getMessage());
         }
 
     }

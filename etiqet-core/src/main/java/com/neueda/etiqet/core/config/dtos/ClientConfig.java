@@ -1,7 +1,7 @@
 package com.neueda.etiqet.core.config.dtos;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAttribute;
 
 public class ClientConfig implements Serializable {
 

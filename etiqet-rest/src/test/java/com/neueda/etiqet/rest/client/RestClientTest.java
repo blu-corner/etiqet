@@ -1,18 +1,13 @@
 package com.neueda.etiqet.rest.client;
 
 import com.google.api.client.http.HttpRequestFactory;
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import com.neueda.etiqet.core.config.GlobalConfig;
-import com.neueda.etiqet.rest.RestConfig;
-import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsgTest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -27,14 +22,11 @@ public class RestClientTest {
 
     private Cdr testCdr;
 
-    private GlobalConfig globalConfig;
-
     @Before
     public void setUp() throws EtiqetException {
-        globalConfig = GlobalConfig.getInstance(RestConfig.class);
         // override the HttpRequestFactory and Config objects for testing purposes
-        primaryConfig = getClass().getClassLoader().getResource("config/ok/client.cfg").getPath();
-        secondaryConfig = getClass().getClassLoader().getResource("config/ok/secondary_client.cfg").getPath();
+        primaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/client.cfg";
+        secondaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/secondary_client.cfg";
         testCdr = new Cdr("test_01");
         testCdr.set("$httpEndpoint", "/test/api");
         testCdr.set("$httpVerb", "GET");
@@ -48,14 +40,6 @@ public class RestClientTest {
             }
         };
     }
-
-    @After
-    public void tearDown() throws Exception {
-        Field field = GlobalConfig.class.getDeclaredField("instance");
-        field.setAccessible(true);
-        field.set(globalConfig, null);
-    }
-
     @Test
     public void testConstructor() throws EtiqetException {
         RestClient restClient = new RestClient(primaryConfig);
@@ -67,14 +51,8 @@ public class RestClientTest {
     }
 
     @Test
-    public void testIsAdmin() {
-        for(String msgType : Arrays.asList("", "200", "404", "GET", "PUT", "POST", "DELETE", "301"))
-            assertFalse(client.isAdmin(msgType));
-    }
-
-    @Test
     public void testDefaultSession() {
-        assertEquals("", client.getDefaultSessionId());
+        assertNull(client.getDefaultSessionId());
     }
 
     @Test
@@ -114,7 +92,7 @@ public class RestClientTest {
         testCdr.set("$header.responsecode", "200");
         testCdr.set("$header.authorization", "key");
         client.send(testCdr);
-        cdr = client.waitForMsgType("200", 5000);
+        cdr = client.waitForAppMsg();
         assertNotNull(cdr.getItems());
 
         testCdr.set("$httpEndpoint", "/test/api");
@@ -134,7 +112,7 @@ public class RestClientTest {
     @Test
     public void testDecode() throws EtiqetException {
         client.send(testCdr);
-        assertNotNull(client.decode(new HttpRequestMsg()));
+        assertNotNull(client.waitForAppMsg());
     }
 
     @Test

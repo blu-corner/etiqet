@@ -1,5 +1,7 @@
 package com.neueda.etiqet.core;
 
+import static com.neueda.etiqet.core.common.ConfigConstants.DEFAULT_CONFIG_VARIABLE;
+
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
@@ -12,6 +14,11 @@ import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 import cucumber.runtime.junit.FeatureRunner;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -19,26 +26,17 @@ import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static com.neueda.etiqet.core.common.ConfigConstants.DEFAULT_CONFIG_VARIABLE;
-
 /**
- * EtiqetTestRunner uses {@link Cucumber} as a delegate test runner. Before instantiating the Cucumber Test Runner,
- * we first configure Etiqet based on the {@link EtiqetOptions} specified on the test class
+ * EtiqetTestRunner uses {@link Cucumber} as a delegate test runner. Before instantiating the Cucumber Test Runner, we
+ * first configure Etiqet based on the {@link EtiqetOptions} specified on the test class
  */
 public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EtiqetTestRunner.class);
 
     /**
      * Package that contains the Etiqet-specific fixtures
      */
     static final String FIXTURE_PACKAGE = "com.neueda.etiqet.fixture";
+    private static final Logger LOG = LoggerFactory.getLogger(EtiqetTestRunner.class);
     private GlobalConfig globalConfig;
 
     /**
@@ -55,9 +53,9 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
      * Constructor called by JUnit.
      *
      * @param clazz the class with the @RunWith annotation.
-     * @throws IOException         if there is a problem initialising Cucumber
+     * @throws IOException if there is a problem initialising Cucumber
      * @throws InitializationError if a class or resource could not be loaded for the tests
-     * @throws EtiqetException     if there is a problem configuring Etiqet
+     * @throws EtiqetException if there is a problem configuring Etiqet
      */
     public EtiqetTestRunner(Class<?> clazz) throws InitializationError, IOException, EtiqetException {
         super(clazz);
@@ -80,7 +78,7 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
                 + "to a configuration file");
         }
 
-        if(!etiqetOptions.configClass().equals(EtiqetOptions.NullConfiguration.class)
+        if (!etiqetOptions.configClass().equals(EtiqetOptions.NullConfiguration.class)
             && !StringUtils.isNullOrEmpty(etiqetOptions.configFile())) {
             throw new EtiqetException("Etiqet cannot be configured with both a class and configuration file");
         }
@@ -107,15 +105,15 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
      * @param clazz the class with the @RunWith annotation
      * @return Cucumber test runner
      * @throws InitializationError if there is a problem initialising Cucumber
-     * @throws IOException         if a class or resource could not be loaded for the tests
+     * @throws IOException if a class or resource could not be loaded for the tests
      */
     Cucumber getCucumberDelegate(Class clazz) throws InitializationError, IOException {
         return new Cucumber(clazz) {
 
             @Override
             protected Runtime createRuntime(ResourceLoader resourceLoader,
-                                            ClassLoader classLoader,
-                                            RuntimeOptions runtimeOptions) {
+                ClassLoader classLoader,
+                RuntimeOptions runtimeOptions) {
                 ClassFinder classFinder = new ResourceLoaderClassFinder(resourceLoader, classLoader);
 
                 if (!runtimeOptions.getGlue().contains(FIXTURE_PACKAGE)) {
@@ -127,7 +125,7 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
 
                 // ensure that list of features we provide Cucumber is unique
                 Set<String> uniqueFeatures = new HashSet<>(runtimeOptions.getFeaturePaths());
-                for(String feature : etiqetOptions.features()) {
+                for (String feature : etiqetOptions.features()) {
                     try {
                         uniqueFeatures.add(Environment.resolveEnvVars(feature));
                     } catch (EtiqetException e) {
@@ -158,15 +156,15 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
      * unit testing of the EtiqetTestRunner
      *
      * @param resourceLoader used to load resources
-     * @param classFinder    used to find classes
-     * @param classLoader    used to load classes
+     * @param classFinder used to find classes
+     * @param classLoader used to load classes
      * @param runtimeOptions Runtime options specified via {@link EtiqetOptions} and {@link CucumberOptions}
      * @return Cucumber runtime
      */
     Runtime getCucumberRuntime(ResourceLoader resourceLoader,
-                               ClassFinder classFinder,
-                               ClassLoader classLoader,
-                               RuntimeOptions runtimeOptions) {
+        ClassFinder classFinder,
+        ClassLoader classLoader,
+        RuntimeOptions runtimeOptions) {
         return new Runtime(resourceLoader, classFinder, classLoader, runtimeOptions);
     }
 
@@ -184,8 +182,8 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
      * {@inheritDoc}
      *
      * @param child the child feature
-     * @return a {@link Description} for {@code child}, which can be assumed to be an element of the list returned
-     * by {@link ParentRunner#getChildren()}
+     * @return a {@link Description} for {@code child}, which can be assumed to be an element of the list returned by
+     * {@link ParentRunner#getChildren()}
      */
     @Override
     protected Description describeChild(FeatureRunner child) {
@@ -195,7 +193,7 @@ public class EtiqetTestRunner extends ParentRunner<FeatureRunner> {
     /**
      * {@inheritDoc}
      *
-     * @param child    child feature to be run
+     * @param child child feature to be run
      * @param notifier {@link RunNotifier} to notify JUnit of running tests
      */
     @Override

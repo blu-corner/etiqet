@@ -1,21 +1,22 @@
 package com.neueda.etiqet.rest.message;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.SerializeException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.rest.RestConfig;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
+import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.reflect.Field;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class RestMsgTest {
 

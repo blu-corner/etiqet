@@ -4,4 +4,5 @@ import com.neueda.etiqet.core.EtiqetOptions;
 
 @EtiqetOptions
 public class EmptyOptionsTestRun {
+
 }

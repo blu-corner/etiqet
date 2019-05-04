@@ -1,14 +1,13 @@
 package com.neueda.etiqet.fixture;
 
+import static org.junit.Assert.fail;
+
 import cucumber.api.java.en.Then;
+import java.util.Calendar;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Calendar;
-
-import static org.junit.Assert.fail;
 
 public class DateTimeFixtures {
 

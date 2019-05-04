@@ -1,14 +1,14 @@
 package com.neueda.etiqet.rest.message;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.SerializeException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.json.JsonUtils;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.StringUtils;
 import com.neueda.etiqet.rest.config.RestConfigConstants;
-import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +25,7 @@ public class RestMsg extends Cdr {
 
     /**
      * Tramsforms the CDR provided into an HttpRequestMsg
+     *
      * @param cdr CDR to be serialised
      * @return HTTP Request Message that can be used by the RestClient
      * @throws EtiqetException when we can't serialise the Cdr into an HTTP request
@@ -33,7 +34,7 @@ public class RestMsg extends Cdr {
         try {
             update(cdr);
             Message messageConfig = getMessage();
-            if(messageConfig == null) {
+            if (messageConfig == null) {
                 LOG.error("Message type {} not recognised", msgType);
                 throw new EtiqetException("Message type " + msgType + " not recognised");
             }
@@ -53,11 +54,13 @@ public class RestMsg extends Cdr {
 
     /**
      * Gets the Message configuration from the ProtocolConfig. Abstracted to help with unit testing
+     *
      * @return message configuration for {@link #msgType}
      * @throws EtiqetException when the protocol config can't be found
      */
     Message getMessage() throws EtiqetException {
-        ProtocolConfig protocolConfig = GlobalConfig.getInstance().getProtocol(RestConfigConstants.DEFAULT_PROTOCOL_NAME);
+        ProtocolConfig protocolConfig = GlobalConfig.getInstance()
+            .getProtocol(RestConfigConstants.DEFAULT_PROTOCOL_NAME);
         return protocolConfig.getMessage(msgType);
     }
 
@@ -77,11 +80,11 @@ public class RestMsg extends Cdr {
 
         Cdr payloadCdr = new Cdr(msgType);
         getItems().entrySet().stream()
-                .filter(entry -> !entry.getKey().startsWith("$"))
-                .forEach(entry -> payloadCdr.setItem(entry.getKey(), entry.getValue()));
+            .filter(entry -> !entry.getKey().startsWith("$"))
+            .forEach(entry -> payloadCdr.setItem(entry.getKey(), entry.getValue()));
 
         String payload = JsonUtils.cdrToJson(payloadCdr);
-        if(!"GET".equals(verb) && !StringUtils.isNullOrEmpty(payload) && !"{}".equals(payload)) {
+        if (!"GET".equals(verb) && !StringUtils.isNullOrEmpty(payload) && !"{}".equals(payload)) {
             request.setPayload(payload);
         }
     }

@@ -1,10 +1,11 @@
 package com.neueda.etiqet.websocket.client;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.json.JsonUtils;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.util.StringUtils;
+import java.util.concurrent.BlockingQueue;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -13,10 +14,9 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.BlockingQueue;
-
 @WebSocket(maxTextMessageSize = 64 * 1024)
 public class WebSocketSession {
+
     private static final Logger LOG = LoggerFactory.getLogger(WebSocketSession.class);
 
     private Session session;

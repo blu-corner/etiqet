@@ -3,12 +3,11 @@ package com.neueda.etiqet.core.config.xml;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Protocol;
 import com.neueda.etiqet.core.util.StringUtils;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * XML Adapter for helping to unmarshall <code>&lt;protocol&gt;</code> elements in an Etiqet configuration file
- * when using the reference attribute
+ * XML Adapter for helping to unmarshall <code>&lt;protocol&gt;</code> elements in an Etiqet configuration file when
+ * using the reference attribute
  */
 public class ProtocolAdapter extends XmlAdapter<Protocol, Protocol> {
 
@@ -23,7 +22,7 @@ public class ProtocolAdapter extends XmlAdapter<Protocol, Protocol> {
     @Override
     public Protocol unmarshal(Protocol protocolRef) throws EtiqetException {
         Protocol protocol;
-        if(StringUtils.isNullOrEmpty(protocolRef.getReference())) {
+        if (StringUtils.isNullOrEmpty(protocolRef.getReference())) {
             protocol = protocolRef;
         } else {
             protocol = new XmlParser().parse(protocolRef.getReference(), Protocol.class);

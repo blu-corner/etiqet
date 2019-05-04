@@ -9,7 +9,8 @@ import org.junit.runner.RunWith;
     plugin = {"pretty", "html:target/cucumber"},
     strict = true,
     monochrome = true,
-    features="src/test/resources/scenarios/examples_selecting.feature",
-    glue={"com.neueda.etiqet"})
+    features = "src/test/resources/scenarios/examples_selecting.feature",
+    glue = {"com.neueda.etiqet"})
 public class SelectingRunner {
+
 }

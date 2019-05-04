@@ -1,8 +1,8 @@
 package com.neueda.etiqet.selenium.fixture.stepdefs;
 
+import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
-import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
 
 public class FlowControl {
 

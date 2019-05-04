@@ -1,10 +1,11 @@
 package com.neueda.etiqet.core.testing.client;
 
-import com.neueda.etiqet.core.client.Client;
-import com.neueda.etiqet.core.common.cdr.Cdr;
-import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import com.neueda.etiqet.core.message.config.ProtocolConfig;
+import static org.awaitility.Awaitility.await;
 
+import com.neueda.etiqet.core.client.Client;
+import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Queue;
@@ -12,12 +13,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static org.awaitility.Awaitility.await;
-
-public class TestClient extends Client<Cdr, String> {
+public class TestClient extends Client {
 
     public static final String DEFAULT_CLIENT_CONFIG
-            = "${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties";
+        = "${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties";
 
     private boolean isStarted = false;
     private boolean isLoggedOn = false;
@@ -42,13 +41,8 @@ public class TestClient extends Client<Cdr, String> {
     }
 
     public TestClient(String primaryClientConfig, String secondaryClientConfig, ProtocolConfig protocolConfig)
-    throws EtiqetException {
+        throws EtiqetException {
         super(primaryClientConfig, secondaryClientConfig, protocolConfig);
-    }
-
-    @Override
-    public boolean isAdmin(String msgType) {
-        return false;
     }
 
     @Override
@@ -74,7 +68,7 @@ public class TestClient extends Client<Cdr, String> {
         msg.set("sent", new SimpleDateFormat("yyyyMMdd").format(new Date()));
         msg.set("sentTime", new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date()));
 
-        if("addFilter".equals(msg.getType())) {
+        if ("addFilter".equals(msg.getType())) {
             msgQueue.add(new Cdr("toFilter"));
         }
         Cdr response = new Cdr("testResponse");
@@ -138,19 +132,10 @@ public class TestClient extends Client<Cdr, String> {
             await().atMost(timeoutMillis, TimeUnit.MILLISECONDS);
             launchClient();
             this.isLoggedOn = true;
-        } catch (EtiqetException ignored) {}
+        } catch (EtiqetException ignored) {
+        }
 
         return isStarted;
-    }
-
-    @Override
-    public Cdr encode(Cdr message) {
-        return message;
-    }
-
-    @Override
-    public Cdr decode(Cdr message) {
-        return message;
     }
 
     public String getSessionId() {
@@ -163,7 +148,7 @@ public class TestClient extends Client<Cdr, String> {
 
     @Override
     public void failover() {
-        if(usingPrimary) {
+        if (usingPrimary) {
             usingPrimary = false;
             usingSecondary = true;
         } else {

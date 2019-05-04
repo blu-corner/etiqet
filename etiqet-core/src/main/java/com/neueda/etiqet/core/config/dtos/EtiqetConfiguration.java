@@ -1,14 +1,13 @@
 package com.neueda.etiqet.core.config.dtos;
 
 import com.neueda.etiqet.core.common.EtiqetConstants;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * XPath: /etiqetConfiguration
@@ -38,6 +37,7 @@ public class EtiqetConfiguration implements Serializable {
 
     /**
      * Sets the protocols in the configuration
+     *
      * @param protocols list of protocol DTOs to be prepared for use
      */
     public void setProtocols(List<Protocol> protocols) {
@@ -59,6 +59,7 @@ public class EtiqetConfiguration implements Serializable {
 
     /**
      * Sets pre-defined clients for use in test steps
+     *
      * @param clients list of client names / implementations
      */
     public void setClients(List<ClientImpl> clients) {
@@ -80,6 +81,7 @@ public class EtiqetConfiguration implements Serializable {
 
     /**
      * Sets pre-defined servers to be used in test steps
+     *
      * @param servers list of server names, implementations and configurations
      */
     public void setServers(List<ServerImpl> servers) {

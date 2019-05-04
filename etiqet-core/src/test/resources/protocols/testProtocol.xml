@@ -1,55 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<protocol xmlns="http://www.neueda.com/etiqet" name="test">
-	<client impl="com.neueda.etiqet.core.testing.client.TestClient"
-            defaultConfig="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties">
-		<delegates>
-			<delegate key="logger" impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"/>
-			<delegate key="sink" impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate"/>
-		</delegates>
-		<urlExtensions>
-			<urlExtension name="neueda" uri="http://localhost:5000"/>
-		</urlExtensions>
-	</client>
-	<dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
-	<messages>
-		<message name="TestMsg">
-			<implementation>java.lang.String</implementation>
-			<fields>
-				<field name="testField" type="string">testValue</field>
-				<field name="testInt" type="integer">1</field>
-				<field name="testBool" type="boolean">true</field>
-				<field name="testDouble" type="double">1.1</field>
-				<field name="testDate" type="string">20010101</field>
-				<field name="testDatetime" type="string">20010101-00:01:02.1</field>
-				<field name="testUtilClass" utilclass="com.neueda.etiqet.core.testing.util.TestUtils"
-					   method="defaultValue" type="string"/>
-			</fields>
-		</message>
-		<message name="testResponse">
-			<implementation>java.lang.String</implementation>
-			<fields>
-				<field name="test" type="string" required="Y" allowedValues="null,value,otherValue">default</field>
-				<field name="messageId" type="string" allowedValues="123,234,3,2">default</field>
-				<field name="sent" type="integer">1</field>
-			</fields>
-		</message>
-		<message name="testMessage">
-			<implementation>java.lang.String</implementation>
-			<fields>
-				<field name="test" type="string">default</field>
-			</fields>
-		</message>
-		<message name="toFilter">
-			<implementation>java.lang.String</implementation>
-			<fields>
-				<field name="test" type="string">default</field>
-			</fields>
-		</message>
-		<message name="addFilter">
-			<implementation>java.lang.String</implementation>
-			<fields>
-				<field name="test" type="string">default</field>
-			</fields>
-		</message>
-	</messages>
+<protocol name="test" xmlns="http://www.neueda.com/etiqet">
+    <client defaultConfig="${user.dir}/src/test/resources/properties/test.properties"
+        impl="com.neueda.etiqet.core.testing.client.TestClient"
+        codecImpl="com.neueda.etiqet.core.transport.ToStringCodec"
+        transportImpl="com.neueda.etiqet.core.transport.ConsoleTransport">
+        <delegates>
+            <delegate impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"
+                key="logger"/>
+            <delegate impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate" key="sink"/>
+        </delegates>
+        <urlExtensions>
+            <urlExtension name="neueda" uri="http://localhost:5000"/>
+        </urlExtensions>
+    </client>
+    <dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
+    <messages>
+        <message name="TestMsg">
+            <implementation>java.lang.String</implementation>
+            <fields>
+                <field name="testField" type="string">testValue</field>
+                <field name="testInt" type="integer">1</field>
+                <field name="testBool" type="boolean">true</field>
+                <field name="testDouble" type="double">1.1</field>
+                <field name="testDate" type="string">20010101</field>
+                <field name="testDatetime" type="string">20010101-00:01:02.1</field>
+                <field method="defaultValue"
+                    name="testUtilClass"
+                    type="string" utilclass="com.neueda.etiqet.core.testing.util.TestUtils"/>
+            </fields>
+        </message>
+        <message name="testResponse">
+            <implementation>java.lang.String</implementation>
+            <fields>
+                <field allowedValues="null,value,otherValue" name="test" required="Y" type="string">
+                    default
+                </field>
+                <field allowedValues="123,234,3,2" name="messageId" type="string">default</field>
+                <field name="sent" type="integer">1</field>
+            </fields>
+        </message>
+        <message name="testMessage">
+            <implementation>java.lang.String</implementation>
+            <fields>
+                <field name="test" type="string">default</field>
+            </fields>
+        </message>
+        <message name="toFilter">
+            <implementation>java.lang.String</implementation>
+            <fields>
+                <field name="test" type="string">default</field>
+            </fields>
+        </message>
+        <message name="addFilter">
+            <implementation>java.lang.String</implementation>
+            <fields>
+                <field name="test" type="string">default</field>
+            </fields>
+        </message>
+    </messages>
 </protocol>

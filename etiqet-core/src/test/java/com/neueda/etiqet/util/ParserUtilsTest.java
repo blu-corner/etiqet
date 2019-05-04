@@ -1,34 +1,36 @@
 package com.neueda.etiqet.util;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
-import com.neueda.etiqet.core.common.cdr.CdrItem;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.CdrItem;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.testing.util.TestUtils;
 import com.neueda.etiqet.core.util.ParserUtils;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class ParserUtilsTest {
-	
-	private static final String params = "campo1=1,campo2->campo21->campo211=2,"
-                  + "campo2->campo21->campo212=3,campo2->campo21->campo213=4,"
-                  + "campo2->campo22=22,campo3->campo31=5,campo3->campo32=6";
-	
-	/**
-	 * Method to test stringToCdr function in ParserUtils
-	 */
-	@Test
-	public void testStringToCdr() {
-		Cdr cdr = ParserUtils.stringToCdr("None", params);
-		assertNotNull(cdr);
+
+    private static final String params = "campo1=1,campo2->campo21->campo211=2,"
+        + "campo2->campo21->campo212=3,campo2->campo21->campo213=4,"
+        + "campo2->campo22=22,campo3->campo31=5,campo3->campo32=6";
+
+    /**
+     * Method to test stringToCdr function in ParserUtils
+     */
+    @Test
+    public void testStringToCdr() {
+        Cdr cdr = ParserUtils.stringToCdr("None", params);
+        assertNotNull(cdr);
         assertTrue(cdr.containsKey("campo1"));
         assertTrue(cdr.containsKey("campo2"));
         assertTrue(cdr.containsKey("campo3"));
@@ -41,7 +43,7 @@ public class ParserUtilsTest {
         assertNotNull(child2);
         List<Cdr> child2Cdrs = child2.getCdrs();
         assertTrue("campo2 key should have children",
-                        child2Cdrs != null && !child2Cdrs.isEmpty());
+            child2Cdrs != null && !child2Cdrs.isEmpty());
         assertEquals("campo2 key should have 2 children, found " + child2Cdrs.size(), 2, child2Cdrs.size());
 
         Cdr child21 = child2Cdrs.get(0);
@@ -51,7 +53,7 @@ public class ParserUtilsTest {
         assertNotNull(campo21);
         List<Cdr> campo21Children = campo21.getCdrs();
         assertTrue("campo21 should have children",
-                        campo21Children != null && !campo21Children.isEmpty());
+            campo21Children != null && !campo21Children.isEmpty());
         assertEquals("campo21 key should have 3 children, found " + campo21Children.size(), 3, campo21Children.size());
         assertTrue(campo21Children.get(0).containsKey("campo211"));
         assertEquals("2", campo21Children.get(0).getItem("campo211").getStrval());
@@ -71,7 +73,7 @@ public class ParserUtilsTest {
         assertNotNull(child3);
         List<Cdr> child3Cdrs = child3.getCdrs();
         assertTrue("campo3 key should have children",
-                child3Cdrs != null && !child3Cdrs.isEmpty());
+            child3Cdrs != null && !child3Cdrs.isEmpty());
         assertEquals("campo3 key should have 2 children, found " + child3Cdrs.size(), 2, child3Cdrs.size());
 
         Cdr campo31 = child3Cdrs.get(0);
@@ -116,11 +118,11 @@ public class ParserUtilsTest {
     public void testGetRestTags() throws EtiqetException {
         String[] tag = {"test1->this", "test->that", "test2->theother"};
         String rest = "test";
-        String returnedTag = ParserUtils.getRestTags(tag,rest);
+        String returnedTag = ParserUtils.getRestTags(tag, rest);
         assertEquals(String.format("%s", returnedTag), rest, returnedTag);
 
         String[] tag2 = {};
-        String returnedTag2 = ParserUtils.getRestTags(tag2,rest);
+        String returnedTag2 = ParserUtils.getRestTags(tag2, rest);
         assertEquals("", returnedTag2);
     }
 
@@ -129,60 +131,60 @@ public class ParserUtilsTest {
      */
     @Test
     public void testGetBoolean() throws EtiqetException {
-        String []testStringError = {"F","T","X"};
-        for(int i=0;i<testStringError.length;i++){
-            Boolean error=Boolean.FALSE;
+        String[] testStringError = {"F", "T", "X"};
+        for (int i = 0; i < testStringError.length; i++) {
+            Boolean error = Boolean.FALSE;
             try {
                 ParserUtils.getBoolean(testStringError[i]);
-            }catch (EtiqetException x){
-                error=Boolean.TRUE;
+            } catch (EtiqetException x) {
+                error = Boolean.TRUE;
             }
-            assertTrue(String.format("Expected %s Got %s",error, testStringError[i]),error);
+            assertTrue(String.format("Expected %s Got %s", error, testStringError[i]), error);
         }
-        String []testStringFail = {"0","false","n"};
-        for(int i=0;i<testStringFail.length;i++){
-            Boolean expected=Boolean.FALSE;
+        String[] testStringFail = {"0", "false", "n"};
+        for (int i = 0; i < testStringFail.length; i++) {
+            Boolean expected = Boolean.FALSE;
             Boolean actual = ParserUtils.getBoolean(testStringFail[i]);
-            assertEquals(String.format("Expected %s Got %s",expected, testStringError[i]),expected,actual);
+            assertEquals(String.format("Expected %s Got %s", expected, testStringError[i]), expected, actual);
         }
-        String []testStringSuccess = {"1","true","y"};
-        for(int i=0;i<testStringSuccess.length;i++){
-            Boolean expected=Boolean.TRUE;
+        String[] testStringSuccess = {"1", "true", "y"};
+        for (int i = 0; i < testStringSuccess.length; i++) {
+            Boolean expected = Boolean.TRUE;
             Boolean actual = ParserUtils.getBoolean(testStringSuccess[i]);
-            assertEquals(String.format("Expected %s Got %s",expected,testStringSuccess[i]),expected,actual);
+            assertEquals(String.format("Expected %s Got %s", expected, testStringSuccess[i]), expected, actual);
         }
     }
 
     /**
-	 * Method to test isTagInCdr function in ParserUtils
-	 */
-	@Test
-	public void testIsTagInCdr() {
-		Cdr cdr = ParserUtils.stringToCdr("None", params);
+     * Method to test isTagInCdr function in ParserUtils
+     */
+    @Test
+    public void testIsTagInCdr() {
+        Cdr cdr = ParserUtils.stringToCdr("None", params);
         assertTrue(ParserUtils.isTagInCdr("campo1", cdr));
         assertTrue(ParserUtils.isTagInCdr("campo21", cdr));
-		assertFalse(ParserUtils.isTagInCdr("notInCdr", cdr));
-	}
-	
-	/**
-	 * Method to test getTagValueFromCdr function in ParserUtils
-	 */
-	@Test
-	public void testGetTagValueFromCdr() {
-		Cdr cdr = ParserUtils.stringToCdr("None", params);
-		assertNotNull(cdr);
-		String tag = "campo212";		
-		
-		Object value = ParserUtils.getTagValueFromCdr(tag, cdr);
-		assertNotNull(value);
-		assertEquals("3", value.toString());
-	}
-	
-	@Test
-	public void testCreateDefault() throws EtiqetException {
-		String path = "${etiqet.directory}/etiqet-core/src/test/resources/protocols/testProtocol.xml";
+        assertFalse(ParserUtils.isTagInCdr("notInCdr", cdr));
+    }
 
-		ProtocolConfig protocol = new ProtocolConfig(path);
+    /**
+     * Method to test getTagValueFromCdr function in ParserUtils
+     */
+    @Test
+    public void testGetTagValueFromCdr() {
+        Cdr cdr = ParserUtils.stringToCdr("None", params);
+        assertNotNull(cdr);
+        String tag = "campo212";
+
+        Object value = ParserUtils.getTagValueFromCdr(tag, cdr);
+        assertNotNull(value);
+        assertEquals("3", value.toString());
+    }
+
+    @Test
+    public void testCreateDefault() throws EtiqetException {
+        String path = "${etiqet.directory}/etiqet-core/src/test/resources/protocols/testProtocol.xml";
+
+        ProtocolConfig protocol = new ProtocolConfig(path);
         assertNotNull(protocol);
 
         Message messageNew = protocol.getMessage("TestMsg");
@@ -197,16 +199,24 @@ public class ParserUtilsTest {
         assertEquals(Boolean.TRUE, cdr.getItem("testBool").getBoolVal());
 
         String testDate = cdr.getItem("testDate").getStrval();
-        assertTrue("Failed to Parse date", ParserUtils.matchDateTimeFormat( "Unable to parse %s as type %s (value: %s), defaulting to String type","testDate","date",testDate, "yyyyMMdd"));
-        assertFalse("Parsed incorrect date", ParserUtils.matchDateTimeFormat( "Unable to parse %s as type %s (value: %s), defaulting to String type","testDate","date","NotAdate", "yyyyMMdd"));
+        assertTrue("Failed to Parse date", ParserUtils
+            .matchDateTimeFormat("Unable to parse %s as type %s (value: %s), defaulting to String type", "testDate",
+                "date", testDate, "yyyyMMdd"));
+        assertFalse("Parsed incorrect date", ParserUtils
+            .matchDateTimeFormat("Unable to parse %s as type %s (value: %s), defaulting to String type", "testDate",
+                "date", "NotAdate", "yyyyMMdd"));
 
         String testDatetime = cdr.getItem("testDatetime").getStrval();
-        assertTrue("Failed to Parse date", ParserUtils.matchDateTimeFormat( "Unable to parse %s as type %s (value: %s), defaulting to String type","testDatetime","datetime",testDatetime, "yyyyMMdd-HH:mm:ss.SSSSSSSSS"));
-        assertFalse("Parsed incorrect datetime??", ParserUtils.matchDateTimeFormat( "Unable to parse %s as type %s (value: %s), defaulting to String type","testDatetime","datetime","notAdateTime", "yyyyMMdd-HH:mm:ss.SSSSSSSSS"));
+        assertTrue("Failed to Parse date", ParserUtils
+            .matchDateTimeFormat("Unable to parse %s as type %s (value: %s), defaulting to String type", "testDatetime",
+                "datetime", testDatetime, "yyyyMMdd-HH:mm:ss.SSSSSSSSS"));
+        assertFalse("Parsed incorrect datetime??", ParserUtils
+            .matchDateTimeFormat("Unable to parse %s as type %s (value: %s), defaulting to String type", "testDatetime",
+                "datetime", "notAdateTime", "yyyyMMdd-HH:mm:ss.SSSSSSSSS"));
 
         assertEquals(Double.valueOf(1.1), cdr.getItem("testDouble").getDoubleval());
         assertEquals(TestUtils.defaultValue(), cdr.getItem("testUtilClass").getStrval());
-	}
+    }
 
     @Test
     public void testFillDefaultInvalidTypes() throws EtiqetException {
@@ -289,7 +299,7 @@ public class ParserUtilsTest {
 
         CdrItem cdrItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
         ArrayList<Cdr> cdrs = new ArrayList<>();
-        for(int i = 1; i < 6; i++) {
+        for (int i = 1; i < 6; i++) {
             Cdr subItem = new Cdr("item" + i);
             subItem.set("item" + i, i);
             cdrs.add(subItem);

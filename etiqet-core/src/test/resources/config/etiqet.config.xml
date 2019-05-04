@@ -1,28 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
     <protocols>
-        <protocol name="testProtocol" ref="${etiqet.directory}/etiqet-core/src/test/resources/protocols/testProtocol.xml"/>
+        <protocol name="testProtocol"
+            ref="${etiqet.directory}/etiqet-core/src/test/resources/protocols/testProtocol.xml"/>
         <protocol name="otherTestProtocol">
-            <client impl="com.neueda.etiqet.core.testing.client.TestClient"
-                    defaultConfig="${user.dir}/src/test/resources/fix-config/client.cfg"/>
+            <client defaultConfig="${user.dir}/src/test/resources/properties/test.properties"
+                impl="com.neueda.etiqet.core.testing.client.TestClient"
+                codecImpl="com.neueda.etiqet.core.transport.ToStringCodec"
+                transportImpl="com.neueda.etiqet.core.transport.ConsoleTransport"
+            />
             <dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
-            <messages ref="${etiqet.directory}/etiqet-core/src/test/resources/config/messages/testProtocolMessages.xml"/>
+            <messages
+                ref="${etiqet.directory}/etiqet-core/src/test/resources/config/messages/testProtocolMessages.xml"/>
         </protocol>
     </protocols>
     <clients>
-    	<!-- pre-defined clients that can be referenced in tests without being explicitly created -->
-        <client name="testClient1" impl="testProtocol">
-            <primary configPath="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"/>
+        <!-- pre-defined clients that can be referenced in tests without being explicitly created -->
+        <client impl="testProtocol" name="testClient1">
+            <primary
+                configPath="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"/>
         </client>
-        <client name="testClient2" impl="otherTestProtocol">
-            <primary configPath="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"/>
-            <secondary configPath="${etiqet.directory}/etiqet-core/src/test/resources/properties/testConfig.properties"/>
+        <client impl="otherTestProtocol" name="testClient2">
+            <primary
+                configPath="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"/>
+            <secondary
+                configPath="${etiqet.directory}/etiqet-core/src/test/resources/properties/testConfig.properties"/>
         </client>
     </clients>
     <servers>
-    	<!-- pre-defined servers that can be referenced in tests without being explicitly created -->
-        <server name="testServer"
+        <!-- pre-defined servers that can be referenced in tests without being explicitly created -->
+        <server config="${user.dir}/src/test/resources/properties/testConfig.properties"
             impl="com.neueda.etiqet.core.testing.server.TestServer"
-            config="${user.dir}/src/test/resources/fix-config/testServer.cfg"/>
+            name="testServer"/>
     </servers>
 </etiqetConfiguration>

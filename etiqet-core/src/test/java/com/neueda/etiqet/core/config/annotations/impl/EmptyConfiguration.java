@@ -4,4 +4,5 @@ import com.neueda.etiqet.core.config.annotations.Configuration;
 
 @Configuration
 public class EmptyConfiguration {
+
 }

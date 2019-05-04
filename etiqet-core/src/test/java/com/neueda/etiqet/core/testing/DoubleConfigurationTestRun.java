@@ -11,4 +11,5 @@ import com.neueda.etiqet.core.config.annotations.impl.ExampleConfiguration;
     plugin = {"pretty", "html:target/cucumber"}
 )
 public class DoubleConfigurationTestRun {
+
 }

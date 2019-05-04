@@ -1,9 +1,17 @@
 package com.neueda.etiqet.core.json;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
-import com.neueda.etiqet.core.common.cdr.CdrItem;
-
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.CdrItem;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,14 +25,11 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
 
     /**
      * Serialises a Cdr object into a Json Element
-     * @param src
-     *          Cdr object to be serialised into JSON
-     * @param typeOfSrc
-     *          the actual type (fully genericized version) of the source object.
-     * @param context
-     *          Context for serialization, passed to by Gson internally
-     * @return
-     *          JSON String representing the Cdr object
+     *
+     * @param src Cdr object to be serialised into JSON
+     * @param typeOfSrc the actual type (fully genericized version) of the source object.
+     * @param context Context for serialization, passed to by Gson internally
+     * @return JSON String representing the Cdr object
      */
     @Override
     public JsonElement serialize(Cdr src, Type typeOfSrc, JsonSerializationContext context) {
@@ -34,8 +39,8 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
     }
 
     private JsonElement serializeArray(Cdr src) {
-        JsonArray jsonArray  = new JsonArray();
-        for(Map.Entry<String, CdrItem> cdrEntry : src.getItems().entrySet()) {
+        JsonArray jsonArray = new JsonArray();
+        for (Map.Entry<String, CdrItem> cdrEntry : src.getItems().entrySet()) {
             CdrItem cdrItem = cdrEntry.getValue();
             JsonElement element = cdrItemToJsonElement(cdrItem);
             jsonArray.add(element);
@@ -45,7 +50,7 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
 
     private JsonElement serializeObject(Cdr src) {
         JsonObject jsonObject = new JsonObject();
-        for(Map.Entry<String, CdrItem> cdrEntry : src.getItems().entrySet()) {
+        for (Map.Entry<String, CdrItem> cdrEntry : src.getItems().entrySet()) {
             String cdrKey = cdrEntry.getKey();
             CdrItem cdrItem = cdrEntry.getValue();
             JsonElement element = cdrItemToJsonElement(cdrItem);
@@ -55,11 +60,10 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
     }
 
     /**
-     * Converts a CdrItem into a JSON Element depending on the CdrItemType. For lists / nested objects, recursion is
-     * used to traverse the JSON tree.
+     * Converts a CdrItem into a JSON Element depending on the CdrItemType. For lists / nested objects, recursion is used
+     * to traverse the JSON tree.
      *
-     * @param cdrItem
-     *          CdrItem to be converted
+     * @param cdrItem CdrItem to be converted
      * @return JsonElement representing the CdrItem
      */
     JsonElement cdrItemToJsonElement(CdrItem cdrItem) {
@@ -77,7 +81,7 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
 
                 // if it has numerical keys, assume that it's a list, rather an JSON object
                 boolean isMap = !childCdrs.get(0).containsKey("0");
-                if(isMap) {
+                if (isMap) {
                     return getMap(childCdrs);
                 } else {
                     // if it has numerical keys, assume that it's a list, rather an JSON object
@@ -90,13 +94,14 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
 
     /**
      * Converts a list of CDRs into a JsonObject
+     *
      * @param cdrs list of CDRs to be converted
      * @return JSON object representing the map in the CDR list
      */
     private JsonObject getMap(List<Cdr> cdrs) {
         JsonObject map = new JsonObject();
-        for(Cdr child : cdrs) {
-            for(Map.Entry<String, CdrItem> childEntry : child.getItems().entrySet()) {
+        for (Cdr child : cdrs) {
+            for (Map.Entry<String, CdrItem> childEntry : child.getItems().entrySet()) {
                 JsonElement childElement = cdrItemToJsonElement(childEntry.getValue());
                 map.add(childEntry.getKey(), childElement);
             }
@@ -106,13 +111,14 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
 
     /**
      * Converts a list of CDRs into a JsonArray
+     *
      * @param cdrs list of CDRs to be converted
      * @return JSON array representing the list of CDRs
      */
     private JsonArray getArray(List<Cdr> cdrs) {
         JsonArray list = new JsonArray();
-        for(Cdr child : cdrs) {
-            for(Map.Entry<String, CdrItem> childEntry : child.getItems().entrySet()) {
+        for (Cdr child : cdrs) {
+            for (Map.Entry<String, CdrItem> childEntry : child.getItems().entrySet()) {
                 JsonElement childElement = cdrItemToJsonElement(childEntry.getValue());
                 list.add(childElement);
             }
@@ -121,45 +127,39 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
     }
 
     /**
-     * Deserialises the provided JSON object into a Cdr object. This uses {@link #getCdrItem(Object)} to
-     * traverse the JSON tree and convert elements to the relevant CdrItem
+     * Deserialises the provided JSON object into a Cdr object. This uses {@link #getCdrItem(Object)} to traverse the JSON
+     * tree and convert elements to the relevant CdrItem
      *
-     * @param json
-     *          the parse tree.
-     * @param typeOfT
-     *          type of the expected return value.
-     * @param context
-     *          Context for serialization, passed to by Gson internally
-     * @return
-     *          Cdr object parsed from the JSON element
-     * @throws JsonParseException
-     *          when the JSON is not valid and GSON can't handle it
+     * @param json the parse tree.
+     * @param typeOfT type of the expected return value.
+     * @param context Context for serialization, passed to by Gson internally
+     * @return Cdr object parsed from the JSON element
+     * @throws JsonParseException when the JSON is not valid and GSON can't handle it
      */
     @Override
-    public Cdr deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-    {
+    public Cdr deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
         Cdr data = new Cdr(typeOfT.getTypeName());
 
-        if(json.isJsonArray())
+        if (json.isJsonArray()) {
             deserializeArray(json, data, context);
-        else
+        } else {
             deserializeObject(json, data, context);
+        }
 
         return data;
     }
 
-    private Cdr deserializeArray(JsonElement json, Cdr data, JsonDeserializationContext context)
-    {
+    private Cdr deserializeArray(JsonElement json, Cdr data, JsonDeserializationContext context) {
         Iterator<JsonElement> jsonIterator = json.getAsJsonArray().iterator();
 
         int idx = 0;
-        while(jsonIterator.hasNext()) {
+        while (jsonIterator.hasNext()) {
             Cdr tmpCdr = new Cdr(Cdr.class.getTypeName());
             JsonElement element = jsonIterator.next();
-            if(element.isJsonPrimitive())
+            if (element.isJsonPrimitive()) {
                 deserializePrimitive(idx, element.getAsJsonPrimitive(), data);
-            else {
-                if(element.isJsonArray()) {
+            } else {
+                if (element.isJsonArray()) {
                     deserializeArray(element, tmpCdr, context);
                 } else {
                     deserializeObject(element, tmpCdr, context);
@@ -177,24 +177,23 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
         return data;
     }
 
-    private Cdr deserializePrimitive(int key, JsonPrimitive json, Cdr data)
-    {
+    private Cdr deserializePrimitive(int key, JsonPrimitive json, Cdr data) {
         CdrItem item;
-        if(json.isNumber())
+        if (json.isNumber()) {
             item = getCdrItem(json.getAsDouble());
-        else if(json.isBoolean())
+        } else if (json.isBoolean()) {
             item = getCdrItem(json.getAsBoolean());
-        else
+        } else {
             item = getCdrItem(json.getAsString());
+        }
 
         data.setItem(String.valueOf(key), item);
         return data;
     }
 
-    private Cdr deserializeObject(JsonElement json, Cdr data, JsonDeserializationContext context)
-    {
+    private Cdr deserializeObject(JsonElement json, Cdr data, JsonDeserializationContext context) {
         Map<String, Object> map = context.deserialize(json, Map.class);
-        for(Map.Entry<String, Object> entry : map.entrySet()) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             CdrItem cdrItem = getCdrItem(entry.getValue());
             data.setItem(entry.getKey(), cdrItem);
         }
@@ -208,23 +207,21 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
      *
      * <p>Suppressed warnings of unchecked types to allow us to cast the entries in Lists/Maps to Object</p>
      *
-     * @param value
-     *          Value retrieved from the JSON parser
-     * @return CdrItem
-     *          A CdrItem to be added to the current Cdr being created.
+     * @param value Value retrieved from the JSON parser
+     * @return CdrItem A CdrItem to be added to the current Cdr being created.
      */
     @SuppressWarnings("unchecked")
     CdrItem getCdrItem(Object value) {
         CdrItem cdrValue;
 
         // work out what the value is
-        if(value == null) {
+        if (value == null) {
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_NULL);
         } else if (value instanceof List) {
             List<Object> listValue = (List) value;
             List<Cdr> cdrList = new ArrayList<>(listValue.size());
 
-            for(int i=0, len=listValue.size(); i < len; i++) {
+            for (int i = 0, len = listValue.size(); i < len; i++) {
                 CdrItem cdrChildItem = getCdrItem(listValue.get(i));
                 Cdr cdrChild = new Cdr(cdrChildItem.getType().name());
                 cdrChild.setItem(String.valueOf(i), cdrChildItem);
@@ -233,11 +230,11 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
 
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
             cdrValue.setCdrs(cdrList);
-        } else if(value instanceof Map) {
+        } else if (value instanceof Map) {
             Map<String, Object> mapValue = (Map<String, Object>) value;
             List<Cdr> cdrList = new ArrayList<>(mapValue.size());
 
-            for(Map.Entry<String, Object> entry : mapValue.entrySet()) {
+            for (Map.Entry<String, Object> entry : mapValue.entrySet()) {
                 CdrItem cdrChildItem = getCdrItem(entry.getValue());
                 Cdr cdrChild = new Cdr(cdrChildItem.getType().name());
                 cdrChild.setItem(entry.getKey(), cdrChildItem);
@@ -246,13 +243,13 @@ public class CdrSerialiser implements JsonSerializer<Cdr>, JsonDeserializer<Cdr>
 
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
             cdrValue.setCdrs(cdrList);
-        } else if(value instanceof Integer || value instanceof Long) {
+        } else if (value instanceof Integer || value instanceof Long) {
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_INTEGER);
             cdrValue.setIntval((Long) value);
-        } else if(value instanceof Double) {
+        } else if (value instanceof Double) {
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_DOUBLE);
             cdrValue.setDoubleval((Double) value);
-        } else if(value instanceof Boolean) {
+        } else if (value instanceof Boolean) {
             cdrValue = new CdrItem(CdrItem.CdrItemType.CDR_BOOLEAN);
             cdrValue.setBoolVal((Boolean) value);
         } else {

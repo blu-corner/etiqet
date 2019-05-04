@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocol name="test"
-		  xmlns="http://www.neueda.com/etiqet">
-	<client impl="com.neueda.etiqet.core.testing.client.TestClient"
-			defaultConfig="${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties"/>
-	<dictionary handler=""/>
-	<components_package>quickfix.fix44.component</components_package>
-	<messages>
-		<message name="TestMsg">
-			<implementation>java.lang.String</implementation>
-			<fields>
-				<field name="testField" type="string">testValue</field>
-				<field name="testInt" type="integer">1</field>
-			</fields>
-		</message>
-	</messages>
+    xmlns="http://www.neueda.com/etiqet">
+    <client defaultConfig="${user.dir}/src/test/resources/fix-config/client.cfg"
+        impl="com.neueda.etiqet.core.testing.client.TestClient"
+        codecImpl="com.neueda.etiqet.core.transport.ToStringCodec"
+        transportImpl="com.neueda.etiqet.core.transport.ConsoleTransport"
+    />
+    <dictionary handler=""/>
+    <components_package>quickfix.fix44.component</components_package>
+    <messages>
+        <message name="TestMsg">
+            <implementation>java.lang.String</implementation>
+            <fields>
+                <field name="testField" type="string">testValue</field>
+                <field name="testInt" type="integer">1</field>
+            </fields>
+        </message>
+    </messages>
 </protocol>

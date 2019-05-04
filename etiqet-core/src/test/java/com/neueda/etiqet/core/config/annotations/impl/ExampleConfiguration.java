@@ -29,7 +29,9 @@ public class ExampleConfiguration {
     private Client getFixClient() {
         Client client = new Client();
         client.setImplementationClass(TestClient.class);
-        client.setDefaultConfig("${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties");
+        client.setDefaultConfig("${user.dir}/src/test/resources/properties/test.properties");
+        client.setTransportImpl("");
+        client.setCodecImpl("");
         return client;
     }
 
@@ -52,9 +54,9 @@ public class ExampleConfiguration {
     }
 
     @NamedServer(
-            name = "testServer",
-            impl = TestServer.class,
-            config = "${user.dir}/src/test/resources/fix-config/testServer.cfg"
+        name = "testServer",
+        impl = TestServer.class,
+        config = "${user.dir}/src/test/resources/properties/testConfig.properties"
     )
     public ServerImpl getServer() {
         return new ServerImpl();
