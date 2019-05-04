@@ -63,7 +63,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.14.1</version>
                 <configuration>
-                    <argLine>-Detiqet.directory=${project.parent.basedir} -Detiqet.global.config=${etiqet.directory}/etiqet-rabbitmq/src/test/resources/config/etiqet.config.xml ${argLine}</argLine>
+                    <argLine>-Detiqet.directory=${project.parent.basedir} -Detiqet.global.config=${etiqet.directory}/etiqet-transport-rabbitmq-gpb/src/test/resources/config/etiqet.config.xml ${argLine}</argLine>
                 </configuration>
             </plugin>
             <!-- Maven Assembly Plugin -->
