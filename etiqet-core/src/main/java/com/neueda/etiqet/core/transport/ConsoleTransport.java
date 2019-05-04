@@ -6,13 +6,13 @@ import com.neueda.etiqet.core.message.cdr.Cdr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConsoleTransport<T> implements Transport {
+public class ConsoleTransport implements Transport {
 
     private static final Logger logger = LoggerFactory.getLogger(ConsoleTransport.class);
 
-    ClientDelegate delegate;
-    Codec<Cdr, T> codec;
-    TransportDelegate<String, Cdr> transDel;
+    private ClientDelegate delegate;
+    private Codec<Cdr, String> codec;
+    private TransportDelegate<String, Cdr> transDel;
 
     @Override
     public void init(String config) {
@@ -31,7 +31,7 @@ public class ConsoleTransport<T> implements Transport {
 
     @Override
     public void send(Cdr msg, String sessionId) throws EtiqetException {
-        logger.info(codec.encode(msg).toString());
+        logger.info(codec.encode(msg));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ConsoleTransport<T> implements Transport {
 
     @Override
     public String getDefaultSessionId() {
-        return "ECHO-SESSION";
+        return "";
     }
 
     @Override

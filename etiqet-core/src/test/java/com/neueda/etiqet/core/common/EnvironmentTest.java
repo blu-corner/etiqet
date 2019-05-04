@@ -35,7 +35,7 @@ public class EnvironmentTest {
         String result = resolveEnvVars(testString);
         assertFalse(result.contains("${etiqet.directory}"));
 
-        String etiqetDirectory = System.getProperty("etiqet.directory");
+        String etiqetDirectory = System.getenv("etiqet.directory");
         String suffix = "/extended/path/to/file.ext".replaceAll("/", Matcher.quoteReplacement(File.separator));
         assertEquals(etiqetDirectory + suffix, result);
 

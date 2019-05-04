@@ -288,10 +288,10 @@ public abstract class Client implements Transport, Runnable {
   /**
    * Returns string containing a session identifier by default.
    *
-   * @return string containing a session identifier by default.
+   * @return string containing a session identifier by default. Null if client is not initialised.
    */
   public String getDefaultSessionId() {
-    return transport.getDefaultSessionId();
+    return (transport != null)? transport.getDefaultSessionId(): null;
   }
 
   @Override

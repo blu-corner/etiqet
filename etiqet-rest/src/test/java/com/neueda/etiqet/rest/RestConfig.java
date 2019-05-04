@@ -6,8 +6,10 @@ import com.neueda.etiqet.core.config.dtos.Client;
 import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.config.dtos.Protocol;
+import com.neueda.etiqet.core.transport.ConsoleTransport;
 import com.neueda.etiqet.rest.client.RestClient;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
+import com.neueda.etiqet.rest.transport.RestCodec;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +29,8 @@ public class RestConfig {
         Client client = new Client();
         client.setImplementationClass(RestClient.class);
         client.setDefaultConfig(getClass().getClassLoader().getResource("config/ok/client.cfg").getPath());
+        client.setTransportImpl(ConsoleTransport.class.getName());
+        client.setCodecImpl(RestCodec.class.getName());
         return client;
     }
 

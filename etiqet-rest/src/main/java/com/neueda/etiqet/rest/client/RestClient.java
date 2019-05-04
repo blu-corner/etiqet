@@ -45,29 +45,9 @@ public class RestClient extends Client {
   }
 
   @Override
-  public void launchClient() throws EtiqetException {
-    launchClient(primaryConfig);
-  }
-
-  @Override
   public void launchClient(String configPath) throws EtiqetException {
+    super.launchClient(configPath);
     requestFactory = getHttpRequestFactory();
-    this.activeConfig = configPath;
-    this.config = PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(activeConfig));
-  }
-
-  @Override
-  public void failover() throws EtiqetException {
-    if (this.activeConfig.equals(primaryConfig)) {
-      launchClient(secondaryConfig);
-    } else {
-      launchClient();
-    }
-  }
-
-  @Override
-  public String getDefaultSessionId() {
-    return "";
   }
 
   @Override

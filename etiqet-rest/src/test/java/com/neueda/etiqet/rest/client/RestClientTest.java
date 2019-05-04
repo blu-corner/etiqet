@@ -52,7 +52,7 @@ public class RestClientTest {
 
     @Test
     public void testDefaultSession() {
-        assertEquals("", client.getDefaultSessionId());
+        assertNull(client.getDefaultSessionId());
     }
 
     @Test
