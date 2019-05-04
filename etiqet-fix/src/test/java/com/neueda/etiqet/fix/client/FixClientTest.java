@@ -1,5 +1,6 @@
 package com.neueda.etiqet.fix.client;
 
+import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -21,10 +22,10 @@ public class FixClientTest {
     @Test
     public void testLaunchClient() throws EtiqetException {
         client = new FixClient(PRIMARY_CONFIG, SECONDARY_CONFIG);
+        assertNull("FixClient should have been started", client.getTransport());
         client.launchClient();
-        assertTrue("FixClient should have been started", client.waitForLogon());
+        assertNotNull("FixClient should have been started", client.getTransport());
         client.stop();
-        assertNotNull("FixClient should have been stopped", client.waitForMsgType("Logout", 10000));
     }
 
     @Test
