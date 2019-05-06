@@ -7,6 +7,7 @@ import com.neueda.etiqet.core.message.cdr.CdrItem;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.fix.message.dictionary.Fix;
 import com.neueda.etiqet.fix.message.dictionary.FixDictionary;
+import edu.emory.mathcs.backport.java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import quickfix.FieldNotFound;
@@ -27,6 +28,34 @@ public class QfjCodecTest {
     @Before
     public void setUp() throws Exception {
         protocolConfig = mock(ProtocolConfig.class);
+
+        Fix fixDictionary = (Fix) JAXBContext.newInstance(Fix.class)
+                                             .createUnmarshaller()
+                                             .unmarshal(getClass().getClassLoader()
+                                                                  .getResourceAsStream("config/FIX50SP2.xml"));
+        assertNotNull("Unable to parse FIX 50SP2 dictionary", fixDictionary);
+        FixDictionary dictionary = mock(FixDictionary.class);
+        when(dictionary.getFixDictionary()).thenReturn(fixDictionary);
+        when(protocolConfig.getDictionary()).thenReturn(dictionary);
+
+        when(protocolConfig.getTagForName(eq("Symbol"))).thenReturn(55);
+        when(protocolConfig.getTagForName(eq("LastPx"))).thenReturn(31);
+        when(protocolConfig.getTagForName(eq("LastQty"))).thenReturn(32);
+        when(protocolConfig.getTagForName(eq("AggregatedBook"))).thenReturn(266);
+        when(protocolConfig.getTagForName(eq("PartyID"))).thenReturn(448);
+        when(protocolConfig.getTagForName(eq("PartyRole"))).thenReturn(452);
+        when(protocolConfig.getTagForName(eq("NoPartyIDs"))).thenReturn(453);
+        when(protocolConfig.getTagForName(eq("NoPartySubIDs"))).thenReturn(802);
+        when(protocolConfig.getTagForName(eq("PartySubID"))).thenReturn(523);
+        when(protocolConfig.getNameForTag(eq(55))).thenReturn("Symbol");
+        when(protocolConfig.getNameForTag(eq(31))).thenReturn("LastPx");
+        when(protocolConfig.getNameForTag(eq(32))).thenReturn("LastQty");
+        when(protocolConfig.getNameForTag(eq(266))).thenReturn("AggregatedBook");
+        when(protocolConfig.getNameForTag(eq(448))).thenReturn("PartyID");
+        when(protocolConfig.getNameForTag(eq(452))).thenReturn("PartyRole");
+        when(protocolConfig.getNameForTag(eq(453))).thenReturn("NoPartyIDs");
+        when(protocolConfig.getNameForTag(eq(802))).thenReturn("NoPartySubIDs");
+        when(protocolConfig.getNameForTag(eq(523))).thenReturn("PartySubID");
     }
 
     @Test
@@ -39,10 +68,6 @@ public class QfjCodecTest {
         Message message = mock(Message.class);
         when(message.getImplementation()).thenReturn(NewOrderSingle.class.getName());
         when(protocolConfig.getMessage(eq("NewOrderSingle"))).thenReturn(message);
-        when(protocolConfig.getTagForName(eq("Symbol"))).thenReturn(55);
-        when(protocolConfig.getTagForName(eq("LastPx"))).thenReturn(31);
-        when(protocolConfig.getTagForName(eq("LastQty"))).thenReturn(32);
-        when(protocolConfig.getTagForName(eq("AggregatedBook"))).thenReturn(266);
 
         QfjCodec codec = new QfjCodec(protocolConfig);
         quickfix.FieldMap fixMessage = codec.encode(newOrderSingle);
@@ -65,6 +90,12 @@ public class QfjCodecTest {
         originatorParty.set("PartyID", "TEST_LEI");
         originatorParty.set("PartyRole", 13);
 
+        Cdr subParty = new Cdr("NoPartySubIDs");
+        subParty.set("PartySubID", "TEST_SUB_ID");
+        CdrItem subPartiesItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        subPartiesItem.setCdrs(Collections.singletonList(subParty));
+        originatorParty.setItem("NoPartySubIDs", subPartiesItem);
+
         Cdr counterParty = new Cdr("NoPartyIDs");
         counterParty.set("PartyID", "ANOTHER_TEST_LEI");
         counterParty.set("PartyRole", 17);
@@ -81,23 +112,6 @@ public class QfjCodecTest {
         Message noParties = mock(Message.class);
         when(noParties.getImplementation()).thenReturn(NewOrderSingle.NoPartyIDs.class.getName());
         when(protocolConfig.getMessage(eq("NoPartyIDs"))).thenReturn(noParties);
-        when(protocolConfig.getTagForName(eq("Symbol"))).thenReturn(55);
-        when(protocolConfig.getTagForName(eq("LastPx"))).thenReturn(31);
-        when(protocolConfig.getTagForName(eq("LastQty"))).thenReturn(32);
-        when(protocolConfig.getTagForName(eq("AggregatedBook"))).thenReturn(266);
-        when(protocolConfig.getTagForName(eq("PartyID"))).thenReturn(448);
-        when(protocolConfig.getTagForName(eq("PartyRole"))).thenReturn(452);
-        when(protocolConfig.getTagForName(eq("NoPartyIDs"))).thenReturn(453);
-
-
-        Fix fixDictionary = (Fix) JAXBContext.newInstance(Fix.class)
-                                             .createUnmarshaller()
-                                             .unmarshal(getClass().getClassLoader()
-                                                                  .getResourceAsStream("config/FIX50SP2.xml"));
-
-        FixDictionary dictionary = mock(FixDictionary.class);
-        when(dictionary.getFixDictionary()).thenReturn(fixDictionary);
-        when(protocolConfig.getDictionary()).thenReturn(dictionary);
 
         QfjCodec codec = new QfjCodec(protocolConfig);
         quickfix.FieldMap fixMessage = codec.encode(newOrderSingle);
@@ -107,6 +121,31 @@ public class QfjCodecTest {
         assertEquals(1, fixMessage.getInt(32));
         assertTrue(fixMessage.getBoolean(266));
         assertTrue(fixMessage.hasGroup(453));
+        assertEquals(2, fixMessage.getInt(453));
+        assertTrue(fixMessage.getGroups(453).stream().anyMatch(group -> {
+            try {
+                return group.isSetField(448) && group.getString(448).equals("TEST_LEI")
+                    && group.isSetField(452) && group.getInt(452) == 13
+                    && group.hasGroup(802) && group.getGroupCount(802) == 1
+                    && group.getGroups(802).stream().anyMatch(group1 -> {
+                    try {
+                        return group1.getString(523).equals("TEST_SUB_ID");
+                    } catch (FieldNotFound fieldNotFound) {
+                        return false;
+                    }
+                });
+            } catch (FieldNotFound fieldNotFound) {
+                return false;
+            }
+        }));
+        assertTrue(fixMessage.getGroups(453).stream().anyMatch(group -> {
+            try {
+                return group.isSetField(448) && group.getString(448).equals("ANOTHER_TEST_LEI")
+                    && group.isSetField(452) && group.getInt(452) == 17;
+            } catch (FieldNotFound fieldNotFound) {
+                return false;
+            }
+        }));
     }
 
 }

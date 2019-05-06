@@ -80,8 +80,10 @@ public class QfjCodec implements Codec<Cdr, Message> {
                 } else {
                     message.setField(bf);
                 }
+                break;
             case CDR_ARRAY:
-                message.addGroup(parseGroup(tag, entry.getValue()));
+                parseGroup(message, tag, entry.getValue());
+                break;
             default:
                 throw new UnknownTagException("Unhandled tag " + tag + " with type " + entry.getValue().getType());
         }
@@ -104,8 +106,10 @@ public class QfjCodec implements Codec<Cdr, Message> {
                 break;
             case CDR_BOOLEAN:
                 message.setField(new BooleanField(tag.intValue(), entry.getValue().getBoolVal()));
+                break;
             case CDR_ARRAY:
-                message.addGroup(parseGroup(tag, entry.getValue()));
+                parseGroup(message, tag, entry.getValue());
+                break;
             default:
                 throw new UnknownTagException("Unhandled tag " + tag + " with type " + entry.getValue().getType());
         }
@@ -113,34 +117,41 @@ public class QfjCodec implements Codec<Cdr, Message> {
 
     /**
      * Attempts to parse a group from the CdrItem passed
+     *
+     * @param message
      * @param tag  Tag that begins the group
      * @param item CdrItem containing the nested fields
      * @return {@link Group} to be added to the FIX message
      * @throws UnknownTagException when there is no group matching the input tag, or we're unable to parse one of the
      *                             children
      */
-    Group parseGroup(Integer tag, CdrItem item) throws UnknownTagException {
+    void parseGroup(FieldMap message, Integer tag, CdrItem item) throws UnknownTagException {
         // This needs to assume that we're using the FixDictionary
         FixDictionary dictionary = (FixDictionary) protocolConfig.getDictionary();
-        String fieldName = dictionary.getNameForTag(tag);
+        String fieldName = protocolConfig.getNameForTag(tag);
         com.neueda.etiqet.fix.message.dictionary.Group groupDef
             = Arrays.stream(dictionary.getFixDictionary().getComponents().getComponent())
                     .map(Component::getGroup)
-                    .filter(group -> group.getName().equalsIgnoreCase(fieldName))
+                    .filter(Objects::nonNull)
+                    .filter(group -> fieldName.equalsIgnoreCase(group.getName()))
                     .findFirst()
                     .orElseThrow(() -> new UnknownTagException("Unknown group definition for tag " + tag));
 
         // Delimiter of the group is always the first field
-        Group group = new Group(tag, groupDef.getField()[0].getNumber());
+        Integer delimiterTag = protocolConfig.getTagForName(groupDef.getField()[0].getName());
+        int[] fieldOrder = new int[groupDef.getField().length];
+        for (int i = 0; i < groupDef.getField().length; i++) {
+            fieldOrder[i] = protocolConfig.getTagForName(groupDef.getField()[i].getName());
+        }
 
         // Iterate through the CDR children to allow for groups within groups
         for (Cdr cdr : item.getCdrs()) {
+            Group childGroup = new Group(tag, delimiterTag, fieldOrder);
             for (Map.Entry<String, CdrItem> cdrItemEntry : cdr.getItems().entrySet()) {
-                encodeKnownMsg(getIntegerTag(cdrItemEntry.getKey()), cdrItemEntry, group);
+                encodeKnownMsg(getIntegerTag(cdrItemEntry.getKey()), cdrItemEntry, childGroup);
             }
+            message.addGroup(childGroup);
         }
-
-        return group;
     }
 
 
