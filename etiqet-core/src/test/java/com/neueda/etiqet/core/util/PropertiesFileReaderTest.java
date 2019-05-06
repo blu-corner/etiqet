@@ -1,11 +1,13 @@
 package com.neueda.etiqet.core.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import org.junit.Test;
-
 import java.util.Map;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class PropertiesFileReaderTest {
 
@@ -29,7 +31,7 @@ public class PropertiesFileReaderTest {
         assertEquals(Long.valueOf(20L), properties.getLong("test.int"));
         assertEquals(Double.valueOf(25.3), properties.getDouble("test.double"));
         assertEquals("etiqet-core/src/test/resources/properties/testConfig.properties",
-                                    properties.getString("config.client.file.path"));
+            properties.getString("config.client.file.path"));
     }
 
     @Test
@@ -51,7 +53,7 @@ public class PropertiesFileReaderTest {
         assertEquals("20", properties.get("test.int"));
         assertEquals("25.3", properties.get("test.double"));
         assertEquals("etiqet-core/src/test/resources/properties/testConfig.properties",
-                                    properties.get("config.client.file.path"));
+            properties.get("config.client.file.path"));
     }
 
     @Test

@@ -9,8 +9,8 @@ Feature: Navigating
   Scenario: Using back and forward
     Given I go to the url "https://www.ultimateqa.com"
       And I go to the url "https://www.ultimateqa.com/complicated-page/"
-    Then I click back
-    Then I click forward
+    Then I go forward a page
+    Then I go back a page
 
   Scenario: Refreshing the page
     Given I go to the url "https://www.ultimateqa.com"

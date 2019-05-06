@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
+    <protocols>
+        <protocol name="rabbit-gpb">
+            <client defaultConfig="${user.dir}/src/test/resources/properties/test.properties"
+                impl="com.neueda.etiqet.core.client.GenericClient"
+                transportImpl="com.neueda.etiqet.transport.rabbitmq.RabbitMqTransport"
+                codecImpl="com.neueda.etiqet.transport.rabbitmq.ProtobufCodec"/>
+            <dictionary handler="com.neueda.etiqet.core.testing.message.TestDictionary"/>
+        </protocol>
+    </protocols>
+</etiqetConfiguration>
+

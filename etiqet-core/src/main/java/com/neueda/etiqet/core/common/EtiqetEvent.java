@@ -1,6 +1,7 @@
 package com.neueda.etiqet.core.common;
 
 public class EtiqetEvent {
+
     private Boolean event;
 
     public EtiqetEvent() {

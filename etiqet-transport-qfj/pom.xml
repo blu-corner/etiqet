@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>etiqet-parent</artifactId>
+        <groupId>com.neueda.etiqet</groupId>
+        <version>1.2-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>etiqet-transport-qfj</artifactId>
+
+    <properties>
+        <slf4j.version>1.7.25</slf4j.version>
+        <quickfixj.version>2.0.0</quickfixj.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.neueda.etiqet</groupId>
+            <artifactId>etiqet-fix-common</artifactId>
+            <version>1.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quickfixj</groupId>
+            <artifactId>quickfixj-all</artifactId>
+            <version>${quickfixj.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>etiqet-transport-qfj</finalName>
+        <plugins>
+            <!-- Make this jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- DO NOT include log4j.properties file in your Jar -->
+                    <excludes>
+                        <exclude>**/log4j.properties</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

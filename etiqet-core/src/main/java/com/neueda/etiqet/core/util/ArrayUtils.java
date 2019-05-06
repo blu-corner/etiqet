@@ -5,7 +5,8 @@ import java.util.Map;
 
 public class ArrayUtils {
 
-    private ArrayUtils() {}
+    private ArrayUtils() {
+    }
 
     public static boolean isNullOrEmpty(Collection collection) {
         return collection == null || collection.isEmpty();

@@ -67,43 +67,5 @@ public class Input {
     @When("^I? press arrow page down(?: (\\d+) times)?$")
     public void pressPageDownTimes(Integer times) {SeleniumHandlers.pressPageDownTimes(times);}
 
-    /**FunctionKeys*/
-
-    @When("^I? press F1 key$")
-    public void pressF1Key(){SeleniumHandlers.pressF1Key();}
-
-    @When("^I? press F2 key$")
-    public void pressF22Key(){SeleniumHandlers.pressF2Key();}
-
-    @When("^I? press F3 key$")
-    public void pressF3Key(){SeleniumHandlers.pressF3Key();}
-
-    @When("^I? press F4 key$")
-    public void pressF4Key(){SeleniumHandlers.pressF4Key();}
-
-    @When("^I? press F5 key$")
-    public void pressF5Key(){SeleniumHandlers.pressF5Key();}
-
-    @When("^I? press F6 key$")
-    public void pressF6Key(){SeleniumHandlers.pressF6Key();}
-
-    @When("^I? press F7 key$")
-    public void pressF7Key(){SeleniumHandlers.pressF7Key();}
-
-    @When("^I? press F8 key$")
-    public void pressF8Key(){SeleniumHandlers.pressF8Key();}
-
-    @When("^I? press F9 key$")
-    public void pressF9Key(){SeleniumHandlers.pressF9Key();}
-
-    @When("^I? press F10 key$")
-    public void pressF10Key(){SeleniumHandlers.pressF10Key();}
-
-    @When("^I? press k11 Key$")
-    public void pressF11Key(){SeleniumHandlers.pressF11Key();}
-
-    @When("^I? press k12 Key$")
-    public void pressF12Key(){SeleniumHandlers.pressF12Key();}
-
     /**End of sendKeys*/
 }

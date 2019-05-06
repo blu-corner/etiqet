@@ -1,13 +1,13 @@
 package com.neueda.etiqet.core.testing.server;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.server.Server;
 
 public class TestServer extends Server {
 
     public static final String DEFAULT_CONFIG
-            = "etiqet-core/src/test/resources/properties/testDefaultServer.properties";
+        = "etiqet-core/src/test/resources/properties/testDefaultServer.properties";
 
     private boolean isStarted = false;
 

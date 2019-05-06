@@ -1,29 +1,38 @@
 package com.neueda.etiqet.core;
 
+import static com.neueda.etiqet.core.common.ConfigConstants.DEFAULT_CONFIG_VARIABLE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.annotations.impl.ExampleConfiguration;
-import com.neueda.etiqet.core.testing.*;
+import com.neueda.etiqet.core.testing.DoubleConfigurationTestRun;
+import com.neueda.etiqet.core.testing.EmptyOptionsTestRun;
+import com.neueda.etiqet.core.testing.NoOptionsTestRun;
+import com.neueda.etiqet.core.testing.ValidConfigurationClassTestRun;
+import com.neueda.etiqet.core.testing.ValidConfigurationFileTestRun;
 import cucumber.api.junit.Cucumber;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.junit.FeatureRunner;
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
-
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
-
-import static com.neueda.etiqet.core.common.ConfigConstants.DEFAULT_CONFIG_VARIABLE;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class EtiqetTestRunnerTest {
 
@@ -88,13 +97,14 @@ public class EtiqetTestRunnerTest {
         EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidConfigurationClassTestRun.class) {
             @Override
             Runtime getCucumberRuntime(ResourceLoader resourceLoader,
-                                       ClassFinder classFinder,
-                                       ClassLoader classLoader,
-                                       RuntimeOptions runtimeOptions) {
+                ClassFinder classFinder,
+                ClassLoader classLoader,
+                RuntimeOptions runtimeOptions) {
                 assertTrue(runtimeOptions.getGlue().contains(EtiqetTestRunner.FIXTURE_PACKAGE));
                 assertTrue(runtimeOptions.getGlue().contains("com.example.other.fixtures"));
                 try {
-                    assertTrue(runtimeOptions.getFeaturePaths().contains(Environment.resolveEnvVars("${etiqet.directory}/etiqet-core/src/test/resources/features/test.feature")));
+                    assertTrue(runtimeOptions.getFeaturePaths().contains(Environment
+                        .resolveEnvVars("${etiqet.directory}/etiqet-core/src/test/resources/features/test.feature")));
                 } catch (EtiqetException e) {
                     fail("Unable to resolve ${etiqet.directory} which should exist");
                 }
@@ -117,13 +127,14 @@ public class EtiqetTestRunnerTest {
         EtiqetTestRunner testRunner = new EtiqetTestRunner(ValidConfigurationFileTestRun.class) {
             @Override
             Runtime getCucumberRuntime(ResourceLoader resourceLoader,
-                                       ClassFinder classFinder,
-                                       ClassLoader classLoader,
-                                       RuntimeOptions runtimeOptions) {
+                ClassFinder classFinder,
+                ClassLoader classLoader,
+                RuntimeOptions runtimeOptions) {
                 assertTrue(runtimeOptions.getGlue().contains(EtiqetTestRunner.FIXTURE_PACKAGE));
                 assertTrue(runtimeOptions.getGlue().contains("com.example.other.fixtures"));
                 try {
-                    assertTrue(runtimeOptions.getFeaturePaths().contains(Environment.resolveEnvVars("${etiqet.directory}/etiqet-core/src/test/resources/features/test.feature")));
+                    assertTrue(runtimeOptions.getFeaturePaths().contains(Environment
+                        .resolveEnvVars("${etiqet.directory}/etiqet-core/src/test/resources/features/test.feature")));
                 } catch (EtiqetException e) {
                     fail("Unable to resolve ${etiqet.directory} which should exist");
                 }
@@ -135,8 +146,8 @@ public class EtiqetTestRunnerTest {
         assertNotNull(globalConfig);
         assertNotNull(globalConfig.getConfigPath());
         assertEquals(
-                Environment.resolveEnvVars("${etiqet.directory}/etiqet-core/src/test/resources/config/etiqet.config.xml"),
-                globalConfig.getConfigPath()
+            Environment.resolveEnvVars("${etiqet.directory}/etiqet-core/src/test/resources/config/etiqet.config.xml"),
+            globalConfig.getConfigPath()
         );
 
         resetGlobalConfig();

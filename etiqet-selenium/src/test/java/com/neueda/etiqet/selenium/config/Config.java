@@ -1,7 +1,8 @@
 package com.neueda.etiqet.selenium.config;
 
 import com.neueda.etiqet.selenium.browser.BrowserBase;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,7 +13,7 @@ import java.net.URL;
 
 public class Config {
 
-    private static Logger logger = Logger.getLogger(BrowserBase.class);
+    private static Logger logger = LoggerFactory.getLogger(BrowserBase.class);
 
     public static void init() {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();

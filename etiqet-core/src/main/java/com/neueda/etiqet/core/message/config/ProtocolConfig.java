@@ -5,8 +5,8 @@ import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.config.dtos.*;
 import com.neueda.etiqet.core.config.xml.XmlParser;
 import com.neueda.etiqet.core.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,16 +18,13 @@ public class ProtocolConfig implements Serializable {
 	/** serialVersionUID */
 	private static final long serialVersionUID = -3777143195512896407L;
 
-	private static final transient Logger LOG = LoggerFactory.getLogger(ProtocolConfig.class);
+	private static final transient Logger LOG = LogManager.getLogger(ProtocolConfig.class);
 	
 	private Protocol protocol;
 	
 	private AbstractDictionary dictionary;
 	
 	private Map<String, Message> messageMap;
-
-	public ProtocolConfig() {
-	}
 
 	public ProtocolConfig(Protocol protocol) throws EtiqetException {
 		setProtocol(protocol);
@@ -47,54 +44,54 @@ public class ProtocolConfig implements Serializable {
 		return protocol.getName();
 	}
 
-	private void commonInit() throws EtiqetException {
-		// Setup the ProtocolConfig based on the Protocol parsed from the XML
-		messageMap = new HashMap<>();
-		if(getProtocol().getMessages() != null) {
-			for (Message message: getProtocol().getMessages().getMessage()) {
-				messageMap.put(message.getName(), message);
-			}
-		}
-		Dictionary protocolDictionary = getProtocol().getDictionary();
-		if (protocolDictionary != null) {
-			String handlerPath = protocolDictionary.getHandler();
-			try {
-				setDictionary((AbstractDictionary) Class.forName(handlerPath)
-												 		.getConstructor(String.class)
-												 		.newInstance(protocolDictionary.getValue()));
-			} catch (Exception e) {
-				LOG.error("Error loading dictionaryHandler: {}", handlerPath);
-				throw new EtiqetException("Error loading dictionaryHandler: " + handlerPath, e);
-			}
-		}
-	}
-	
-	public Message getMessage(String name) {
-		return messageMap.get(name);
-	}
-	
-	public Message[] getMessages() {
-		return getProtocol().getMessages().getMessage();
-	}
-	
-	public String getComponentPackage() {
-		String componentPackage = getProtocol().getComponentsPackage();
-		return componentPackage + (componentPackage.endsWith(".") ? "" : ".");
-	}
-	
-	public String getMsgType(String messageName) {
-		String msgType = null;
-		if (getDictionary() != null) {
-			msgType = getDictionary().getMsgType(messageName);
-		}
-		if (StringUtils.isNullOrEmpty(msgType)) {
-			Message message = messageMap.get(messageName);
-			if (message != null) {
-				msgType = message.getMsgtype();
-			}
-		}
-		return msgType;
-	}
+    private void commonInit() throws EtiqetException {
+        // Setup the ProtocolConfig based on the Protocol parsed from the XML
+        messageMap = new HashMap<>();
+        if (getProtocol().getMessages() != null) {
+            for (Message message : getProtocol().getMessages().getMessage()) {
+                messageMap.put(message.getName(), message);
+            }
+        }
+        Dictionary protocolDictionary = getProtocol().getDictionary();
+        if (protocolDictionary != null) {
+            String handlerPath = protocolDictionary.getHandler();
+            try {
+                setDictionary((AbstractDictionary) Class.forName(handlerPath)
+                    .getConstructor(String.class)
+                    .newInstance(protocolDictionary.getValue()));
+            } catch (Exception e) {
+                LOG.error("Error loading dictionaryHandler: {}", handlerPath);
+                throw new EtiqetException("Error loading dictionaryHandler: " + handlerPath, e);
+            }
+        }
+    }
+
+    public Message getMessage(String name) {
+        return messageMap.get(name);
+    }
+
+    public Message[] getMessages() {
+        return getProtocol().getMessages().getMessage();
+    }
+
+    public String getComponentPackage() {
+        String componentPackage = getProtocol().getComponentsPackage();
+        return componentPackage + (componentPackage.endsWith(".") ? "" : ".");
+    }
+
+    public String getMsgType(String messageName) {
+        String msgType = null;
+        if (getDictionary() != null) {
+            msgType = getDictionary().getMsgType(messageName);
+        }
+        if (StringUtils.isNullOrEmpty(msgType)) {
+            Message message = messageMap.get(messageName);
+            if (message != null) {
+                msgType = message.getMsgtype();
+            }
+        }
+        return msgType;
+    }
 
 	public String getNameForTag(Integer t) {
 		return getDictionary() != null ? getDictionary().getNameForTag(t) : null;

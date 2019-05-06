@@ -10,4 +10,6 @@ import org.junit.runner.RunWith;
     plugin = {"pretty", "html:target/cucumber"},
     features = "src/test/resources/scenarios/websocket_example.feature"
 )
-public class WebSocketTest { }
+public class WebSocketTest {
+
+}

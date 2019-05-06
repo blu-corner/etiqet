@@ -1,9 +1,16 @@
 package com.neueda.etiqet.core.common;
 
+import static com.neueda.etiqet.core.common.Environment.fileResolveEnvVars;
+import static com.neueda.etiqet.core.common.Environment.isEnvVarSet;
+import static com.neueda.etiqet.core.common.Environment.resolveEnvVars;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import com.neueda.etiqet.core.common.exceptions.EnvironmentVariableNotFoundException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -11,9 +18,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
-
-import static com.neueda.etiqet.core.common.Environment.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class EnvironmentTest {
 
@@ -51,47 +56,47 @@ public class EnvironmentTest {
         }
     }
 
-   @Test
-   public void testFileResolveEnvVars() throws EtiqetException {
-       String testFilePath = "${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties";
-       InputStream inputStream = fileResolveEnvVars(testFilePath);
-       assertNotNull(inputStream);
+    @Test
+    public void testFileResolveEnvVars() throws EtiqetException {
+        String testFilePath = "${etiqet.directory}/etiqet-core/src/test/resources/properties/test.properties";
+        InputStream inputStream = fileResolveEnvVars(testFilePath);
+        assertNotNull(inputStream);
 
-       BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-       final Map<String, String> properties =
-               reader.lines()
-                       .collect(Collectors.toMap(s -> s.split("=")[0], s -> s.split("=")[1]));
-       assertFalse(properties.isEmpty());
-       assertEquals(12, properties.size());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        final Map<String, String> properties =
+            reader.lines()
+                .collect(Collectors.toMap(s -> s.split("=")[0], s -> s.split("=")[1]));
+        assertFalse(properties.isEmpty());
+        assertEquals(12, properties.size());
 
-       assertEquals("config.properties", properties.get("fix.config.file.path"));
-       assertEquals("server.cfg", properties.get("fix.server.config.file.path"));
-       assertEquals("database.properties", properties.get("shell.database.properties.path"));
-       assertEquals("remoteshell.properties", properties.get("shell.remoteshell.properties.path"));
-       assertEquals("protocolConfig.properties", properties.get("config.protocol.file.path"));
-       assertEquals("true", properties.get("test.boolean.true"));
-       assertEquals("1", properties.get("test.boolean.convert.true"));
-       assertEquals("false", properties.get("test.boolean.false"));
-       assertEquals("0", properties.get("test.boolean.convert.false"));
-       assertEquals("20", properties.get("test.int"));
-       assertEquals("25.3", properties.get("test.double"));
+        assertEquals("config.properties", properties.get("fix.config.file.path"));
+        assertEquals("server.cfg", properties.get("fix.server.config.file.path"));
+        assertEquals("database.properties", properties.get("shell.database.properties.path"));
+        assertEquals("remoteshell.properties", properties.get("shell.remoteshell.properties.path"));
+        assertEquals("protocolConfig.properties", properties.get("config.protocol.file.path"));
+        assertEquals("true", properties.get("test.boolean.true"));
+        assertEquals("1", properties.get("test.boolean.convert.true"));
+        assertEquals("false", properties.get("test.boolean.false"));
+        assertEquals("0", properties.get("test.boolean.convert.false"));
+        assertEquals("20", properties.get("test.int"));
+        assertEquals("25.3", properties.get("test.double"));
 
-       String expected = "etiqet-core/src/test/resources/properties/testConfig.properties"
-               .replaceAll("/", Matcher.quoteReplacement(File.separator));
-       assertEquals(expected, properties.get("config.client.file.path"));
-   }
+        String expected = "etiqet-core/src/test/resources/properties/testConfig.properties"
+            .replaceAll("/", Matcher.quoteReplacement(File.separator));
+        assertEquals(expected, properties.get("config.client.file.path"));
+    }
 
-   @Test
-   public void testFileResolveEnvVarsBadPath() throws EtiqetException {
-       String testFilePath = "${etiqet.directory}/path/does/not/exist/test.properties";
-       InputStream inputStream = fileResolveEnvVars(testFilePath);
-       assertNull(inputStream);
+    @Test
+    public void testFileResolveEnvVarsBadPath() throws EtiqetException {
+        String testFilePath = "${etiqet.directory}/path/does/not/exist/test.properties";
+        InputStream inputStream = fileResolveEnvVars(testFilePath);
+        assertNull(inputStream);
 
-       inputStream = fileResolveEnvVars("");
-       assertNull(inputStream);
+        inputStream = fileResolveEnvVars("");
+        assertNull(inputStream);
 
-       inputStream = fileResolveEnvVars(null);
-       assertNull(inputStream);
-   }
+        inputStream = fileResolveEnvVars(null);
+        assertNull(inputStream);
+    }
 
 }

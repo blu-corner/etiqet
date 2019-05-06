@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -12,7 +14,7 @@
 
     <properties>
         <slf4j.version>1.7.25</slf4j.version>
-        <quickfixj.version>2.0.0</quickfixj.version>
+        <log4j.version>2.9.0</log4j.version>
         <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
 
@@ -24,7 +26,8 @@
             <id>default</id>
             <properties>
                 <etiqet.directory>${project.parent.basedir}</etiqet.directory>
-                <etiqet.global.config>${etiqet.directory}/config/etiqet.config.xml</etiqet.global.config>
+                <etiqet.global.config>${etiqet.directory}/config/etiqet.config.xml
+                </etiqet.global.config>
             </properties>
         </profile>
     </profiles>
@@ -52,7 +55,8 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/jacoco-coverage/</outputDirectory>
+                            <outputDirectory>${project.build.directory}/jacoco-coverage/
+                            </outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -62,7 +66,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.14.1</version>
                 <configuration>
-                    <argLine>-Detiqet.directory=${project.parent.basedir} -Detiqet.global.config=${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/etiqet.config.xml ${argLine}</argLine>
+                    <argLine>-Detiqet.directory=${project.parent.basedir}
+                        -Detiqet.global.config=${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/etiqet.config.xml
+                        ${argLine}
+                    </argLine>
                 </configuration>
             </plugin>
         </plugins>
@@ -137,17 +144,38 @@
             <version>2.6</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/log4j/log4j -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
+            <version>${slf4j.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.5</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>3.3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.4.0-b180725.0427</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

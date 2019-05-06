@@ -1,13 +1,20 @@
 package com.neueda.etiqet.rest;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.neueda.etiqet.core.EtiqetOptions;
 import com.neueda.etiqet.core.EtiqetTestRunner;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @RunWith(EtiqetTestRunner.class)
 @EtiqetOptions(

@@ -1,17 +1,12 @@
 package com.neueda.etiqet.fix.client.delegate;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import com.neueda.etiqet.core.client.delegate.BaseClientDelegate;
-import com.neueda.etiqet.core.common.exceptions.StopEncodingException;
+import com.neueda.etiqet.core.message.cdr.Cdr;
 import org.junit.Test;
 import org.mockito.Mockito;
-import quickfix.FieldNotFound;
-import quickfix.Message;
-import quickfix.field.DefaultCstmApplVerID;
-import quickfix.field.Password;
-import quickfix.field.SenderSubID;
-import quickfix.field.TargetSubID;
-
-import static org.junit.Assert.*;
 
 public class FixClientDelegateTest {
 
@@ -19,45 +14,21 @@ public class FixClientDelegateTest {
     public void testTransformBeforEncodingEmptyValues() {
         FixClientDelegate delegate = new FixClientDelegate();
         delegate.init(null, null);
-        Message msg = Mockito.spy(Message.class);
-
-        // Need to mock this using a Message class rather than concrete implementation
-        Mockito.when(msg.isAdmin()).thenReturn(Boolean.TRUE);
-
-        try {
-            delegate.transformBeforeEncoding(msg);
-        } catch (StopEncodingException e) {
-            fail("StopEncodingException was thrown during transformation: " + e.getMessage());
-        }
-
+        Cdr msg = new Cdr("0");
+        delegate.processMessage(msg);
         testEmptySubIDs(msg);
 
         delegate = new FixClientDelegate();
         delegate.init("", "");
-
-        try {
-            delegate.transformBeforeEncoding(msg);
-        } catch (StopEncodingException e) {
-            fail("StopEncodingException was thrown during transformation: " + e.getMessage());
-        }
-
+        delegate.processMessage(msg);
         testEmptySubIDs(msg);
     }
 
-    private void testEmptySubIDs(Message msg) {
-        assertTrue(msg.isAdmin());
-        try {
-            msg.getHeader().getField(new TargetSubID()).getValue();
-            fail("TargetSubID shouldn't have been set, so this should cause a FieldNotFound error");
-        } catch (Exception e) {
-            assertTrue(e instanceof FieldNotFound);
-        }
-        try {
-            msg.getHeader().getField(new SenderSubID()).getValue();
-            fail("SenderSubID shouldn't have been set, so this should cause a FieldNotFound error");
-        } catch (Exception e) {
-            assertTrue(e instanceof FieldNotFound);
-        }
+    private void testEmptySubIDs(Cdr msg) {
+        assertNull("TargetSubID shouldn't have been set, so this should cause a FieldNotFound error",
+            msg.getItem("TargetSubID"));
+        assertNull("SenderSubID shouldn't have been set, so this should cause a FieldNotFound error",
+            msg.getItem("SenderSubID"));
     }
 
     @Test
@@ -68,84 +39,48 @@ public class FixClientDelegateTest {
 
         FixClientDelegate delegate = new FixClientDelegate();
         delegate.init(targetSub, senderSub);
-        Message msg = Mockito.spy(Message.class);
+        Cdr msg = new Cdr("0");
 
-        // Need to mock this using a Message class rather than concrete implementation
-        Mockito.when(msg.isAdmin()).thenReturn(Boolean.TRUE);
-
-        try {
-            delegate.transformBeforeEncoding(msg);
-        } catch (StopEncodingException e) {
-            fail("StopEncodingException was thrown during transformation: " + e.getMessage());
-        }
-
-        assertTrue(msg.isAdmin());
-        try {
-            assertEquals(targetSub, msg.getHeader().getField(new TargetSubID()).getValue());
-            assertEquals(senderSub, msg.getHeader().getField(new SenderSubID()).getValue());
-        } catch (FieldNotFound e) {
-            fail("FieldNotFound exception was thrown while checking for TargetSubID / SenderSubID / Password: "
-                    + e.getMessage());
-        }
-
+        delegate.processMessage(msg);
+        assertEquals(targetSub, msg.getItem("TargetSubID").getStrval());
+        assertEquals(senderSub, msg.getItem("SenderSubID").getStrval());
         delegate.init(targetSub, senderSub, password);
 
-        try {
-            delegate.transformBeforeEncoding(msg);
-        } catch (StopEncodingException e) {
-            fail("StopEncodingException was thrown during transformation: " + e.getMessage());
-        }
-
-        assertTrue(msg.isAdmin());
+        delegate.processMessage(msg);
         testSubs(msg, targetSub, senderSub);
-        try {
-            assertEquals(password, msg.getField(new Password()).getValue());
-        } catch (FieldNotFound e) {
-            fail("FieldNotFound exception was thrown while checking for TargetSubID / SenderSubID / Password: "
-                + e.getMessage());
-        }
+        assertEquals(
+            "FieldNotFound exception was thrown while checking for TargetSubID / SenderSubID / Password: ",
+            password, msg.getItem("Password").getStrval());
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testTransformBeforeEncodingChainDelegate() {
         final String targetSub = "targetSub";
         final String senderSub = "senderSub";
 
-        Message msg = new Message();
+        Cdr msg = new Cdr("0");
 
         FixClientDelegate delegate = new FixClientDelegate(null);
         delegate.init(targetSub, senderSub);
 
-        try {
-            delegate.transformBeforeEncoding(msg);
-        } catch (StopEncodingException e) {
-            fail("StopEncodingException was thrown during transformation: " + e.getMessage());
-        }
+        delegate.processMessage(msg);
 
-        assertFalse(msg.isAdmin());
         testSubs(msg, targetSub, senderSub);
 
         BaseClientDelegate nextDelegate = Mockito.spy(BaseClientDelegate.class);
         delegate = new FixClientDelegate(nextDelegate);
         delegate.init(targetSub, senderSub);
 
-        try {
-            delegate.transformBeforeEncoding(msg);
-            testSubs(msg, targetSub, senderSub);
-            Mockito.verify(nextDelegate, Mockito.times(1)).transformBeforeEncoding(msg);
-        } catch (StopEncodingException e) {
-            fail("StopEncodingException was thrown during transformation: " + e.getMessage());
-        }
+        delegate.processMessage(msg);
+        testSubs(msg, targetSub, senderSub);
+        Mockito.verify(nextDelegate, Mockito.times(1)).processMessage(msg);
     }
 
-    private void testSubs(Message msg, String targetSub, String senderSub) {
-        try {
-            assertEquals(targetSub, msg.getHeader().getField(new TargetSubID()).getValue());
-            assertEquals(senderSub, msg.getHeader().getField(new SenderSubID()).getValue());
-        } catch (FieldNotFound e) {
-            fail("FieldNotFound exception was thrown while checking for TargetSubID / SenderSubID: " + e.getMessage());
-        }
+    private void testSubs(Cdr msg, String targetSub, String senderSub) {
+        assertEquals("TargetSubID not found in [" + msg.toString() + "]", targetSub,
+            msg.getItem("TargetSubID").getStrval());
+        assertEquals("SenderSubID not found in [" + msg.toString() + "]", senderSub,
+            msg.getItem("SenderSubID").getStrval());
     }
 
 }

@@ -1,9 +1,11 @@
 package com.neueda.etiqet.core.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ConfigTest {
 
@@ -31,7 +33,7 @@ public class ConfigTest {
         assertEquals(Long.valueOf(20L), config.getLong("test.int"));
         assertEquals(Double.valueOf(25.3), config.getDouble("test.double"));
         assertEquals("etiqet-core/src/test/resources/properties/testConfig.properties",
-                                config.getString("config.client.file.path"));
+            config.getString("config.client.file.path"));
 
         // test default values are set for properties that don't exist
         assertEquals(Config.DEFAULT_STRING, config.getString("property.does.not.exist"));

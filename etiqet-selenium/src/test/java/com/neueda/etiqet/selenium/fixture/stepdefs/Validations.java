@@ -1,7 +1,9 @@
 package com.neueda.etiqet.selenium.fixture.stepdefs;
 
-import cucumber.api.java.en.Then;
 import com.neueda.etiqet.selenium.fixture.SeleniumHandlers;
+import cucumber.api.java.en.Then;
+
+import java.util.ArrayList;
 
 public class Validations {
 
@@ -55,13 +57,23 @@ public class Validations {
         SeleniumHandlers.checkInnerTextContains(expectedSubText);
     }
 
+    @Then("^I? ?check multiple (?:the)? ?selected elements' inner text is equal to \"([^\"]*)\"$")
+    public void checkMultipleElementsInnerTextEquals(ArrayList<String> expectedText) {
+        SeleniumHandlers.checkMultipleElementsInnerTextEquals(expectedText);
+    }
+
+    @Then("^I? ?check multiple (?:the)? ?selected elements' inner text contains \"([^\"]*)\"$")
+    public void checkMultipleElementsInnerTextContains(ArrayList<String> expectedSubText) {
+        SeleniumHandlers.checkMultipleElementsInnerTextContains(expectedSubText);
+    }
+
     @Then("^I? ?check if (?:the)? ?selected element's descendents contain the text \"([^\"]*)\"$")
     public void checkDescendents(String expectedText) {
         SeleniumHandlers.checkDescendents(expectedText);
     }
 
     @Then("^I? ?check (?:the)? ?attribute \"([^\"]*)\" exists$")
-    public void iCheckAttributeExists(String attribute) {
+    public void checkAttributeExists(String attribute) {
         SeleniumHandlers.checkAttributeExists(attribute);
     }
 
@@ -159,7 +171,7 @@ public class Validations {
     @Then("^I? ?check the element \"([^\"]*)\"'s attribute \"([^\"]*)\"'s value is equal to " +
         "the element \"([^\"]*)\"'s attribute \"([^\"]*)\"'s value$")
     public void checkTwoElementsAttrValIsEqual(String firstElement, String firstAttr, String secondElement,
-                                               String secondAttr) {
+        String secondAttr) {
         SeleniumHandlers.checkTwoElementsAttrValIsEqual(firstElement, firstAttr, secondElement, secondAttr);
     }
 

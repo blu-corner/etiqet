@@ -2,22 +2,25 @@ package com.neueda.etiqet.core.config.xml;
 
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
-import javax.xml.bind.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.UnmarshallerHandler;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 /**
  * Generic XML parser for Etiqet. This class can be used to parse {@link com.neueda.etiqet.core.config.dtos.EtiqetConfiguration}s,
@@ -39,15 +42,12 @@ public class XmlParser {
      *
      * Suppresses warnings of unchecked casts from the XML reader into the return type.
      *
-     * @param xmlPath
-     *          path to the XML file to be parsed
-     * @param clazz
-     *          Class reference of T
-     * @param <T>
-     *          Type of object to be returns
+     * @param xmlPath path to the XML file to be parsed
+     * @param clazz Class reference of T
+     * @param <T> Type of object to be returns
      * @return instance of the class provided as parse from the XML
-     * @throws EtiqetException
-     *          when an error occurs trying to parse <code>xmlPath</code> as an instance of <code>clazz</code>
+     * @throws EtiqetException when an error occurs trying to parse <code>xmlPath</code> as an instance of
+     * <code>clazz</code>
      * @see #getSchemaFile()
      */
     @SuppressWarnings("unchecked")
@@ -86,8 +86,8 @@ public class XmlParser {
      * Validates the instance comply with the Etiqet schema
      *
      * @param instance instance to be validated against the Etiqet schema
-     * @param source   where the instance originated from
-     * @param <T>      type of class to be validates
+     * @param source where the instance originated from
+     * @param <T> type of class to be validates
      * @throws EtiqetException when the object doesn't comply to the schema
      * @see #SCHEMA_FILE
      */
@@ -102,7 +102,7 @@ public class XmlParser {
             marshaller.marshal(instance, writer);
         } catch (JAXBException e) {
             throw new EtiqetException("Unable to successfully validate the class " + source.getName()
-                    + " against " + SCHEMA_FILE, e);
+                + " against " + SCHEMA_FILE, e);
         }
     }
 
@@ -119,7 +119,7 @@ public class XmlParser {
         URL protocolSchema = getClass().getClassLoader().getResource(getSchemaFile());
         if (protocolSchema == null) {
             throw new EtiqetException("Could not read " + getSchemaFile()
-                    + ", please check your classpath configuration");
+                + ", please check your classpath configuration");
         }
         Schema schema;
         try {
