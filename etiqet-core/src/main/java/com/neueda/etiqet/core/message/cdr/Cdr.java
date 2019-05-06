@@ -5,11 +5,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Cdr {
-
-    private final Map<String, CdrItem> items = new LinkedHashMap<>();
     protected String msgType;
+    private final Map<String, CdrItem> items = new LinkedHashMap<>();
 
-    public Cdr(String typeId) {
+    public Cdr (String typeId) {
         this.msgType = typeId;
     }
 
@@ -53,9 +52,9 @@ public class Cdr {
 
     public String getAsString(String key) {
         CdrItem i = getItem(key);
-        return (i != null) ? i.toString() : null;
+        return (i != null)? i.toString (): null;
     }
-
+    
     public CdrItem getItem(String key) {
         return items.get(key);
     }
@@ -78,10 +77,10 @@ public class Cdr {
     public void clear() {
         items.clear();
     }
-
+    
     public Map<String, CdrItem> getItems() {
-        return items;
-    }
+		return items;
+	}
 
     @Override
     public boolean equals(Object o) {
@@ -100,15 +99,18 @@ public class Cdr {
         return Objects.hash(msgType, items);
     }
 
-    @Override
+	@Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-
-        for (Map.Entry<String, CdrItem> entry : items.entrySet()) {
-            builder.append("[key=").append(entry.getKey()).append(", value=")
-                .append(entry.getValue().toString()).append("]|");
+    	StringBuilder builder = new StringBuilder();
+    	
+    	for (Map.Entry<String, CdrItem> entry : items.entrySet()) {
+            builder.append("[key=")
+                   .append(entry.getKey())
+                   .append(", value=")
+                   .append(entry.getValue().toString())
+                   .append("]|");
         }
-
-        return builder.toString();
+    	
+    	return builder.toString();
     }
 }
