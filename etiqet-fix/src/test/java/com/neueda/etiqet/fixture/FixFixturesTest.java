@@ -1,10 +1,7 @@
 package com.neueda.etiqet.fixture;
 
-import com.neueda.etiqet.core.common.cdr.Cdr;
-import com.neueda.etiqet.core.common.cdr.CdrItem;
-import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import com.neueda.etiqet.core.util.ArrayUtils;
-import edu.emory.mathcs.backport.java.util.Arrays;
+import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.cdr.CdrItem;
 import org.junit.Before;
 import org.junit.Test;
 
