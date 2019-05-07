@@ -1,6 +1,8 @@
 package com.neueda.etiqet.core.message.cdr;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,6 +77,14 @@ public class CdrItem {
 
     public void setCdrs(List<Cdr> cdrs) {
         this.cdrs = cdrs;
+        this.type = CdrItemType.CDR_ARRAY;
+    }
+
+    public void addCdrToList(Cdr cdr) {
+        if(cdrs == null) {
+            this.cdrs = new ArrayList<>();
+        }
+        cdrs.add(cdr);
         this.type = CdrItemType.CDR_ARRAY;
     }
 

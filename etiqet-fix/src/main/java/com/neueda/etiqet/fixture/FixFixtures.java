@@ -81,13 +81,7 @@ public class FixFixtures {
         CdrItem group = getGroup(message, messageName, groupType);
 
         Cdr fields = ParserUtils.stringToCdr(groupType, handlers.preTreatParams(params));
-        List<Cdr> cdrs = group.getCdrs();
-        if (cdrs == null) {
-            cdrs = new ArrayList<>();
-        }
-        cdrs.add(fields);
-        group.setCdrs(cdrs);
-        message.getItems().put(groupType, group);
+        group.addCdrToList(fields);
     }
 
     /**
