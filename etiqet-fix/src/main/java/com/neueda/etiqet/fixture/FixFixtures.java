@@ -143,11 +143,13 @@ public class FixFixtures {
     }
 
     /**
-     * @param message
-     * @param messageName
-     * @param groupName
-     * @param remainingGroups
-     * @return
+     * Gets a nested group from the message provided
+     *
+     * @param message         Cdr message
+     * @param messageName     name of the message, for logging purposes only
+     * @param groupName       Initial group name
+     * @param remainingGroups Remaining groups, if split by <code>/</code> character
+     * @return CdrItem representing the group
      */
     private CdrItem getNestedGroup(Cdr message, String messageName, String groupName, String[] remainingGroups) {
         CdrItem group = getGroupWithFilter(message, groupName);
