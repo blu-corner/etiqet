@@ -1,7 +1,10 @@
 package com.neueda.etiqet.core.message.cdr;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CdrItem {
 
@@ -77,6 +80,33 @@ public class CdrItem {
         this.type = CdrItemType.CDR_ARRAY;
     }
 
+    public void addCdrToList(Cdr cdr) {
+        if(cdrs == null) {
+            this.cdrs = new ArrayList<>();
+        }
+        cdrs.add(cdr);
+        this.type = CdrItemType.CDR_ARRAY;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CdrItem cdrItem = (CdrItem) o;
+        return type == cdrItem.type &&
+            Objects.equals(intval, cdrItem.intval) &&
+            Objects.equals(strval, cdrItem.strval) &&
+            Objects.equals(doubleval, cdrItem.doubleval) &&
+            Objects.equals(boolVal, cdrItem.boolVal) &&
+            Objects.equals(cdrs, cdrItem.cdrs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, intval, strval, doubleval, boolVal, cdrs);
+    }
+
+    @Override
     public String toString() {
         switch (type) {
             case CDR_INTEGER:

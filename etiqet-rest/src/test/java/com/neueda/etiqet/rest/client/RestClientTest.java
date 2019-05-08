@@ -1,8 +1,10 @@
 package com.neueda.etiqet.rest.client;
 
 import com.google.api.client.http.HttpRequestFactory;
+import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.rest.RestConfig;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsgTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,9 +26,10 @@ public class RestClientTest {
 
     @Before
     public void setUp() throws EtiqetException {
+        GlobalConfig.getInstance(RestConfig.class);
         // override the HttpRequestFactory and Config objects for testing purposes
-        primaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/client.cfg";
-        secondaryConfig = "${etiqet.directory}/etiqet-rest/src/test/resources/config/ok/secondary_client.cfg";
+        primaryConfig = "${user.dir}/src/test/resources/config/ok/client.cfg";
+        secondaryConfig = "${user.dir}/src/test/resources/config/ok/secondary_client.cfg";
         testCdr = new Cdr("test_01");
         testCdr.set("$httpEndpoint", "/test/api");
         testCdr.set("$httpVerb", "GET");
