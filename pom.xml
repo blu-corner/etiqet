@@ -26,6 +26,7 @@
     <module>etiqet-transport-qfj</module>
     <module>etiqet-transport-rabbitmq-gpb</module>
       <module>etiqet-fix-common</module>
+      <module>etiqet-transport-solace</module>
   </modules>
 
   <profiles>

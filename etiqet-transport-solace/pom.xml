@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>etiqet-parent</artifactId>
+        <groupId>com.neueda.etiqet</groupId>
+        <version>1.2-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>etiqet-transport-solace</artifactId>
+
+    <properties>
+        <etiqet.core.version>1.2-SNAPSHOT</etiqet.core.version>
+    </properties>
+
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>default</id>
+            <properties>
+                <etiqet.directory>${project.parent.basedir}</etiqet.directory>
+                <etiqet.global.config>${etiqet.directory}/config/etiqet.config.xml</etiqet.global.config>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+
+
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.neueda.etiqet</groupId>
+            <artifactId>etiqet-core</artifactId>
+            <version>${etiqet.core.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.rabbitmq/amqp-client -->
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.googlecode.protobuf-java-format/protobuf-java-format -->
+        <dependency>
+            <groupId>com.googlecode.protobuf-java-format</groupId>
+            <artifactId>protobuf-java-format</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.solacesystems</groupId>
+            <artifactId>sol-jms</artifactId>
+            <version>10.5.0</version>
+        </dependency>
+    </dependencies>
+
+</project>

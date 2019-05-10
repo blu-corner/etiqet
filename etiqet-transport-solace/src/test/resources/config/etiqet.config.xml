@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
+    <protocols>
+        <protocol name="solace">
+            <client defaultConfig="${user.dir}/src/test/resources/config/solace.cfg"
+                    impl = "com.neueda.etiqet.core.client.GenericClient"
+                    transportImpl="com.neueda.etiqet.transport.solace.SolaceTransport"
+                    codecImpl="com.neueda.etiqet.core.json.JsonCodec">
+                <delegates>
+                    <delegate key="sink" impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate"/>
+                </delegates>
+            </client>
+            <messages ref="${user.dir}/src/test/resources/fix-config/etiqet-fix-messages.xml"/>
+        </protocol>
+    </protocols>
+</etiqetConfiguration>
