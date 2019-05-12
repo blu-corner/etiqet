@@ -6,11 +6,12 @@
                     impl = "com.neueda.etiqet.core.client.GenericClient"
                     transportImpl="com.neueda.etiqet.transport.solace.SolaceTransport"
                     codecImpl="com.neueda.etiqet.core.json.JsonCodec">
-                <delegates>
-                    <delegate key="sink" impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate"/>
-                </delegates>
             </client>
-            <messages ref="${user.dir}/src/test/resources/fix-config/etiqet-fix-messages.xml"/>
+            <messages>
+                <message name="TestMessage">
+                    <implementation>java.lang.String</implementation>
+                </message>
+            </messages>
         </protocol>
     </protocols>
 </etiqetConfiguration>

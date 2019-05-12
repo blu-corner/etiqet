@@ -1,105 +1,105 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.neueda.etiqet</groupId>
-  <artifactId>etiqet-parent</artifactId>
-  <version>1.2-SNAPSHOT</version>
-  <packaging>pom</packaging>
+    <groupId>com.neueda.etiqet</groupId>
+    <artifactId>etiqet-parent</artifactId>
+    <version>1.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-  <name>Etiqet Parent Project</name>
+    <name>Etiqet Parent Project</name>
 
-  <properties>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <log.version>2.9.1</log.version>
-  </properties>
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <log.version>2.9.1</log.version>
+    </properties>
 
-  <modules>
-    <module>etiqet-core</module>
-    <module>etiqet-fix</module>
-    <module>etiqet-rest</module>
-    <module>etiqet-websocket</module>
-    <module>etiqet-selenium</module>
-    <module>etiqet-transport-qfj</module>
-    <module>etiqet-transport-rabbitmq-gpb</module>
-      <module>etiqet-fix-common</module>
-      <module>etiqet-transport-solace</module>
-  </modules>
+    <modules>
+        <module>etiqet-core</module>
+        <module>etiqet-fix-common</module>
+        <module>etiqet-fix</module>
+        <module>etiqet-rest</module>
+        <module>etiqet-websocket</module>
+        <module>etiqet-selenium</module>
+        <module>etiqet-transport-qfj</module>
+        <module>etiqet-transport-rabbitmq-gpb</module>
+        <module>etiqet-transport-solace</module>
+    </modules>
 
-  <profiles>
-    <profile>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <id>default</id>
-      <properties>
-        <etiqet.directory>${project.basedir}</etiqet.directory>
-        <etiqet.global.config>${etiqet.directory}/config/etiqet.config.xml</etiqet.global.config>
-      </properties>
-    </profile>
-  </profiles>
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>default</id>
+            <properties>
+                <etiqet.directory>${project.basedir}</etiqet.directory>
+                <etiqet.global.config>${etiqet.directory}/config/etiqet.config.xml</etiqet.global.config>
+            </properties>
+        </profile>
+    </profiles>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>cloudsmith-api</id>
-      <name>Cloudsmith API Releases</name>
-      <url>https://dl.cloudsmith.io/public/cloudsmith/api/maven</url>
-    </pluginRepository>
-  </pluginRepositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>cloudsmith-api</id>
+            <name>Cloudsmith API Releases</name>
+            <url>https://dl.cloudsmith.io/public/cloudsmith/api/maven</url>
+        </pluginRepository>
+    </pluginRepositories>
 
-  <repositories>
-    <repository>
-      <id>cloudsmith-api</id>
-      <name>Cloudsmith API Releases</name>
-      <url>https://dl.cloudsmith.io/public/cloudsmith/api/maven</url>
-    </repository>
-  </repositories>
+    <repositories>
+        <repository>
+            <id>cloudsmith-api</id>
+            <name>Cloudsmith API Releases</name>
+            <url>https://dl.cloudsmith.io/public/cloudsmith/api/maven</url>
+        </repository>
+    </repositories>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.25</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.25</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>2.11.1</version>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.25</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.11.1</version>
+        </dependency>
+    </dependencies>
 
-  <build>
-    <extensions>
-      <extension>
-        <groupId>io.cloudsmith.maven.wagon</groupId>
-        <artifactId>cloudsmith-maven-wagon</artifactId>
-        <version>0.4.0</version>
-      </extension>
-    </extensions>
-  </build>
+    <build>
+        <extensions>
+            <extension>
+                <groupId>io.cloudsmith.maven.wagon</groupId>
+                <artifactId>cloudsmith-maven-wagon</artifactId>
+                <version>0.4.0</version>
+            </extension>
+        </extensions>
+    </build>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>cloudsmith-snapshots</id>
-      <url>cloudsmith+https://api.cloudsmith.io/neueda/etiqet</url>
-    </snapshotRepository>
-    <repository>
-      <id>cloudsmith-releases</id>
-      <url>cloudsmith+https://api.cloudsmith.io/neueda/etiqet</url>
-    </repository>
-  </distributionManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>cloudsmith-snapshots</id>
+            <url>cloudsmith+https://api.cloudsmith.io/neueda/etiqet</url>
+        </snapshotRepository>
+        <repository>
+            <id>cloudsmith-releases</id>
+            <url>cloudsmith+https://api.cloudsmith.io/neueda/etiqet</url>
+        </repository>
+    </distributionManagement>
 </project>
