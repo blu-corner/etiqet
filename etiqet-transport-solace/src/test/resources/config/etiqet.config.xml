@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
+    <protocols>
+        <protocol name="solace">
+            <client defaultConfig="${user.dir}/src/test/resources/config/solace.cfg"
+                    impl = "com.neueda.etiqet.core.client.GenericClient"
+                    transportImpl="com.neueda.etiqet.transport.solace.SolaceTransport"
+                    codecImpl="com.neueda.etiqet.core.json.JsonCodec">
+            </client>
+            <messages>
+                <message name="TestMessage">
+                    <implementation>java.lang.String</implementation>
+                </message>
+            </messages>
+        </protocol>
+    </protocols>
+</etiqetConfiguration>

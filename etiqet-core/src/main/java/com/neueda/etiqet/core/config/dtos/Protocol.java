@@ -110,8 +110,7 @@ public class Protocol implements Serializable {
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
-        out.append("Protocol [name = " + name + ", com.neueda.etiqet.quickfix.dictionary = " + dictionary.toString()
-            + ", components_package = " + componentsPackage + ", messages = ");
+        out.append("Protocol [name = " + name + ", messages = ");
 
         if (messages != null && messages.getMessage() != null && messages.getMessage().length > 0) {
             for (Message message : messages.getMessage()) {
