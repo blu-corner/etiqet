@@ -2,8 +2,6 @@ package com.neueda.etiqet.solace;
 
 import com.neueda.etiqet.core.EtiqetOptions;
 import com.neueda.etiqet.core.EtiqetTestRunner;
-import cucumber.api.CucumberOptions;
-import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 /**
