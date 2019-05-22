@@ -25,6 +25,7 @@ import quickfix.SessionID;
 import quickfix.SessionNotFound;
 import quickfix.SessionSettings;
 import quickfix.SocketInitiator;
+import quickfix.field.CheckSum;
 
 public class QfjTransport implements Transport, Application {
 
@@ -45,6 +46,8 @@ public class QfjTransport implements Transport, Application {
     // Replace/Add the fields from the source message
     source.iterator().forEachRemaining(f -> {
       final int fid = f.getField();
+      if(fid == 10) {return;}
+
       if (target.getHeader().isSetField(fid)) {
         target.getHeader().removeField(fid);
         target.getHeader().setField(fid, f);
@@ -57,6 +60,7 @@ public class QfjTransport implements Transport, Application {
         target.setField(fid, f);
       }
     });
+    target.toString();
   }
 
   @Override

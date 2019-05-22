@@ -33,14 +33,31 @@ public class FixClientDelegateTest {
     }
 
     @Test
-    public void testTransformBeforeEncoding() {
+    public void testTransformBeforeEncodingNoLogon() {
+        final String targetSub = "targetSub";
+        final String senderSub = "senderSub";
+
+        FixClientDelegate delegate = new FixClientDelegate();
+        delegate.init(targetSub, senderSub);
+        Cdr msg = new Cdr("0");
+
+        delegate.processMessage(msg);
+        assertEquals(targetSub, msg.getItem("TargetSubID").getStrval());
+        assertEquals(senderSub, msg.getItem("SenderSubID").getStrval());
+
+        delegate.processMessage(msg);
+        testSubs(msg, targetSub, senderSub);
+    }
+
+    @Test
+    public void testTransformBeforeEncodingWithLogon() {
         final String targetSub = "targetSub";
         final String senderSub = "senderSub";
         final String password = "password";
 
         FixClientDelegate delegate = new FixClientDelegate();
         delegate.init(targetSub, senderSub);
-        Cdr msg = new Cdr("0");
+        Cdr msg = new Cdr("Logon");
 
         delegate.processMessage(msg);
         assertEquals(targetSub, msg.getItem("TargetSubID").getStrval());
