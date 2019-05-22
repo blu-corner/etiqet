@@ -8,6 +8,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.fail;
+
 public class GenericClient extends Client implements TransportDelegate<String, Cdr> {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
@@ -74,5 +76,10 @@ public class GenericClient extends Client implements TransportDelegate<String, C
     @Override
     public void fromApp(Cdr msg, String sid) {
         logger.info("<<< Received from session id [" + sid + "] message [" + msg.toString() + "]");
+        try {
+            msgQueue.put(msg);
+        } catch (InterruptedException e) {
+            fail("Unable to add message to application queue");
+        }
     }
 }
