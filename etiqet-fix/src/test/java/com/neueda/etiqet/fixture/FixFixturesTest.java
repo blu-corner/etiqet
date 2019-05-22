@@ -36,6 +36,28 @@ public class FixFixturesTest {
         assertNotNull(parties);
         assertNotNull(parties.getCdrs());
     }
+    
+    @Test
+    public void testCreateRepeatingGroupWithFields() {
+        Cdr fixMsg = new Cdr("TEST_FIX");
+        when(handlers.getSentMessage("testMessage")).thenReturn(fixMsg);
+        
+        when(handlers.preTreatParams(anyString())).thenCallRealMethod();
+        
+        fixtures.createRepeatingGroupWithFields("NoSides", "Side=1,Currency=GBP", "testMessage");
+
+        assertTrue(fixMsg.containsKey("NoSides"));
+        CdrItem parties = fixMsg.getItem("NoSides");
+        assertNotNull(parties);
+        List<Cdr> childCdrs = parties.getCdrs();
+        assertNotNull(childCdrs);
+        assertEquals(1, childCdrs.size());
+        Cdr child = childCdrs.get(0);
+        assertTrue(child.containsKey("Side"));
+        assertEquals("1", child.getAsString("Side"));
+        assertTrue(child.containsKey("Currency"));
+        assertEquals("GBP", child.getAsString("Currency"));
+    }
 
     @Test
     public void testCreateRepeatingGroup_MessageNotFound() {
@@ -349,6 +371,55 @@ public class FixFixturesTest {
             assertEquals("Requested Test doesn't appear to be a group, was CDR_STRING expected:<CDR_ARRAY> but was:<CDR_STRING>",
                          t.getMessage());
         }
+    }
+
+    @Test
+    public void testCreateRepeatingGroupInGroup() {
+        Cdr parent = new Cdr("Parent");
+        CdrItem groupItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        groupItem.setCdrs(new ArrayList<>());
+        parent.setItem("Child", groupItem);
+
+        when(handlers.getSentMessage("Parent")).thenReturn(parent);
+        fixtures.createRepeatingGroupInGroup("Child2", "Child", "Parent");
+
+        assertEquals(1, groupItem.getCdrs().size());
+        Cdr child = groupItem.getCdrs().get(0);
+        assertEquals("Child2", child.getType());
+    }
+
+    @Test
+    public void testCreateRepeatingGroupInGroup_NoCdrList() {
+        Cdr parent = new Cdr("Parent");
+        CdrItem groupItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        parent.setItem("Child", groupItem);
+
+        when(handlers.getSentMessage("Parent")).thenReturn(parent);
+        fixtures.createRepeatingGroupInGroup("Child2", "Child", "Parent");
+
+        assertNotNull(groupItem.getCdrs());
+        Cdr child = groupItem.getCdrs().get(0);
+        assertEquals("Child2", child.getType());
+    }
+
+    @Test
+    public void testCreateRepeatingGroupWithFieldsInGroup() {
+        Cdr parent = new Cdr("Parent");
+        CdrItem groupItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        parent.setItem("Child", groupItem);
+
+        when(handlers.preTreatParams(anyString())).thenCallRealMethod();
+        when(handlers.getSentMessage("Parent")).thenReturn(parent);
+        fixtures.createRepeatingGroupWithFieldsInGroup("Child2", "field1=value1,field2=value2", "Child", "Parent");
+
+        assertNotNull(groupItem.getCdrs());
+        assertEquals(1, groupItem.getCdrs().size());
+        Cdr child = groupItem.getCdrs().get(0);
+        assertEquals("Child2", child.getType());
+        assertTrue(child.containsKey("field1"));
+        assertEquals("value1", child.getAsString("field1"));
+        assertTrue(child.containsKey("field2"));
+        assertEquals("value2", child.getAsString("field2"));
     }
 
 }

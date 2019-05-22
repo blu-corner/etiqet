@@ -38,6 +38,24 @@ public class FixFixtures {
     }
 
     /**
+     * <p>Creates an empty group of the given type in the message specified.</p>
+     *
+     * <p><b>Example usage:</b> <code>Then create a repeating group "NoSides" with "Side=1,Currency=GBP" in message "TradeCaptureReport"</code></p>
+     *
+     * @param groupType   Name of the repeating group
+     * @param params      Field values to go into the new group
+     * @param messageName Name of the message to add the group to
+     */
+    @Then("create a repeating group \"([^\"]*)\" with \"([^\"]*)\" in message \"([^\"]*)\"")
+    public void createRepeatingGroupWithFields(String groupType, String params, String messageName) {
+        Cdr message = getMessage(messageName);
+        CdrItem groupItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        Cdr child = ParserUtils.stringToCdr(groupType, handlers.preTreatParams(params));
+        groupItem.addCdrToList(child);
+        message.setItem(groupType, groupItem);
+    }
+
+    /**
      * <p>Creates an empty group of the given type into a pre-existing group within the message specified.</p>
      *
      * <p><b>Example usage:</b> <code>Then create a repeating group "Parties" in group "NoSides" in message "TradeCaptureReport"</code></p>
@@ -50,13 +68,32 @@ public class FixFixtures {
      */
     @Then("create a repeating group \"([^\"]*)\" in group \"([^\"]*)\" in message \"([^\"]*)\"")
     public void createRepeatingGroupInGroup(String groupType, String existingGroup, String messageName) {
+        createRepeatingGroupWithFieldsInGroup(groupType, null, existingGroup, messageName);
+    }
+
+    /**
+     * <p>Creates a group with the fields provided of the given type into a pre-existing group within the message
+     * specified</p>
+     *
+     * <p><b>Example usage:</b> <code>Then create a repeating group "Parties" with "PartyID=123,PartyRole=13" in group "NoSides" in message "TradeCaptureReport"</code></p>
+     *
+     * <p>Group types may use XPath style mappings for nested groups, e.g. <code>NoSides/Parties[PartyID=MyBank123]</code></p>
+     *
+     * @param groupType     Name of the new repeating group to be added
+     * @param params        Field values to go into the new group
+     * @param existingGroup Name of the existing repeating group the new group should be added to
+     * @param messageName   Name of the message to add the group to
+     */
+    @Then("create a repeating group \"([^\"]*)\" with \"([^\"]*)\" in group \"([^\"]*)\" in message \"([^\"]*)\"")
+    public void createRepeatingGroupWithFieldsInGroup(String groupType, String params, String existingGroup, String messageName) {
         Cdr message = getMessage(messageName);
         CdrItem group = getGroup(message, messageName, existingGroup);
         List<Cdr> cdrs = group.getCdrs();
         if (cdrs == null) {
             cdrs = new ArrayList<>();
         }
-        Cdr newGroup = new Cdr(groupType);
+        Cdr newGroup = ParserUtils.stringToCdr(groupType, handlers.preTreatParams(params));
+
         addGroupToCdr(groupType, newGroup);
         cdrs.add(newGroup);
         group.setCdrs(cdrs);
@@ -197,7 +234,9 @@ public class FixFixtures {
         assertEquals("Field " + name + " was not a group", CdrItem.CdrItemType.CDR_ARRAY, childItem.getType());
         assertTrue("Could not find matching group " + groupName, childItem.getCdrs()
                                                                           .stream()
-                                                                          .anyMatch(cdr -> cdr.containsKey(field) && cdr.getAsString(field).equals(value)));
+                                                                          .anyMatch(cdr -> cdr.containsKey(field) && cdr
+                                                                              .getAsString(field)
+                                                                              .equals(value)));
         return childItem;
     }
 
