@@ -428,6 +428,16 @@ public class EtiqetFixtures {
         }
     }
 
+    @Then("^wait for \"([^\"]*)\" to receive an? \"([^\"]*)\" within (\\d+) milliseconds?$")
+    public void namedClientDefaultResponseDuringMs(String clientName, String t, int time) throws EtiqetException {
+        if (EtiqetHandlers.RESPONSE.equals(t)) {
+            handlers.waitForResponse(EtiqetHandlers.DEFAULT_MESSAGE_NAME, clientName, time);
+        }
+        else {
+            handlers.waitForResponseOfType(EtiqetHandlers.DEFAULT_MESSAGE_NAME, clientName, t, time, false);
+        }
+    }
+
     // Checks
     @Then("^check for \"([^\"]*)\"$")
     public void checkLastResponseContainsKeyValueList(String params) {
@@ -522,6 +532,18 @@ public class EtiqetFixtures {
     @Then("^wait for an? \"([^\"]*)\" message with \"([^\"]*)\"$")
     public void waitForAWith(String messageType, String params) throws EtiqetException {
         waitForAMessageDefaultTimeout(messageType);
+        checkLastResponseContainsKeyValueList(params);
+    }
+
+    @Then("^wait for \"([^\"]*)\" to receive an? \"([^\"]*)\" with \"([^\"]*)\"$")
+    public void checkClientResponseContainsKeyValueList(String clientName, String t, String params) throws EtiqetException {
+        namedClientDefaultResponse(clientName, t);
+        checkLastResponseContainsKeyValueList(params);
+    }
+
+    @Then("^wait for \"([^\"]*)\" to receive an? \"([^\"]*)\" with \"([^\"]*)\" within (\\d+) milliseconds?$")
+    public void checkClientResponseContainsKeyValueList(String clientName, String t, String params, int time) throws EtiqetException {
+        namedClientDefaultResponseDuringMs(clientName, t, time);
         checkLastResponseContainsKeyValueList(params);
     }
 
