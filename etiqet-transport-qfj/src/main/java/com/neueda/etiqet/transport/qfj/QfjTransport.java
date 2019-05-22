@@ -25,7 +25,6 @@ import quickfix.SessionID;
 import quickfix.SessionNotFound;
 import quickfix.SessionSettings;
 import quickfix.SocketInitiator;
-import quickfix.field.CheckSum;
 
 public class QfjTransport implements Transport, Application {
 
@@ -42,11 +41,13 @@ public class QfjTransport implements Transport, Application {
   private int maxRetries;
   private SessionSettings sessionSettings;
 
-  private static void replaceMesageFields(Message target, Message source) {
+  private static void replaceMessageFields(Message target, Message source) {
     // Replace/Add the fields from the source message
     source.iterator().forEachRemaining(f -> {
       final int fid = f.getField();
-      if(fid == 10) {return;}
+      if(fid == 10) {
+          return;
+      }
 
       if (target.getHeader().isSetField(fid)) {
         target.getHeader().removeField(fid);
@@ -60,7 +61,6 @@ public class QfjTransport implements Transport, Application {
         target.setField(fid, f);
       }
     });
-    target.toString();
   }
 
   @Override
@@ -147,7 +147,7 @@ public class QfjTransport implements Transport, Application {
   @Override
   public void send(Cdr msg, String sessionId) throws EtiqetException {
     try {
-      Session.sendToTarget(codec.encode(msg), sessionIds.get(sessionId));
+      Session.sendToTarget(codec.encode(delegate.processMessage(msg)), sessionIds.get(sessionId));
     } catch (SessionNotFound sessionNotFound) {
       sessionNotFound.printStackTrace();
     }
@@ -161,7 +161,7 @@ public class QfjTransport implements Transport, Application {
   public void onLogon(SessionID sessionID) {
     // Map the session ids and link the responders
     for (Session s : socketInitiator.getManagedSessions()) {
-      s.setResponder(new InterceptorResponder(s.getResponder(), delegate, codec));
+      s.setResponder(new InterceptorResponder(s.getResponder()));
       sessionIds.put(s.getSessionID().toString(), s.getSessionID());
     }
     // Delegate to application init after logon
@@ -214,7 +214,7 @@ public class QfjTransport implements Transport, Application {
     try {
       Cdr cdr = delegate.processMessage(codec.decode(msg));
       transDel.toApp(cdr, sessionID.toString());
-      replaceMesageFields(msg, codec.encode(cdr));
+      replaceMessageFields(msg, codec.encode(cdr));
     } catch (EtiqetException e) {
       throw new EtiqetRuntimeException("Error sending admin message [" + msg.toString() + "]", e);
     }
@@ -223,9 +223,7 @@ public class QfjTransport implements Transport, Application {
   @Override
   public void toApp(Message msg, SessionID sessionID) {
     try {
-      Cdr cdr = delegate.processMessage(codec.decode(msg));
-      transDel.toApp(cdr, sessionID.toString());
-      replaceMesageFields(msg, codec.encode(cdr));
+      transDel.toApp(codec.decode(msg), sessionID.toString());
     } catch (EtiqetException e) {
       throw new EtiqetRuntimeException("Error sending app message [" + msg.toString() + "]", e);
     }
