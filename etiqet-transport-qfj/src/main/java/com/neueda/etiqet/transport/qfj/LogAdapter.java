@@ -8,6 +8,7 @@ public class LogAdapter implements Log {
 
     private final Logger logger;
     private Level level;
+
     public LogAdapter(String context, Level level) {
         this.level = level;
         logger = LoggerFactory.getLogger("FIX [" + context + "]");

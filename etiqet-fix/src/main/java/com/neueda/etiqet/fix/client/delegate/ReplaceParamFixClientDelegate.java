@@ -3,6 +3,7 @@ package com.neueda.etiqet.fix.client.delegate;
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
+
 import java.util.Map;
 
 /**

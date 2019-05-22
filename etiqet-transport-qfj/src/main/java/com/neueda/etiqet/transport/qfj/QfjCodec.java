@@ -10,15 +10,14 @@ import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.util.IntegerValidator;
 import com.neueda.etiqet.core.util.ParserUtils;
-
-import java.util.*;
-
 import com.neueda.etiqet.fix.message.dictionary.Component;
 import com.neueda.etiqet.fix.message.dictionary.FixDictionary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import quickfix.*;
 import quickfix.field.MsgType;
+
+import java.util.*;
 
 public class QfjCodec implements Codec<Cdr, Message> {
 
@@ -119,8 +118,8 @@ public class QfjCodec implements Codec<Cdr, Message> {
      * Attempts to parse a group from the CdrItem passed
      *
      * @param message
-     * @param tag  Tag that begins the group
-     * @param item CdrItem containing the nested fields
+     * @param tag     Tag that begins the group
+     * @param item    CdrItem containing the nested fields
      * @return {@link Group} to be added to the FIX message
      * @throws UnknownTagException when there is no group matching the input tag, or we're unable to parse one of the
      *                             children
@@ -130,7 +129,7 @@ public class QfjCodec implements Codec<Cdr, Message> {
         for (Cdr cdr : item.getCdrs()) {
             Group childGroup = createEmptyGroup(tag);
             for (Map.Entry<String, CdrItem> cdrItemEntry : cdr.getItems().entrySet()) {
-                if(!cdrItemEntry.getKey().equals(cdr.getType())) {
+                if (!cdrItemEntry.getKey().equals(cdr.getType())) {
                     encodeKnownMsg(getIntegerTag(cdrItemEntry.getKey()), cdrItemEntry, childGroup);
                 } else {
                     Map<String, CdrItem> items = cdrItemEntry.getValue().getCdrs().get(0).getItems();
@@ -193,7 +192,7 @@ public class QfjCodec implements Codec<Cdr, Message> {
             Integer tag = getIntegerTag(key);
 
             // Warning ... we are skiping this Checksum tag ... is calculated by QF4J.
-            if(tag==10) continue;
+            if (tag == 10) continue;
 
             if (message instanceof Message) {
                 // Determine field type and assign correctly

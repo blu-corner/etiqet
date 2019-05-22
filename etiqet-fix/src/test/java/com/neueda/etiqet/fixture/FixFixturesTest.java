@@ -6,7 +6,6 @@ import edu.emory.mathcs.backport.java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,14 +36,14 @@ public class FixFixturesTest {
         assertNotNull(parties);
         assertNotNull(parties.getCdrs());
     }
-    
+
     @Test
     public void testCreateRepeatingGroupWithFields() {
         Cdr fixMsg = new Cdr("TEST_FIX");
         when(handlers.getSentMessage("testMessage")).thenReturn(fixMsg);
-        
+
         when(handlers.preTreatParams(anyString())).thenCallRealMethod();
-        
+
         fixtures.createRepeatingGroupWithFields("NoSides", "Side=1,Currency=GBP", "testMessage");
 
         assertTrue(fixMsg.containsKey("NoSides"));

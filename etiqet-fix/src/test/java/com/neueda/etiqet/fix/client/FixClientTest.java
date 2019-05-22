@@ -1,16 +1,13 @@
 package com.neueda.etiqet.fix.client;
 
-import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
 import org.junit.Test;
 import quickfix.ConfigError;
+
+import static junit.framework.TestCase.assertNull;
+import static org.junit.Assert.*;
 
 public class FixClientTest {
 
@@ -32,18 +29,18 @@ public class FixClientTest {
     public void testFailover() throws EtiqetException {
         client = new FixClient(PRIMARY_CONFIG, SECONDARY_CONFIG);
         assertEquals("Should have started FixClient with the primary config",
-            PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(PRIMARY_CONFIG)),
-            this.client.getConfig());
+                     PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(PRIMARY_CONFIG)),
+                     this.client.getConfig());
 
         client.failover();
         assertEquals("Should be started with secondary config",
-            PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(SECONDARY_CONFIG)),
-            this.client.getConfig());
+                     PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(SECONDARY_CONFIG)),
+                     this.client.getConfig());
 
         client.failover();
         assertEquals("Should have started FixClient with the primary config",
-            PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(PRIMARY_CONFIG)),
-            this.client.getConfig());
+                     PropertiesFileReader.loadPropertiesFile(Environment.resolveEnvVars(PRIMARY_CONFIG)),
+                     this.client.getConfig());
     }
 
     @Test

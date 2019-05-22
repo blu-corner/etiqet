@@ -4,7 +4,6 @@ import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
 import com.neueda.etiqet.core.util.ParserUtils;
 import com.neueda.etiqet.core.util.StringUtils;
-import com.neueda.etiqet.fix.message.dictionary.Group;
 import cucumber.api.java.en.Then;
 
 import java.util.ArrayList;
@@ -171,14 +170,14 @@ public class FixFixtures {
         }
 
         CdrItem item = message.getItem(groupName);
-        if(item.getCdrs() == null || !item.getType().equals(CdrItem.CdrItemType.CDR_ARRAY)) {
+        if (item.getCdrs() == null || !item.getType().equals(CdrItem.CdrItemType.CDR_ARRAY)) {
             fail("Requested " + groupName + " doesn't appear to be a group");
         }
         Optional<Cdr> group = item.getCdrs()
                                   .stream()
                                   .filter(cdr -> cdr.getType().equals(groupName))
                                   .findFirst();
-        if(group.isPresent()) {
+        if (group.isPresent()) {
             return group.get();
         } else {
             Cdr newGroup = new Cdr(groupName);
