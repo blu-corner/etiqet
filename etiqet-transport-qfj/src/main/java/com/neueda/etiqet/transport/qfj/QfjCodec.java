@@ -181,6 +181,9 @@ public class QfjCodec implements Codec<Cdr, Message> {
 
             Integer tag = getIntegerTag(key);
 
+            // Warning ... we are skiping this Checksum tag ... is calculated by QF4J.
+            if(tag==10) continue;
+
             if (message instanceof Message) {
                 // Determine field type and assign correctly
                 encodeKnownMsg(tag, entry, message);

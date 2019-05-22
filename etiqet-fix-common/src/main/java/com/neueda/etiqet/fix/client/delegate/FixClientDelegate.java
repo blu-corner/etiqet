@@ -61,7 +61,7 @@ public class FixClientDelegate extends BaseClientDelegate {
         if (!StringUtils.isNullOrEmpty(senderSubID)) {
             msg.set("SenderSubID", senderSubID);
         }
-        if (!StringUtils.isNullOrEmpty(password)) {
+        if ("Logon".equals(msg.getType()) && !StringUtils.isNullOrEmpty(password)) {
             msg.set("Password", password);
         }
         return (next != null) ? next.processMessage(msg) : msg;
