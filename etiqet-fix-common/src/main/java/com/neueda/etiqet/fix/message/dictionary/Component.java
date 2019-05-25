@@ -4,31 +4,31 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 public class Component {
-	private String name;
+    private String name;
 
-	private String required;
+    private String required;
 
-	private Group group;
+    private Group group;
 
-	@XmlAttribute
-	public String getName() {
-		return name;
-	}
+    @XmlAttribute
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@XmlAttribute
-	public String getRequired() {
-		return required;
-	}
+    @XmlAttribute
+    public String getRequired() {
+        return required;
+    }
 
-	public void setRequired(String required) {
-		this.required = required;
-	}
+    public void setRequired(String required) {
+        this.required = required;
+    }
 
-	@XmlElement
+    @XmlElement
     public Group getGroup() {
         return group;
     }
@@ -38,7 +38,7 @@ public class Component {
     }
 
     @Override
-	public String toString() {
-		return "Component [name = " + name + ", required = " + required + "]";
-	}
+    public String toString() {
+        return "Component [name = " + name + ", required = " + required + "]";
+    }
 }

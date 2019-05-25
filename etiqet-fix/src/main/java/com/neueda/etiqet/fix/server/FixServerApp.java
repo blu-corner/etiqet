@@ -8,15 +8,7 @@ import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.fix.config.FixConfigConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import quickfix.Application;
-import quickfix.DoNotSend;
-import quickfix.FieldNotFound;
-import quickfix.Message;
-import quickfix.MessageCracker;
-import quickfix.Session;
-import quickfix.SessionID;
-import quickfix.SessionNotFound;
-import quickfix.UnsupportedMessageType;
+import quickfix.*;
 import quickfix.field.MsgType;
 
 public class FixServerApp extends MessageCracker implements Application {
@@ -37,7 +29,7 @@ public class FixServerApp extends MessageCracker implements Application {
     /**
      * Method to handle incoming messages from client.
      *
-     * @param message incoming message.
+     * @param message   incoming message.
      * @param sessionID session identifier.
      * @throws UnsupportedMessageType exception throw when a messagetype is not allowed.
      */
