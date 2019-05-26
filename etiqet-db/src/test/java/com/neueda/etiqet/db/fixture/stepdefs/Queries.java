@@ -12,17 +12,17 @@ public class Queries {
         DbHandlers.selectAll(tableName);
     }
 
-    @When("^I select all from table \"([^\"]*)\" where \"([^\"]*)\"$")
+    @When("^I? ?select all from table \"([^\"]*)\" where \"([^\"]*)\"$")
     public void selectAll(String tableName, String condition) {
         DbHandlers.selectAllWithCondition(tableName, condition);
     }
 
-    @When("^I select columns \"([^\"]*)\" from table \"([^\"]*)\"$")
+    @When("^I? ?select (?:the)? ?columns \"([^\"]*)\" from table \"([^\"]*)\"$")
     public void selectColumns(ArrayList<String> columns, String table) {
         DbHandlers.selectColumns(columns, table);
     }
 
-    @When("^I select columns \"([^\"]*)\" from table \"([^\"]*)\" where \"([^\"]*)\"$")
+    @When("^I? ?select (?:the)? ?columns \"([^\"]*)\" from table \"([^\"]*)\" where \"([^\"]*)\"$")
     public void selectColumns(ArrayList<String> columns, String table, String condition) {
         DbHandlers.selectColumnsWithCondition(columns, table, condition);
     }

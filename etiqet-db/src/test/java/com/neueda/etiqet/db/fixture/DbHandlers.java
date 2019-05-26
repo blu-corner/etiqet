@@ -24,6 +24,10 @@ public class DbHandlers {
     private static Result<Record> results;
     private static HashMap<String, SelectQuery<Record>> queries;
 
+    static {
+        queries = new HashMap<>();
+    }
+
     public static void connect(String serverAlias) {
         DbServer dbServer = DbBase.getServerConfig(serverAlias);
         if (dbServer.getSshTunnel() != null) {
@@ -123,6 +127,45 @@ public class DbHandlers {
             columns.add(field(DSL.name(columnName)));
         }
         results = dslContext.select(columns).from(table).where(condition).fetch();
+    }
+
+    /**QUERY BUILDER*/
+
+    public static void initQueryBuilder(String alias) {
+        queries.put(alias, dslContext.selectQuery());
+    }
+
+    public static void addSelect(ArrayList<String> columnNames, String alias) {
+        ArrayList<Field<Object>> columns = new ArrayList<>();
+        for (String columnName : columnNames) {
+            columns.add(field(DSL.name(columnName)));
+        }
+        queries.get(alias).addSelect(columns);
+    }
+
+    public static void addFrom(String tableName, String alias) {
+        Table<Record> table = DSL.table(tableName);
+        queries.get(alias).addFrom(table);
+    }
+
+    public static void addCondition(String conditionExp, String alias) {
+        Condition condition = DSL.condition(conditionExp);
+        queries.get(alias).addConditions(condition);
+    }
+
+    public static void addJoin(String tableName, JoinType joinType, String alias) {
+        Table<Record> table = DSL.table(tableName);
+        queries.get(alias).addJoin(table, joinType);
+    }
+
+    public static void addJoinWithCondition(String tableName, JoinType joinType, String conditionExp,  String alias) {
+        Table<Record> table = DSL.table(tableName);
+        Condition condition = DSL.condition(conditionExp);
+        queries.get(alias).addJoin(table, joinType, condition);
+    }
+
+    public static void executeQuery(String alias) {
+        results = queries.get(alias).fetch();
     }
 
     /**FILTERS*/
