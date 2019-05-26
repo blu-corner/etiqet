@@ -739,7 +739,7 @@ public class EtiqetHandlers {
                 .equals(messageType)))) {
                 if (!DEFAULT_MESSAGE_NAME.equals(messageType)) {
                     handleError(
-                        "Expected message '" + messageType + "' but found message '" + rsp.getType() + "'.",
+                        "Expected message '" + messageType + "' but found message '" + receivedMsgType + "'.",
                         (receivedMsgType.equals(messageType)), "NoCorrectResponseException");
                 }
                 LOG.info("Validating msg of type: " + messageType);

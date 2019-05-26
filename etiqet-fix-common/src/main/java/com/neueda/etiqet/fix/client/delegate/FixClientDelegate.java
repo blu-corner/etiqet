@@ -45,7 +45,7 @@ public class FixClientDelegate extends BaseClientDelegate {
      *
      * @param targetSubID the target identifier
      * @param senderSubID the sender identifier
-     * @param password the password for the client to connect
+     * @param password    the password for the client to connect
      */
     public void init(String targetSubID, String senderSubID, String password) {
         this.targetSubID = targetSubID;
@@ -61,7 +61,7 @@ public class FixClientDelegate extends BaseClientDelegate {
         if (!StringUtils.isNullOrEmpty(senderSubID)) {
             msg.set("SenderSubID", senderSubID);
         }
-        if (!StringUtils.isNullOrEmpty(password)) {
+        if ("Logon".equals(msg.getType()) && !StringUtils.isNullOrEmpty(password)) {
             msg.set("Password", password);
         }
         return (next != null) ? next.processMessage(msg) : msg;

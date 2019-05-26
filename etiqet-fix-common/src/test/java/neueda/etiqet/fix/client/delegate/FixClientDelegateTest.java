@@ -1,13 +1,13 @@
 package neueda.etiqet.fix.client.delegate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import com.neueda.etiqet.core.client.delegate.BaseClientDelegate;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.fix.client.delegate.FixClientDelegate;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class FixClientDelegateTest {
 
@@ -27,20 +27,37 @@ public class FixClientDelegateTest {
 
     private void testEmptySubIDs(Cdr msg) {
         assertNull("TargetSubID shouldn't have been set, so this should cause a FieldNotFound error",
-            msg.getItem("TargetSubID"));
+                   msg.getItem("TargetSubID"));
         assertNull("SenderSubID shouldn't have been set, so this should cause a FieldNotFound error",
-            msg.getItem("SenderSubID"));
+                   msg.getItem("SenderSubID"));
     }
 
     @Test
-    public void testTransformBeforeEncoding() {
+    public void testTransformBeforeEncodingNoLogon() {
+        final String targetSub = "targetSub";
+        final String senderSub = "senderSub";
+
+        FixClientDelegate delegate = new FixClientDelegate();
+        delegate.init(targetSub, senderSub);
+        Cdr msg = new Cdr("0");
+
+        delegate.processMessage(msg);
+        assertEquals(targetSub, msg.getItem("TargetSubID").getStrval());
+        assertEquals(senderSub, msg.getItem("SenderSubID").getStrval());
+
+        delegate.processMessage(msg);
+        testSubs(msg, targetSub, senderSub);
+    }
+
+    @Test
+    public void testTransformBeforeEncodingWithLogon() {
         final String targetSub = "targetSub";
         final String senderSub = "senderSub";
         final String password = "password";
 
         FixClientDelegate delegate = new FixClientDelegate();
         delegate.init(targetSub, senderSub);
-        Cdr msg = new Cdr("0");
+        Cdr msg = new Cdr("Logon");
 
         delegate.processMessage(msg);
         assertEquals(targetSub, msg.getItem("TargetSubID").getStrval());
@@ -79,9 +96,9 @@ public class FixClientDelegateTest {
 
     private void testSubs(Cdr msg, String targetSub, String senderSub) {
         assertEquals("TargetSubID not found in [" + msg.toString() + "]", targetSub,
-            msg.getItem("TargetSubID").getStrval());
+                     msg.getItem("TargetSubID").getStrval());
         assertEquals("SenderSubID not found in [" + msg.toString() + "]", senderSub,
-            msg.getItem("SenderSubID").getStrval());
+                     msg.getItem("SenderSubID").getStrval());
     }
 
 }

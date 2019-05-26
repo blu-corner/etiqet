@@ -38,6 +38,28 @@ public class FixFixturesTest {
     }
 
     @Test
+    public void testCreateRepeatingGroupWithFields() {
+        Cdr fixMsg = new Cdr("TEST_FIX");
+        when(handlers.getSentMessage("testMessage")).thenReturn(fixMsg);
+
+        when(handlers.preTreatParams(anyString())).thenCallRealMethod();
+
+        fixtures.createRepeatingGroupWithFields("NoSides", "Side=1,Currency=GBP", "testMessage");
+
+        assertTrue(fixMsg.containsKey("NoSides"));
+        CdrItem parties = fixMsg.getItem("NoSides");
+        assertNotNull(parties);
+        List<Cdr> childCdrs = parties.getCdrs();
+        assertNotNull(childCdrs);
+        assertEquals(1, childCdrs.size());
+        Cdr child = childCdrs.get(0);
+        assertTrue(child.containsKey("Side"));
+        assertEquals("1", child.getAsString("Side"));
+        assertTrue(child.containsKey("Currency"));
+        assertEquals("GBP", child.getAsString("Currency"));
+    }
+
+    @Test
     public void testCreateRepeatingGroup_MessageNotFound() {
         try {
             fixtures.createRepeatingGroup("Parties", "testMessage");
@@ -49,45 +71,6 @@ public class FixFixturesTest {
     }
 
     @Test
-    public void testAddFieldsToRepeatingGroup_GroupAddedToCdr() {
-        Cdr party1 = new Cdr("Parties");
-        party1.set("PartyID", "EXAMPLE_LEI");
-        party1.set("PartyRole", "13");
-
-        Cdr party2 = new Cdr("Parties");
-        party2.set("PartyID", "EXAMPLE_LEI_2");
-        party2.set("PartyRole", "17");
-        List<Cdr> partiesList = new ArrayList<>(2);
-        partiesList.add(party1);
-        partiesList.add(party2);
-
-        CdrItem fields = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
-        fields.setCdrs(partiesList);
-        Cdr fixMsg = new Cdr("TEST_FIX");
-        fixMsg.setItem("Parties", fields);
-
-        when(handlers.getSentMessage(eq("testMessage"))).thenReturn(fixMsg);
-        when(handlers.preTreatParams(anyString())).thenCallRealMethod();
-
-        fixtures.addFieldsToRepeatingGroup("PartyID=PRIME_BROKER,PartyRole=1", "Parties", "testMessage");
-
-        assertEquals(1, fixMsg.getItems().size());
-        CdrItem partiesGroup = fixMsg.getItem("Parties");
-        assertNotNull(partiesGroup);
-        assertEquals(CdrItem.CdrItemType.CDR_ARRAY, partiesGroup.getType());
-        List<Cdr> partiesCdrList = partiesGroup.getCdrs();
-        assertNotNull(partiesCdrList);
-        assertEquals(3, partiesCdrList.size());
-        assertTrue(partiesCdrList.contains(party1));
-        assertTrue(partiesCdrList.contains(party2));
-
-        Cdr expectedParty3 = new Cdr("Parties");
-        expectedParty3.set("PartyID", "PRIME_BROKER");
-        expectedParty3.set("PartyRole", "1");
-        assertTrue(partiesCdrList.contains(expectedParty3));
-    }
-
-    @Test
     public void testAddFieldsToRepeatingGroup_MessageNotFound() {
         try {
             fixtures.addFieldsToRepeatingGroup("PartyID=PRIME_BROKER,PartyRole=1", "Parties", "testMessage");
@@ -95,18 +78,6 @@ public class FixFixturesTest {
         } catch (Throwable t) {
             assertTrue(t instanceof AssertionError);
             assertEquals("Could not find message testMessage", t.getMessage());
-        }
-    }
-
-    @Test
-    public void testAddFieldsToRepeatingGroup_GroupNotFound() {
-        try {
-            when(handlers.getSentMessage(eq("testMessage"))).thenReturn(new Cdr("Test"));
-            fixtures.addFieldsToRepeatingGroup("PartyID=PRIME_BROKER,PartyRole=1", "Parties", "testMessage");
-            fail("Should have thrown an AssertionError because no group found");
-        } catch (Throwable t) {
-            assertTrue(t instanceof AssertionError);
-            assertEquals("Could not find group Parties in message testMessage", t.getMessage());
         }
     }
 
@@ -122,32 +93,8 @@ public class FixFixturesTest {
             fail("Should have thrown an AssertionError because group is a String type, not Array");
         } catch (Throwable t) {
             assertTrue(t instanceof AssertionError);
-            assertEquals("Requested Parties doesn't appear to be a group, was CDR_STRING expected:<CDR_ARRAY> but was:<CDR_STRING>", t.getMessage());
+            assertEquals("Requested Parties doesn't appear to be a group", t.getMessage());
         }
-    }
-
-    @Test
-    public void testAddFieldsToRepeatingGroup_GroupAddedToCdrNoChildren() {
-        Cdr fixMsg = new Cdr("TEST_FIX");
-        fixMsg.setItem("Parties", new CdrItem(CdrItem.CdrItemType.CDR_ARRAY));
-
-        when(handlers.getSentMessage(eq("testMessage"))).thenReturn(fixMsg);
-        when(handlers.preTreatParams(anyString())).thenCallRealMethod();
-
-        fixtures.addFieldsToRepeatingGroup("PartyID=PRIME_BROKER,PartyRole=1", "Parties", "testMessage");
-
-        assertEquals(1, fixMsg.getItems().size());
-        CdrItem partiesGroup = fixMsg.getItem("Parties");
-        assertNotNull(partiesGroup);
-        assertEquals(CdrItem.CdrItemType.CDR_ARRAY, partiesGroup.getType());
-        List<Cdr> partiesCdrList = partiesGroup.getCdrs();
-        assertNotNull(partiesCdrList);
-        assertEquals(1, partiesCdrList.size());
-
-        Cdr expectedParty3 = new Cdr("Parties");
-        expectedParty3.set("PartyID", "PRIME_BROKER");
-        expectedParty3.set("PartyRole", "1");
-        assertTrue(partiesCdrList.contains(expectedParty3));
     }
 
     @Test
@@ -175,13 +122,15 @@ public class FixFixturesTest {
 
     @Test
     public void testGetGroupWithFilter_NoFilterSpecified() {
-        Cdr message = new Cdr("Test");
-        message.set("field", "value");
+        Cdr nested = new Cdr("nested");
+        CdrItem children = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        children.addCdrToList(nested);
 
-        CdrItem field = fixtures.getGroupWithFilter(message, "field");
-        CdrItem expected = new CdrItem(CdrItem.CdrItemType.CDR_STRING);
-        expected.setStrval("value");
-        assertEquals(expected, field);
+        Cdr message = new Cdr("Test");
+        message.setItem("field", children);
+
+        Cdr field = fixtures.getGroupWithFilter(message, "field");
+        assertEquals(nested, field);
     }
 
     @Test
@@ -196,11 +145,11 @@ public class FixFixturesTest {
         Cdr parent = new Cdr("Parent");
         parent.setItem("Test", field);
 
-        CdrItem filteredGroup = fixtures.getGroupWithFilter(parent, "Test[child=value1]");
-        assertEquals(field, filteredGroup);
+        Cdr filteredGroup = fixtures.getGroupWithFilter(parent, "Test[child=value1]");
+        assertEquals(child1, filteredGroup);
 
         filteredGroup = fixtures.getGroupWithFilter(parent, "Test[child=value2]");
-        assertEquals(field, filteredGroup);
+        assertEquals(child2, filteredGroup);
     }
 
     @Test
@@ -248,19 +197,6 @@ public class FixFixturesTest {
     }
 
     @Test
-    public void testGetGroupWithFilter_InvalidFilter_FieldNotFound() {
-        Cdr message = new Cdr("Test");
-        message.set("field", "value");
-        try {
-            fixtures.getGroupWithFilter(message, "otherField[field=value]");
-            fail("Should have failed because otherField wasn't defined");
-        } catch (Throwable t) {
-            assertTrue(t instanceof AssertionError);
-            assertEquals("Could not find field otherField in message " + message, t.getMessage());
-        }
-    }
-
-    @Test
     public void testGetGroupWithFilter_InvalidFilter_FieldNotArrayType() {
         Cdr message = new Cdr("Test");
         message.set("field", "value");
@@ -298,44 +234,8 @@ public class FixFixturesTest {
         Cdr parent = new Cdr("Parent");
         parent.setItem("Test", field);
 
-        CdrItem group = fixtures.getGroup(parent, "TestMessage", "Test/child2[subChild=value3]");
+        Cdr group = fixtures.getGroup(parent, "TestMessage", "Test/child2[subChild=value3]");
         assertNotNull(group);
-    }
-
-    @Test
-    public void testGetGroup_NonNested() {
-        CdrItem field = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
-        Cdr child1 = new Cdr("Test");
-        child1.set("child", "value1");
-        Cdr child2 = new Cdr("Test");
-        child2.set("child", "value2");
-        field.setCdrs(Arrays.asList(child1, child2));
-
-        Cdr parent = new Cdr("Parent");
-        parent.setItem("Test", field);
-
-        CdrItem group = fixtures.getGroup(parent, "TestMessage", "Test");
-        assertEquals(field, group);
-    }
-
-    @Test
-    public void testGetGroup_NonNested_NotFound() {
-        CdrItem field = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
-        Cdr child1 = new Cdr("Test");
-        child1.set("child", "value1");
-        Cdr child2 = new Cdr("Test");
-        child2.set("child", "value2");
-        field.setCdrs(Arrays.asList(child1, child2));
-
-        Cdr parent = new Cdr("Parent");
-        parent.setItem("Test", field);
-
-        try {
-            fixtures.getGroup(parent, "TestMessage", "Test2");
-        } catch (Throwable t) {
-            assertTrue(t instanceof AssertionError);
-            assertEquals("Could not find group Test2 in message TestMessage", t.getMessage());
-        }
     }
 
     @Test
@@ -346,9 +246,69 @@ public class FixFixturesTest {
             fixtures.getGroup(parent, "TestMessage", "Test");
         } catch (Throwable t) {
             assertTrue(t instanceof AssertionError);
-            assertEquals("Requested Test doesn't appear to be a group, was CDR_STRING expected:<CDR_ARRAY> but was:<CDR_STRING>",
-                         t.getMessage());
+            assertEquals("Requested Test doesn't appear to be a group", t.getMessage());
         }
+    }
+
+    @Test
+    public void testCreateRepeatingGroupInGroup() {
+        Cdr parent = new Cdr("Parent");
+        CdrItem groupItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        groupItem.setCdrs(new ArrayList<>());
+        parent.setItem("Child", groupItem);
+
+        when(handlers.getSentMessage("Parent")).thenReturn(parent);
+        fixtures.createRepeatingGroupInGroup("Child2", "Child", "Parent");
+
+        assertEquals(1, groupItem.getCdrs().size());
+        Cdr child = groupItem.getCdrs().get(0);
+        assertEquals("Child", child.getType());
+        assertTrue(child.containsKey("Child2"));
+        assertEquals(CdrItem.CdrItemType.CDR_ARRAY, child.getItem("Child2").getType());
+    }
+
+    @Test
+    public void testCreateRepeatingGroupInGroup_NoCdrList() {
+        Cdr parent = new Cdr("Parent");
+        CdrItem groupItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        groupItem.setCdrs(new ArrayList<>());
+        parent.setItem("Child", groupItem);
+
+        when(handlers.getSentMessage("Parent")).thenReturn(parent);
+        fixtures.createRepeatingGroupInGroup("Child2", "Child", "Parent");
+
+        assertNotNull(groupItem.getCdrs());
+        Cdr child = groupItem.getCdrs().get(0);
+        assertEquals("Child", child.getType());
+        assertTrue(child.containsKey("Child2"));
+        assertEquals(CdrItem.CdrItemType.CDR_ARRAY, child.getItem("Child2").getType());
+    }
+
+    @Test
+    public void testCreateRepeatingGroupWithFieldsInGroup() {
+        Cdr parent = new Cdr("Parent");
+        CdrItem groupItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        groupItem.setCdrs(new ArrayList<>());
+        parent.setItem("Child", groupItem);
+
+        when(handlers.preTreatParams(anyString())).thenCallRealMethod();
+        when(handlers.getSentMessage("Parent")).thenReturn(parent);
+        fixtures.createRepeatingGroupWithFieldsInGroup("Child2", "field1=value1,field2=value2", "Child", "Parent");
+
+        assertNotNull(groupItem.getCdrs());
+        assertEquals(1, groupItem.getCdrs().size());
+        Cdr child = groupItem.getCdrs().get(0);
+        assertEquals("Child", child.getType());
+        assertTrue(child.containsKey("Child2"));
+        CdrItem child2 = child.getItem("Child2");
+        assertEquals(CdrItem.CdrItemType.CDR_ARRAY, child2.getType());
+
+        assertEquals(1, child2.getCdrs().size());
+        Cdr nestedChild = child2.getCdrs().get(0);
+        assertTrue(nestedChild.containsKey("field1"));
+        assertEquals("value1", nestedChild.getAsString("field1"));
+        assertTrue(nestedChild.containsKey("field2"));
+        assertEquals("value2", nestedChild.getAsString("field2"));
     }
 
 }

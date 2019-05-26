@@ -8,7 +8,7 @@ import cucumber.api.java.en.Then;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -38,6 +38,24 @@ public class FixFixtures {
     }
 
     /**
+     * <p>Creates an empty group of the given type in the message specified.</p>
+     *
+     * <p><b>Example usage:</b> <code>Then create a repeating group "NoSides" with "Side=1,Currency=GBP" in message "TradeCaptureReport"</code></p>
+     *
+     * @param groupType   Name of the repeating group
+     * @param params      Field values to go into the new group
+     * @param messageName Name of the message to add the group to
+     */
+    @Then("create a repeating group \"([^\"]*)\" with \"([^\"]*)\" in message \"([^\"]*)\"")
+    public void createRepeatingGroupWithFields(String groupType, String params, String messageName) {
+        Cdr message = getMessage(messageName);
+        CdrItem groupItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        Cdr child = ParserUtils.stringToCdr(groupType, handlers.preTreatParams(params));
+        groupItem.addCdrToList(child);
+        message.setItem(groupType, groupItem);
+    }
+
+    /**
      * <p>Creates an empty group of the given type into a pre-existing group within the message specified.</p>
      *
      * <p><b>Example usage:</b> <code>Then create a repeating group "Parties" in group "NoSides" in message "TradeCaptureReport"</code></p>
@@ -50,17 +68,34 @@ public class FixFixtures {
      */
     @Then("create a repeating group \"([^\"]*)\" in group \"([^\"]*)\" in message \"([^\"]*)\"")
     public void createRepeatingGroupInGroup(String groupType, String existingGroup, String messageName) {
+        createRepeatingGroupWithFieldsInGroup(groupType, null, existingGroup, messageName);
+    }
+
+    /**
+     * <p>Creates a group with the fields provided of the given type into a pre-existing group within the message
+     * specified</p>
+     *
+     * <p><b>Example usage:</b> <code>Then create a repeating group "Parties" with "PartyID=123,PartyRole=13" in group "NoSides" in message "TradeCaptureReport"</code></p>
+     *
+     * <p>Group types may use XPath style mappings for nested groups, e.g. <code>NoSides/Parties[PartyID=MyBank123]</code></p>
+     *
+     * @param groupType     Name of the new repeating group to be added
+     * @param params        Field values to go into the new group
+     * @param existingGroup Name of the existing repeating group the new group should be added to
+     * @param messageName   Name of the message to add the group to
+     */
+    @Then("create a repeating group \"([^\"]*)\" with \"([^\"]*)\" in group \"([^\"]*)\" in message \"([^\"]*)\"")
+    public void createRepeatingGroupWithFieldsInGroup(String groupType, String params, String existingGroup, String messageName) {
         Cdr message = getMessage(messageName);
-        CdrItem group = getGroup(message, messageName, existingGroup);
-        List<Cdr> cdrs = group.getCdrs();
-        if (cdrs == null) {
-            cdrs = new ArrayList<>();
+        Cdr group = getGroup(message, messageName, existingGroup);
+        Cdr fields = ParserUtils.stringToCdr(groupType, handlers.preTreatParams(params));
+        if (group.containsKey(groupType)) {
+            group.getItem(groupType).addCdrToList(fields);
+        } else {
+            CdrItem cdrItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+            cdrItem.addCdrToList(fields);
+            group.setItem(groupType, cdrItem);
         }
-        Cdr newGroup = new Cdr(groupType);
-        addGroupToCdr(groupType, newGroup);
-        cdrs.add(newGroup);
-        group.setCdrs(cdrs);
-        message.setItem(existingGroup, group);
     }
 
     /**
@@ -78,10 +113,15 @@ public class FixFixtures {
     public void addFieldsToRepeatingGroup(String params, String groupType, String messageName) {
         Cdr message = getMessage(messageName);
 
-        CdrItem group = getGroup(message, messageName, groupType);
-
+        Cdr group = getGroup(message, messageName, groupType);
         Cdr fields = ParserUtils.stringToCdr(groupType, handlers.preTreatParams(params));
-        group.addCdrToList(fields);
+        if (group.containsKey(groupType)) {
+            group.getItem(groupType).addCdrToList(fields);
+        } else {
+            CdrItem cdrItem = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+            cdrItem.addCdrToList(fields);
+            group.setItem(groupType, cdrItem);
+        }
     }
 
     /**
@@ -117,11 +157,11 @@ public class FixFixtures {
      * @param message     Message to get the group from
      * @param messageName Name of the message, for logging purposes only
      * @param groupName   Name of the group to get
-     * @return {@link CdrItem} that represents the group
+     * @return {@link Cdr} that represents the group
      * @throws AssertionError when the group doesn't exist within the message, or the {@code CdrItem} found does not
      *                        have the type {@code CDR_ARRAY}
      */
-    CdrItem getGroup(Cdr message, String messageName, String groupName) {
+    Cdr getGroup(Cdr message, String messageName, String groupName) {
         if (groupName.contains("/")) {
             String[] groupSplit = groupName.split("/");
             String firstGroup = groupSplit[0];
@@ -129,11 +169,21 @@ public class FixFixtures {
             return getNestedGroup(message, messageName, firstGroup, remainingGroups);
         }
 
-        CdrItem group = message.getItem(groupName);
-        assertNotNull("Could not find group " + groupName + " in message " + messageName, group);
-        assertEquals("Requested " + groupName + " doesn't appear to be a group, was " + group.getType(),
-                     CdrItem.CdrItemType.CDR_ARRAY, group.getType());
-        return group;
+        CdrItem item = message.getItem(groupName);
+        if (item.getCdrs() == null || !item.getType().equals(CdrItem.CdrItemType.CDR_ARRAY)) {
+            fail("Requested " + groupName + " doesn't appear to be a group");
+        }
+        Optional<Cdr> group = item.getCdrs()
+                                  .stream()
+                                  .filter(cdr -> cdr.getType().equals(groupName))
+                                  .findFirst();
+        if (group.isPresent()) {
+            return group.get();
+        } else {
+            Cdr newGroup = new Cdr(groupName);
+            item.addCdrToList(newGroup);
+            return newGroup;
+        }
     }
 
     /**
@@ -145,21 +195,20 @@ public class FixFixtures {
      * @param remainingGroups Remaining groups, if split by <code>/</code> character
      * @return CdrItem representing the group
      */
-    private CdrItem getNestedGroup(Cdr message, String messageName, String groupName, String[] remainingGroups) {
-        CdrItem group = getGroupWithFilter(message, groupName);
+    private Cdr getNestedGroup(Cdr message, String messageName, String groupName, String[] remainingGroups) {
+        Cdr group = getGroupWithFilter(message, groupName);
         assertNotNull("Could not find group " + groupName + " in message " + messageName, group);
-        assertEquals("Requested " + groupName + " doesn't appear to be a group, was " + group.getType(),
-                     CdrItem.CdrItemType.CDR_ARRAY, group.getType());
 
         if (remainingGroups.length > 0) {
             String nextGroup = remainingGroups[0];
             String[] groups = Arrays.copyOfRange(remainingGroups, 1, remainingGroups.length);
-            Cdr nextMessage = group.getCdrs()
-                                   .stream()
-                                   .filter(cdr -> cdr.containsKey(getUnfilteredGroupName(nextGroup)))
-                                   .findFirst()
-                                   .orElse(null);
-            assertNotNull("Could not find group " + nextGroup + " in group " + groupName, nextMessage);
+            CdrItem nextGroupItem = group.getItem(getUnfilteredGroupName(nextGroup));
+            assertNotNull("Could not find group " + nextGroup + " in group " + groupName, nextGroupItem);
+            assertEquals(nextGroup + " appears not to be an array type",
+                         CdrItem.CdrItemType.CDR_ARRAY,
+                         nextGroupItem.getType());
+
+            Cdr nextMessage = getGroupWithFilter(message, groupName);
             return getNestedGroup(nextMessage, groupName, nextGroup, groups);
         }
 
@@ -172,11 +221,11 @@ public class FixFixtures {
      * @param message   {@link Cdr} message that the group should belong to
      * @param groupName name of the group to get from the message. If using a filter should be defined as
      *                  <code>group[field=name]</code>
-     * @return Matching CdrItem for the group
+     * @return Matching Cdr for the group
      */
-    CdrItem getGroupWithFilter(Cdr message, String groupName) {
+    Cdr getGroupWithFilter(Cdr message, String groupName) {
         if (!groupName.contains("[") && !groupName.contains("]")) {
-            return message.getItem(groupName);
+            return message.getItem(groupName).getCdrs().get(0);
         }
 
         int filterStart = groupName.indexOf("[");
@@ -192,13 +241,15 @@ public class FixFixtures {
 
         assertEquals("No value specified in group filter " + groupName, 2, split.length);
         String value = split[1];
-        assertTrue("Could not find field " + name + " in message " + message, message.containsKey(name));
         CdrItem childItem = message.getItem(name);
         assertEquals("Field " + name + " was not a group", CdrItem.CdrItemType.CDR_ARRAY, childItem.getType());
-        assertTrue("Could not find matching group " + groupName, childItem.getCdrs()
-                                                                          .stream()
-                                                                          .anyMatch(cdr -> cdr.containsKey(field) && cdr.getAsString(field).equals(value)));
-        return childItem;
+        Cdr child = childItem.getCdrs()
+                             .stream()
+                             .filter(cdr -> cdr.containsKey(field) && cdr.getAsString(field).equals(value))
+                             .findFirst()
+                             .orElse(null);
+        assertNotNull("Could not find matching group " + groupName, child);
+        return child;
     }
 
     private String getUnfilteredGroupName(String groupName) {

@@ -5,14 +5,11 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.server.Server;
-import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import quickfix.DefaultMessageFactory;
-import quickfix.FileStoreFactory;
-import quickfix.ScreenLogFactory;
-import quickfix.SessionSettings;
-import quickfix.SocketAcceptor;
+import quickfix.*;
+
+import java.io.File;
 
 public class FixServer extends Server {
 

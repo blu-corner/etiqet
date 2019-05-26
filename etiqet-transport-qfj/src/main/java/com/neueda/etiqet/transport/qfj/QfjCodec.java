@@ -10,15 +10,14 @@ import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.util.IntegerValidator;
 import com.neueda.etiqet.core.util.ParserUtils;
-
-import java.util.*;
-
 import com.neueda.etiqet.fix.message.dictionary.Component;
 import com.neueda.etiqet.fix.message.dictionary.FixDictionary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import quickfix.*;
 import quickfix.field.MsgType;
+
+import java.util.*;
 
 public class QfjCodec implements Codec<Cdr, Message> {
 
@@ -119,18 +118,36 @@ public class QfjCodec implements Codec<Cdr, Message> {
      * Attempts to parse a group from the CdrItem passed
      *
      * @param message
-     * @param tag  Tag that begins the group
-     * @param item CdrItem containing the nested fields
+     * @param tag     Tag that begins the group
+     * @param item    CdrItem containing the nested fields
      * @return {@link Group} to be added to the FIX message
      * @throws UnknownTagException when there is no group matching the input tag, or we're unable to parse one of the
      *                             children
      */
     void parseGroup(FieldMap message, Integer tag, CdrItem item) throws UnknownTagException {
-        // This needs to assume that we're using the FixDictionary
+        // Iterate through the CDR children to allow for groups within groups
+        for (Cdr cdr : item.getCdrs()) {
+            Group childGroup = createEmptyGroup(tag);
+            for (Map.Entry<String, CdrItem> cdrItemEntry : cdr.getItems().entrySet()) {
+                if (!cdrItemEntry.getKey().equals(cdr.getType())) {
+                    encodeKnownMsg(getIntegerTag(cdrItemEntry.getKey()), cdrItemEntry, childGroup);
+                } else {
+                    Map<String, CdrItem> items = cdrItemEntry.getValue().getCdrs().get(0).getItems();
+                    for (Map.Entry<String, CdrItem> childEntry : items.entrySet()) {
+                        encodeKnownMsg(getIntegerTag(childEntry.getKey()), childEntry, childGroup);
+                    }
+                }
+            }
+            message.addGroup(childGroup);
+        }
+    }
+
+    private Group createEmptyGroup(Integer tag) throws UnknownTagException {
         FixDictionary dictionary = (FixDictionary) protocolConfig.getDictionary();
         String fieldName = protocolConfig.getNameForTag(tag);
+        Component[] components = dictionary.getFixDictionary().getComponents().getComponent();
         com.neueda.etiqet.fix.message.dictionary.Group groupDef
-            = Arrays.stream(dictionary.getFixDictionary().getComponents().getComponent())
+            = Arrays.stream(components)
                     .map(Component::getGroup)
                     .filter(Objects::nonNull)
                     .filter(group -> fieldName.equalsIgnoreCase(group.getName()))
@@ -144,14 +161,7 @@ public class QfjCodec implements Codec<Cdr, Message> {
             fieldOrder[i] = protocolConfig.getTagForName(groupDef.getField()[i].getName());
         }
 
-        // Iterate through the CDR children to allow for groups within groups
-        for (Cdr cdr : item.getCdrs()) {
-            Group childGroup = new Group(tag, delimiterTag, fieldOrder);
-            for (Map.Entry<String, CdrItem> cdrItemEntry : cdr.getItems().entrySet()) {
-                encodeKnownMsg(getIntegerTag(cdrItemEntry.getKey()), cdrItemEntry, childGroup);
-            }
-            message.addGroup(childGroup);
-        }
+        return new Group(tag, delimiterTag, fieldOrder);
     }
 
 
@@ -181,6 +191,9 @@ public class QfjCodec implements Codec<Cdr, Message> {
 
             Integer tag = getIntegerTag(key);
 
+            // Warning ... we are skiping this Checksum tag ... is calculated by QF4J.
+            if (tag == 10) continue;
+
             if (message instanceof Message) {
                 // Determine field type and assign correctly
                 encodeKnownMsg(tag, entry, message);
@@ -206,6 +219,7 @@ public class QfjCodec implements Codec<Cdr, Message> {
         }
     }
 
+    // TODO: Handle repeating groups on decode. Currently have only needed to send
     @Override
     public Cdr decode(Message msg) throws EtiqetException {
         try {

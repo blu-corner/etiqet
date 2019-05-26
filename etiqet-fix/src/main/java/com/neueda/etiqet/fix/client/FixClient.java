@@ -9,10 +9,11 @@ import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.TransportDelegate;
 import com.neueda.etiqet.fix.client.delegate.FixClientDelegate;
 import com.neueda.etiqet.fix.config.FixConfigConstants;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * {@inheritDoc}
@@ -43,13 +44,13 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
     /**
      * Constructor.
      *
-     * @param primaryConfig the client's configuration.
+     * @param primaryConfig   the client's configuration.
      * @param secondaryConfig the client's secondary configuration for failover.
      * @throws EtiqetException when an issue occurs setting up the FixClient
      */
     public FixClient(String primaryConfig, String secondaryConfig) throws EtiqetException {
         super(primaryConfig, secondaryConfig,
-            GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME));
+              GlobalConfig.getInstance().getProtocol(FixConfigConstants.PROTOCOL_NAME));
         sessionQueue = new LinkedBlockingQueue<>();
         setActions(DEFAULT_CLIENT_DELEGATES);
     }
@@ -109,7 +110,7 @@ public class FixClient extends Client implements TransportDelegate<String, Cdr> 
     /**
      * Method to check type of received message
      *
-     * @param msgType type of msg requested
+     * @param msgType       type of msg requested
      * @param timeoutMillis the maximum timeout to wait for the message in milliseconds
      */
     @Override

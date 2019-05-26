@@ -1,17 +1,14 @@
 package com.neueda.etiqet.fix.dictionary;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.fix.message.dictionary.FixDictionary;
-import java.net.URL;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.net.URL;
+
+import static org.junit.Assert.*;
 
 public class FixDictionaryTest {
 
