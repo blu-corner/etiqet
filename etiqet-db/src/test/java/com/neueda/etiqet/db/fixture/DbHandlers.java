@@ -168,6 +168,17 @@ public class DbHandlers {
         results = queries.get(alias).fetch();
     }
 
+    /**UPDATE*/
+
+    public static void updateWithCondition(String tableName, String newFieldValueParams, String conditionExp) {
+        Table<Record> table = DSL.table(tableName);
+        Condition condition = DSL.condition(conditionExp);
+        HashMap<String, String> newFieldValues = DbUtils.resolveParamsToFieldValMap(newFieldValueParams);
+        HashMap<Field<Object>, Object> typeResolvedFieldValues = DbUtils.resolveToFieldValMap(
+            dslContext, tableName, newFieldValues);
+        dslContext.update(table).set(typeResolvedFieldValues).where(condition).execute();
+    }
+
     /**FILTERS*/
 
     // todo - a method of saving values
