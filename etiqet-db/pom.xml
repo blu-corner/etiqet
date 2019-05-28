@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>etiqet-parent</artifactId>
         <groupId>com.neueda.etiqet</groupId>
+        <artifactId>etiqet-parent</artifactId>
         <version>1.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -12,6 +12,25 @@
     <artifactId>etiqet-db</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.neueda.etiqet</groupId>
+            <artifactId>etiqet-core</artifactId>
+            <version>1.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neueda.etiqet</groupId>
+            <artifactId>etiqet-fix-common</artifactId>
+            <version>1.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.neueda.etiqet</groupId>
+            <artifactId>etiqet-transport-qfj</artifactId>
+            <version>1.2-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
