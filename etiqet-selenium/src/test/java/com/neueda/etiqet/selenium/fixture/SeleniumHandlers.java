@@ -1028,5 +1028,10 @@ public class SeleniumHandlers {
             logger.info("Performing closing down operations...");
             BrowserBase.getCurrentBrowser().close();
         }
+        else {
+            if (BrowserBase.getCurrentBrowser().getScreenShotOnExitEnabled()) {
+                BrowserBase.getCurrentBrowser().takeScreenshot();
+            }
+        }
     }
 }
