@@ -11,19 +11,13 @@ public class Properties {
         SeleniumHandlers.getIndexOfElementContaining(text);
     }
 
-    @When("^I get the value of attribute \"([^\"]*)\" from the selected element (?: named (\"[^\"]*\")?)?$")
-    public void getAttribute(String attr, @Nullable String alias) {
-        SeleniumHandlers.getAttribute(attr, alias);
-    }
-
     @When("^I change the value of attribute \"([^\"]*)\" in selected element (?: named (\"[^\"]*\")?)? to \"([^\"]*)\"$")
     public void setAttribute(String attr, @Nullable String alias, String value) {
-        SeleniumHandlers.changeAttribute(attr, alias, value);
+        SeleniumHandlers.setAttributeValue(attr, alias, value);
     }
 
-    @When("^I change the value of the selected attribute$")
-    public void setSelectedAtrributeValue(String attr, String value) {
-        SeleniumHandlers.changeAttributeOf(attr, value);
+    @When("^I? ?set the value of (?:the)? ?attribute \"([^\"]*)\" to \"([^\"]*)\"(?: for named element \"([^\"]*)\"?)?$")
+    public void setSelectedAttributeValue(String attr, String value, String alias) {
+        SeleniumHandlers.setAttributeValue(attr, value, alias);
     }
-
 }

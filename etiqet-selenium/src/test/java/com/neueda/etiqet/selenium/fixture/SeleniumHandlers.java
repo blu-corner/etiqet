@@ -12,7 +12,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,9 +46,6 @@ public class SeleniumHandlers {
     private static List<WebElement> selectedElements;
     private static WebElement selectedElement;
 
-    private static String attributeValue;
-    private static HashMap<String, WebElement> attributesWebElements;
-
     private static ExplicitWait explicitWait;
     private static long explicitWaitTimeout;
 
@@ -58,7 +54,6 @@ public class SeleniumHandlers {
     static {
         SeleniumHandlers.namedElements = new HashMap<>();
         SeleniumHandlers.selectedElements = new ArrayList<>();
-        SeleniumHandlers.attributesWebElements = new HashMap<>();
         SeleniumHandlers.namedValues = new HashMap<>();
     }
 
@@ -552,32 +547,14 @@ public class SeleniumHandlers {
         }
     }
 
-    public static void getAttribute(String attributeName, String alias) {
-        attributeValue = alias != null ? namedElements.get(alias).getAttribute(attributeName) : selectedElement.getAttribute(attributeName);
-        if(alias!=null) {
-            attributesWebElements.put(attributeName, namedElements.get(alias));
-        }
-        else{
-            attributesWebElements.put(attributeName, selectedElement);}
-    }
-
-    /**
-     * Change Properties Methods
-     * @param attributeName
-     * @param alias
-     * @param value
-     */
-    public static void changeAttribute(String attributeName, @Nullable String alias, String value){
+    public static void setAttributeValue(String attribute, String value, String alias){
         JavascriptExecutor js = (JavascriptExecutor) driver;
         if(alias != null){
-            js.executeScript("argument[0].setAttribute(argument[1],argument[2])",namedElements.get(alias), attributeName, value);
+            js.executeScript("arguments[0].setAttribute(arguments[1],arguments[2])", namedElements.get(alias), attribute, value);
         }
-        else{js.executeScript("argument[0].setAttribute(argument[1],argument[2])", selectedElement, attributeName, value);}
-    }
-
-    public static void changeAttributeOf(String attribute, String value){
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("argument[0].setAttribute(argument[1],argument[2])", attributesWebElements.get(attribute), attribute, value);
+        else{
+            js.executeScript("arguments[0].setAttribute(arguments[1],arguments[2])", selectedElement, attribute, value);
+        }
     }
 
     /**
