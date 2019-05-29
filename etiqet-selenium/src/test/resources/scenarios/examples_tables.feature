@@ -17,7 +17,7 @@ Feature: Working with Grid Structures
         Then I select the children of selected element
 
         #Grab the column index for the column you want and save it to the index variable
-        Then I get index for element amongst selected elements containing "Season"
+        Then I select first element from elements by contained text "season"
         Then I clear the selected elements
 
         #Get an array list of the tables rows
@@ -30,7 +30,7 @@ Feature: Working with Grid Structures
         Then I select the children of selected element
 
         #Select from current array list element located in position corresponding to column index
-        Then I select element at current index from selected elements
+        Then I select element at index 0 from selected elements
 
         #Verify we have located the specific cell we wanted
         Then I check the selected element's inner text contains "Mid"

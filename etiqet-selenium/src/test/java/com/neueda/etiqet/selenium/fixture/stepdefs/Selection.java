@@ -63,6 +63,16 @@ public class Selection {
         SeleniumHandlers.selectElementByPartialLinkText(locator, relative, alias);
     }
 
+    @When("^I? ?select element at index (-?\\d+) from selected elements$")
+    public void selectFromElements(Integer index) {
+        SeleniumHandlers.selectElementAtIndex(index);
+    }
+
+    @When("^I? ?select (?:the)? ?last element from selected elements$")
+    public void selectFromElements() {
+        SeleniumHandlers.selectLastElement();
+    }
+
     @When("^I? ?select first element from elements by contained text \"([^\"]*)\"(?: as \"([^\"]*)\"?)?$")
     public void selectFirstElementByContainedText(String text, String alias){
         SeleniumHandlers.selectFirstElementByContainedText(text, alias);
@@ -81,20 +91,6 @@ public class Selection {
     @When("^I? ?select element from dropdown by (?:the)? ?value (\\d+)$")
     public void selectFromDropdownByIndex(int index) {
         SeleniumHandlers.selectFromDropdownByIndex(index);
-    }
-
-    /**
-     * Selects WebElement from selectedElements and assigned to selectedElement
-     * @param index to select from selectedElements
-     */
-    @When("^I? ?select index (\\d+) from selected elements$")
-    public void selectFromElements(Integer index) {
-        SeleniumHandlers.selectFromElements(index);
-    }
-
-    @When("^I? ?select (?:the)? ?element at (?:the)? ?current index from selected elements$")
-    public void checkEntryInSpecificCell() {
-        SeleniumHandlers.getElementAtIndex();
     }
 
     @When("^I? ?filter selected elements by xpath using value \"([^\"]*)\"$")

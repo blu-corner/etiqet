@@ -35,7 +35,7 @@ Feature: Selecting
 
     Scenario: Selecting elements from multiple already selected elements
     Then I select elements by tag using value "div"
-      And I select index 3 from selected elements
+      And I select element at index 3 from selected elements
       And I clear the selected element
 
   Scenario: Giving selected elements an alias then selecting using aliases
