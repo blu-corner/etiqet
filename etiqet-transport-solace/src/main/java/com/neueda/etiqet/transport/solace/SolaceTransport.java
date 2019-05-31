@@ -47,11 +47,10 @@ public class SolaceTransport implements Transport {
             props.load(Environment.fileResolveEnvVars(configPath));
 
             // Create connection and channels
-            connectionFactory = new SolXAConnectionFactoryImpl();
-            connectionFactory.setHost(props.getProperty("solaceHost"));
-            connectionFactory.setVPN(props.getProperty("solaceVpn"));
-            connectionFactory.setUsername(props.getProperty("solaceUser"));
-            connectionFactory.setPassword(props.getProperty("solacePassword"));
+            connectionFactory = SolaceUtils.getConnectionFactory(props.getProperty("solaceHost"),
+                                                                 props.getProperty("solaceVpn"),
+                                                                 props.getProperty("solaceUser"),
+                                                                 props.getProperty("solacePassword"));
 
             defaultTopic = props.getProperty("solaceDefaultTopic");
         } catch (Exception e) {

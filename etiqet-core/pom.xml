@@ -30,6 +30,8 @@
         <cucumber.version>1.2.5</cucumber.version>
         <mysql.version>5.1.6</mysql.version>
         <gson.version>2.8.2</gson.version>
+        <jaxb.version>2.2.11</jaxb.version>
+        <javax.activation.version>1.1.1</javax.activation.version>
     </properties>
 
     <dependencies>
@@ -102,9 +104,24 @@
 
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>${javax.activation.version}</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
