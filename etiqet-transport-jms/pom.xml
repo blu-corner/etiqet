@@ -60,7 +60,6 @@
                     <sources>
                         <source>src/main/resources/etiqet_jms.xsd</source>
                     </sources>
-                    <staleFileDirectory>${project.build.directory}/generated-sources</staleFileDirectory>
                 </configuration>
             </plugin>
         </plugins>
