@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings version="2.1"
+               xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb
+                                   http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
+
+    <jaxb:globalBindings localScoping="toplevel">
+        <jaxb:serializable uid="1"/>
+
+        <!-- date time adapter -->
+       <!-- <jaxb:javaType name="java.util.Calendar" xmlType="xs:dateTime"
+                       parseMethod="javax.xml.bind.DatatypeConverter.parseDateTime"
+                       printMethod="javax.xml.bind.DatatypeConverter.printDateTime" />-->
+
+    </jaxb:globalBindings>
+
+</jaxb:bindings>

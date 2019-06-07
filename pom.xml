@@ -25,6 +25,7 @@
         <module>etiqet-websocket</module>
         <module>etiqet-selenium</module>
         <module>etiqet-transport-qfj</module>
+        <module>etiqet-transport-jms</module>
         <module>etiqet-transport-rabbitmq-gpb</module>
         <module>etiqet-transport-solace</module>
     </modules>
