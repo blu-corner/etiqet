@@ -19,9 +19,19 @@ public class QueryBuilder {
         DbHandlers.executeQuery(alias);
     }
 
+    @When("^I? ?add a? ?SELECT statement selecting all columns to query \"([^\"]*)\"$")
+    public void addSelect(String alias) {
+        DbHandlers.addSelect(alias);
+    }
+
     @When("^I? ?add a? ?SELECT statement selecting columns \"([^\"]*)\" to query \"([^\"]*)\"$")
     public void addSelect(ArrayList<String> columnNames, String alias) {
         DbHandlers.addSelect(columnNames, alias);
+    }
+
+    @When("^I? ?add a? ?DISTINCT ON rule for columns \"([^\"]*)\" to query \"([^\"]*)\"$")
+    public void addCondition(ArrayList<String> distinctColumns, String alias) {
+        DbHandlers.addDistinctOn(distinctColumns, alias);
     }
 
     @When("^I? ?add a? ?FROM statement using table \"([^\"]*)\" to query \"([^\"]*)\"$")
@@ -32,6 +42,21 @@ public class QueryBuilder {
     @When("^I? ?add a? ?condition \"([^\"]*)\" to query \"([^\"]*)\"$")
     public void addCondition(String conditionExp, String alias) {
         DbHandlers.addCondition(conditionExp, alias);
+    }
+
+    @When("^I? ?add a? ?GROUP BY statement \"([^\"]*)\" to query \"([^\"]*)\"$")
+    public void addHaving(ArrayList<String> columnNames, String alias) {
+        DbHandlers.addGroupBy(columnNames, alias);
+    }
+
+    @When("^I? ?add a? ?HAVING clause \"([^\"]*)\" to query \"([^\"]*)\"$")
+    public void addHaving(String conditionExp, String alias) {
+        DbHandlers.addHaving(conditionExp, alias);
+    }
+
+    @When("^I? ?add an? ?ORDER BY for columns \"([^\"]*)\" to query \"([^\"]*)\"$")
+    public void addOrderBy(ArrayList<String> columnNames, String alias) {
+        DbHandlers.addOrderBy(columnNames, alias);
     }
 
     /**JOINS*/

@@ -10,6 +10,7 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.sql.*;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -97,36 +98,57 @@ public class DbHandlers {
 
     /**QUERIES*/
 
-    public static void selectAll(String tableName) {
+    public static void selectAll(String tableName, String distinctColumnNames) {
         Name table = DSL.name(tableName);
-        results = dslContext.select().from(table).fetch();
+        if (distinctColumnNames != null) {
+            ArrayList<Field<Object>> distinctColumns = DbUtils.resolveToFieldList(distinctColumnNames);
+            results = dslContext.select().distinctOn(distinctColumns).from(table).fetch();
+        }
+        else {
+            results = dslContext.select().from(table).fetch();
+        }
     }
 
-    public static void selectAllWithCondition(String tableName, String conditionExp) {
+    public static void selectAllWithCondition(String tableName, String conditionExp, String distinctColumnNames) {
         Name table = DSL.name(tableName);
         Condition condition = DSL.condition(conditionExp);
-        results = dslContext.select().from(table).where(condition).fetch();
-    }
-
-    public static void selectColumns(ArrayList<String> columnNames, String tableName) {
-        Name table = DSL.name(tableName);
-
-        ArrayList<Field<Object>> columns = new ArrayList<>();
-        for (String columnName : columnNames) {
-            columns.add(field(DSL.name(columnName)));
+        if (distinctColumnNames != null) {
+            ArrayList<Field<Object>> distinctColumns = DbUtils.resolveToFieldList(distinctColumnNames);
+            results = dslContext.select().distinctOn(distinctColumns).from(table).where(condition).fetch();
         }
-        results = dslContext.select(columns).from(table).fetch();
+        else {
+            results = dslContext.select().from(table).where(condition).fetch();
+        }
     }
 
-    public static void selectColumnsWithCondition(ArrayList<String> columnNames, String tableName, String conditionExp) {
+    public static void selectColumns(ArrayList<String> columnNames, String tableName, String distinctColumnNames) {
+        Name table = DSL.name(tableName);
+        ArrayList<Field<Object>> columns = DbUtils.resolveToFieldList(columnNames);
+        if (distinctColumnNames != null) {
+            ArrayList<Field<Object>> distinctColumns = DbUtils.resolveToFieldList(distinctColumnNames);
+            results = dslContext.select(columns).distinctOn(distinctColumns).from(table).fetch();
+        }
+        else {
+            results = dslContext.select(columns).from(table).fetch();
+        }
+    }
+
+    public static void selectColumnsWithCondition(ArrayList<String> columnNames, String tableName, String conditionExp, String distinctColumnNames) {
         Name table = DSL.name(tableName);
         Condition condition = DSL.condition(conditionExp);
 
-        ArrayList<Field<Object>> columns = new ArrayList<>();
-        for (String columnName : columnNames) {
-            columns.add(field(DSL.name(columnName)));
+        ArrayList<Field<Object>> columns = DbUtils.resolveToFieldList(columnNames);
+        if (distinctColumnNames != null) {
+            ArrayList<Field<Object>> distinctColumns = DbUtils.resolveToFieldList(distinctColumnNames);
+            results = dslContext.select(columns).distinctOn(distinctColumns).from(table).where(condition).fetch();
         }
-        results = dslContext.select(columns).from(table).where(condition).fetch();
+        else {
+            results = dslContext.select(columns).from(table).where(condition).fetch();
+        }
+    }
+
+    public static void sendRawSQLQuery(String query) {
+        results = dslContext.fetch(query);
     }
 
     /**QUERY BUILDER*/
@@ -135,7 +157,11 @@ public class DbHandlers {
         queries.put(alias, dslContext.selectQuery());
     }
 
-    public static void addSelect(ArrayList<String> columnNames, String alias) {
+    public static void addSelect(String alias) {
+        queries.get(alias).addSelect();
+    }
+
+    public static void addSelect(ArrayList<String> columnNames,  String alias) {
         ArrayList<Field<Object>> columns = new ArrayList<>();
         for (String columnName : columnNames) {
             columns.add(field(DSL.name(columnName)));
@@ -151,6 +177,23 @@ public class DbHandlers {
     public static void addCondition(String conditionExp, String alias) {
         Condition condition = DSL.condition(conditionExp);
         queries.get(alias).addConditions(condition);
+    }
+
+    public static void addGroupBy(ArrayList<String> columnNames, String alias) {
+        queries.get(alias).addGroupBy(DbUtils.resolveToFieldList(columnNames));
+    }
+
+    public static void addHaving(String conditionExp, String alias) {
+        Condition condition = DSL.condition(conditionExp);
+        queries.get(alias).addHaving(condition);
+    }
+
+    public static void addDistinctOn(ArrayList<String> distinctColumnNames, String alias) {
+        queries.get(alias).addDistinctOn(DbUtils.resolveToFieldList(distinctColumnNames));
+    }
+
+    public static void addOrderBy(ArrayList<String> columnNames, String alias) {
+        queries.get(alias).addOrderBy(DbUtils.resolveToFieldList(columnNames));
     }
 
     public static void addJoin(String tableName, JoinType joinType, String alias) {
@@ -179,6 +222,27 @@ public class DbHandlers {
         dslContext.update(table).set(typeResolvedFieldValues).where(condition).execute();
     }
 
+    public static void insertInto(ArrayList<String> values, String tableName) {
+        Table<Record> table = DSL.table(tableName);
+        dslContext.insertInto(table).values(DbUtils.resolveToFieldList(values));
+    }
+
+    public static void insertInto(ArrayList<String> values, ArrayList<String> columnNames, String tableName) {
+        Table<Record> table = DSL.table(tableName);
+        dslContext.insertInto(table).columns(DbUtils.resolveToFieldList(columnNames)).values(DbUtils.resolveToFieldList(values));
+    }
+
+    public static void deleteAll(String tableName) {
+        Table<Record> table = DSL.table(tableName);
+        dslContext.delete(table).execute();
+    }
+
+    public static void deleteWithCondition(String tableName, String conditionExp) {
+        Table<Record> table = DSL.table(tableName);
+        Condition condition = DSL.condition(conditionExp);
+        dslContext.delete(table).where(condition);
+    }
+
     /**FILTERS*/
 
     // todo - a method of saving values
@@ -188,21 +252,36 @@ public class DbHandlers {
 
     /**VALIDATIONS*/
 
-    public static void checkRowCountGreaterThan(int expectedRows) throws SQLException {
+    public static void checkRowCountGreaterThan(int expectedRows) {
         assertTrue(expectedRows > results.size());
     }
 
-    public static void checkRowCountLessThan(int expectedRows) throws SQLException {
+    public static void checkRowCountLessThan(int expectedRows) {
         assertTrue(expectedRows < results.size());
     }
 
-    public static void checkRowCountEqualTo(int expectedRows) throws SQLException {
+    public static void checkRowCountEqualTo(int expectedRows) {
         assertEquals(expectedRows, results.size());
     }
 
-    public static void checkRowValuesEquals(ArrayList<String> values, String columnName) {
+    public static void checkValueForColumnAtRow(String value, int rowIndex, String columnName) {
+        assertEquals(value, results.get(rowIndex).get(field(DSL.name(columnName))));
+    }
+
+    public static void checkValueForColumnAtRowContains(String value, int rowIndex, String columnName) {
+        assertTrue(results.get(rowIndex).get(field(DSL.name(columnName))).toString().contains(value));
+    }
+
+    public static void checkValuesAcrossRows(ArrayList<String> values, String columnName) {
         for (int i = 0; i < results.size(); i++) {
             assertEquals(values.get(i), results.getValue(i, field(DSL.name(columnName))));
+        }
+    }
+
+    public static void checkValuesAcrossColumns(ArrayList<String> values, int rowIndex) {
+        Record row = results.get(rowIndex);
+        for (int i = 0; i < row.size(); i++) {
+            assertEquals(values.get(i), row.get(i));
         }
     }
 

@@ -5,8 +5,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.jooq.impl.DSL.field;
 
@@ -42,4 +41,15 @@ public class DbUtils {
         return value;
     }
 
+    protected static ArrayList<Field<Object>> resolveToFieldList(String fieldNames) {
+        return resolveToFieldList(Arrays.asList(fieldNames.split(Separators.PARAM_SEPARATOR)));
+    }
+
+    protected static ArrayList<Field<Object>> resolveToFieldList(List<String> fieldNames) {
+        ArrayList<Field<Object>> fields = new ArrayList<>();
+        for (String field : fieldNames) {
+            fields.add(field(DSL.name(field)));
+        }
+        return fields;
+    }
 }
