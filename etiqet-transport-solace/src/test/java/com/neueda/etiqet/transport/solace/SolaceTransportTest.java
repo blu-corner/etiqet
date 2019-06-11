@@ -74,7 +74,7 @@ public class SolaceTransportTest {
 
         verify(connectionFactory, times(1)).createConnection();
         verify(connection, times(1)).start();
-        verify(connection, times(1)).createSession(eq(true), eq(Session.AUTO_ACKNOWLEDGE));
+        verify(connection, times(1)).createSession(eq(false), eq(Session.AUTO_ACKNOWLEDGE));
         verifyNoMoreInteractions(connectionFactory, connection);
     }
 

@@ -13,6 +13,7 @@ public class SolaceUtils {
         connectionFactory.setVPN(vpn);
         connectionFactory.setUsername(user);
         connectionFactory.setPassword(pass);
+        connectionFactory.setXmlPayload(false);
         return connectionFactory;
     }
 

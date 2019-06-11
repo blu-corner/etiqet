@@ -14,6 +14,7 @@ import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.config.dtos.UrlExtension;
+import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,6 +50,9 @@ import java.util.stream.Collectors;
 import javax.net.ssl.HttpsURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 
 public class EtiqetHandlers {
 
@@ -612,8 +617,7 @@ public class EtiqetHandlers {
      * @param params list of params with pattern "field1=value1,field2=value2,...,fieldN=valueN"
      */
     public void createMessageForClient(String msgType, String clientName, String messageName,
-        String params)
-        throws EtiqetException {
+                                       String params) throws EtiqetException {
         Cdr message = ParserUtils.stringToCdr(msgType, preTreatParams(params));
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
@@ -621,6 +625,32 @@ public class EtiqetHandlers {
         assertNotNull("Could not find protocol " + client.getProtocolName(), config);
         ParserUtils.fillDefault(config.getMessage(msgType), message);
         messageMap.put(messageName, message);
+    }
+
+    public void createMessageNoAlias(String msgType, String clientName, String params) throws EtiqetException {
+        Cdr message = ParserUtils.stringToCdr(msgType, preTreatParams(params));
+        Client client = getClient(clientName);
+        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
+        ProtocolConfig config = client.getProtocolConfig();
+        assertNotNull("Could not find protocol " + client.getProtocolName(), config);
+        ParserUtils.fillDefault(config.getMessage(msgType), message);
+    }
+
+    public void createMessageNoParams(String msgType, String clientName, String messageName) throws EtiqetException {
+        Cdr message = ParserUtils.stringToCdr(msgType, DEFAULT_PARAMS);
+        Client client = getClient(clientName);
+        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
+        ProtocolConfig config = client.getProtocolConfig();
+        assertNotNull("Could not find protocol " + client.getProtocolName(), config);
+        messageMap.put(messageName, message);
+    }
+
+    public void createMessageNoParamsNoAlias(String msgType, String clientName) throws EtiqetException {
+        Cdr message = ParserUtils.stringToCdr(msgType, DEFAULT_PARAMS);
+        Client client = getClient(clientName);
+        ProtocolConfig config = client.getProtocolConfig();
+        assertNotNull("Could not find protocol " + client.getProtocolName(), config);
+        ParserUtils.fillDefault(config.getMessage(msgType), message);
     }
 
     public void addCukeVariable(String alias, String value) {
@@ -631,6 +661,13 @@ public class EtiqetHandlers {
         } else {
             cukeVariables.put(alias, value);
         }
+    }
+
+    public void createMessageFromFile(String fileName, String alias) throws IOException {
+        String content = new String(Files.readAllBytes(Paths.get(fileName)));
+        Cdr message = JsonUtils.jsonToCdr(content);
+        LOG.info("Payload: " + message);
+        messageMap.put(alias, message);
     }
 
     /**

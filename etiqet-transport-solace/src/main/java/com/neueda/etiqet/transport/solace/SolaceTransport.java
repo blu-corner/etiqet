@@ -9,6 +9,7 @@ import com.neueda.etiqet.core.transport.Transport;
 import com.neueda.etiqet.core.transport.TransportDelegate;
 
 import com.neueda.etiqet.core.util.StringUtils;
+import com.solacesystems.jms.SolMessageProducer;
 import com.solacesystems.jms.SolXAConnectionFactory;
 import com.solacesystems.jms.SolXAConnectionFactoryImpl;
 
@@ -68,7 +69,7 @@ public class SolaceTransport implements Transport {
         try {
             connection = connectionFactory.createConnection();
             connection.start();
-            session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         } catch (JMSException e) {
             throw new EtiqetException("Couldn't create Solace connection", e);
         }

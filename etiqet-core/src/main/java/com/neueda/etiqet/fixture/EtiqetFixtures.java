@@ -231,6 +231,15 @@ public class EtiqetFixtures {
         handlers.createMessage(msgType, protocol, messageName, params);
     }
 
+    @And("^create a message with payload from file \"([^\"]*)\" as \"([^\"]*)\"")
+    public void createMessageFromFile(String fileName, String alias) throws EtiqetException {
+        try {
+            handlers.createMessageFromFile(fileName, alias );
+        } catch (IOException e) {
+            handlers.addException(new RuntimeException(e), EtiqetHandlers.DEFAULT_EXCEPTION);
+        }
+    }
+
     @Then("^send message$")
     public void sendDefaultMessageUsingDefaultClient() throws EtiqetException {
         handlers.sendMessage(EtiqetHandlers.DEFAULT_MESSAGE_NAME, EtiqetHandlers.DEFAULT_CLIENT_NAME);

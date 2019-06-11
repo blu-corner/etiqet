@@ -75,3 +75,7 @@ Feature: Test correctly formed messages are accepted
         Then send a "NewOrderSingle" message with "ClOrdID=2222,ReceivedDeptID=9,AccountType=1,Account=35944156,HandlInst=1,Symbol=EURUSD,Side=u,TransactTime=20180115-13:30:00.000,OrderQty=1,OrdType=2,TimeInForce=4,Currency=EUR"
         And wait for an "Reject" message with "Text=Invalid Side" within 10 seconds
         And stop client
+
+     Scenario: Test
+         Given a "fix" client
+         When client "fix" is logged on

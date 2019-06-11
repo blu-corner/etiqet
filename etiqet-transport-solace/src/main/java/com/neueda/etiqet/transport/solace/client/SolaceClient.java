@@ -2,6 +2,7 @@ package com.neueda.etiqet.transport.solace.client;
 
 import com.neueda.etiqet.core.client.Client;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.transport.solace.SolaceUtils;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 
