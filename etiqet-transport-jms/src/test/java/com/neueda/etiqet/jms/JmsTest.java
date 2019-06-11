@@ -2,7 +2,10 @@ package com.neueda.etiqet.jms;
 
 import com.neueda.etiqet.core.EtiqetOptions;
 import com.neueda.etiqet.core.EtiqetTestRunner;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+
+
 
 /**
  * This class class the basic jms_test.feature in the test classpath. This feature requires a running Jms instance
@@ -17,3 +20,5 @@ import org.junit.runner.RunWith;
 )
 public class JmsTest {
 }
+
+

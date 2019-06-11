@@ -7,26 +7,17 @@ import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.Transport;
 import com.neueda.etiqet.core.transport.TransportDelegate;
+import com.neueda.etiqet.transport.jms.config.ConstructorArgument;
+import com.neueda.etiqet.transport.jms.config.JmsConfig;
+import com.neueda.etiqet.transport.jms.config.JmsConfigExtractor;
+import com.neueda.etiqet.transport.jms.config.SetterArgument;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import javax.jms.*;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import java.io.File;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.Collections;
 import java.util.List;
-
-import static com.neueda.etiqet.transport.jms.JmsConfigConstants.JMS_CONFIG_SCHEMA;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Class used to interact with a jms bus
@@ -51,30 +42,14 @@ public class JmsTransport implements Transport {
      */
     @Override
     public void init(String configPath) throws EtiqetException {
-        JmsConfiguration configuration = getJmsConfiguration(configPath);
+        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor();
+        JmsConfig configuration = jmsConfigExtractor.retrieveConfiguration(configPath);
         connectionFactory = createConnectionFactory(configuration);
         defaultTopic = configuration.getDefaultTopic();
     }
 
-    private JmsConfiguration getJmsConfiguration(final String configPath) throws EtiqetException {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(JmsConfiguration.class);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            URL protocolSchema = getClass().getClassLoader().getResource(JMS_CONFIG_SCHEMA);
-            if (protocolSchema == null) {
-                throw new EtiqetException("Unable to find configuration schema " + JMS_CONFIG_SCHEMA);
-            }
-            Schema schema = sf.newSchema(protocolSchema);
-            unmarshaller.setSchema(schema);
-            return (JmsConfiguration) unmarshaller.unmarshal(new File(configPath));
-        } catch (JAXBException | SAXException e) {
-            throw new EtiqetException("Error retrieving Jms configuration from " + configPath, e);
-        }
-    }
-
-    private ConnectionFactory createConnectionFactory(final JmsConfiguration configuration) throws EtiqetException {
-        List<ConstructorArgument> constructorArguments = getConstructorArguments(configuration.getConstructorArgs());
+    private ConnectionFactory createConnectionFactory(final JmsConfig configuration) throws EtiqetException {
+        List<ConstructorArgument> constructorArguments = configuration.getConstructorArgs();
         final Class[] argumentClasses = constructorArguments.stream()
             .map(arg -> arg.getArgumentType().getClazz())
             .toArray(Class[]::new);
@@ -83,9 +58,9 @@ public class JmsTransport implements Transport {
             .toArray(Object[]::new);
 
         try {
-            final Class<?> constructorClass = Class.forName(configuration.getImplementation());
+            final Class<?> constructorClass = configuration.getImplementation();
             final ConnectionFactory cf = (ConnectionFactory) constructorClass.getConstructor(argumentClasses).newInstance(argumentValues);
-            getSetterArguments(configuration.getProperties()).forEach(
+            configuration.getSetterArgs().forEach(
                 setterArgument -> setArgument(setterArgument, constructorClass, cf)
             );
             return cf;
@@ -104,39 +79,7 @@ public class JmsTransport implements Transport {
         }
     }
 
-    private List<ConstructorArgument> getConstructorArguments(final ConstructorArgs constructorArgs) {
-        if (constructorArgs == null) {
-            return Collections.emptyList();
-        }
-        return constructorArgs.getArg().stream()
-            .map(this::mapArgument)
-            .collect(toList());
-    }
 
-    private ConstructorArgument mapArgument(final ConstructorArg xmlArg) {
-        return new ConstructorArgument(
-            ArgumentType.from(xmlArg.getArgType().value()),
-            xmlArg.getArgValue()
-        );
-    }
-
-
-    private List<SetterArgument> getSetterArguments(final Properties properties) {
-        if (properties == null) {
-            return Collections.emptyList();
-        }
-        return properties.getProperty().stream()
-            .map(this::mapProperty)
-            .collect(toList());
-    }
-
-    private SetterArgument mapProperty(SetterProperty prop) {
-        return new SetterArgument(
-            ArgumentType.from(prop.getArgType().value()),
-            prop.getArgName(),
-            prop.getArgValue()
-        );
-    }
 
     /**
      * Starts a connection to the configured Jms bus

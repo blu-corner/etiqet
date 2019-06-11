@@ -1,4 +1,6 @@
-package com.neueda.etiqet.transport.jms;
+package com.neueda.etiqet.transport.jms.config;
+
+import com.neueda.etiqet.transport.jms.config.ArgumentType;
 
 public class SetterArgument {
     private ArgumentType argumentType;

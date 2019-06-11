@@ -1,4 +1,4 @@
-package com.neueda.etiqet.transport.jms;
+package com.neueda.etiqet.transport.jms.config;
 
 public class JmsConfigConstants {
 
