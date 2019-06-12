@@ -608,6 +608,14 @@ public class EtiqetHandlers {
         }
     }
 
+    private ProtocolConfig initialiseProtocolConfig(String clientName) {
+        Client client = getClient(clientName);
+        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
+        ProtocolConfig config = client.getProtocolConfig();
+        assertNotNull("Could not find protocol " + client.getProtocolName(), config);
+        return config;
+    }
+
     /**
      * Method to create a message.
      *
@@ -619,37 +627,25 @@ public class EtiqetHandlers {
     public void createMessageForClient(String msgType, String clientName, String messageName,
                                        String params) throws EtiqetException {
         Cdr message = ParserUtils.stringToCdr(msgType, preTreatParams(params));
-        Client client = getClient(clientName);
-        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
-        ProtocolConfig config = client.getProtocolConfig();
-        assertNotNull("Could not find protocol " + client.getProtocolName(), config);
+        ProtocolConfig config = initialiseProtocolConfig(clientName);
         ParserUtils.fillDefault(config.getMessage(msgType), message);
         messageMap.put(messageName, message);
     }
 
     public void createMessageNoAlias(String msgType, String clientName, String params) throws EtiqetException {
         Cdr message = ParserUtils.stringToCdr(msgType, preTreatParams(params));
-        Client client = getClient(clientName);
-        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
-        ProtocolConfig config = client.getProtocolConfig();
-        assertNotNull("Could not find protocol " + client.getProtocolName(), config);
+        ProtocolConfig config = initialiseProtocolConfig(clientName);
         ParserUtils.fillDefault(config.getMessage(msgType), message);
     }
 
     public void createMessageNoParams(String msgType, String clientName, String messageName) throws EtiqetException {
         Cdr message = ParserUtils.stringToCdr(msgType, DEFAULT_PARAMS);
-        Client client = getClient(clientName);
-        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
-        ProtocolConfig config = client.getProtocolConfig();
-        assertNotNull("Could not find protocol " + client.getProtocolName(), config);
         messageMap.put(messageName, message);
     }
 
     public void createMessageNoParamsNoAlias(String msgType, String clientName) throws EtiqetException {
         Cdr message = ParserUtils.stringToCdr(msgType, DEFAULT_PARAMS);
-        Client client = getClient(clientName);
-        ProtocolConfig config = client.getProtocolConfig();
-        assertNotNull("Could not find protocol " + client.getProtocolName(), config);
+        ProtocolConfig config = initialiseProtocolConfig(clientName);
         ParserUtils.fillDefault(config.getMessage(msgType), message);
     }
 
