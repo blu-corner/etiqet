@@ -67,7 +67,25 @@ public class JmsTransportTest {
     @Test
     public void testInit_propertiesMissingInConfiguration() throws EtiqetException{
         String configPath = "src/test/resources/config/jmsConfig_missingProperties.xml";
+
         transport.init(configPath);
+
+        ActiveMQConnectionFactory connectionFactory = (ActiveMQConnectionFactory) transport.getConnectionFactory();
+        assertNull(connectionFactory.getUserName());
+        assertNull(connectionFactory.getPassword());
+        assertEquals("tcp://localhost:61616", connectionFactory.getBrokerURL());
+    }
+
+    @Test
+    public void testInit_constructorArgsMissingInConfiguration() throws EtiqetException{
+        String configPath = "src/test/resources/config/jmsConfig_missingConstructorArgs.xml";
+
+        transport.init(configPath);
+
+        ActiveMQConnectionFactory connectionFactory = (ActiveMQConnectionFactory) transport.getConnectionFactory();
+        assertEquals("USERNAME", connectionFactory.getUserName());
+        assertEquals("PASSWORD", connectionFactory.getPassword());
+        assertEquals("tcp://localhost:61616", connectionFactory.getBrokerURL());
     }
 
     @Test
