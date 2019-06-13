@@ -29,12 +29,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
 import org.awaitility.Duration;
@@ -129,7 +124,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=null,messageId=123");
+            "message1", Optional.of("test=null,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
         handlers.compareTimestampEqualsCukeVar("test", "response1", "");
@@ -149,7 +144,7 @@ public class EtiqetHandlersTest {
         Client client = handler.getClient(clientName);
         assertEquals("testValue", client.getConfig().getString("testProperty"));
         handler.createMessageForClient("TestMsg", clientName,
-            "message1", "test=null,messageId=123");
+            "message1", Optional.of("test=null,messageId=123"));
 
         assertNotNull(clientName + " should exist but doesn\'t", client);
         assertTrue(clientName + " should be able to failover but cannot", client.canFailover());
@@ -1013,7 +1008,7 @@ public class EtiqetHandlersTest {
         String clientName = "testClient";
         Client client = handlers.createClient("testProtocol", clientName);
 
-        handlers.createMessageForClient("TestMsg", clientName, "testMsg", "test=value");
+        handlers.createMessageForClient("TestMsg", clientName, "testMsg", Optional.of("test=value"));
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
 
         handlers.sendMessage("testMsg", clientName);
@@ -1037,17 +1032,17 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message2",
-            "test=otherValue,messageId=234");
+            Optional.of("test=otherValue,messageId=234"));
         handlers.sendMessage("message2", clientName);
         handlers.waitForResponseOfType("response2", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message3",
-            "test=thirdValue,messageId=123");
+            Optional.of("test=thirdValue,messageId=123"));
         handlers.getResponseToMessageFromListByField
             ("response3", "message3", "response2,response1", "messageId");
 
@@ -1286,17 +1281,17 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message2",
-            "test=otherValue,messageId=234");
+            Optional.of("test=otherValue,messageId=234"));
         handlers.sendMessage("message2", clientName);
         handlers.waitForResponseOfType("response2", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message3",
-            "test=thirdValue,messageId=456");
+            Optional.of("test=thirdValue,messageId=456"));
 
         // this should thrown an assertion error because neither response1 or response2 will have the same messageId
         handlers.getResponseToMessageFromListByField
@@ -1331,7 +1326,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
         handlers.validateMessageTypeExistInResponseMap("response1");
@@ -1385,7 +1380,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
@@ -1404,7 +1399,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
@@ -1430,7 +1425,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 

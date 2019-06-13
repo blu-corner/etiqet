@@ -10,6 +10,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Class to define Steps to that implement feature definitions.
@@ -222,13 +223,18 @@ public class EtiqetFixtures {
 
     @And("^create a \"([^\"]*)\" message with \"([^\"]*)\" as \"([^\"]*)\"$")
     public void createMessageWithAs(String msgType, String params, String varName) throws EtiqetException {
-        handlers.createMessageForClient(msgType, EtiqetHandlers.DEFAULT_CLIENT_NAME, varName, params);
+        handlers.createMessageForClient(msgType, EtiqetHandlers.DEFAULT_CLIENT_NAME, varName, Optional.of(params));
     }
 
     @And("^create a \"([^\"]*)\" \"([^\"]*)\" message as \"([^\"]*)\" with \"([^\"]*)\"$")
     public void createMessage(String msgType, String protocol, String messageName, String params)
         throws EtiqetException {
         handlers.createMessage(msgType, protocol, messageName, params);
+    }
+
+    @And("^create a message with payload from file \"([^\"]*)\" as \"([^\"]*)\"")
+    public void createMessageFromFile(String fileName, String alias) throws EtiqetException {
+        handlers.createMessageFromFile(fileName, alias );
     }
 
     @Then("^send message$")
@@ -308,7 +314,7 @@ public class EtiqetFixtures {
     @Then("^send an? \"([^\"]*)\" message with \"([^\"]*)\" using \"([^\"]*)\" with session id \"([^\"]*)\" as \"([^\"]*)\"$")
     public void sendAMsgParamClientSessionAs(String msgType, String params, String clientName, String sessionId,
         String alias) throws EtiqetException {
-        handlers.createMessageForClient(msgType, clientName, alias, params);
+        handlers.createMessageForClient(msgType, clientName, alias, Optional.of(params));
         handlers.sendMessage(alias, clientName, sessionId);
     }
 

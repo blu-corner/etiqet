@@ -1,4 +1,4 @@
-package com.neueda.etiqet.transport.jms.config;
+package com.neueda.etiqet.transport.jms.config.model;
 
 import java.util.List;
 

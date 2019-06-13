@@ -14,6 +14,8 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+        <jaxb.version>2.2.11</jaxb.version>
+        <javax.activation.version>1.1.1</javax.activation.version>
         <log.version>2.9.1</log.version>
     </properties>
 
@@ -21,6 +23,7 @@
         <module>etiqet-core</module>
         <module>etiqet-fix-common</module>
         <module>etiqet-fix</module>
+        <module>etiqet-message-broker</module>
         <module>etiqet-rest</module>
         <module>etiqet-websocket</module>
         <module>etiqet-selenium</module>
@@ -60,6 +63,26 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>${javax.activation.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
