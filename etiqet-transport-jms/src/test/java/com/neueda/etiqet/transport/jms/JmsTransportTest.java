@@ -1,15 +1,20 @@
 package com.neueda.etiqet.transport.jms;
 
+import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.transport.Codec;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQTextMessage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.jms.*;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -109,7 +114,7 @@ public class JmsTransportTest {
 
         verify(connectionFactory, times(1)).createConnection();
         verify(connection, times(1)).start();
-        verify(connection, times(1)).createSession(eq(true), eq(Session.AUTO_ACKNOWLEDGE));
+        verify(connection, times(1)).createSession(false, Session.CLIENT_ACKNOWLEDGE);
         verifyNoMoreInteractions(connectionFactory, connection);
     }
 
@@ -288,8 +293,44 @@ public class JmsTransportTest {
             fail("Should have failed because and exception should have been thrown while creating the producer");
         } catch (Exception e) {
             assertTrue(e instanceof EtiqetException);
-            assertEquals("javax.jms.JMSException: Unable to create Jms Producer", e.getMessage());
+            assertEquals("Unable to send message to Jms topic TestTopic", e.getMessage());
         }
     }
+
+    @Test
+    public void testConsumeFromTopic() throws Exception {
+        final String topicName = "topicName";
+        Session session = mock(Session.class);
+        Topic topic = mock(Topic.class);
+        MessageConsumer messageConsumer = mock(MessageConsumer.class);
+        ClientDelegate clientDelegate = mock(ClientDelegate.class);
+        Codec codec = mock(Codec.class);
+        Cdr cdr = new Cdr("None");
+        cdr.set("test", "value");
+        when(session.createTopic(topicName)).thenReturn(topic);
+        when(session.createConsumer(topic)).thenReturn(messageConsumer);
+        when(clientDelegate.processMessage(cdr)).thenReturn(cdr);
+        when(codec.decode("text")).thenReturn(cdr);
+        doAnswer(
+            call -> {
+                MessageListener ml = call.getArgument(0);
+                ActiveMQTextMessage message = new ActiveMQTextMessage();
+                message.setText("text");
+                ml.onMessage(message);
+                return null;
+            }
+        ).when(messageConsumer).setMessageListener(any(MessageListener.class));
+
+        transport.setSession(session);
+        transport.setDelegate(clientDelegate);
+        transport.setCodec(codec);
+
+
+        CompletableFuture<Cdr> eventualCdr = transport.consumeFromTopic(Optional.of(topicName));
+
+        final Cdr result = eventualCdr.get(1, SECONDS);
+        assertEquals(cdr, result);
+    }
+
 
 }

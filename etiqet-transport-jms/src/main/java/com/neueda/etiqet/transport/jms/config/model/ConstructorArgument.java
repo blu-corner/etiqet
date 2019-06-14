@@ -1,6 +1,4 @@
-package com.neueda.etiqet.transport.jms.config;
-
-import com.neueda.etiqet.transport.jms.config.ArgumentType;
+package com.neueda.etiqet.transport.jms.config.model;
 
 public class ConstructorArgument {
     private ArgumentType argumentType;
@@ -23,7 +21,7 @@ public class ConstructorArgument {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 }

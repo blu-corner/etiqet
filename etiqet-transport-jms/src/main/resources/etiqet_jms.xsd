@@ -40,6 +40,7 @@
     <xs:simpleType name="ArgType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="string"/>
+            <xs:enumeration value="boolean"/>
         </xs:restriction>
     </xs:simpleType>
 

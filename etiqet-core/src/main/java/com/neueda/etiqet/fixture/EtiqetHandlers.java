@@ -14,6 +14,7 @@ import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.config.dtos.UrlExtension;
+import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
@@ -29,19 +30,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -611,10 +604,14 @@ public class EtiqetHandlers {
      * @param messageName name to index the message.
      * @param params list of params with pattern "field1=value1,field2=value2,...,fieldN=valueN"
      */
-    public void createMessageForClient(String msgType, String clientName, String messageName,
-        String params)
-        throws EtiqetException {
-        Cdr message = ParserUtils.stringToCdr(msgType, preTreatParams(params));
+    public void createMessageForClient(String msgType, String clientName, String messageName, Optional<String> params) throws EtiqetException {
+        final String pretreatedParams;
+        if (params.isPresent()) {
+            pretreatedParams = preTreatParams(params.get());
+        } else {
+            pretreatedParams = DEFAULT_PARAMS;
+        }
+        Cdr message = ParserUtils.stringToCdr(msgType, pretreatedParams);
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
         ProtocolConfig config = client.getProtocolConfig();
@@ -631,6 +628,19 @@ public class EtiqetHandlers {
         } else {
             cukeVariables.put(alias, value);
         }
+    }
+
+    public void createMessageFromFile(String fileName, String alias) throws EtiqetException {
+        final String content;
+        try {
+            content = new String(Files.readAllBytes(Paths.get(fileName)));
+        } catch (IOException e) {
+            addException(new RuntimeException(e), EtiqetHandlers.DEFAULT_EXCEPTION);
+            throw new EtiqetException(e);
+        }
+        Cdr message = JsonUtils.jsonToCdr(content);
+        LOG.info("Payload: " + message);
+        messageMap.put(alias, message);
     }
 
     /**
