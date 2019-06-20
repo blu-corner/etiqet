@@ -5,13 +5,23 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
-import com.neueda.etiqet.core.transport.SubscriptionTransport;
+import com.neueda.etiqet.core.transport.BrokerTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
+
+import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toCollection;
 
 public class MessageBrokerClient extends Client {
+
+    private ConcurrentHashMap<String, Deque<Cdr>> messagesByTopic;
+    private ConcurrentHashMap<String, Deque<Cdr>> messagesByQueue;
+    private final static Logger logger = LoggerFactory.getLogger(MessageBrokerClient.class);
 
     public MessageBrokerClient(String clientConfig) throws EtiqetException {
         this(clientConfig, null);
@@ -23,11 +33,43 @@ public class MessageBrokerClient extends Client {
 
     public MessageBrokerClient(String primaryClientConfig, String secondaryClientConfig, ProtocolConfig protocol) throws EtiqetException {
         super(primaryClientConfig, secondaryClientConfig, protocol);
+        messagesByTopic = new ConcurrentHashMap<>();
+        messagesByQueue = new ConcurrentHashMap<>();
     }
 
     @Override
     public boolean isLoggedOn() {
         return transport != null && transport.isLoggedOn();
+    }
+
+    public void subscribeToTopic(String topicName) throws EtiqetException {
+        getTransport().subscribeToTopic(
+            Optional.of(topicName),
+            message -> addMessageToGroup(messagesByTopic, topicName, message)
+        );
+    }
+
+    public void subscribeToQueue(String queueName) throws EtiqetException {
+        getTransport().subscribeToQueue(
+            queueName,
+            message -> addMessageToGroup(messagesByQueue, queueName, message)
+        );
+    }
+
+    private void addMessageToGroup(final Map<String, Deque<Cdr>> map, final String groupKey, final Cdr message) {
+        if (message == null) {
+            throw new EtiqetRuntimeException("Empty message received from " + groupKey);
+        }
+
+        map.merge(
+            groupKey,
+            new LinkedList<>(singleton(message)),
+            (q1, q2) ->
+                Stream.of(q1, q2)
+                    .flatMap(Collection::stream)
+                    .collect(toCollection(LinkedList::new))
+        );
+        msgQueue.add(message);
     }
 
     public void sendMessageToTopic(Cdr message, Optional<String> topicName) throws EtiqetException {
@@ -39,27 +81,51 @@ public class MessageBrokerClient extends Client {
     }
 
     public Cdr waitForMsgOnTopic(Optional<String> topic, int milliseconds) throws EtiqetException {
-        CompletableFuture<Cdr> eventualCdr = getTransport().consumeFromTopic(topic);
-        try {
-            return eventualCdr.get(milliseconds, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            throw new EtiqetException(e);
-        }
+        return getTransport().subscribeAndConsumeFromTopic(topic, Duration.ofMillis(milliseconds));
     }
 
     public Cdr waitForMsgOnQueue(String queueName, int milliseconds) throws EtiqetException {
-        CompletableFuture<Cdr> eventualCdr = getTransport().consumeFromQueue(queueName);
-        try {
-            return eventualCdr.get(milliseconds, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            throw new EtiqetException(e);
-        }
+        return getTransport().subscribeAndConsumeFromQueue(queueName, Duration.ofMillis(milliseconds));
     }
 
-    public SubscriptionTransport getTransport() {
-        if (!(transport instanceof SubscriptionTransport)) {
-            throw new EtiqetRuntimeException("Transport for messagebrokerClient should be a SubscriptionTransport");
-        }
-        return (SubscriptionTransport) transport;
+    public List<Cdr> getReceivedMessagesFromTopic(String topicName) {
+        return getReceivedMessagesInGroup(messagesByTopic, topicName);
     }
+
+    public List<Cdr> getReceivedMessagesFromQueue(String queueName) {
+        return getReceivedMessagesInGroup(messagesByQueue, queueName);
+    }
+
+    private List<Cdr> getReceivedMessagesInGroup(final Map<String, Deque<Cdr>> map, final String groupName) {
+        return new ArrayList<>(map.getOrDefault(groupName, new LinkedList<>()));
+    }
+
+    public Optional<Cdr> getLastMessageFromTopic(String topicName) {
+        return getLastMessageFromGroup(messagesByTopic, topicName);
+    }
+
+    public Optional<Cdr> getLastMessageFromQueue(String queueName) {
+        return getLastMessageFromGroup(messagesByQueue, queueName);
+    }
+
+    private Optional<Cdr> getLastMessageFromGroup(final Map<String, Deque<Cdr>> map, final String groupName) {
+        return Optional.ofNullable(
+            map
+                .getOrDefault(groupName, new ArrayDeque<>())
+                .getLast()
+        );
+    }
+
+    @Override
+    public BrokerTransport getTransport() {
+        if (transport == null) {
+            throw new EtiqetRuntimeException("Transport not available");
+        }
+        if (transport instanceof BrokerTransport) {
+            return (BrokerTransport) transport;
+        }
+        throw new EtiqetRuntimeException("Transport for messagebrokerClient should be a BrokerTransport");
+    }
+
+
 }

@@ -3,13 +3,17 @@ package com.neueda.etiqet.fixture;
 import com.neueda.etiqet.core.client.Client;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.util.ParserUtils;
 import com.neueda.etiqet.messageBroker.client.MessageBrokerClient;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.neueda.etiqet.fixture.EtiqetHandlers.DEFAULT_MESSAGE_NAME;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
@@ -19,6 +23,18 @@ public class MessageBrokerFixtures {
 
     public MessageBrokerFixtures(EtiqetHandlers handlers) {
         this.handlers = handlers;
+    }
+
+    @When("^client \"([^\"]*)\" is subscribed to topic \"([^\"]*)\"$")
+    public void subscribeToTopicFromClient(String clientName, String topic) throws EtiqetException {
+        MessageBrokerClient client = getMessageBrokerClient(clientName);
+        client.subscribeToTopic(topic);
+    }
+
+    @When("^client \"([^\"]*)\" is subscribed to queue \"([^\"]*)\"$")
+    public void subscribeToQueueFromClient(String clientName, String queueName) throws EtiqetException {
+        MessageBrokerClient client = getMessageBrokerClient(clientName);
+        client.subscribeToQueue(queueName);
     }
 
     @And("^wait for a message on topic \"([^\"]*)\"")
@@ -175,6 +191,45 @@ public class MessageBrokerFixtures {
         final Cdr cdr = handlers.getSentMessage(alias);
         MessageBrokerClient client = getMessageBrokerClient(clientName);
         client.sendMessageToQueue(cdr, queueName);
+    }
+
+    @Then("check that \"([^\"]*)\" has received (\\d+) messages from topic \"([^\"]*)\"$")
+    public void checkNumberOfMessagesReceivedOnTopic(String clientName, int numMessages, String topicName) {
+        MessageBrokerClient client = getMessageBrokerClient(clientName);
+        List<Cdr> receivedMessages = client.getReceivedMessagesFromTopic(topicName);
+        assertEquals(numMessages, receivedMessages.size());
+    }
+
+    @Then("check that \"([^\"]*)\" has received (\\d+) messages from queue \"([^\"]*)\"$")
+    public void checkNumberOfMessagesReceivedOnQueue(String clientName, int numMessages, String queueName) {
+        MessageBrokerClient client = getMessageBrokerClient(clientName);
+        List<Cdr> receivedMessages = client.getReceivedMessagesFromQueue(queueName);
+        assertEquals(numMessages, receivedMessages.size());
+    }
+
+    @Then("check that last message received by \"([^\"]*)\" from topic \"([^\"]*)\" contains \"([^\"]*)\"$")
+    public void checkLastTopicMessageContent(String clientName, String topicName, String params) {
+        MessageBrokerClient client = getMessageBrokerClient(clientName);
+
+        Optional<Cdr> lastMessage = client.getLastMessageFromTopic(topicName);
+        assertTrue("No message found for topic", lastMessage.isPresent());
+        checkMessageContent(lastMessage.get(), params);
+    }
+
+    @Then("check that last message received by \"([^\"]*)\" from queue \"([^\"]*)\" contains \"([^\"]*)\"$")
+    public void checkLastQueueMessageContent(String clientName, String queueName, String params) {
+        MessageBrokerClient client = getMessageBrokerClient(clientName);
+
+        Optional<Cdr> lastMessage = client.getLastMessageFromQueue(queueName);
+        assertTrue("No message found for queue", lastMessage.isPresent());
+        checkMessageContent(lastMessage.get(), params);
+    }
+
+    private void checkMessageContent(Cdr lastMessage, String params) {
+        Cdr expectedCdr = ParserUtils.stringToCdr("NOTYPE", handlers.preTreatParams(params));
+        expectedCdr.getItems().forEach(
+            (key, value) -> assertEquals(value, lastMessage.getItem(key))
+        );
     }
 
     private MessageBrokerClient getMessageBrokerClient(final String clientName) {

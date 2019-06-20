@@ -4,12 +4,16 @@
         <protocol name="broker">
             <client defaultConfig="${user.dir}/src/test/resources/config/brokerConfig.xml"
                     impl = "com.neueda.etiqet.messageBroker.client.MessageBrokerClient"
-                    transportImpl="com.neueda.etiqet.messageBroker.mock.SubscriptionTransportMock"
+                    transportImpl="com.neueda.etiqet.messageBroker.mock.BrokerTransportStub"
                     codecImpl="com.neueda.etiqet.core.json.JsonCodec">
             </client>
             <messages>
                 <message name="TestMessage">
-                    <implementation>java.lang.String</implementation>
+                    <implementation>com.neueda.etiqet.messageBroker.TestClass</implementation>
+                    <fields>
+                        <field name="field1" type="string">value1</field>
+                        <field name="field2" type="string">value2</field>
+                    </fields>
                 </message>
             </messages>
         </protocol>
