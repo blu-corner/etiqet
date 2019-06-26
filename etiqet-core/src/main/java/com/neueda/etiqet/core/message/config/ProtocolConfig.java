@@ -4,7 +4,7 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.config.dtos.*;
 import com.neueda.etiqet.core.config.xml.XmlParser;
-import com.neueda.etiqet.core.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -84,10 +84,12 @@ public class ProtocolConfig implements Serializable {
         if (getDictionary() != null) {
             msgType = getDictionary().getMsgType(messageName);
         }
-        if (StringUtils.isNullOrEmpty(msgType)) {
+        if (StringUtils.isEmpty(msgType)) {
             Message message = messageMap.get(messageName);
             if (message != null) {
                 msgType = message.getMsgtype();
+            } else {
+                msgType = messageName;
             }
         }
         return msgType;

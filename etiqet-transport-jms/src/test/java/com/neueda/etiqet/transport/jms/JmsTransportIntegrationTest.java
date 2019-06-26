@@ -4,10 +4,9 @@ import com.neueda.etiqet.core.client.delegate.SinkClientDelegate;
 import com.neueda.etiqet.core.json.JsonCodec;
 import com.neueda.etiqet.core.message.CdrBuilder;
 import com.neueda.etiqet.core.message.cdr.Cdr;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.jms.ConnectionFactory;
 import java.util.List;
@@ -21,16 +20,22 @@ import static junit.framework.TestCase.assertTrue;
 
 public class JmsTransportIntegrationTest {
     private JmsTransport jmsTransport;
-    @Rule public EmbeddedActiveMQBroker broker = new EmbeddedActiveMQBroker();
+    @Rule
+    public EmbeddedActiveMQBroker broker;
 
     @Before
     public void setup() throws Exception {
-        ConnectionFactory connectionFactory = broker.createConnectionFactory();
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
         jmsTransport = new JmsTransport();
         jmsTransport.setCodec(new JsonCodec());
         jmsTransport.setConnectionFactory(connectionFactory);
         jmsTransport.setDelegate(new SinkClientDelegate());
         jmsTransport.start();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        jmsTransport.stop();
     }
 
     @Test
@@ -43,7 +48,7 @@ public class JmsTransportIntegrationTest {
         jmsTransport.subscribeToTopic(Optional.of(topicName), message -> receivedMessages.add(message));
         jmsTransport.sendToTopic(CdrBuilder.aCdr("NONE").withField("field", "value01").build(), Optional.of(topicName));
         jmsTransport.sendToTopic(CdrBuilder.aCdr("NONE").withField("field", "value02").build(), Optional.of(topicName));
-        Thread.sleep(20);
+        Thread.sleep(200);
 
         assertEquals(2, receivedMessages.size());
         List<String> values = receivedMessages.stream().map(m -> m.getAsString("field")).sorted(String::compareTo).collect(toList());
@@ -57,7 +62,7 @@ public class JmsTransportIntegrationTest {
         BlockingQueue<Cdr> receivedMessages = new LinkedBlockingQueue<>();
 
         jmsTransport.subscribeToTopic(Optional.of(topicName), message -> receivedMessages.add(message));
-        Thread.sleep(20);
+        Thread.sleep(200);
 
         assertTrue(receivedMessages.isEmpty());
     }
@@ -72,7 +77,7 @@ public class JmsTransportIntegrationTest {
         jmsTransport.subscribeToQueue(queueName, message -> receivedMessages.add(message));
         jmsTransport.sendToQueue(CdrBuilder.aCdr("NONE").withField("field", "value01").build(), queueName);
         jmsTransport.sendToQueue(CdrBuilder.aCdr("NONE").withField("field", "value02").build(), queueName);
-        Thread.sleep(20);
+        Thread.sleep(200);
 
         assertEquals(2, receivedMessages.size());
         List<String> values = receivedMessages.stream().map(m -> m.getAsString("field")).sorted(String::compareTo).collect(toList());
