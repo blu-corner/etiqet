@@ -4,7 +4,8 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xmlns:e="http://www.neueda.com/etiqet/transport/jms">
     <constructor-args>
-        <arg argType="string" argValue="tcp://localhost:61616"/>
+        <!-- tcp://localhost:61616 for default activemq; vm://localhost for the embedded one -->
+        <arg argType="string" argValue="vm://localhost?broker.persistent=false"/>
     </constructor-args>
     <properties>
         <property argType="string" argName="userName" argValue="USERNAME"/>

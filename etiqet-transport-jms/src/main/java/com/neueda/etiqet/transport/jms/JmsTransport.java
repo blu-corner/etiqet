@@ -4,13 +4,13 @@ import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.transport.BrokerTransport;
 import com.neueda.etiqet.core.transport.Codec;
-import com.neueda.etiqet.core.transport.SubscriptionTransport;
 import com.neueda.etiqet.core.transport.TransportDelegate;
+import com.neueda.etiqet.transport.jms.config.JmsConfigExtractor;
 import com.neueda.etiqet.transport.jms.config.JmsConfigurationReader;
 import com.neueda.etiqet.transport.jms.config.model.ConstructorArgument;
 import com.neueda.etiqet.transport.jms.config.model.JmsConfig;
-import com.neueda.etiqet.transport.jms.config.JmsConfigExtractor;
 import com.neueda.etiqet.transport.jms.config.model.SetterArgument;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -18,15 +18,17 @@ import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
 import java.lang.reflect.Method;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * Class used to interact with a jms bus
  */
-public class JmsTransport implements SubscriptionTransport {
+public class JmsTransport implements BrokerTransport {
 
     private final static Logger logger = LoggerFactory.getLogger(JmsTransport.class);
 
@@ -208,6 +210,32 @@ public class JmsTransport implements SubscriptionTransport {
     }
 
     @Override
+    public void subscribeToTopic(Optional<String> topicName, final Consumer<Cdr> cdrListener) throws EtiqetException {
+        try {
+            final Topic topic = session.createTopic(topicName.orElse(defaultTopic));
+            subscribe(topic, cdrListener);
+        } catch (JMSException e) {
+            throw new EtiqetException(e);
+        }
+    }
+
+    @Override
+    public void subscribeToQueue(String queueName, Consumer<Cdr> cdrListener) throws EtiqetException {
+        try {
+            final Queue queue = session.createQueue(queueName);
+            subscribe(queue, cdrListener);
+        } catch (JMSException e) {
+            throw new EtiqetException(e);
+        }
+    }
+
+    private void subscribe(final Destination destination, final Consumer<Cdr> cdrListener) throws JMSException {
+        MessageListener messageListener = message -> cdrListener.accept(jmsMessageToCdr(message));
+        final MessageConsumer consumer = session.createConsumer(destination);
+        consumer.setMessageListener(messageListener);
+    }
+
+    @Override
     public void sendToTopic(Cdr cdr, Optional<String> maybeTopicName) throws EtiqetException {
         final String topicName = maybeTopicName.orElseGet(() -> {
             logger.info("Empty topic name passed for sending to Jms, using default topic from config: {}", defaultTopic);
@@ -242,66 +270,62 @@ public class JmsTransport implements SubscriptionTransport {
     }
 
     @Override
-    public CompletableFuture<Cdr> consumeFromTopic(Optional<String> topicName) throws EtiqetException {
+    public Cdr subscribeAndConsumeFromTopic(final Optional<String> topicName, final Duration timeout) throws EtiqetException {
         try {
             final Topic topic = session.createTopic(topicName.orElse(defaultTopic));
-            return consumeFromDestination(topic);
-        } catch (JMSException e) {
+            return jmsMessageToCdr(consumeFromDestination(topic).get(timeout.getSeconds(), TimeUnit.SECONDS));
+        } catch (Exception e) {
             throw new EtiqetException(e);
         }
-
     }
 
     @Override
-    public CompletableFuture<Cdr> consumeFromQueue(final String queueName) throws EtiqetException {
+    public Cdr subscribeAndConsumeFromQueue(final String queueName, final Duration timeout) throws EtiqetException {
         try {
             final Queue queue = session.createQueue(queueName);
-            return consumeFromDestination(queue);
-        } catch (JMSException e) {
+            return jmsMessageToCdr(consumeFromDestination(queue).get(timeout.getSeconds(), TimeUnit.SECONDS));
+        } catch (Exception e) {
             throw new EtiqetException(e);
         }
     }
 
-    private CompletableFuture<Cdr> consumeFromDestination(final Destination destination) throws JMSException {
-        CompletableFuture<Cdr> eventualCdr = new CompletableFuture<>();
-        final MessageConsumer consumer = session.createConsumer(destination);
-        consumer.setMessageListener(
-            message -> {
-                try {
-                    eventualCdr.complete(jmsMessageToCdr(message));
-                } catch(EtiqetException e) {
-                    throw new CompletionException(e);
-                }
-            });
+    private CompletableFuture<Message> consumeFromDestination(final Destination destination) throws EtiqetException {
+        CompletableFuture<Message> eventualCdr = new CompletableFuture<>();
+        try {
+            final MessageConsumer consumer = session.createConsumer(destination);
+            consumer.setMessageListener(message -> eventualCdr.complete(message));
+        } catch (JMSException e) {
+            throw new EtiqetException(e);
+        }
         return eventualCdr;
     }
 
-    private Cdr jmsMessageToCdr(final Message message) throws EtiqetException {
-        final Cdr cdr;
-        if (message instanceof TextMessage) {
-            try {
-                TextMessage txt = (TextMessage) message;
-                cdr = delegate.processMessage((Cdr) getCodec().decode(txt.getText()));
-                message.acknowledge();
-            } catch (Exception e) {
-                throw new EtiqetException("Error while getting message from JMS bus", e);
-            }
-        } else if(message instanceof BytesMessage) {
-            try {
-                BytesMessage bytesXMLMessage = ((BytesMessage) message);
-                byte[] b = new byte[(int) bytesXMLMessage.getBodyLength()];
-                bytesXMLMessage.readBytes(b);
+    private Cdr jmsMessageToCdr(final Message message) {
+        final Cdr decodedMessage;
+        try {
+            decodedMessage = getDecodedMessage(message);
+            message.acknowledge();
+        } catch (JMSException | EtiqetException e) {
+            throw new EtiqetRuntimeException("Unable to convert message to Cdr:" + e.getMessage());
+        }
+        return delegate.processMessage(decodedMessage);
+    }
 
-                cdr = delegate.processMessage((Cdr) getCodec().decode(new String(b)));
-                message.acknowledge();
-            } catch (Exception e) {
-                throw new EtiqetException("Error while getting message from JMS bus", e);
-            }
+    private Cdr getDecodedMessage(final Message message) throws EtiqetException, JMSException{
+        final String messageContent;
+        if (message instanceof TextMessage) {
+            TextMessage txt = (TextMessage) message;
+            messageContent = txt.getText();
+        } else if (message instanceof BytesMessage) {
+            BytesMessage bytesXMLMessage = ((BytesMessage) message);
+            byte[] b = new byte[(int) bytesXMLMessage.getBodyLength()];
+            bytesXMLMessage.readBytes(b);
+            messageContent = new String(b);
         } else {
-            throw new EtiqetException("Unable to process message of type " + message.getClass().getName());
+            throw new EtiqetException("Unable to extract content from message type " + message.getClass().getName());
         }
 
-        return cdr;
+        return (Cdr) getCodec().decode(messageContent);
     }
 
     ConnectionFactory getConnectionFactory() {

@@ -2,11 +2,9 @@ package com.neueda.etiqet.transport.jms.config;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.transport.jms.JmsConfiguration;
-import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -29,7 +27,7 @@ public class JmsConfigurationReader {
             Schema schema = sf.newSchema(protocolSchema);
             unmarshaller.setSchema(schema);
             return (JmsConfiguration) unmarshaller.unmarshal(new File(configPath));
-        } catch (JAXBException | SAXException e) {
+        } catch (Exception e) {
             throw new EtiqetException("Error retrieving Jms configuration from " + configPath, e);
         }
     }
