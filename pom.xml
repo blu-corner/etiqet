@@ -21,10 +21,12 @@
         <module>etiqet-core</module>
         <module>etiqet-fix-common</module>
         <module>etiqet-fix</module>
+        <module>etiqet-message-broker</module>
         <module>etiqet-rest</module>
         <module>etiqet-websocket</module>
         <module>etiqet-selenium</module>
         <module>etiqet-transport-qfj</module>
+        <module>etiqet-transport-jms</module>
         <module>etiqet-transport-rabbitmq-gpb</module>
         <module>etiqet-transport-solace</module>
     </modules>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<e:jmsConfiguration implementation="org.apache.activemq.ActiveMQConnectionFactory"
+                  defaultTopic="testTopic"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns:e="http://www.neueda.com/etiqet/transport/jms">
+    <constructor-args>
+        <!-- tcp://localhost:61616 for default activemq; vm://localhost for the embedded one -->
+        <arg argType="string" argValue="vm://localhost?broker.persistent=false"/>
+    </constructor-args>
+    <properties>
+        <property argType="string" argName="userName" argValue="USERNAME"/>
+        <property argType="string" argName="password" argValue="PASSWORD"/>
+    </properties>
+</e:jmsConfiguration>
