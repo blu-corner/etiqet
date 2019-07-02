@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SqlServers>
+    <SqlServer name="default" driver_class="org.postgresql.Driver" dialect="POSTGRES">
+        <subprotocol>jdbc:postgresql://</subprotocol>
+        <host>crypto-exchange-uat.c4a9wglyofvu.us-east-2.rds.amazonaws.com</host>
+        <port>5432</port>
+        <db_name>LSD_DB</db_name>
+        <user>postgres</user>
+        <password>postgres</password>
+    </SqlServer>
+
+    <SqlServer name="tunnel_test" driver_class="org.postgresql.Driver" dialect="POSTGRES">
+        <host>crypto-exchange-uat.c4a9wglyofvu.us-east-2.rds.amazonaws.com</host>
+        <port>5432</port>
+        <user>postgres</user>
+        <password>postgres</password>
+
+        <SshTunnel>
+            <PortForward>
+                <local_port>5433</local_port>
+                <remote_server>crypto-exchange-uat.c4a9wglyofvu.us-east-2.rds.amazonaws.com</remote_server>
+                <destination_port>5432</destination_port>
+            </PortForward>
+            <SshServer>
+                <url></url>
+                <port></port>
+                <user></user>
+                <password></password>
+                <key></key>
+            </SshServer>
+        </SshTunnel>
+    </SqlServer>
+</SqlServers>
