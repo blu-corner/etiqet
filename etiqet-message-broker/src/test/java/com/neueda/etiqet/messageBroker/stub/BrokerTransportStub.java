@@ -1,8 +1,9 @@
-package com.neueda.etiqet.messageBroker.mock;
+package com.neueda.etiqet.messageBroker.stub;
 
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.transport.BrokerTransport;
 import com.neueda.etiqet.core.transport.EchoTransport;
+import com.neueda.etiqet.core.util.MapUtils;
 
 import java.time.Duration;
 import java.util.*;
@@ -22,24 +23,12 @@ public class BrokerTransportStub extends EchoTransport implements BrokerTranspor
 
     @Override
     public void subscribeToTopic(Optional<String> topicName, Consumer<Cdr> cdrListener) {
-        listenersByTopic.merge(
-            topicName.orElse(DEFAULT_TOPIC_NAME),
-            singletonList(cdrListener),
-            (list1, list2) ->
-                Stream.of(list1, list2)
-                    .flatMap(Collection::stream)
-                    .collect(toList()));
+        MapUtils.addToMappedList(listenersByTopic, topicName.orElse(DEFAULT_TOPIC_NAME), cdrListener);
     }
 
     @Override
     public void subscribeToQueue(String queueName, Consumer<Cdr> cdrListener) {
-        listenersByQueue.merge(
-            queueName,
-            singletonList(cdrListener),
-            (list1, list2) ->
-                Stream.of(list1, list2)
-                    .flatMap(Collection::stream)
-                    .collect(toList()));
+        MapUtils.addToMappedList(listenersByQueue, queueName, cdrListener);
     }
 
     @Override

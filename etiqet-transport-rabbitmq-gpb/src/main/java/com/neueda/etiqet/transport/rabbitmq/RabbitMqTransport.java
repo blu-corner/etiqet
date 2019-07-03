@@ -141,8 +141,10 @@ public class RabbitMqTransport implements ExchangeTransport {
 
     @Override
     public void subscribeToQueue(String queueName, Consumer<Cdr> cdrListener) throws EtiqetException {
-        DeliverCallback deliverCallback = (consumerTag, delivery) ->
-            cdrListener.accept(decodeMessageBytes(delivery.getBody()));
+        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+            final Cdr decodedMessage = decodeMessageBytes(delivery.getBody());
+            cdrListener.accept(processMessageUsingDelegate(decodedMessage));
+        };
         try {
             final Channel channel = connection.createChannel();
             channel.basicConsume(queueName, false, deliverCallback, consumerTag -> {});
@@ -173,7 +175,7 @@ public class RabbitMqTransport implements ExchangeTransport {
 
     public void sendToExchange(Cdr cdr, String exchangeName, Optional<String> routingKey) throws EtiqetException {
         final Channel channel = getChannelByExchangeName(exchangeName);
-        final Object payload = codec.encode(cdr);
+        final Object payload = codec.encode(processMessageUsingDelegate(cdr));
         final byte[] payloadBytes;
         if (payload instanceof String) {
             payloadBytes = ((String) payload).getBytes(UTF_8);
@@ -193,6 +195,13 @@ public class RabbitMqTransport implements ExchangeTransport {
             throw new EtiqetException("Exchange " + exchangeName + " hasn't been created for current client");
         }
         return channel;
+    }
+
+    private Cdr processMessageUsingDelegate(Cdr cdr) {
+        if (delegate == null) {
+            return cdr;
+        }
+        return delegate.processMessage(cdr);
     }
 
     @Override

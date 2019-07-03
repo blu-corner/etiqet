@@ -115,8 +115,8 @@ public class RabbitMqTransportIntegrationTest {
 
         assertEquals("value1", cdrMessages1.poll(2, SECONDS).getAsString("field1"));
         assertEquals("value1", cdrMessages2.poll(2, SECONDS).getAsString("field1"));
-        assertEquals(0, cdrMessages1.size());
-        assertEquals(0, cdrMessages2.size());
+        assertTrue(cdrMessages1.isEmpty());
+        assertTrue(cdrMessages2.isEmpty());
     }
 
     @Test

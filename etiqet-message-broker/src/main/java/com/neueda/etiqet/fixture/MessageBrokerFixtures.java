@@ -213,7 +213,7 @@ public class MessageBrokerFixtures {
 
         Optional<Cdr> lastMessage = client.getLastMessageFromTopic(topicName);
         assertTrue("No message found for topic", lastMessage.isPresent());
-        checkMessageContent(lastMessage.get(), params);
+        handlers.checkMessageContent(lastMessage.get(), params);
     }
 
     @Then("check that last message received by \"([^\"]*)\" from queue \"([^\"]*)\" contains \"([^\"]*)\"$")
@@ -222,14 +222,7 @@ public class MessageBrokerFixtures {
 
         Optional<Cdr> lastMessage = client.getLastMessageFromQueue(queueName);
         assertTrue("No message found for queue", lastMessage.isPresent());
-        checkMessageContent(lastMessage.get(), params);
-    }
-
-    private void checkMessageContent(Cdr lastMessage, String params) {
-        Cdr expectedCdr = ParserUtils.stringToCdr("NOTYPE", handlers.preTreatParams(params));
-        expectedCdr.getItems().forEach(
-            (key, value) -> assertEquals(value, lastMessage.getItem(key))
-        );
+        handlers.checkMessageContent(lastMessage.get(), params);
     }
 
     private MessageBrokerClient getMessageBrokerClient(final String clientName) {

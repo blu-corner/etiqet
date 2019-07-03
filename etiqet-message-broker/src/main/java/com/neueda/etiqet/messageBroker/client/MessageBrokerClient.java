@@ -6,16 +6,13 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.transport.BrokerTransport;
+import com.neueda.etiqet.core.util.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
-
-import static java.util.Collections.singleton;
-import static java.util.stream.Collectors.toCollection;
 
 public class MessageBrokerClient extends Client {
 
@@ -57,18 +54,10 @@ public class MessageBrokerClient extends Client {
     }
 
     private void addMessageToGroup(final Map<String, Deque<Cdr>> map, final String groupKey, final Cdr message) {
+        MapUtils.addMessageToGroup(map, groupKey, message);
         if (message == null) {
             throw new EtiqetRuntimeException("Empty message received from " + groupKey);
         }
-
-        map.merge(
-            groupKey,
-            new LinkedList<>(singleton(message)),
-            (q1, q2) ->
-                Stream.of(q1, q2)
-                    .flatMap(Collection::stream)
-                    .collect(toCollection(LinkedList::new))
-        );
         msgQueue.add(message);
     }
 

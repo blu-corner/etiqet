@@ -39,6 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.net.ssl.HttpsURLConnection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -559,7 +560,7 @@ public class EtiqetHandlers {
         if (sFirstTimestamp.equalsIgnoreCase("null")) {
             assertTrue(StringUtils.isNullOrEmpty(sSecondTimestamp));
         } else {
-            assertEquals(sFirstTimestamp, sSecondTimestamp);
+            assertEquals(sSecondTimestamp, sFirstTimestamp);
         }
     }
 
@@ -843,6 +844,13 @@ public class EtiqetHandlers {
         }
         exceptionsList.add(e);
         LOG.info("Exception caught: " + e);
+    }
+
+    public void checkMessageContent(Cdr message, String params) {
+        Cdr expectedCdr = ParserUtils.stringToCdr("NOTYPE", preTreatParams(params));
+        expectedCdr.getItems().forEach(
+            (key, value) -> assertEquals(value, message.getItem(key))
+        );
     }
 
     public void checkResponseKeyPresenceAndValue(String messageName, String params,
