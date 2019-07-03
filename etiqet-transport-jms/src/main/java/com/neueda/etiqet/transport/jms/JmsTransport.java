@@ -267,7 +267,8 @@ public class JmsTransport implements BrokerTransport {
 
     private void sendToDestination(final Cdr cdr, final Destination destination) throws JMSException, EtiqetException {
         MessageProducer producer = session.createProducer(destination);
-        Object payload = codec.encode(cdr);
+        final Cdr processedMessage = processMessageWithDelegate(cdr);
+        Object payload = codec.encode(processedMessage);
         final Message message;
         if (payload instanceof String) {
             message = session.createTextMessage((String) payload);
@@ -319,7 +320,7 @@ public class JmsTransport implements BrokerTransport {
         } catch (JMSException | EtiqetException e) {
             throw new EtiqetRuntimeException("Unable to convert message to Cdr:" + e.getMessage());
         }
-        return delegate.processMessage(decodedMessage);
+        return processMessageWithDelegate(decodedMessage);
     }
 
     private Cdr getDecodedMessage(final Message message) throws EtiqetException, JMSException{
@@ -338,6 +339,13 @@ public class JmsTransport implements BrokerTransport {
         }
 
         return (Cdr) getCodec().decode(messageContent);
+    }
+
+    private Cdr processMessageWithDelegate(final Cdr cdr) {
+        if (delegate == null) {
+            return cdr;
+        }
+        return delegate.processMessage(cdr);
     }
 
     ConnectionFactory getConnectionFactory() {
