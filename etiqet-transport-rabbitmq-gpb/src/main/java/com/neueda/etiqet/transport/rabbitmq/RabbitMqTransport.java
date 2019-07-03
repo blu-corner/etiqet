@@ -1,167 +1,233 @@
 package com.neueda.etiqet.transport.rabbitmq;
 
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
-import com.neueda.etiqet.core.common.Environment;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.transport.Codec;
-import com.neueda.etiqet.core.transport.Transport;
+import com.neueda.etiqet.core.transport.ExchangeTransport;
 import com.neueda.etiqet.core.transport.TransportDelegate;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.ShutdownNotifier;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import com.neueda.etiqet.transport.rabbitmq.config.AmqpConfigExtractor;
+import com.neueda.etiqet.transport.rabbitmq.config.model.AmqpConfig;
+import com.neueda.etiqet.transport.rabbitmq.config.model.ExchangeConfig;
+import com.neueda.etiqet.transport.rabbitmq.config.model.QueueConfig;
+import com.rabbitmq.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RabbitMqTransport implements Transport {
+import java.io.IOException;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
-  private static final String DEF_QUEUE = "DEF_QUEUE";
-  private final static Logger logger = LoggerFactory.getLogger(RabbitMqTransport.class);
-  private final static String DEF_CONNECTION = "DEF_CONNECTION";
-  private final static String DEF_CHANNEL = "DEF_CHANNEL";
-  private final static String SESSION_SEPARATOR = "\\.";
-  private Map<String, Connection> connections = new HashMap<>();
-  private Map<String, Channel> channels = new HashMap<>();
-  private Codec<Cdr, byte[]> codec;
-  private TransportDelegate<String, Cdr> transDel;
-  private ClientDelegate delegate;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Optional.empty;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-  @Override
-  public void init(String configPath) throws EtiqetException {
-    try {
-      // Load configuration
-      Properties props = new Properties();
-      props.load(Environment.fileResolveEnvVars(configPath));
+public class RabbitMqTransport implements ExchangeTransport {
 
-      // Create connection and channels
-      ConnectionFactory factory = new ConnectionFactory();
-      factory.setHost("localhost");
-      Connection conn = factory.newConnection();
-      Channel ch = conn.createChannel();
-      String channelName = props.getProperty("connection.channel", DEF_CHANNEL);
-      String queueName = props.getProperty("connection.channel.queue.name", DEF_QUEUE);
-      ch.queueDeclare(
-          queueName,
-          Boolean.parseBoolean(props.getProperty("connection.channel.queue.durable", "false")),
-          Boolean.parseBoolean(props.getProperty("connection.channel.queue.exclusive", "false")),
-          Boolean.parseBoolean(props.getProperty("connection.channel.queue.autodelete", "false")),
-          null);
-      ch.basicConsume(queueName, new DefaultConsumer(ch) {
-        @Override
-        public void handleDelivery(String consumerTag,
-            Envelope envelope,
-            AMQP.BasicProperties properties,
-            byte[] body)
-            throws IOException {
-          String routingKey = envelope.getRoutingKey();
-          String contentType = properties.getContentType();
-          long deliveryTag = envelope.getDeliveryTag();
+    private final static Logger logger = LoggerFactory.getLogger(RabbitMqTransport.class);
+    private Connection connection;
+    private Map<String, Channel> channelsByExchange;
+    private Codec<Cdr, Object> codec;
+    private TransportDelegate<String, Cdr> transDel;
+    private ClientDelegate delegate;
+    private ConnectionFactory connectionFactory;
+    private AmqpConfigExtractor configExtractor;
 
-          try {
-            codec.decode(body);
-          } catch (EtiqetException e) {
-            logger.error("Error decoding message with routing key [" + routingKey +
-                "] and content type [" + contentType + "]");
-          }
 
-          ch.basicAck(deliveryTag, false);
+    public RabbitMqTransport() {
+        this(new AmqpConfigExtractor());
+    }
+
+    RabbitMqTransport(AmqpConfigExtractor configExtractor) {
+        super();
+        this.configExtractor = configExtractor;
+        channelsByExchange = new HashMap<>();
+    }
+
+    @Override
+    public void init(String configPath) throws EtiqetException {
+        AmqpConfig configuration = configExtractor.retrieveConfiguration(configPath);
+        connectionFactory = new ConnectionFactory();
+        connectionFactory.setHost(configuration.getHost());
+        try {
+            connection = connectionFactory.newConnection();
+        } catch (Exception e) {
+            throw new EtiqetException(e);
         }
-      });
-      connections.put(DEF_CONNECTION, conn);
-      channels.put(channelName, ch);
-    } catch (Exception e) {
-      throw new EtiqetException("Could not init RabbitMQ with config [" + configPath + "]", e);
+
+        configuration.getExchangeConfigs().forEach(
+            exchangeConfig -> {
+                try {
+                    createExchange(exchangeConfig, exchangeConfig.getExchangeType());
+                } catch (IOException e) {
+                    throw new EtiqetRuntimeException(e);
+                }
+            }
+        );
     }
-  }
 
-  @Override
-  public void start() throws EtiqetException {
-    try {
-      for(String channelId: channels.keySet()) {
-        send(new Cdr("Logon"), channelId);
-      }
-    } catch (Exception e) {
-      throw new EtiqetException("Could not start RabbitMQ. Reason " + e.getMessage(), e);
+    private AMQP.Exchange.DeclareOk createExchange(final ExchangeConfig exchangeConfig, final BuiltinExchangeType exchangeType) throws IOException {
+        final Channel channel = connection.createChannel();
+        final String exchangeName = exchangeConfig.getName();
+        channelsByExchange.put(exchangeName, channel);
+
+        AMQP.Exchange.DeclareOk exchangeDeclareOk = channel.exchangeDeclare(exchangeName, exchangeType);
+
+        for (QueueConfig queueConfig : exchangeConfig.getQueueConfigs()) {
+            final String queueName = queueConfig.getName();
+            channel.queueDeclare(queueName, queueConfig.isDurable(), queueConfig.isExclusive(), queueConfig.isAutodelete(), null);
+            channel.queueBind(queueName, exchangeName, queueConfig.getBindingKey().orElse(""));
+        }
+        return exchangeDeclareOk;
     }
-  }
 
-  @Override
-  public void stop() {
-    connections.forEach((k, c) -> {
-      try {
-        c.close();
-      } catch (IOException e) {
-        logger.error("Could not close connection " + c.getClientProvidedName());
-      }
-    });
-  }
 
-  /**
-   * Sends a message through the given channel.
-   *
-   * @param msg the message to be sent.
-   * @param sessionId the session identifier to address the message to.
-   * @param channelName the name of the channel.
-   */
-  private void send(Cdr msg, String sessionId, String channelName) throws EtiqetException {
-    try {
-      channels.get(sessionId).basicPublish("", channelName, null, codec.encode(msg));
-    } catch (IOException e) {
-      throw new EtiqetException("Could not send message [" + msg.toString() + "]", e);
+    @Override
+    public void start() throws EtiqetException {
+        try {
+            for (String exchangeId : channelsByExchange.keySet()) {
+                send(new Cdr("Logon"), exchangeId);
+            }
+        } catch (Exception e) {
+            throw new EtiqetException("Could not start RabbitMQ. Reason " + e.getMessage(), e);
+        }
     }
-  }
 
-  @Override
-  public void send(Cdr msg) throws EtiqetException {
-    send(msg, getDefaultSessionId(), DEF_CHANNEL);
-  }
+    @Override
+    public void stop() {
+        channelsByExchange.forEach(
+            (exchangeName, channel) -> {
+                try {
+                    channel.exchangeDeleteNoWait(exchangeName, false);
+                } catch (IOException e) {
+                    logger.error("Could not delete exchange " + exchangeName);
+                }
+            }
+        );
+        try {
+            connection.close();
+        } catch (IOException e) {
+            logger.error("Could not close connection");
+        }
+    }
 
-  @Override
-  public void send(Cdr msg, String sessionId) throws EtiqetException {
-    send(msg, sessionId, sessionId.split(SESSION_SEPARATOR)[1]);
-  }
 
-  @Override
-  public boolean isLoggedOn() {
-    return connections.values().stream().anyMatch(ShutdownNotifier::isOpen);
-  }
+    @Override
+    public void send(Cdr msg) throws EtiqetException {
+        send(msg, getDefaultSessionId());
+    }
 
-  @Override
-  public String getDefaultSessionId() {
-    return DEF_CONNECTION + SESSION_SEPARATOR + DEF_CHANNEL;
-  }
+    @Override
+    public void send(Cdr msg, String sessionId) throws EtiqetException {
+        sendToExchange(msg, sessionId);
+    }
 
-  @Override
-  public void setTransportDelegate(TransportDelegate<String, Cdr> transDel) {
-    this.transDel = transDel;
-  }
+    @Override
+    public Cdr subscribeAndConsumeFromQueue(String queueName, Duration timeout) throws EtiqetException {
+        CompletableFuture<Cdr> eventualCdr = new CompletableFuture<>();
+        Consumer<Cdr> consumer = cdr -> eventualCdr.complete(cdr);
+        subscribeToQueue(queueName, consumer);
+        try {
+            return eventualCdr.get(timeout.toMillis(), MILLISECONDS);
+        } catch (Exception e) {
+            throw new EtiqetException(e);
+        }
+    }
 
-  @Override
-  public Codec getCodec() {
-    return codec;
-  }
+    @Override
+    public void subscribeToQueue(String queueName, Consumer<Cdr> cdrListener) throws EtiqetException {
+        DeliverCallback deliverCallback = (consumerTag, delivery) ->
+            cdrListener.accept(decodeMessageBytes(delivery.getBody()));
+        try {
+            final Channel channel = connection.createChannel();
+            channel.basicConsume(queueName, false, deliverCallback, consumerTag -> {});
+        } catch (IOException e) {
+            throw new EtiqetException(e);
+        }
+    }
 
-  @Override
-  public void setCodec(Codec c) {
-    codec = c;
-  }
+    private Cdr decodeMessageBytes(byte[] messageBytes) {
+        String strMessage = new String(messageBytes, UTF_8);
+        try {
+            return codec.decode(strMessage);
+        } catch (EtiqetException e) {
+            logger.error("Unable to decode message bytes " + strMessage);
+            throw new EtiqetRuntimeException(e);
+        }
+    }
 
-  @Override
-  public ClientDelegate getDelegate() {
-    return delegate;
-  }
+    @Override
+    public void sendToExchange(Cdr cdr, String exchangeName) throws EtiqetException {
+        sendToExchange(cdr, exchangeName, empty());
+    }
 
-  @Override
-  public void setDelegate(ClientDelegate delegate) {
-    this.delegate = delegate;
-  }
+    @Override
+    public void sendToExchange(Cdr cdr, String exchangeName, String routingKey) throws EtiqetException {
+        sendToExchange(cdr, exchangeName, Optional.of(routingKey));
+    }
+
+    public void sendToExchange(Cdr cdr, String exchangeName, Optional<String> routingKey) throws EtiqetException {
+        final Channel channel = getChannelByExchangeName(exchangeName);
+        final Object payload = codec.encode(cdr);
+        final byte[] payloadBytes;
+        if (payload instanceof String) {
+            payloadBytes = ((String) payload).getBytes(UTF_8);
+        } else {
+            throw new EtiqetException("Unable to encode cdr");
+        }
+        try {
+            channel.basicPublish(exchangeName, routingKey.orElse(""), null, payloadBytes);
+        } catch (IOException e) {
+            throw new EtiqetException(e);
+        }
+    }
+
+    private Channel getChannelByExchangeName(final String exchangeName) throws EtiqetException {
+        final Channel channel = channelsByExchange.get(exchangeName);
+        if (channel == null) {
+            throw new EtiqetException("Exchange " + exchangeName + " hasn't been created for current client");
+        }
+        return channel;
+    }
+
+    @Override
+    public boolean isLoggedOn() {
+        return connection.isOpen();
+    }
+
+    @Override
+    public String getDefaultSessionId() {
+        return channelsByExchange.keySet().stream().findFirst().orElse("EXCHANGE");// DEF_CONNECTION + SESSION_SEPARATOR + DEF_CHANNEL;
+    }
+
+    @Override
+    public void setTransportDelegate(TransportDelegate<String, Cdr> transDel) {
+        this.transDel = transDel;
+    }
+
+    @Override
+    public Codec getCodec() {
+        return codec;
+    }
+
+    @Override
+    public void setCodec(Codec c) {
+        codec = c;
+    }
+
+    @Override
+    public ClientDelegate getDelegate() {
+        return delegate;
+    }
+
+    @Override
+    public void setDelegate(ClientDelegate delegate) {
+        this.delegate = delegate;
+    }
 
 }

@@ -137,7 +137,7 @@ public class XmlParser {
      *
      * @return name of the schema file
      */
-    String getSchemaFile() {
+    protected String getSchemaFile() {
         return SCHEMA_FILE;
     }
 }

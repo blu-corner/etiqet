@@ -38,7 +38,7 @@ public class XmlParserTest {
         String badSchemaFile = "file.not.found.xsd";
         XmlParser parser = new XmlParser() {
             @Override
-            String getSchemaFile() {
+            protected String getSchemaFile() {
                 return badSchemaFile;
             }
         };
