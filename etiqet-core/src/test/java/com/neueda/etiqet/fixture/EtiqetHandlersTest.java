@@ -29,12 +29,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
 import org.awaitility.Duration;
@@ -129,7 +124,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=null,messageId=123");
+            "message1", Optional.of("test=null,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
         handlers.compareTimestampEqualsCukeVar("test", "response1", "");
@@ -149,7 +144,7 @@ public class EtiqetHandlersTest {
         Client client = handler.getClient(clientName);
         assertEquals("testValue", client.getConfig().getString("testProperty"));
         handler.createMessageForClient("TestMsg", clientName,
-            "message1", "test=null,messageId=123");
+            "message1", Optional.of("test=null,messageId=123"));
 
         assertNotNull(clientName + " should exist but doesn\'t", client);
         assertTrue(clientName + " should be able to failover but cannot", client.canFailover());
@@ -910,15 +905,14 @@ public class EtiqetHandlersTest {
         String responseParams = "sent=" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + ",test=value";
         handlers.checkResponseKeyPresenceAndValue("testResponse", responseParams);
     }
-
-    @Test(expected = AssertionError.class)
+    @Test
     public void testResponsesIncorrectValue() throws EtiqetException {
         String clientName = "testClient";
         Client client = handlers.createClient("testProtocol", clientName);
         assertTrue(client instanceof TestClient);
 
         String messageName = "testMessage";
-        handlers.createMessage("TestMsg", "test", messageName, "test=value");
+        handlers.createMessage("TestMsg", "testProtocol", messageName, "test=value");
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
         handlers.sendMessage(messageName, clientName);
 
@@ -926,24 +920,34 @@ public class EtiqetHandlersTest {
 
         // this will throw an AssertionError (expected) because the values are incorrect
         String responseParams = "sent=20180101,test=value2";
-        handlers.checkResponseKeyPresenceAndValue("testResponse", responseParams);
+        try {
+            handlers.checkResponseKeyPresenceAndValue("testResponse", responseParams);
+            fail("Should throw assertion error because the values are incorrect");
+        } catch (AssertionError e) {
+            assertEquals("checkResponseKeyPresenceAndValue: testResponse Msg: 'test=value' found, expected: 'test=value2'", e.getMessage());
+        }
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testResponseFieldNotFound() throws EtiqetException {
         String clientName = "testClient";
         Client client = handlers.createClient("testProtocol", clientName);
         assertTrue(client instanceof TestClient);
 
         String messageName = "testMessage";
-        handlers.createMessage("TestMsg", "test", messageName, "test=value");
+        handlers.createMessage("TestMsg", "testProtocol", messageName, "test=value");
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
         handlers.sendMessage(messageName, clientName);
 
         handlers.waitForResponseOfType("testResponse", clientName, "testResponse");
 
         // this should throw an assertion error (expected) because the two fields aren't present in the response
-        handlers.checkFieldPresence("testResponse", "fieldNotPresent,otherField");
+        try {
+            handlers.checkFieldPresence("testResponse", "fieldNotPresent,otherField");
+            fail("Should throw an assertion error because the two fields aren't present in the response");
+        } catch (AssertionError e) {
+            assertEquals("checkResponseKeyPresenceAndValue: params 'fieldNotPresent,otherField' don't match with message testResponse", e.getMessage());
+        }
     }
 
     @Test
@@ -992,7 +996,7 @@ public class EtiqetHandlersTest {
         handlers.waitForResponseOfType("testResponse", clientName, "toFilter");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testMessageFiltersDoesntReturn() throws EtiqetException {
         String clientName = "testClient";
         Client client = handlers.createClient("testProtocol", clientName);
@@ -1000,12 +1004,17 @@ public class EtiqetHandlersTest {
         assertTrue(client instanceof TestClient);
 
         String messageName = "testMessage";
-        handlers.createMessage("addFilter", "test", messageName, "test=value");
+        handlers.createMessage("addFilter", "testProtocol", messageName, "test=value");
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
         handlers.sendMessage(messageName, clientName);
 
         // This should throw an assertion error because the toFilter message should have been filtered out
-        handlers.waitForResponseOfType("testResponse", clientName, "toFilter");
+        try {
+            handlers.waitForResponseOfType("testResponse", clientName, "toFilter");
+            fail("Should throw an assertion error because the toFilter message should have been filtered out");
+        } catch (AssertionError e) {
+            assertEquals("Expected message 'toFilter' but found message 'testResponse'.", e.getMessage());
+        }
     }
 
     @Test
@@ -1013,7 +1022,7 @@ public class EtiqetHandlersTest {
         String clientName = "testClient";
         Client client = handlers.createClient("testProtocol", clientName);
 
-        handlers.createMessageForClient("TestMsg", clientName, "testMsg", "test=value");
+        handlers.createMessageForClient("TestMsg", clientName, "testMsg", Optional.of("test=value"));
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
 
         handlers.sendMessage("testMsg", clientName);
@@ -1037,17 +1046,17 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message2",
-            "test=otherValue,messageId=234");
+            Optional.of("test=otherValue,messageId=234"));
         handlers.sendMessage("message2", clientName);
         handlers.waitForResponseOfType("response2", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message3",
-            "test=thirdValue,messageId=123");
+            Optional.of("test=thirdValue,messageId=123"));
         handlers.getResponseToMessageFromListByField
             ("response3", "message3", "response2,response1", "messageId");
 
@@ -1286,17 +1295,17 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message2",
-            "test=otherValue,messageId=234");
+            Optional.of("test=otherValue,messageId=234"));
         handlers.sendMessage("message2", clientName);
         handlers.waitForResponseOfType("response2", clientName, "testResponse");
 
         handlers.createMessageForClient("TestMsg", clientName, "message3",
-            "test=thirdValue,messageId=456");
+            Optional.of("test=thirdValue,messageId=456"));
 
         // this should thrown an assertion error because neither response1 or response2 will have the same messageId
         handlers.getResponseToMessageFromListByField
@@ -1331,7 +1340,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
         handlers.validateMessageTypeExistInResponseMap("response1");
@@ -1385,7 +1394,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
@@ -1404,7 +1413,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 
@@ -1430,7 +1439,7 @@ public class EtiqetHandlersTest {
         handlers.startClient(clientName);
 
         handlers.createMessageForClient("TestMsg", clientName,
-            "message1", "test=value,messageId=123");
+            "message1", Optional.of("test=value,messageId=123"));
         handlers.sendMessage("message1", clientName);
         handlers.waitForResponseOfType("response1", clientName, "testResponse");
 

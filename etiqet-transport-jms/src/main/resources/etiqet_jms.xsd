@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<xs:schema targetNamespace="http://www.neueda.com/etiqet/transport/jms"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.neueda.com/etiqet/transport/jms">
+
+    <xs:element name="jmsConfiguration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="constructor-args" type="ConstructorArgs" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="properties" type="Properties" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+            <xs:attribute name="implementation" type="xs:string" use="required"/>
+            <xs:attribute name="defaultTopic" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ConstructorArgs">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="arg" type="ConstructorArg"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ConstructorArg">
+        <xs:attribute name="argType" type="ArgType"/>
+        <xs:attribute name="argValue" type="xs:string" />
+    </xs:complexType>
+
+    <xs:complexType name="Properties">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="property" type="SetterProperty"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SetterProperty">
+        <xs:attribute name="argType" type="ArgType"/>
+        <xs:attribute name="argName" type="xs:string" />
+        <xs:attribute name="argValue" type="xs:string" />
+    </xs:complexType>
+
+    <xs:simpleType name="ArgType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="string"/>
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="boolean_boxed"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
