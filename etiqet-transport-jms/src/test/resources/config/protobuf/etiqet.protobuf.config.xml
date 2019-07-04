@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
+    <protocols>
+        <protocol name="jms_protobuf">
+            <client defaultConfig="${user.dir}/src/test/resources/config/protobuf/jmsProtobufConfig.xml"
+                    impl = "com.neueda.etiqet.core.client.GenericClient"
+                    transportImpl="com.neueda.etiqet.transport.jms.JmsTransport"
+                    codecImpl="com.neueda.etiqet.core.transport.ProtobufCodec">
+            </client>
+            <dictionary handler="com.neueda.etiqet.core.message.dictionary.ProtobufDictionary">config/dictionary/addressbook.desc</dictionary>
+        </protocol>
+    </protocols>
+</etiqetConfiguration>

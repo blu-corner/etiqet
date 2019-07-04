@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.List;
@@ -35,7 +36,7 @@ public class JmsTransport implements BrokerTransport {
     private ConnectionFactory connectionFactory;
     private Connection connection;
     private Session session;
-    private Codec<Cdr, String> codec;
+    private Codec<Cdr, ?> codec;
     private String defaultTopic;
     private ClientDelegate delegate;
     private TransportDelegate<String, Cdr> transDel;
@@ -266,7 +267,15 @@ public class JmsTransport implements BrokerTransport {
 
     private void sendToDestination(final Cdr cdr, final Destination destination) throws JMSException, EtiqetException {
         MessageProducer producer = session.createProducer(destination);
-        producer.send(session.createTextMessage(codec.encode(cdr)));
+        final Cdr processedMessage = processMessageWithDelegate(cdr);
+        Object payload = codec.encode(processedMessage);
+        final Message message;
+        if (payload instanceof String) {
+            message = session.createTextMessage((String) payload);
+        } else {
+            message = session.createObjectMessage((Serializable) payload);
+        }
+        producer.send(message);
     }
 
     @Override
@@ -304,28 +313,39 @@ public class JmsTransport implements BrokerTransport {
         final Cdr decodedMessage;
         try {
             decodedMessage = getDecodedMessage(message);
+            if (decodedMessage != null) {
+                logger.info("Decoded message: " + decodedMessage.toString());
+            }
             message.acknowledge();
         } catch (JMSException | EtiqetException e) {
             throw new EtiqetRuntimeException("Unable to convert message to Cdr:" + e.getMessage());
         }
-        return delegate.processMessage(decodedMessage);
+        return processMessageWithDelegate(decodedMessage);
     }
 
     private Cdr getDecodedMessage(final Message message) throws EtiqetException, JMSException{
-        final String messageContent;
+        final Object messageContent;
+
         if (message instanceof TextMessage) {
             TextMessage txt = (TextMessage) message;
             messageContent = txt.getText();
         } else if (message instanceof BytesMessage) {
             BytesMessage bytesXMLMessage = ((BytesMessage) message);
-            byte[] b = new byte[(int) bytesXMLMessage.getBodyLength()];
-            bytesXMLMessage.readBytes(b);
-            messageContent = new String(b);
+            messageContent = bytesXMLMessage.getBody(Message.class);
+        } else if (message instanceof ObjectMessage) {
+            messageContent = ((ObjectMessage) message).getObject();
         } else {
             throw new EtiqetException("Unable to extract content from message type " + message.getClass().getName());
         }
 
         return (Cdr) getCodec().decode(messageContent);
+    }
+
+    private Cdr processMessageWithDelegate(final Cdr cdr) {
+        if (delegate == null) {
+            return cdr;
+        }
+        return delegate.processMessage(cdr);
     }
 
     ConnectionFactory getConnectionFactory() {

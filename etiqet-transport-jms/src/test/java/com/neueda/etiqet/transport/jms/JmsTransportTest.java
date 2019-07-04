@@ -1,15 +1,23 @@
 package com.neueda.etiqet.transport.jms;
 
+import com.example.tutorial.AddressBookProtos;
+import com.google.protobuf.Message;
+import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.transport.Codec;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import javax.jms.*;
+import java.io.Serializable;
+import java.time.Duration;
 
+import static java.util.Optional.empty;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -26,6 +34,7 @@ public class JmsTransportTest {
 
     @After
     public void tearDown() {
+        transport.stop();
         transport = null;
     }
 
@@ -290,6 +299,40 @@ public class JmsTransportTest {
             assertTrue(e instanceof EtiqetException);
             assertEquals("Unable to send message to Jms topic TestTopic", e.getMessage());
         }
+    }
+
+    @Test
+    public void testSubscribeAndConsumeFromTopic_protobufMessage() throws Exception{
+        Session session = mock(Session.class);
+        Topic topic = mock(Topic.class);
+        ClientDelegate clientDelegate = mock(ClientDelegate.class);
+        Codec<Cdr, Message> codec = mock(Codec.class);
+        when(session.createTopic(anyString())).thenReturn(topic);
+        MessageConsumer messageConsumer = mock(MessageConsumer.class);
+        Message message = AddressBookProtos.Person.newBuilder().setId(23).setName("name").build();
+        doAnswer(
+            call -> {
+                MessageListener ml = call.getArgument(0);
+                ActiveMQObjectMessage activeMQMessage = new ActiveMQObjectMessage();
+                activeMQMessage.setObject((Serializable) message);
+                ml.onMessage(activeMQMessage);
+                return null;
+            }
+        ).when(messageConsumer).setMessageListener(any(MessageListener.class));
+        when(session.createConsumer(null)).thenReturn(messageConsumer);
+
+        transport.setSession(session);
+        transport.setCodec(codec);
+        transport.setDelegate(clientDelegate);
+        transport.subscribeAndConsumeFromTopic(empty(), Duration.ofMillis(700));
+
+        ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
+        verify(codec, times(1)).decode(messageCaptor.capture());
+        Message receivedMessage = messageCaptor.getValue();
+        assertEquals(receivedMessage.getClass(), message.getClass());
+        AddressBookProtos.Person receivedPerson = (AddressBookProtos.Person) receivedMessage;
+        assertEquals("name", receivedPerson.getName());
+        assertEquals(23, receivedPerson.getId());
     }
 
 }

@@ -611,10 +611,10 @@ public class EtiqetHandlers {
         } else {
             pretreatedParams = DEFAULT_PARAMS;
         }
-        Cdr message = ParserUtils.stringToCdr(msgType, pretreatedParams);
         Client client = getClient(clientName);
-        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
         ProtocolConfig config = client.getProtocolConfig();
+        Cdr message = ParserUtils.stringToCdr(config.getMsgType(msgType), pretreatedParams);
+        assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
         assertNotNull("Could not find protocol " + client.getProtocolName(), config);
         ParserUtils.fillDefault(config.getMessage(msgType), message);
         messageMap.put(messageName, message);
@@ -653,8 +653,8 @@ public class EtiqetHandlers {
      */
     public void createMessage(String msgType, String protocol, String messageName, String params)
         throws EtiqetException {
-        Cdr message = ParserUtils.stringToCdr(msgType, preTreatParams(params));
         ProtocolConfig config = globalConfig.getProtocol(protocol);
+        Cdr message = ParserUtils.stringToCdr(config.getMsgType(msgType), preTreatParams(params));
         assertNotNull("Could find protocol " + protocol, config);
         ParserUtils.fillDefault(config.getMessage(msgType), message);
         messageMap.put(messageName, message);
