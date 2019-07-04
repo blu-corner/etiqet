@@ -56,37 +56,38 @@ public class ProtobufDictionary extends AbstractDictionary {
 
     @Override
     public String getMsgName(String messageType) {
-        return null;
+        String[] splitMessage = messageType.split("(\\.|\\$)");
+        return splitMessage[splitMessage.length - 1];
     }
 
     @Override
     public String getNameForTag(Integer tag) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Integer getTagForName(String n) throws UnknownTagException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean tagContains(Integer tag) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isHeaderField(String fieldName) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isHeaderField(Integer tag) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isAdmin(String messageName) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
 }

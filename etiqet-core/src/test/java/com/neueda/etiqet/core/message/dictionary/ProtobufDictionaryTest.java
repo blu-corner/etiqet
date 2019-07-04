@@ -55,6 +55,26 @@ public class ProtobufDictionaryTest {
         assertEquals("com.package.ClassWrapper$PersonClass", messageType);
     }
 
+    @Test
+    public void testGetMsgName_withOuterClassAndPackage() {
+        assertEquals("PersonClass", protobufDictionary.getMsgName("com.package.ClassWrapper$PersonClass"));
+    }
+
+    @Test
+    public void testGetMsgName() {
+        assertEquals("PersonClass", protobufDictionary.getMsgName("PersonClass"));
+    }
+
+    @Test
+    public void testGetMsgName_withOuterClass() {
+        assertEquals("PersonClass", protobufDictionary.getMsgName("ClassWrapper$PersonClass"));
+    }
+
+    @Test
+    public void testGetMsgName_withPackage() {
+        assertEquals("PersonClass", protobufDictionary.getMsgName("com.package.PersonClass"));
+    }
+
     class ProtobufDictionaryStub extends ProtobufDictionary {
 
         public ProtobufDictionaryStub(String configPath) {
