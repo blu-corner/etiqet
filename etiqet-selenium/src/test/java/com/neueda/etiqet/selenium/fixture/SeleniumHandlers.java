@@ -12,7 +12,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,18 +46,12 @@ public class SeleniumHandlers {
     private static List<WebElement> selectedElements;
     private static WebElement selectedElement;
 
-    private static String attributeValue;
-    private static HashMap<String, WebElement> attributesWebElements;
-
     private static ExplicitWait explicitWait;
     private static long explicitWaitTimeout;
-
-    private static Integer index;
 
     static {
         SeleniumHandlers.namedElements = new HashMap<>();
         SeleniumHandlers.selectedElements = new ArrayList<>();
-        SeleniumHandlers.attributesWebElements = new HashMap<>();
         SeleniumHandlers.namedValues = new HashMap<>();
     }
 
@@ -172,7 +165,7 @@ public class SeleniumHandlers {
 
     /**
      * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement
-     * by calling selectFromElements(int index) step definition.
+     * by calling selectElementAtIndex(int index) step definition.
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
@@ -215,7 +208,7 @@ public class SeleniumHandlers {
 
     /**
      * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement
-     * by calling selectFromElements(int index) step definition.
+     * by calling selectElementAtIndex(int index) step definition.
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
@@ -282,7 +275,7 @@ public class SeleniumHandlers {
 
     /**
      * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement
-     * by calling selectFromElements(int index) step definition.
+     * by calling selectElementAtIndex(int index) step definition.
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
@@ -326,7 +319,7 @@ public class SeleniumHandlers {
 
     /**
      * Selected elements will be stored in selectedElements and any of these can be assigned to selectedElement
-     * by calling selectFromElements(int index) step definition.
+     * by calling selectElementAtIndex(int index) step definition.
      * Selenium returns an empty list if no elements found, however NoSuchElementException is thrown to
      * remain consistent with the selectElementBy... methods.
      * @param locator a string that targets an element in the dom.
@@ -390,6 +383,22 @@ public class SeleniumHandlers {
         }
     }
 
+    /**
+     * Selects WebElement from selectedElements and assigned to selectedElement
+     * A negative index will index backwards from the end of the list -> index -1 will be the last element
+     * @param index to select from selectedElements
+     */
+    public static void selectElementAtIndex(Integer index) {
+        selectedElement = index < 0 ? selectedElements.get(selectedElements.size() + index) : selectedElements.get(index);
+    }
+
+    /**
+     * Selects the last WebElement from selectedElements and assigned to selectedElement
+     */
+    public static void selectLastElement() {
+        selectedElement = selectedElements.get(selectedElements.size() - 1);
+    }
+
     public static void selectFirstElementByContainedText(String text, String alias) {
         for(WebElement element : selectedElements) {
             if(element.getText().contains(text)) {
@@ -421,15 +430,6 @@ public class SeleniumHandlers {
     }
 
     /**
-     * Selects WebElement from selectedElements and assigned to selectedElement
-     *
-     * @param index to select from selectedElements
-     */
-    public static void selectFromElements(Integer index) {
-        selectedElement = selectedElements.get(index);
-    }
-
-    /**
      * Saves selected elements inner text that other methods can then use
      * @param alias name that references the text
      */
@@ -452,10 +452,6 @@ public class SeleniumHandlers {
      */
     public static void saveSelectedElementsCountAs(String alias) {
         namedValues.put(alias, Integer.toString(selectedElements.size()));
-    }
-
-    public static void getElementAtIndex() {
-        selectedElement = selectedElements.get(index);
     }
 
     /**
@@ -539,45 +535,14 @@ public class SeleniumHandlers {
         selectedElements = selectedElement.findElements(By.xpath("./ancestor::*"));
     }
 
-    /**
-     * Select Properties Methods
-     * @param text
-     */
-
-    public static void getIndexOfElementContaining(String text) {
-        for(WebElement element : selectedElements) {
-            if (element.getText().equals(text)) {
-                index = selectedElements.indexOf(element);
-            }
-        }
-    }
-
-    public static void getAttribute(String attributeName, String alias) {
-        attributeValue = alias != null ? namedElements.get(alias).getAttribute(attributeName) : selectedElement.getAttribute(attributeName);
-        if(alias!=null) {
-            attributesWebElements.put(attributeName, namedElements.get(alias));
-        }
-        else{
-            attributesWebElements.put(attributeName, selectedElement);}
-    }
-
-    /**
-     * Change Properties Methods
-     * @param attributeName
-     * @param alias
-     * @param value
-     */
-    public static void changeAttribute(String attributeName, @Nullable String alias, String value){
+    public static void setAttributeValue(String attribute, String value, String alias){
         JavascriptExecutor js = (JavascriptExecutor) driver;
         if(alias != null){
-            js.executeScript("argument[0].setAttribute(argument[1],argument[2])",namedElements.get(alias), attributeName, value);
+            js.executeScript("arguments[0].setAttribute(arguments[1],arguments[2])", namedElements.get(alias), attribute, value);
         }
-        else{js.executeScript("argument[0].setAttribute(argument[1],argument[2])", selectedElement, attributeName, value);}
-    }
-
-    public static void changeAttributeOf(String attribute, String value){
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("argument[0].setAttribute(argument[1],argument[2])", attributesWebElements.get(attribute), attribute, value);
+        else{
+            js.executeScript("arguments[0].setAttribute(arguments[1],arguments[2])", selectedElement, attribute, value);
+        }
     }
 
     /**
@@ -1027,6 +992,11 @@ public class SeleniumHandlers {
         if (BrowserBase.getCurrentBrowser().shouldCloseOnExit() && BrowserBase.getCurrentBrowser().getDriver() != null) {
             logger.info("Performing closing down operations...");
             BrowserBase.getCurrentBrowser().close();
+        }
+        else {
+            if (BrowserBase.getCurrentBrowser().getScreenShotOnExitEnabled()) {
+                BrowserBase.getCurrentBrowser().takeScreenshot();
+            }
         }
     }
 }
