@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SqlServers>
-    <SqlServer name="default" driver_class="org.postgresql.Driver" dialect="POSTGRES">
-        <subprotocol>jdbc:postgresql://</subprotocol>
-        <host>crypto-exchange-uat.c4a9wglyofvu.us-east-2.rds.amazonaws.com</host>
-        <port>5432</port>
-        <db_name>LSD_DB</db_name>
-        <user>postgres</user>
-        <password>postgres</password>
-    </SqlServer>
+<DbConns>
 
-    <SqlServer name="tunnel_test" driver_class="org.postgresql.Driver" dialect="POSTGRES">
-        <host>crypto-exchange-uat.c4a9wglyofvu.us-east-2.rds.amazonaws.com</host>
-        <port>5432</port>
-        <user>postgres</user>
-        <password>postgres</password>
+    <DbConn name="mysql-example" driver_class="com.mysql.cj.jdbc.Driver" dialect="MYSQL">
+        <subprotocol>jdbc:mysql://</subprotocol>
+        <host>0.0.0.0</host>
+        <port>3306</port>
+        <db_name>employees</db_name>
+        <user>root</user>
+        <password>college</password>
+    </DbConn>
 
+    <DbConn name="tunnel-config-example" driver_class="com.mysql.cj.jdbc.Driver" dialect="MYSQL">
+        <subprotocol>jdbc:mysql://</subprotocol>
+        <host>127.0.0.1</host>
+        <port>1234</port>
+        <db_name>database</db_name>
+        <user>user</user>
+        <password>db-password</password>
         <SshTunnel>
-            <PortForward>
-                <local_port>5433</local_port>
-                <remote_server>crypto-exchange-uat.c4a9wglyofvu.us-east-2.rds.amazonaws.com</remote_server>
-                <destination_port>5432</destination_port>
-            </PortForward>
-            <SshServer>
-                <url></url>
-                <port></port>
-                <user></user>
-                <password></password>
-                <key></key>
-            </SshServer>
+            <username>remote-username</username>
+            <local-port>1234</local-port>
+            <remote-host>remote.host</remote-host>
+            <remote-port>5555</remote-port>
+            <password>ssh-password</password>
+            <key>ssh-key</key>
         </SshTunnel>
-    </SqlServer>
-</SqlServers>
+    </DbConn>
+</DbConns>
