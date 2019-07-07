@@ -23,12 +23,12 @@ public class Validations {
     }
 
     @Then("^I? ?check (?:the)? ?value for column \"([^\"]*)\" at row (\\d+) is equal to \"([^\"]*)\"$")
-    public static void checkValueForColumnAtRow(String value, int rowIndex, String columnName) {
+    public static void checkValueForColumnAtRow(String columnName, int rowIndex, String value) {
         SqlHandlers.checkValueForColumnAtRow(value, rowIndex, columnName);
     }
 
     @Then("^I? ?check (?:the)? ?value for column \"([^\"]*)\" at row (\\d+) contains \"([^\"]*)\"$")
-    public static void checkValueForColumnAtRowContains(String value, int rowIndex, String columnName) {
+    public static void checkValueForColumnAtRowContains(String columnName, int rowIndex, String value) {
         SqlHandlers.checkValueForColumnAtRowContains(value, rowIndex, columnName);
     }
 
