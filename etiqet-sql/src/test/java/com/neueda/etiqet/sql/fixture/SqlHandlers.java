@@ -1,11 +1,18 @@
 package com.neueda.etiqet.sql.fixture;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.jooq.impl.DSL.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
+import com.neueda.etiqet.sql.UnsupportedDialectException;
+import com.neueda.etiqet.sql.config.ConfigUtils;
+import com.neueda.etiqet.sql.config.Settings;
 import org.apache.log4j.Logger;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -13,10 +20,13 @@ import org.jooq.impl.DSL;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class SqlHandlers {
 
     private static Logger logger = Logger.getLogger(SqlHandlers.class);
+    private static Settings settings;
+    private static HashSet<SQLDialect> usesDictinctOn;
     public static final String DEFAULT_SERVER_ALIAS = "default";
 
     private static Session session;
@@ -28,34 +38,34 @@ public class SqlHandlers {
 
     static {
         queries = new HashMap<>();
+        usesDictinctOn = new HashSet<SQLDialect>() {{
+            add(SQLDialect.POSTGRES); add(SQLDialect.POSTGRES_9_3); add(SQLDialect.POSTGRES_9_4);
+            add(SQLDialect.POSTGRES_9_5); add(SQLDialect.POSTGRES_10);
+        }};
+        settings = Settings.loadSettings();
     }
 
-    public static void connect(String serverAlias) {
-        SqlServer sqlServer = SqlBase.getServerConfig(serverAlias);
-        if (sqlServer.getSshTunnel() != null) {
-            createTunnel(sqlServer.getSshTunnel());
+    public static void connect(String dbAlias) throws UnsupportedDialectException {
+        DbConn dbConn = DbBase.getDbConfig(dbAlias);
+        connect(dbConn);
+    }
+
+    public static void connect(DbConn dbConn) throws UnsupportedDialectException {
+        if (dbConn.getSshTunnel() != null) {
+            prepareTunnelSession(dbConn);
+            createTunnel(dbConn.getSshTunnel());
         }
-        connect(sqlServer);
-    }
 
-    public static void connect(SqlServer sqlServer) {
         try {
-            initSqlDriver(sqlServer.getDriverClass());
-            String url = "";
-            if (sqlServer.getDialect() == SQLDialect.POSTGRES) {
-                url = buildUrlPostgres(sqlServer.getSubprotocol(), sqlServer.getHost(), sqlServer.getDbName(),
-                    sqlServer.getPort());
-            }
-            conn = DriverManager.getConnection(url, sqlServer.getUser(), sqlServer.getPassword());
-            dslContext = DSL.using(conn, sqlServer.getDialect());
-
+            initSqlDriver(dbConn.getDriverClass());
+            String url = ConfigUtils.buildUrl(dbConn);
+            conn = DriverManager.getConnection(url, dbConn.getUser(), dbConn.getPassword());
+            dslContext = DSL.using(conn, dbConn.getDialect());
+            dslContext.configuration().settings().withExecuteLogging(false);
             logger.info("Successfully connected to " + url);
         }
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
+        catch (ClassNotFoundException | SQLException e) {
+            logger.error("Failed to connect to database with connection settings " + dbConn, e);
         }
     }
 
@@ -63,26 +73,50 @@ public class SqlHandlers {
         Class.forName(driverClass);
     }
 
-    public static String buildUrlPostgres(String subprotocol, String host, String dbName, Integer port) {
-        StringBuilder url = new StringBuilder();
-        url.append(subprotocol);
-        url.append(host);
-        url.append(":");
-        url.append(port);
-        url.append("/");
-        url.append(dbName);
-        return url.toString();
+    public static void prepareTunnelSession(DbConn dbConn) {
+        try {
+            JSch jSch = new JSch();
+            if (dbConn.getSshTunnel().getKeyPath() != null) {
+                jSch.addIdentity(dbConn.getSshTunnel().getKeyPath());
+            }
+            session = jSch.getSession(dbConn.getUser(), dbConn.getHost(), dbConn.getPort());
+        }
+        catch (JSchException e) {
+            logger.error("Failed to setup ssh session with " + dbConn.getUser() +
+                " for host " + dbConn.getHost() + " " +
+                " on port " + dbConn.getPort() + ".\n", e);
+        }
     }
 
     public static void createTunnel(SshTunnel sshTunnel) {
+        try {
+            session.setPortForwardingL(sshTunnel.getLocalPort(), sshTunnel.getRemoteHost(), sshTunnel.getRemotePort());
 
+        }
+        catch (JSchException e) {
+            logger.error("Failed to setup ssh tunnel from local port " + sshTunnel.getLocalPort() +
+                " to remote host " + sshTunnel.getRemoteHost() + " " +
+                " on remote port " + sshTunnel.getRemotePort() + ".\n", e);
+        }
+    }
+
+    public static void connectToTunnel(SshTunnel sshTunnel) {
+        if (sshTunnel.getPassword() != null) {
+            session.setPassword(sshTunnel.getPassword());
+        }
+        try {
+            session.connect();
+        }
+        catch (JSchException e) {
+            logger.error("Failed to connect to ssh tunnel session. \n", e);
+        }
     }
 
     /**QUERIES*/
 
     public static void selectAll(String tableName, String distinctColumnNames) {
         Name table = DSL.name(tableName);
-        if (distinctColumnNames != null) {
+        if (distinctColumnNames != null && usesDictinctOn.contains(dslContext.dialect())) {
             ArrayList<Field<Object>> distinctColumns = SqlUtils.resolveToFieldList(distinctColumnNames);
             results = dslContext.select().distinctOn(distinctColumns).from(table).fetch();
         }
@@ -94,7 +128,7 @@ public class SqlHandlers {
     public static void selectAllWithCondition(String tableName, String conditionExp, String distinctColumnNames) {
         Name table = DSL.name(tableName);
         Condition condition = DSL.condition(conditionExp);
-        if (distinctColumnNames != null) {
+        if (distinctColumnNames != null && usesDictinctOn.contains(dslContext.dialect())) {
             ArrayList<Field<Object>> distinctColumns = SqlUtils.resolveToFieldList(distinctColumnNames);
             results = dslContext.select().distinctOn(distinctColumns).from(table).where(condition).fetch();
         }
@@ -106,7 +140,7 @@ public class SqlHandlers {
     public static void selectColumns(ArrayList<String> columnNames, String tableName, String distinctColumnNames) {
         Name table = DSL.name(tableName);
         ArrayList<Field<Object>> columns = SqlUtils.resolveToFieldList(columnNames);
-        if (distinctColumnNames != null) {
+        if (distinctColumnNames != null && usesDictinctOn.contains(dslContext.dialect())) {
             ArrayList<Field<Object>> distinctColumns = SqlUtils.resolveToFieldList(distinctColumnNames);
             results = dslContext.select(columns).distinctOn(distinctColumns).from(table).fetch();
         }
@@ -120,7 +154,7 @@ public class SqlHandlers {
         Condition condition = DSL.condition(conditionExp);
 
         ArrayList<Field<Object>> columns = SqlUtils.resolveToFieldList(columnNames);
-        if (distinctColumnNames != null) {
+        if (distinctColumnNames != null && usesDictinctOn.contains(dslContext.dialect())) {
             ArrayList<Field<Object>> distinctColumns = SqlUtils.resolveToFieldList(distinctColumnNames);
             results = dslContext.select(columns).distinctOn(distinctColumns).from(table).where(condition).fetch();
         }
@@ -206,12 +240,12 @@ public class SqlHandlers {
 
     public static void insertInto(ArrayList<String> values, String tableName) {
         Table<Record> table = DSL.table(tableName);
-        dslContext.insertInto(table).values(SqlUtils.resolveToFieldList(values));
+        dslContext.insertInto(table).values(SqlUtils.resolveToFieldList(values)).execute();
     }
 
     public static void insertInto(ArrayList<String> values, ArrayList<String> columnNames, String tableName) {
         Table<Record> table = DSL.table(tableName);
-        dslContext.insertInto(table).columns(SqlUtils.resolveToFieldList(columnNames)).values(SqlUtils.resolveToFieldList(values));
+        dslContext.insertInto(table).columns(SqlUtils.resolveToFieldList(columnNames)).values(values).execute();
     }
 
     public static void deleteAll(String tableName) {
@@ -222,14 +256,7 @@ public class SqlHandlers {
     public static void deleteWithCondition(String tableName, String conditionExp) {
         Table<Record> table = DSL.table(tableName);
         Condition condition = DSL.condition(conditionExp);
-        dslContext.delete(table).where(condition);
-    }
-
-    /**FILTERS*/
-
-    // todo - a method of saving values
-    public static void getColumnValAtRow(Integer rowIndex, String column, String alias) {
-        results.getValue(rowIndex, column);
+        dslContext.delete(table).where(condition).execute();
     }
 
     /**VALIDATIONS*/
@@ -251,7 +278,7 @@ public class SqlHandlers {
     }
 
     public static void checkValueForColumnAtRowContains(String value, int rowIndex, String columnName) {
-        assertTrue(results.get(rowIndex).get(field(DSL.name(columnName))).toString().contains(value));
+        assertThat(results.get(rowIndex).get(field(DSL.name(columnName))).toString(), containsString(value));
     }
 
     public static void checkValuesAcrossRows(ArrayList<String> values, String columnName) {

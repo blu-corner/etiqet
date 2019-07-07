@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class SqlServer {
+public class DbConn {
 
-    private static Logger logger = Logger.getLogger(SqlServer.class);
+    private static Logger logger = Logger.getLogger(DbConn.class);
 
     @XmlAttribute
     private String name;
@@ -35,9 +35,9 @@ public class SqlServer {
     @XmlElement(name = "SshTunnel")
     private SshTunnel sshTunnel;
 
-    private SqlServer(){}
+    private DbConn(){}
 
-    public SqlServer(String name, String driverClass, SQLDialect dialect, String subprotocol, String host, int port, String dbName, String user, String password) {
+    public DbConn(String name, String driverClass, SQLDialect dialect, String subprotocol, String host, int port, String dbName, String user, String password) {
         this.name = name;
         this.driverClass = driverClass;
         this.dialect = dialect;
@@ -49,7 +49,7 @@ public class SqlServer {
         this.password = password;
     }
 
-    public SqlServer(String name, String driverClass, SQLDialect dialect, String subprotocol, String host, int port, String dbName, String user, String password, SshTunnel sshTunnel) {
+    public DbConn(String name, String driverClass, SQLDialect dialect, String subprotocol, String host, int port, String dbName, String user, String password, SshTunnel sshTunnel) {
         this.name = name;
         this.driverClass = driverClass;
         this.dialect = dialect;
@@ -100,5 +100,21 @@ public class SqlServer {
 
     public SshTunnel getSshTunnel() {
         return sshTunnel;
+    }
+
+    @Override
+    public String toString() {
+        return "DbConn{" +
+            "name='" + name + '\'' +
+            ", driverClass='" + driverClass + '\'' +
+            ", dialect=" + dialect +
+            ", subprotocol='" + subprotocol + '\'' +
+            ", host='" + host + '\'' +
+            ", port=" + port +
+            ", dbName='" + dbName + '\'' +
+            ", user='" + user + '\'' +
+            ", password='" + password + '\'' +
+            ", sshTunnel=" + sshTunnel +
+            '}';
     }
 }
