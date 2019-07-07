@@ -41,6 +41,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="string"/>
             <xs:enumeration value="boolean"/>
+            <xs:enumeration value="boolean_boxed"/>
         </xs:restriction>
     </xs:simpleType>
 

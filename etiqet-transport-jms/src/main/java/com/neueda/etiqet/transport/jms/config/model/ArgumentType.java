@@ -4,7 +4,8 @@ import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 
 public enum ArgumentType {
     STRING (String.class),
-    BOOLEAN (Boolean.class);
+    BOOLEAN (boolean.class),
+    BOOLEAN_BOXED(Boolean.class);
 
     private Class clazz;
 
@@ -20,6 +21,7 @@ public enum ArgumentType {
         switch (propertyType.toLowerCase()) {
             case "string": return STRING;
             case "boolean": return BOOLEAN;
+            case "boolean_boxed": return BOOLEAN_BOXED;
             default: throw new EtiqetRuntimeException("Invalid constructor argument property type " + propertyType);
         }
     }

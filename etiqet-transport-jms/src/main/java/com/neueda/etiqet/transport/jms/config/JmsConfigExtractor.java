@@ -57,8 +57,11 @@ public class JmsConfigExtractor {
 
     private Object getArgumentValue(final ArgumentType argumentType, final String stringValue) {
         switch (argumentType) {
-            case BOOLEAN: return Boolean.valueOf(stringValue);
-            case STRING: return stringValue;
+            case BOOLEAN:
+            case BOOLEAN_BOXED:
+                return stringValue.toLowerCase().equals("true");
+            case STRING:
+                return stringValue;
             default: throw new EtiqetRuntimeException("Unable to process argument value from config. Argument type: " + argumentType.name() + ", value: " + stringValue);
         }
     }

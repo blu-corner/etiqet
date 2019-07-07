@@ -905,15 +905,14 @@ public class EtiqetHandlersTest {
         String responseParams = "sent=" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + ",test=value";
         handlers.checkResponseKeyPresenceAndValue("testResponse", responseParams);
     }
-
-    @Test(expected = AssertionError.class)
+    @Test
     public void testResponsesIncorrectValue() throws EtiqetException {
         String clientName = "testClient";
         Client client = handlers.createClient("testProtocol", clientName);
         assertTrue(client instanceof TestClient);
 
         String messageName = "testMessage";
-        handlers.createMessage("TestMsg", "test", messageName, "test=value");
+        handlers.createMessage("TestMsg", "testProtocol", messageName, "test=value");
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
         handlers.sendMessage(messageName, clientName);
 
@@ -921,24 +920,34 @@ public class EtiqetHandlersTest {
 
         // this will throw an AssertionError (expected) because the values are incorrect
         String responseParams = "sent=20180101,test=value2";
-        handlers.checkResponseKeyPresenceAndValue("testResponse", responseParams);
+        try {
+            handlers.checkResponseKeyPresenceAndValue("testResponse", responseParams);
+            fail("Should throw assertion error because the values are incorrect");
+        } catch (AssertionError e) {
+            assertEquals("checkResponseKeyPresenceAndValue: testResponse Msg: 'test=value' found, expected: 'test=value2'", e.getMessage());
+        }
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testResponseFieldNotFound() throws EtiqetException {
         String clientName = "testClient";
         Client client = handlers.createClient("testProtocol", clientName);
         assertTrue(client instanceof TestClient);
 
         String messageName = "testMessage";
-        handlers.createMessage("TestMsg", "test", messageName, "test=value");
+        handlers.createMessage("TestMsg", "testProtocol", messageName, "test=value");
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
         handlers.sendMessage(messageName, clientName);
 
         handlers.waitForResponseOfType("testResponse", clientName, "testResponse");
 
         // this should throw an assertion error (expected) because the two fields aren't present in the response
-        handlers.checkFieldPresence("testResponse", "fieldNotPresent,otherField");
+        try {
+            handlers.checkFieldPresence("testResponse", "fieldNotPresent,otherField");
+            fail("Should throw an assertion error because the two fields aren't present in the response");
+        } catch (AssertionError e) {
+            assertEquals("checkResponseKeyPresenceAndValue: params 'fieldNotPresent,otherField' don't match with message testResponse", e.getMessage());
+        }
     }
 
     @Test
@@ -987,7 +996,7 @@ public class EtiqetHandlersTest {
         handlers.waitForResponseOfType("testResponse", clientName, "toFilter");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testMessageFiltersDoesntReturn() throws EtiqetException {
         String clientName = "testClient";
         Client client = handlers.createClient("testProtocol", clientName);
@@ -995,12 +1004,17 @@ public class EtiqetHandlersTest {
         assertTrue(client instanceof TestClient);
 
         String messageName = "testMessage";
-        handlers.createMessage("addFilter", "test", messageName, "test=value");
+        handlers.createMessage("addFilter", "testProtocol", messageName, "test=value");
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
         handlers.sendMessage(messageName, clientName);
 
         // This should throw an assertion error because the toFilter message should have been filtered out
-        handlers.waitForResponseOfType("testResponse", clientName, "toFilter");
+        try {
+            handlers.waitForResponseOfType("testResponse", clientName, "toFilter");
+            fail("Should throw an assertion error because the toFilter message should have been filtered out");
+        } catch (AssertionError e) {
+            assertEquals("Expected message 'toFilter' but found message 'testResponse'.", e.getMessage());
+        }
     }
 
     @Test
