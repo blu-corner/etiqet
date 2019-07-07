@@ -1,6 +1,6 @@
 package com.neueda.etiqet.sql.fixture.stepdefs;
 
-import com.neueda.etiqet.sql.config.Config;
+import com.neueda.etiqet.sql.config.DbConfig;
 import cucumber.api.java.Before;
 
 public class GlobalHooks {
@@ -9,7 +9,7 @@ public class GlobalHooks {
     @Before
     public void beforeAll() {
         if(!dunit) {
-            Config.init();
+            DbConfig.init();
             dunit = true;
         }
     }
