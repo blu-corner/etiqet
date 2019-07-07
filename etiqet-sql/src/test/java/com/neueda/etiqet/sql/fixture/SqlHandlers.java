@@ -61,7 +61,7 @@ public class SqlHandlers {
             String url = ConfigUtils.buildUrl(dbConn);
             conn = DriverManager.getConnection(url, dbConn.getUser(), dbConn.getPassword());
             dslContext = DSL.using(conn, dbConn.getDialect());
-            dslContext.configuration().settings().withExecuteLogging(false);
+            dslContext.configuration().settings().withExecuteLogging(settings.getUseJooqLogging());
             logger.info("Successfully connected to " + url);
         }
         catch (ClassNotFoundException | SQLException e) {

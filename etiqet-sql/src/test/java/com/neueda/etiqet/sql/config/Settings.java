@@ -85,4 +85,8 @@ public class Settings {
         }
         return propertyValue;
     }
+
+    public Boolean getUseJooqLogging() {
+        return useJooqLogging;
+    }
 }
