@@ -3,6 +3,11 @@ package com.neueda.etiqet.core.testing.message;
 import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.message.config.AbstractDictionary;
 
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+
 public class TestDictionary extends AbstractDictionary {
 
     public TestDictionary(String configPath) {
@@ -17,6 +22,11 @@ public class TestDictionary extends AbstractDictionary {
     @Override
     public String getMsgName(String messageType) {
         return messageType;
+    }
+
+    @Override
+    public List<String> getMessageNames() {
+        return emptyList();
     }
 
     @Override

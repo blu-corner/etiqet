@@ -39,6 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.net.ssl.HttpsURLConnection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -559,7 +560,7 @@ public class EtiqetHandlers {
         if (sFirstTimestamp.equalsIgnoreCase("null")) {
             assertTrue(StringUtils.isNullOrEmpty(sSecondTimestamp));
         } else {
-            assertEquals(sFirstTimestamp, sSecondTimestamp);
+            assertEquals(sSecondTimestamp, sFirstTimestamp);
         }
     }
 
@@ -613,7 +614,7 @@ public class EtiqetHandlers {
         }
         Client client = getClient(clientName);
         ProtocolConfig config = client.getProtocolConfig();
-        Cdr message = ParserUtils.stringToCdr(config.getMsgType(msgType), pretreatedParams);
+        Cdr message = ParserUtils.stringToCdr(msgType, pretreatedParams);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
         assertNotNull("Could not find protocol " + client.getProtocolName(), config);
         ParserUtils.fillDefault(config.getMessage(msgType), message);
@@ -654,7 +655,7 @@ public class EtiqetHandlers {
     public void createMessage(String msgType, String protocol, String messageName, String params)
         throws EtiqetException {
         ProtocolConfig config = globalConfig.getProtocol(protocol);
-        Cdr message = ParserUtils.stringToCdr(config.getMsgType(msgType), preTreatParams(params));
+        Cdr message = ParserUtils.stringToCdr(msgType, preTreatParams(params));
         assertNotNull("Could find protocol " + protocol, config);
         ParserUtils.fillDefault(config.getMessage(msgType), message);
         messageMap.put(messageName, message);
@@ -843,6 +844,13 @@ public class EtiqetHandlers {
         }
         exceptionsList.add(e);
         LOG.info("Exception caught: " + e);
+    }
+
+    public void checkMessageContent(Cdr message, String params) {
+        Cdr expectedCdr = ParserUtils.stringToCdr("NOTYPE", preTreatParams(params));
+        expectedCdr.getItems().forEach(
+            (key, value) -> assertEquals(value, message.getItem(key))
+        );
     }
 
     public void checkResponseKeyPresenceAndValue(String messageName, String params,

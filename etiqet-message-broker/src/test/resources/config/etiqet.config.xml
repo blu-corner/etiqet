@@ -4,7 +4,7 @@
         <protocol name="broker">
             <client defaultConfig="${user.dir}/src/test/resources/config/brokerConfig.xml"
                     impl = "com.neueda.etiqet.messageBroker.client.MessageBrokerClient"
-                    transportImpl="com.neueda.etiqet.messageBroker.mock.BrokerTransportStub"
+                    transportImpl="com.neueda.etiqet.messageBroker.stub.BrokerTransportStub"
                     codecImpl="com.neueda.etiqet.core.json.JsonCodec">
             </client>
             <messages>

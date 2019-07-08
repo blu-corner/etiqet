@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FixDictionary extends AbstractDictionary {
@@ -82,6 +84,11 @@ public class FixDictionary extends AbstractDictionary {
             return message.getName();
         }
         return null;
+    }
+
+    @Override
+    public List<String> getMessageNames() {
+        return new ArrayList(messageMap.keySet());
     }
 
     @Override

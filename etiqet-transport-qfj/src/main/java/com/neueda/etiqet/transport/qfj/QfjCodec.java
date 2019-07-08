@@ -6,6 +6,7 @@ import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.config.GlobalConfig;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.util.IntegerValidator;
@@ -23,6 +24,7 @@ public class QfjCodec implements Codec<Cdr, Message> {
 
     private static final Logger logger = LogManager.getLogger(QfjCodec.class);
     private ProtocolConfig protocolConfig;
+    private FixDictionary dictionary;
 
     /**
      * Constructor for the codec. Suppressing unused warnings as this will typically be instantiated via reflection
@@ -143,7 +145,6 @@ public class QfjCodec implements Codec<Cdr, Message> {
     }
 
     private Group createEmptyGroup(Integer tag) throws UnknownTagException {
-        FixDictionary dictionary = (FixDictionary) protocolConfig.getDictionary();
         String fieldName = protocolConfig.getNameForTag(tag);
         Component[] components = dictionary.getFixDictionary().getComponents().getComponent();
         com.neueda.etiqet.fix.message.dictionary.Group groupDef
@@ -244,6 +245,22 @@ public class QfjCodec implements Codec<Cdr, Message> {
             return d;
         } catch (FieldNotFound fieldNotFound) {
             throw new EtiqetException(fieldNotFound);
+        }
+    }
+
+    @Override
+    public Cdr decodeBinary(byte[] binaryMessage) throws EtiqetException {
+        try {
+            return decode(new Message(new String(binaryMessage)));
+        } catch(InvalidMessage e) {
+            throw new EtiqetException(e);
+        }
+    }
+
+    @Override
+    public void setDictionary(AbstractDictionary dictionary) {
+        if (dictionary != null && dictionary instanceof FixDictionary) {
+            this.dictionary = (FixDictionary) dictionary;
         }
     }
 }

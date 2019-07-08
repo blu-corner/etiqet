@@ -19,6 +19,7 @@
 
     <modules>
         <module>etiqet-core</module>
+        <module>etiqet-exchange-broker</module>
         <module>etiqet-fix-common</module>
         <module>etiqet-fix</module>
         <module>etiqet-message-broker</module>

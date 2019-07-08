@@ -4,6 +4,8 @@ import com.example.tutorial.AddressBookProtos;
 import com.neueda.etiqet.core.client.delegate.SinkClientDelegate;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
+import com.neueda.etiqet.core.message.dictionary.ProtobufDictionary;
+import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.ProtobufCodec;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
@@ -28,7 +30,9 @@ public class JmsTransportProtobufIntegrationTest {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
         connectionFactory.setTrustAllPackages(true);
         jmsTransport = new JmsTransport();
-        jmsTransport.setCodec(new ProtobufCodec());
+        Codec codec = new ProtobufCodec();
+        codec.setDictionary(new ProtobufDictionary("config/dictionary/addressbook.desc"));
+        jmsTransport.setCodec(codec);
         jmsTransport.setConnectionFactory(connectionFactory);
         jmsTransport.setDelegate(new SinkClientDelegate());
         jmsTransport.start();
@@ -43,7 +47,7 @@ public class JmsTransportProtobufIntegrationTest {
     public void testSubscribeToTopicAndReceiveMessages() throws Exception {
         final String topicName = "topicTest01";
         BlockingQueue<Cdr> receivedMessages = new LinkedBlockingQueue<>();
-        Cdr cdr = aCdr(AddressBookProtos.Person.class.getName())
+        Cdr cdr = aCdr("Person")
             .withField("name", "PersonName")
             .withField("id", 34)
             .withField("email", "aaa@aaa.aaa")

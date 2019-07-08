@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<xs:schema targetNamespace="http://www.neueda.com/etiqet/transport/amqp_091"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.neueda.com/etiqet/transport/amqp_091">
+
+    <xs:element name="amqpConfiguration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="queues" type="Queues"/>
+                <xs:element name="exchanges" type="Exchanges"/>
+            </xs:sequence>
+            <xs:attribute name="host" type="xs:string"/>
+        </xs:complexType>
+        <xs:key name="queueNameKey">
+            <xs:selector xpath="./queues/queue"/>
+            <xs:field xpath="@name"/>
+        </xs:key>
+        <xs:keyref name="queueRef" refer="queueNameKey">
+            <xs:selector xpath="./exchanges/exchange/queue-ref"></xs:selector>
+            <xs:field xpath="@ref"></xs:field>
+        </xs:keyref>
+    </xs:element>
+
+    <xs:complexType name="Queues">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="queue" type="Queue"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Queue">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="durable" type="xs:boolean" default="false"/>
+        <xs:attribute name="exclusive" type="xs:boolean" default="false"/>
+        <xs:attribute name="autodelete" type="xs:boolean" default="false"/>
+    </xs:complexType>
+
+    <xs:complexType name="Exchanges">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="exchange" type="Exchange"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Exchange">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="queue-ref" type="Queue-ref"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="exchangeType" type="ExchangeType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="Queue-refs">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="queue-ref" type="Queue-ref"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Queue-ref">
+        <xs:attribute name="ref" type="xs:string" use="required"/>
+        <xs:attribute name="binding-key" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:simpleType name="ExchangeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="direct"/>
+            <xs:enumeration value="topic"/>
+            <xs:enumeration value="headers"/>
+            <xs:enumeration value="fanout"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

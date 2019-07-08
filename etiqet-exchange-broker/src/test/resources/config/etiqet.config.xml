@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
+    <protocols>
+        <protocol name="broker">
+            <client defaultConfig="${user.dir}/src/test/resources/config/exchangeConfigPlaceholder.xml"
+                    impl = "com.neueda.etiqet.exchangeBroker.client.ExchangeBrokerClient"
+                    transportImpl="com.neueda.etiqet.exchangeBroker.stub.ExchangeTransportStub"
+                    codecImpl="com.neueda.etiqet.core.json.JsonCodec">
+            </client>
+            <messages>
+                <message name="TestMessage">
+                    <implementation>com.neueda.etiqet.messageBroker.TestClass</implementation>
+                    <fields>
+                        <field name="field1" type="string">value1</field>
+                        <field name="field2" type="string">value2</field>
+                    </fields>
+                </message>
+            </messages>
+        </protocol>
+    </protocols>
+</etiqetConfiguration>

@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 public class QfjCodecTest {
 
     private ProtocolConfig protocolConfig;
+    private FixDictionary dictionary;
 
     @Before
     public void setUp() throws Exception {
@@ -34,10 +35,8 @@ public class QfjCodecTest {
                                              .unmarshal(getClass().getClassLoader()
                                                                   .getResourceAsStream("config/FIX50SP2.xml"));
         assertNotNull("Unable to parse FIX 50SP2 dictionary", fixDictionary);
-        FixDictionary dictionary = mock(FixDictionary.class);
+        dictionary = mock(FixDictionary.class);
         when(dictionary.getFixDictionary()).thenReturn(fixDictionary);
-        when(protocolConfig.getDictionary()).thenReturn(dictionary);
-
         when(protocolConfig.getTagForName(eq("Symbol"))).thenReturn(55);
         when(protocolConfig.getTagForName(eq("LastPx"))).thenReturn(31);
         when(protocolConfig.getTagForName(eq("LastQty"))).thenReturn(32);
@@ -70,6 +69,7 @@ public class QfjCodecTest {
         when(protocolConfig.getMessage(eq("NewOrderSingle"))).thenReturn(message);
 
         QfjCodec codec = new QfjCodec(protocolConfig);
+        codec.setDictionary(dictionary);
         quickfix.FieldMap fixMessage = codec.encode(newOrderSingle);
         assertTrue(fixMessage instanceof NewOrderSingle);
         assertEquals("ZINC.MI", fixMessage.getString(55));
@@ -114,6 +114,7 @@ public class QfjCodecTest {
         when(protocolConfig.getMessage(eq("NoPartyIDs"))).thenReturn(noParties);
 
         QfjCodec codec = new QfjCodec(protocolConfig);
+        codec.setDictionary(dictionary);
         quickfix.FieldMap fixMessage = codec.encode(newOrderSingle);
         assertTrue(fixMessage instanceof NewOrderSingle);
         assertEquals("ZINC.MI", fixMessage.getString(55));

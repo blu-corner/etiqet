@@ -2,6 +2,7 @@ package com.neueda.etiqet.core.message.config;
 
 import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import java.io.Serializable;
+import java.util.List;
 
 public abstract class AbstractDictionary implements Serializable {
 
@@ -14,6 +15,8 @@ public abstract class AbstractDictionary implements Serializable {
     public abstract String getMsgType(String messageName);
 
     public abstract String getMsgName(String messageType);
+
+    public abstract List<String> getMessageNames();
 
     public abstract String getNameForTag(Integer tag);
 

@@ -14,4 +14,10 @@ public class JsonCodec implements Codec<Cdr, String> {
     public Cdr decode(String message) throws EtiqetException {
         return JsonUtils.jsonToCdr(message);
     }
+
+    @Override
+    public Cdr decodeBinary(byte[] message) throws EtiqetException {
+        return decode(new String(message));
+    }
+
 }
