@@ -29,6 +29,7 @@
         <module>etiqet-transport-jms</module>
         <module>etiqet-transport-rabbitmq-gpb</module>
         <module>etiqet-transport-solace</module>
+        <module>etiqet-sql</module>
     </modules>
 
     <profiles>
