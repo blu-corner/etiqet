@@ -207,18 +207,8 @@ public class JmsTransportTest {
     public void testSend_WithTopic() throws EtiqetException, JMSException {
         String testText = "TEST";
         Cdr testCdr = new Cdr("TEST");
-        Codec<Cdr, String> codec = new Codec<Cdr, String>() {
-            @Override
-            public String encode(Cdr message) {
-                return testText;
-            }
-
-            @Override
-            public Cdr decode(String message) {
-                return testCdr;
-            }
-        };
-
+        Codec<Cdr, String> codec = mock(Codec.class);
+        when(codec.encode(any(Cdr.class))).thenReturn(testText);
         Session session = mock(Session.class);
         Topic topic = mock(Topic.class);
         when(session.createTopic(anyString())).thenReturn(topic);
@@ -241,18 +231,8 @@ public class JmsTransportTest {
     public void testSend_WithDefaultTopic() throws EtiqetException, JMSException {
         String testText = "TEST";
         Cdr testCdr = new Cdr("TEST");
-        Codec<Cdr, String> codec = new Codec<Cdr, String>() {
-            @Override
-            public String encode(Cdr message) {
-                return testText;
-            }
-
-            @Override
-            public Cdr decode(String message) {
-                return testCdr;
-            }
-        };
-
+        Codec<Cdr, String> codec = mock(Codec.class);
+        when(codec.encode(any(Cdr.class))).thenReturn(testText);
         Session session = mock(Session.class);
         Topic topic = mock(Topic.class);
         when(session.createTopic(anyString())).thenReturn(topic);

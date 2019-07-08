@@ -1,11 +1,16 @@
 package com.neueda.etiqet.core.transport;
 
+import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
@@ -13,10 +18,17 @@ import static com.google.protobuf.Descriptors.FieldDescriptor.JavaType.MESSAGE;
 
 public class ProtobufCodec implements Codec<Cdr, Message> {
 
+    private AbstractDictionary dictionary;
+
+    final static Logger logger = LoggerFactory.getLogger(ProtobufCodec.class);
+
     @Override
     public Message encode(Cdr cdr) throws EtiqetException {
         try {
-            String type = cdr.getType();
+            String type = dictionary.getMsgType(cdr.getType());
+            if (type == null) {
+                throw new EtiqetException("Could not find message class for type " + cdr.getType());
+            }
             Message.Builder builder = (Message.Builder) Class.forName(type).getMethod("newBuilder").invoke(this);
             return encode(cdr, builder);
         } catch (Exception e) {
@@ -82,7 +94,7 @@ public class ProtobufCodec implements Codec<Cdr, Message> {
 
     @Override
     public Cdr decode(Message message) {
-        Cdr cdr = new Cdr(message.getClass().getName());
+        Cdr cdr = new Cdr(dictionary.getMsgName(message.getClass().getName()));
         message.getAllFields().forEach(
             (fieldDescriptor, value) -> {
                 String fieldName = fieldDescriptor.getName();
@@ -129,5 +141,46 @@ public class ProtobufCodec implements Codec<Cdr, Message> {
         return cdr;
     }
 
+    @Override
+    public Cdr decodeBinary(byte[] message) throws EtiqetException {
+        return decode(deserialize(message));
+    }
+
+    public Message deserialize(byte[] binaryMessage) {
+        if (dictionary != null) {
+            for (String messageName : dictionary.getMessageNames()) {
+                Message parsedMessage = parseMessage(dictionary.getMsgType(messageName), binaryMessage);
+                if (parsedMessage != null && parsedMessage.getUnknownFields().asMap().size() == 0) {
+                    return parsedMessage;
+                }
+            }
+        }
+        try {
+            return Any.newBuilder().mergeFrom(binaryMessage).build();
+        } catch (InvalidProtocolBufferException e) {
+            logger.error("Unable to parse received binary message");
+            return null;
+        }
+    }
+
+
+
+    private Message parseMessage(final String className, byte[] binaryMessage) {
+        try {
+            Class messageClass = Class.forName(className);
+            return (Message) messageClass.getMethod("parseFrom", byte[].class).invoke(this, binaryMessage);
+        } catch (Exception e){
+            return null;
+        }
+    }
+
+    @Override
+    public void setDictionary(AbstractDictionary dictionary) {
+        if (dictionary == null) {
+            logger.warn("Protobuf dictionary missing");
+        } else {
+            this.dictionary = dictionary;
+        }
+    }
 
 }

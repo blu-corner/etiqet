@@ -18,4 +18,10 @@ public class ToStringCodec implements Codec<Cdr, String> {
     public Cdr decode(String message) throws EtiqetException {
         return ParserUtils.stringToCdr("None", message);
     }
+
+    @Override
+    public Cdr decodeBinary(byte[] message) throws EtiqetException {
+        return decode(new String(message));
+    }
+
 }

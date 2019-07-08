@@ -11,6 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -53,6 +55,11 @@ public class ProtobufDictionary extends AbstractDictionary {
             .filter(StringUtils::isNotEmpty)
             .collect(joining("$"));
     }
+
+    public List<String> getMessageNames() {
+        return new LinkedList<>(messageTypes.keySet());
+    }
+
 
     @Override
     public String getMsgName(String messageType) {

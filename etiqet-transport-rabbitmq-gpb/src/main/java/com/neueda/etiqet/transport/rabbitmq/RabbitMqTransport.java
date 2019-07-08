@@ -1,5 +1,6 @@
 package com.neueda.etiqet.transport.rabbitmq;
 
+import com.google.protobuf.Message;
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
@@ -154,11 +155,10 @@ public class RabbitMqTransport implements ExchangeTransport {
     }
 
     private Cdr decodeMessageBytes(byte[] messageBytes) {
-        String strMessage = new String(messageBytes, UTF_8);
         try {
-            return codec.decode(strMessage);
+            return codec.decodeBinary(messageBytes);
         } catch (EtiqetException e) {
-            logger.error("Unable to decode message bytes " + strMessage);
+            logger.error("Unable to decode message bytes " + new String(messageBytes, UTF_8));
             throw new EtiqetRuntimeException(e);
         }
     }
@@ -179,6 +179,10 @@ public class RabbitMqTransport implements ExchangeTransport {
         final byte[] payloadBytes;
         if (payload instanceof String) {
             payloadBytes = ((String) payload).getBytes(UTF_8);
+        } else if (payload instanceof Message) {
+            payloadBytes = ((Message) payload).toByteArray();
+        } else if (payload instanceof byte[]) {
+            payloadBytes = (byte[]) payload;
         } else {
             throw new EtiqetException("Unable to encode cdr");
         }

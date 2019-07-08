@@ -2,7 +2,10 @@ package com.neueda.etiqet.transport.rabbitmq;
 
 import com.neueda.etiqet.core.json.JsonCodec;
 import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.dictionary.ProtobufDictionary;
+import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.ExchangeTransport;
+import com.neueda.etiqet.core.transport.ProtobufCodec;
 import com.neueda.etiqet.rabbitmq.embeddedBroker.EmbeddedQpidBrokerRule;
 import com.neueda.etiqet.transport.rabbitmq.config.AmqpConfigExtractor;
 import com.neueda.etiqet.transport.rabbitmq.config.model.AmqpConfig;
@@ -301,11 +304,49 @@ public class RabbitMqTransportIntegrationTest {
         assertTrue(messageKeys2.containsAll(Arrays.asList(new String[]{messageRoutingKeys[0], messageRoutingKeys[1], messageRoutingKeys[3], messageRoutingKeys[4]})));
     }
 
+    @Test
+    public void testFanout_withProtobuf() throws Exception {
+        final String exchangeName = "exchangeFanoutProtobuf";
+        ProtobufCodec codec = new ProtobufCodec();
+        codec.setDictionary(new ProtobufDictionary("config/dictionary/addressbook.desc"));
+        ExchangeTransport transport = createAndInitializeTransport(
+            aAmqpConfig()
+            .addExchangeConfig(
+                aExchangeConfig(exchangeName, FANOUT)
+                .addQueueConfig(
+                    aQueueConfig("queue1").build()
+                ).addQueueConfig(
+                    aQueueConfig("queue2").build()
+                ).build()
+            ).build(),
+            codec
+        );
+        Cdr cdrRequest = aCdr("Person")
+            .withField("name", "PersonName")
+            .withField("id", 34)
+            .build();
+        BlockingQueue<Cdr> cdrMessages1 = new LinkedBlockingQueue<>();
+        BlockingQueue<Cdr> cdrMessages2 = new LinkedBlockingQueue<>();
+
+        transport.subscribeToQueue("queue1", cdr -> cdrMessages1.add(cdr));
+        transport.subscribeToQueue("queue2", cdr -> cdrMessages2.add(cdr));
+        transport.sendToExchange(cdrRequest, exchangeName);
+
+        assertEquals("PersonName", cdrMessages1.poll(2, SECONDS).getAsString("name"));
+        assertEquals("PersonName", cdrMessages2.poll(2, SECONDS).getAsString("name"));
+        assertTrue(cdrMessages1.isEmpty());
+        assertTrue(cdrMessages2.isEmpty());
+    }
+
     private ExchangeTransport createAndInitializeTransport(AmqpConfig config) throws Exception {
+        return createAndInitializeTransport(config, new JsonCodec());
+    }
+
+    private ExchangeTransport createAndInitializeTransport(AmqpConfig config, Codec codec) throws Exception {
         AmqpConfigExtractor extractor = mock(AmqpConfigExtractor.class);
         when(extractor.retrieveConfiguration(anyString())).thenReturn(config);
         final ExchangeTransport transport = new RabbitMqTransport(extractor);
-        transport.setCodec(new JsonCodec());
+        transport.setCodec(codec);
         transport.init("");
         transports.add(transport);
         return transport;

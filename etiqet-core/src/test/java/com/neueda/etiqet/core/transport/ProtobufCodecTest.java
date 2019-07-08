@@ -4,30 +4,51 @@ import com.google.protobuf.Message;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
+import com.neueda.etiqet.core.message.dictionary.ProtobufDictionary;
 import org.junit.Before;
 import org.junit.Test;
 import com.example.tutorial.AddressBookProtos;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static com.ibm.icu.impl.Assert.fail;
 import static com.neueda.etiqet.core.message.CdrBuilder.aCdr;
 import static com.neueda.etiqet.core.message.CdrItemBuilder.aCdrItem;
 import static com.neueda.etiqet.core.message.cdr.CdrItem.CdrItemType.CDR_ARRAY;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ProtobufCodecTest {
     private Codec<Cdr, Message> codec;
+    private static final String PERSON = "Person";
+    private static final String ADDRESS_BOOK = "AddressBook";
+    private static final String PERSON_WITH_REQUIRED_ADDRESS = "PersonWithRequiredAddress";
+    private static final String PERSON_WITH_MULTIPLE_FIELD_TYPES = "PersonWithMultipleFieldTypes";
 
     @Before
     public void setup() {
+        AbstractDictionary dictionary = mock(ProtobufDictionary.class);
+        Map<String, Class> messageTypes = new HashMap<>();
+        messageTypes.put(PERSON, AddressBookProtos.Person.class);
+        messageTypes.put(ADDRESS_BOOK, AddressBookProtos.AddressBook.class);
+        messageTypes.put(PERSON_WITH_REQUIRED_ADDRESS, AddressBookProtos.PersonWithRequiredAddress.class);
+        messageTypes.put(PERSON_WITH_MULTIPLE_FIELD_TYPES, AddressBookProtos.PersonWithMultipleFieldTypes.class);
+
+        when(dictionary.getMessageNames()).thenReturn(new ArrayList<>(messageTypes.keySet()));
+        messageTypes.forEach(
+            (messageName, messageClass) -> when(dictionary.getMsgType(messageName)).thenReturn(messageClass.getName())
+        );
+        when(dictionary.getMsgName(AddressBookProtos.Person.class.getName())).thenReturn(PERSON);
         codec = new ProtobufCodec();
+        codec.setDictionary(dictionary);
     }
 
     @Test
     public void testPerson() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.Person.class.getName())
+        Cdr cdr = aCdr(PERSON)
             .withField("name", "person name")
             .withField("email", "aaa@aaa.aaa")
             .withField("id", "23")
@@ -43,7 +64,7 @@ public class ProtobufCodecTest {
 
     @Test
     public void testPersonWithNestedPhoneNumber() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.Person.class.getName())
+        Cdr cdr = aCdr(PERSON)
             .withField("name", "person name")
             .withField("email", "aaa@aaa.aaa")
             .withField("id", "23")
@@ -69,7 +90,7 @@ public class ProtobufCodecTest {
 
     @Test
     public void testPersonWithTwoPhoneNumbers() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.Person.class.getName())
+        Cdr cdr = aCdr(PERSON)
             .withField("name", "person name")
             .withField("email", "aaa@aaa.aaa")
             .withField("id", "23")
@@ -100,7 +121,7 @@ public class ProtobufCodecTest {
 
     @Test
     public void testPersonWithNestedPhoneNumberAndPhoneEnumType() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.Person.class.getName())
+        Cdr cdr = aCdr(PERSON)
             .withField("name", "person name")
             .withField("email", "aaa@aaa.aaa")
             .withField("id", "23")
@@ -128,7 +149,7 @@ public class ProtobufCodecTest {
 
     @Test
     public void testAddressBook() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.AddressBook.class.getName())
+        Cdr cdr = aCdr(ADDRESS_BOOK)
             .withCdrItem("people",
                 aCdrItem(CDR_ARRAY)
                     .addCdr(
@@ -157,7 +178,7 @@ public class ProtobufCodecTest {
 
     @Test
     public void testPersonWithRequiredAddress() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.PersonWithRequiredAddress.class.getName())
+        Cdr cdr = aCdr(PERSON_WITH_REQUIRED_ADDRESS)
             .withField("id", "23")
             .withCdrItem("address",
                 aCdrItem(CDR_ARRAY)
@@ -184,7 +205,7 @@ public class ProtobufCodecTest {
     public void testMultipleFieldTypes_long() throws EtiqetException {
         long longId = Long.valueOf(Integer.MAX_VALUE + 100);
 
-        Cdr cdr = aCdr(AddressBookProtos.PersonWithMultipleFieldTypes.class.getName())
+        Cdr cdr = aCdr(PERSON_WITH_MULTIPLE_FIELD_TYPES)
             .withField("longId", longId)
             .build();
 
@@ -195,7 +216,7 @@ public class ProtobufCodecTest {
 
     @Test
     public void testMultipleFieldTypes_boolean() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.PersonWithMultipleFieldTypes.class.getName())
+        Cdr cdr = aCdr(PERSON_WITH_MULTIPLE_FIELD_TYPES)
             .withField("eligible", true)
             .build();
 
@@ -206,7 +227,7 @@ public class ProtobufCodecTest {
 
     @Test
     public void testMultipleFieldTypes_double() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.PersonWithMultipleFieldTypes.class.getName())
+        Cdr cdr = aCdr(PERSON_WITH_MULTIPLE_FIELD_TYPES)
             .withField("weight", 89.95)
             .build();
 
@@ -217,7 +238,7 @@ public class ProtobufCodecTest {
 
     @Test
     public void testMultipleFieldTypes_float() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.PersonWithMultipleFieldTypes.class.getName())
+        Cdr cdr = aCdr(PERSON_WITH_MULTIPLE_FIELD_TYPES)
             .withField("height", 1.89)
             .build();
 
@@ -228,12 +249,40 @@ public class ProtobufCodecTest {
 
     @Test
     public void testMultipleFieldTypes_fixedInt() throws EtiqetException {
-        Cdr cdr = aCdr(AddressBookProtos.PersonWithMultipleFieldTypes.class.getName())
+        Cdr cdr = aCdr(PERSON_WITH_MULTIPLE_FIELD_TYPES)
             .withField("fixed32", 32)
             .build();
 
         Message message = codec.encode(cdr);
         Map<String, CdrItem> result = codec.decode(message).getItems();
         assertEquals(32, Math.round(result.get("fixed32").getIntval()));
+    }
+
+    @Test
+    public void testInvalidClass(){
+        Cdr cdr = aCdr("InvalidClass").build();
+        try {
+            codec.encode(cdr);
+            fail("Should have thrown exception when marshalling to invalid class");
+        } catch (EtiqetException e) {
+            assertTrue(e.getMessage().contains("Could not find message class for type InvalidClass"));
+        }
+    }
+
+    @Test
+    public void testBinaryMessage() throws EtiqetException {
+        Cdr cdr = aCdr(PERSON)
+            .withField("name", "person name")
+            .withField("email", "aaa@aaa.aaa")
+            .withField("id", 23)
+            .build();
+
+        byte[] encodedMessage = codec.encode(cdr).toByteArray();
+        Cdr result = codec.decodeBinary(encodedMessage);
+
+        assertEquals(PERSON, result.getType());
+        assertEquals("person name", result.getAsString("name"));
+        assertEquals("aaa@aaa.aaa", result.getAsString("email"));
+        assertEquals(23, Math.round(result.getItem("id").getIntval()));
     }
 }
