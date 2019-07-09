@@ -12,12 +12,12 @@ import com.example.tutorial.AddressBookProtos;
 
 import java.util.*;
 
-import static com.ibm.icu.impl.Assert.fail;
 import static com.neueda.etiqet.core.message.CdrBuilder.aCdr;
 import static com.neueda.etiqet.core.message.CdrItemBuilder.aCdrItem;
 import static com.neueda.etiqet.core.message.cdr.CdrItem.CdrItemType.CDR_ARRAY;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -269,20 +269,4 @@ public class ProtobufCodecTest {
         }
     }
 
-    @Test
-    public void testBinaryMessage() throws EtiqetException {
-        Cdr cdr = aCdr(PERSON)
-            .withField("name", "person name")
-            .withField("email", "aaa@aaa.aaa")
-            .withField("id", 23)
-            .build();
-
-        byte[] encodedMessage = codec.encode(cdr).toByteArray();
-        Cdr result = codec.decodeBinary(encodedMessage);
-
-        assertEquals(PERSON, result.getType());
-        assertEquals("person name", result.getAsString("name"));
-        assertEquals("aaa@aaa.aaa", result.getAsString("email"));
-        assertEquals(23, Math.round(result.getItem("id").getIntval()));
-    }
 }

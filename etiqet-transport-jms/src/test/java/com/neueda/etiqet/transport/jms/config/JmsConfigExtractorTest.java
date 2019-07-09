@@ -19,11 +19,12 @@ import static com.neueda.etiqet.transport.jms.config.model.JmsConfigurationBuild
 import static com.neueda.etiqet.transport.jms.config.model.SetterPropertyBuilder.aSetterProperty;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class JmsConfigExtractorTest {
     @Mock
-    private JmsConfigurationReader jmsConfigurationReader;
+    private JmsConfigXmlParser jmsConfigXmlParser;
 
     @Before
     public void setUp() {
@@ -37,8 +38,8 @@ public class JmsConfigExtractorTest {
             .addConstructorArg(aConstructorArg().argType(ArgType.STRING).argValue("USERNAME").build())
             .addConstructorArg(aConstructorArg().argType(ArgType.STRING).argValue("PASSWORD").build())
             .build();
-        when(jmsConfigurationReader.getJmsConfiguration(anyString())).thenReturn(jmsConfiguration);
-        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(jmsConfigurationReader);
+        when(jmsConfigXmlParser.parse(anyString(), eq(JmsConfiguration.class))).thenReturn(jmsConfiguration);
+        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(jmsConfigXmlParser);
 
         JmsConfig jmsConfig = jmsConfigExtractor.retrieveConfiguration("file");
 
@@ -59,8 +60,8 @@ public class JmsConfigExtractorTest {
             .addProperty(aSetterProperty().argType(ArgType.STRING).name("username").argValue("USERNAME").build())
             .addProperty(aSetterProperty().argType(ArgType.STRING).name("password").argValue("PASSWORD").build())
             .build();
-        when(jmsConfigurationReader.getJmsConfiguration(anyString())).thenReturn(jmsConfiguration);
-        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(jmsConfigurationReader);
+        when(jmsConfigXmlParser.parse(anyString(), eq(JmsConfiguration.class))).thenReturn(jmsConfiguration);
+        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(jmsConfigXmlParser);
 
         JmsConfig jmsConfig = jmsConfigExtractor.retrieveConfiguration("file");
 
@@ -79,8 +80,8 @@ public class JmsConfigExtractorTest {
         JmsConfiguration jmsConfiguration = aJmsConfigurationBuilder()
             .withImplementation("invalid.class")
             .build();
-        when(jmsConfigurationReader.getJmsConfiguration(anyString())).thenReturn(jmsConfiguration);
-        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(jmsConfigurationReader);
+        when(jmsConfigXmlParser.parse(anyString(), eq(JmsConfiguration.class))).thenReturn(jmsConfiguration);
+        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(jmsConfigXmlParser);
 
         jmsConfigExtractor.retrieveConfiguration("file");
     }
@@ -92,8 +93,8 @@ public class JmsConfigExtractorTest {
             .addConstructorArg(aConstructorArg().argType(ArgType.BOOLEAN).argValue("true").build())
             .addProperty(aSetterProperty().argType(ArgType.BOOLEAN).argValue("FALSE").build())
             .build();
-        when(jmsConfigurationReader.getJmsConfiguration(anyString())).thenReturn(jmsConfiguration);
-        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(jmsConfigurationReader);
+        when(jmsConfigXmlParser.parse(anyString(), eq(JmsConfiguration.class))).thenReturn(jmsConfiguration);
+        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(jmsConfigXmlParser);
 
         JmsConfig jmsConfig = jmsConfigExtractor.retrieveConfiguration("file");
 

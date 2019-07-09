@@ -19,9 +19,4 @@ public class ToStringCodec implements Codec<Cdr, String> {
         return ParserUtils.stringToCdr("None", message);
     }
 
-    @Override
-    public Cdr decodeBinary(byte[] message) throws EtiqetException {
-        return decode(new String(message));
-    }
-
 }

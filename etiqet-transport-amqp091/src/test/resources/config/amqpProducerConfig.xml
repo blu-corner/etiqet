@@ -1,0 +1,16 @@
+<e:amqpConfiguration
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:e="http://www.neueda.com/etiqet/transport/amqp_091"
+    host="localhost"
+    binaryMessageConverterDelegate="com.neueda.etiqet.core.transport.delegate.StringBinaryMessageConverterDelegate">
+    <queues>
+        <queue name="queue1"/>
+        <queue name="queue2"/>
+    </queues>
+    <exchanges>
+        <exchange name="exchange" exchangeType="fanout">
+            <queue-ref ref="queue1"/>
+            <queue-ref ref="queue2"/>
+        </exchange>
+    </exchanges>
+</e:amqpConfiguration>

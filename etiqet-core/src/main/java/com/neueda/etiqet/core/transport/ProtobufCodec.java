@@ -1,8 +1,6 @@
 package com.neueda.etiqet.core.transport;
 
-import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
@@ -139,39 +137,6 @@ public class ProtobufCodec implements Codec<Cdr, Message> {
             }
         );
         return cdr;
-    }
-
-    @Override
-    public Cdr decodeBinary(byte[] message) throws EtiqetException {
-        return decode(deserialize(message));
-    }
-
-    public Message deserialize(byte[] binaryMessage) {
-        if (dictionary != null) {
-            for (String messageName : dictionary.getMessageNames()) {
-                Message parsedMessage = parseMessage(dictionary.getMsgType(messageName), binaryMessage);
-                if (parsedMessage != null && parsedMessage.getUnknownFields().asMap().size() == 0) {
-                    return parsedMessage;
-                }
-            }
-        }
-        try {
-            return Any.newBuilder().mergeFrom(binaryMessage).build();
-        } catch (InvalidProtocolBufferException e) {
-            logger.error("Unable to parse received binary message");
-            return null;
-        }
-    }
-
-
-
-    private Message parseMessage(final String className, byte[] binaryMessage) {
-        try {
-            Class messageClass = Class.forName(className);
-            return (Message) messageClass.getMethod("parseFrom", byte[].class).invoke(this, binaryMessage);
-        } catch (Exception e){
-            return null;
-        }
     }
 
     @Override
