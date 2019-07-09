@@ -7,7 +7,6 @@ import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.rest.message.RestMsg;
 import com.neueda.etiqet.rest.message.impl.HttpRequestMsg;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -39,11 +38,6 @@ public class RestCodec implements Codec<Cdr, HttpRequestMsg> {
         }
 
         return new RestMsg(String.valueOf(httpResponse.getStatusCode())).update(responseData);
-    }
-
-    @Override
-    public Cdr decodeBinary(byte[] message) throws EtiqetException {
-        throw new NotImplementedException();
     }
 
 }

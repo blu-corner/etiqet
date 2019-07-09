@@ -13,6 +13,7 @@ import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.config.dtos.UrlExtension;
 import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.Transport;
@@ -304,8 +305,10 @@ public abstract class Client implements Transport, Runnable {
           .newInstance());
       transport.init(config);
       transport.setDelegate(delegate);
+      AbstractDictionary dictionary = protocolConfig.getDictionary();
+      transport.setDictionary(dictionary);
       Codec codec = (Codec) Class.forName(protocolConfig.getClient().getCodecImpl()).newInstance();
-      codec.setDictionary(protocolConfig.getDictionary());
+      codec.setDictionary(dictionary);
       setCodec(codec);
     } catch (Exception e) {
       logger.error("Could not initialise client. Reason " + e.getCause().getMessage());

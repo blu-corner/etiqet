@@ -14,14 +14,15 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 public class JmsConfigExtractor {
-    private final JmsConfigurationReader configurationReader;
+    private final JmsConfigXmlParser jmsConfigXmlParser;
 
-    public JmsConfigExtractor(final JmsConfigurationReader jmsConfigurationReader) {
-        this.configurationReader = jmsConfigurationReader;
+    public JmsConfigExtractor(final JmsConfigXmlParser jmsConfigXmlParser) {
+        this.jmsConfigXmlParser = jmsConfigXmlParser;
     }
 
     public JmsConfig retrieveConfiguration(final String configPath) throws EtiqetException {
-        final JmsConfiguration jmsConfiguration = configurationReader.getJmsConfiguration(configPath);
+
+        final JmsConfiguration jmsConfiguration = jmsConfigXmlParser.parse(configPath, JmsConfiguration.class);
         final Class<?> constructorClass;
         try {
             constructorClass = Class.forName(jmsConfiguration.getImplementation());

@@ -8,7 +8,7 @@ import com.neueda.etiqet.core.transport.BrokerTransport;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.TransportDelegate;
 import com.neueda.etiqet.transport.jms.config.JmsConfigExtractor;
-import com.neueda.etiqet.transport.jms.config.JmsConfigurationReader;
+import com.neueda.etiqet.transport.jms.config.JmsConfigXmlParser;
 import com.neueda.etiqet.transport.jms.config.model.ConstructorArgument;
 import com.neueda.etiqet.transport.jms.config.model.JmsConfig;
 import com.neueda.etiqet.transport.jms.config.model.SetterArgument;
@@ -49,7 +49,7 @@ public class JmsTransport implements BrokerTransport {
      */
     @Override
     public void init(String configPath) throws EtiqetException {
-        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(new JmsConfigurationReader());
+        JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(new JmsConfigXmlParser());
         JmsConfig configuration = jmsConfigExtractor.retrieveConfiguration(configPath);
         connectionFactory = createConnectionFactory(configuration);
         defaultTopic = configuration.getDefaultTopic();

@@ -2,10 +2,12 @@ package com.neueda.etiqet.transport.rabbitmq;
 
 import com.neueda.etiqet.core.json.JsonCodec;
 import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.message.dictionary.ProtobufDictionary;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.ExchangeTransport;
 import com.neueda.etiqet.core.transport.ProtobufCodec;
+import com.neueda.etiqet.core.transport.delegate.ProtobufBinaryMessageConverterDelegate;
 import com.neueda.etiqet.rabbitmq.embeddedBroker.EmbeddedQpidBrokerRule;
 import com.neueda.etiqet.transport.rabbitmq.config.AmqpConfigExtractor;
 import com.neueda.etiqet.transport.rabbitmq.config.model.AmqpConfig;
@@ -307,10 +309,9 @@ public class RabbitMqTransportIntegrationTest {
     @Test
     public void testFanout_withProtobuf() throws Exception {
         final String exchangeName = "exchangeFanoutProtobuf";
-        ProtobufCodec codec = new ProtobufCodec();
-        codec.setDictionary(new ProtobufDictionary("config/dictionary/addressbook.desc"));
         ExchangeTransport transport = createAndInitializeTransport(
             aAmqpConfig()
+            .withBinaryMessageConverterDelegateClass(ProtobufBinaryMessageConverterDelegate.class)
             .addExchangeConfig(
                 aExchangeConfig(exchangeName, FANOUT)
                 .addQueueConfig(
@@ -319,7 +320,8 @@ public class RabbitMqTransportIntegrationTest {
                     aQueueConfig("queue2").build()
                 ).build()
             ).build(),
-            codec
+            new ProtobufCodec(),
+            new ProtobufDictionary("config/dictionary/addressbook.desc")
         );
         Cdr cdrRequest = aCdr("Person")
             .withField("name", "PersonName")
@@ -339,14 +341,16 @@ public class RabbitMqTransportIntegrationTest {
     }
 
     private ExchangeTransport createAndInitializeTransport(AmqpConfig config) throws Exception {
-        return createAndInitializeTransport(config, new JsonCodec());
+        return createAndInitializeTransport(config, new JsonCodec(), null);
     }
 
-    private ExchangeTransport createAndInitializeTransport(AmqpConfig config, Codec codec) throws Exception {
+    private ExchangeTransport createAndInitializeTransport(AmqpConfig config, Codec codec, AbstractDictionary dictionary) throws Exception {
         AmqpConfigExtractor extractor = mock(AmqpConfigExtractor.class);
         when(extractor.retrieveConfiguration(anyString())).thenReturn(config);
         final ExchangeTransport transport = new RabbitMqTransport(extractor);
+        codec.setDictionary(dictionary);
         transport.setCodec(codec);
+        transport.setDictionary(dictionary);
         transport.init("");
         transports.add(transport);
         return transport;

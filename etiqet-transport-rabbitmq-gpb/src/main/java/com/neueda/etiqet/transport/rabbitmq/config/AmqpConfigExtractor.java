@@ -2,6 +2,7 @@ package com.neueda.etiqet.transport.rabbitmq.config;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
+import com.neueda.etiqet.core.transport.delegate.BinaryMessageConverterDelegate;
 import com.neueda.etiqet.transport.amqp_091.*;
 import com.neueda.etiqet.transport.rabbitmq.config.model.AmqpConfig;
 import com.neueda.etiqet.transport.rabbitmq.config.model.ExchangeConfig;
@@ -26,9 +27,11 @@ public class AmqpConfigExtractor {
     public AmqpConfig retrieveConfiguration(final String configFile) throws EtiqetException {
         AmqpConfiguration xmlConfiguration = configXmlParser.parse(configFile);
         queues = queues(xmlConfiguration.getQueues().getQueue());
+        Class binaryMessageConverterDelegateClass = binaryMessageConverterDelegateClass(xmlConfiguration);
         return new AmqpConfig(
             xmlConfiguration.getHost(),
-            exchangeConfigs(xmlConfiguration)
+            exchangeConfigs(xmlConfiguration),
+            binaryMessageConverterDelegateClass
         );
     }
 
@@ -79,6 +82,14 @@ public class AmqpConfigExtractor {
             case FANOUT: return BuiltinExchangeType.FANOUT;
             case HEADERS: return BuiltinExchangeType.HEADERS;
             default: throw new EtiqetRuntimeException("No built-in exchange type found for " + xmlExchangeType.name());
+        }
+    }
+
+    private Class binaryMessageConverterDelegateClass(AmqpConfiguration xmlConfiguration) throws EtiqetException{
+        try {
+            return Class.forName(xmlConfiguration.getBinaryMessageConverterDelegate());
+        } catch (ReflectiveOperationException e) {
+            throw new EtiqetException("Unable to find BinaryMessageConverterDelegate class " + xmlConfiguration.getBinaryMessageConverterDelegate());
         }
     }
 

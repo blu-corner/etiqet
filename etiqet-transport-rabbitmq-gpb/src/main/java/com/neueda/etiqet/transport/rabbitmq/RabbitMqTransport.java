@@ -1,13 +1,14 @@
 package com.neueda.etiqet.transport.rabbitmq;
 
-import com.google.protobuf.Message;
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.ExchangeTransport;
 import com.neueda.etiqet.core.transport.TransportDelegate;
+import com.neueda.etiqet.core.transport.delegate.BinaryMessageConverterDelegate;
 import com.neueda.etiqet.transport.rabbitmq.config.AmqpConfigExtractor;
 import com.neueda.etiqet.transport.rabbitmq.config.model.AmqpConfig;
 import com.neueda.etiqet.transport.rabbitmq.config.model.ExchangeConfig;
@@ -28,17 +29,18 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.empty;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class RabbitMqTransport implements ExchangeTransport {
+public class RabbitMqTransport<T> implements ExchangeTransport {
 
-    private final static Logger logger = LoggerFactory.getLogger(RabbitMqTransport.class);
     private Connection connection;
     private Map<String, Channel> channelsByExchange;
-    private Codec<Cdr, Object> codec;
-    private TransportDelegate<String, Cdr> transDel;
+    private Codec<Cdr, T> codec;
+    private AbstractDictionary dictionary;
     private ClientDelegate delegate;
-    private ConnectionFactory connectionFactory;
+    private BinaryMessageConverterDelegate<T> binaryMessageConverterDelegate;
     private AmqpConfigExtractor configExtractor;
 
+    private final static Logger logger = LoggerFactory.getLogger(RabbitMqTransport.class);
+    private final static String DEFAULT_EXCHANGE = "";
 
     public RabbitMqTransport() {
         this(new AmqpConfigExtractor());
@@ -53,7 +55,8 @@ public class RabbitMqTransport implements ExchangeTransport {
     @Override
     public void init(String configPath) throws EtiqetException {
         AmqpConfig configuration = configExtractor.retrieveConfiguration(configPath);
-        connectionFactory = new ConnectionFactory();
+        this.binaryMessageConverterDelegate = instantiateBinaryMessageConverterDelegate(configuration);
+        final ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.setHost(configuration.getHost());
         try {
             connection = connectionFactory.newConnection();
@@ -131,7 +134,7 @@ public class RabbitMqTransport implements ExchangeTransport {
     @Override
     public Cdr subscribeAndConsumeFromQueue(String queueName, Duration timeout) throws EtiqetException {
         CompletableFuture<Cdr> eventualCdr = new CompletableFuture<>();
-        Consumer<Cdr> consumer = cdr -> eventualCdr.complete(cdr);
+        Consumer<Cdr> consumer = eventualCdr::complete;
         subscribeToQueue(queueName, consumer);
         try {
             return eventualCdr.get(timeout.toMillis(), MILLISECONDS);
@@ -156,7 +159,8 @@ public class RabbitMqTransport implements ExchangeTransport {
 
     private Cdr decodeMessageBytes(byte[] messageBytes) {
         try {
-            return codec.decodeBinary(messageBytes);
+            T message = binaryMessageConverterDelegate.fromByteArray(messageBytes);
+            return codec.decode(message);
         } catch (EtiqetException e) {
             logger.error("Unable to decode message bytes " + new String(messageBytes, UTF_8));
             throw new EtiqetRuntimeException(e);
@@ -175,19 +179,10 @@ public class RabbitMqTransport implements ExchangeTransport {
 
     public void sendToExchange(Cdr cdr, String exchangeName, Optional<String> routingKey) throws EtiqetException {
         final Channel channel = getChannelByExchangeName(exchangeName);
-        final Object payload = codec.encode(processMessageUsingDelegate(cdr));
-        final byte[] payloadBytes;
-        if (payload instanceof String) {
-            payloadBytes = ((String) payload).getBytes(UTF_8);
-        } else if (payload instanceof Message) {
-            payloadBytes = ((Message) payload).toByteArray();
-        } else if (payload instanceof byte[]) {
-            payloadBytes = (byte[]) payload;
-        } else {
-            throw new EtiqetException("Unable to encode cdr");
-        }
+        final T payload = codec.encode(processMessageUsingDelegate(cdr));
+        final byte[] binaryMessage = binaryMessageConverterDelegate.toByteArray(payload);
         try {
-            channel.basicPublish(exchangeName, routingKey.orElse(""), null, payloadBytes);
+            channel.basicPublish(exchangeName, routingKey.orElse(""), null, binaryMessage);
         } catch (IOException e) {
             throw new EtiqetException(e);
         }
@@ -208,6 +203,21 @@ public class RabbitMqTransport implements ExchangeTransport {
         return delegate.processMessage(cdr);
     }
 
+    private BinaryMessageConverterDelegate<T> instantiateBinaryMessageConverterDelegate(AmqpConfig config) throws EtiqetException {
+        Optional<Class> delegateClass = config.getBinaryMessageConverterDelegateClass();
+        if (delegateClass.isPresent()) {
+            try {
+                BinaryMessageConverterDelegate<T> delegate = (BinaryMessageConverterDelegate<T>) delegateClass.get().newInstance();
+                delegate.setDictionary(dictionary);
+                return delegate;
+            } catch (ReflectiveOperationException e) {
+                throw new EtiqetException("Unable to instantiate BinaryMessageConverterDelegate " + delegateClass.get().getName());
+            }
+        } else {
+            throw new EtiqetException("Missing BinaryMessgeConverterDelegate in transport configuration");
+        }
+    }
+
     @Override
     public boolean isLoggedOn() {
         return connection.isOpen();
@@ -215,12 +225,12 @@ public class RabbitMqTransport implements ExchangeTransport {
 
     @Override
     public String getDefaultSessionId() {
-        return channelsByExchange.keySet().stream().findFirst().orElse("EXCHANGE");// DEF_CONNECTION + SESSION_SEPARATOR + DEF_CHANNEL;
+        return DEFAULT_EXCHANGE;
     }
 
     @Override
     public void setTransportDelegate(TransportDelegate<String, Cdr> transDel) {
-        this.transDel = transDel;
+        logger.warn("Trying to set trasnport delegate which won't be used");
     }
 
     @Override
@@ -231,6 +241,11 @@ public class RabbitMqTransport implements ExchangeTransport {
     @Override
     public void setCodec(Codec c) {
         codec = c;
+    }
+
+    @Override
+    public void setDictionary(AbstractDictionary dictionary) {
+        this.dictionary = dictionary;
     }
 
     @Override
