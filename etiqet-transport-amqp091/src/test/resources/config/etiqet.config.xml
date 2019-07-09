@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
+    <protocols>
+        <protocol name="amqp">
+            <client defaultConfig="${user.dir}/src/test/resources/config/amqpProducerConfig.xml"
+                    impl = "com.neueda.etiqet.core.client.GenericClient"
+                    transportImpl="com.neueda.etiqet.transport.amqp.AmqpTransport"
+                    codecImpl="com.neueda.etiqet.core.json.JsonCodec"/>
+            <messages>
+                <message name="TestMessage">
+                    <implementation>java.lang.String</implementation>
+                    <fields>
+                        <field name="field1" type="string">default</field>
+                        <field name="field2" type="integer">0</field>
+                    </fields>
+                </message>
+            </messages>
+        </protocol>
+    </protocols>
+</etiqetConfiguration>
+
