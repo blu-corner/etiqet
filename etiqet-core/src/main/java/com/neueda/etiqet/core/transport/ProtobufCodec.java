@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.List;
 
 import static com.google.protobuf.Descriptors.FieldDescriptor.JavaType.MESSAGE;
 
@@ -43,11 +44,15 @@ public class ProtobufCodec implements Codec<Cdr, Message> {
                     throw new EtiqetRuntimeException("Unable to find field " + fieldName);
                 }
                 if (fieldDescriptor.isRepeated()) {
-                    fieldValue.getCdrs().stream()
-                        .map(item -> encode(item, builder.newBuilderForField(fieldDescriptor)))
-                        .forEach(
-                            valueItem -> builder.addRepeatedField(fieldDescriptor, valueItem)
-                        );
+                    if(fieldValue.getType().equals(CdrItem.CdrItemType.CDR_ARRAY)) {
+                        fieldValue.getCdrs().stream()
+                                  .map(item -> encode(item, builder.newBuilderForField(fieldDescriptor)))
+                                  .forEach(
+                                      valueItem -> builder.addRepeatedField(fieldDescriptor, valueItem)
+                                          );
+                    } else {
+                        builder.addRepeatedField(fieldDescriptor, getValue(fieldValue, fieldDescriptor));
+                    }
                 } else {
                     final Object value;
                     if (fieldDescriptor.getJavaType() == MESSAGE) {
@@ -58,7 +63,11 @@ public class ProtobufCodec implements Codec<Cdr, Message> {
                     if (value == null && fieldDescriptor.isRequired()) {
                         throw new EtiqetRuntimeException("Unable to encode Cdr with type /*" + cdr + "*/. No value found for required field " + fieldDescriptor.getName());
                     }
-                    builder.setField(fieldDescriptor, value);
+                    try {
+                        builder.setField(fieldDescriptor, value);
+                    } catch (Exception e) {
+                        throw new EtiqetRuntimeException("Unable to set field " + fieldName + " with value " + value, e);
+                    }
                 }
             }
         );
@@ -68,25 +77,30 @@ public class ProtobufCodec implements Codec<Cdr, Message> {
 
 
     private Object getValue(CdrItem cdrItem, Descriptors.FieldDescriptor fieldDescriptor){
-        switch (fieldDescriptor.getJavaType()) {
-            case INT:
-                return Integer.parseInt(cdrItem.getStrval());
-            case LONG:
-                return cdrItem.getIntval();
-            case DOUBLE:
-                return cdrItem.getDoubleval();
-            case FLOAT:
-                return cdrItem.getDoubleval().floatValue();
-            case ENUM:
-                Descriptors.EnumDescriptor enumDescriptor = fieldDescriptor.getEnumType();
-                return enumDescriptor.findValueByName(cdrItem.getStrval());
-            case STRING:
-                return cdrItem.getStrval();
-            case BOOLEAN:
-                return cdrItem.getBoolVal();
-            default:
-                throw new EtiqetRuntimeException("Unable to encode value of type " + fieldDescriptor.getJavaType() +
-                    " for field " + fieldDescriptor.getName());
+        try {
+            switch (fieldDescriptor.getJavaType()) {
+                case INT:
+                    return cdrItem.getIntval() != null ? cdrItem.getIntval().intValue() : Integer.parseInt(cdrItem.getStrval());
+                case LONG:
+                    return cdrItem.getIntval() != null ? cdrItem.getIntval().longValue() : Long.parseLong(cdrItem.getStrval());
+                case DOUBLE:
+                    return cdrItem.getDoubleval() != null ? cdrItem.getDoubleval().doubleValue() : Double.parseDouble(cdrItem.getStrval());
+                case FLOAT:
+                    return cdrItem.getDoubleval() != null ? cdrItem.getDoubleval().floatValue() : Float.parseFloat(cdrItem.getStrval());
+                case ENUM:
+                    Descriptors.EnumDescriptor enumDescriptor = fieldDescriptor.getEnumType();
+                    return enumDescriptor.findValueByName(cdrItem.getStrval());
+                case STRING:
+                    return cdrItem.getStrval();
+                case BOOLEAN:
+                    return cdrItem.getBoolVal() != null ? cdrItem.getBoolVal() : Boolean.parseBoolean(cdrItem.getStrval());
+                default:
+                    throw new EtiqetRuntimeException("Unable to encode value of type " + fieldDescriptor.getJavaType() +
+                                                         " for field " + fieldDescriptor.getName());
+            }
+        } catch (NumberFormatException e) {
+            throw new EtiqetRuntimeException("Unable to encode value of type " + fieldDescriptor.getJavaType() +
+                                                 " for field " + fieldDescriptor.getName(), e);
         }
     }
 
@@ -98,22 +112,75 @@ public class ProtobufCodec implements Codec<Cdr, Message> {
                 String fieldName = fieldDescriptor.getName();
                 switch (fieldDescriptor.getJavaType()) {
                     case STRING:
-                        cdr.set(fieldName, (String) value);
+                    case ENUM:
+                        if(fieldDescriptor.isRepeated() && value instanceof List) {
+                            if(!cdr.containsKey(fieldName)) {
+                                cdr.setItem(fieldName, new CdrItem(CdrItem.CdrItemType.CDR_ARRAY));
+                            }
+                            for (Object listVal : (List) value) {
+                                Cdr stringChild = new Cdr(fieldName);
+                                stringChild.set(fieldName, listVal.toString());
+                                cdr.getItem(fieldName).addCdrToList(stringChild);
+                            }
+                        } else {
+                            cdr.set(fieldName, (String) value);
+                        }
                         break;
                     case INT:
-                        cdr.set(fieldName, (int) value);
+                        if(fieldDescriptor.isRepeated() && value instanceof List) {
+                            if(!cdr.containsKey(fieldName)) {
+                                cdr.setItem(fieldName, new CdrItem(CdrItem.CdrItemType.CDR_ARRAY));
+                            }
+                            for (Object listVal : (List) value) {
+                                Cdr intChild = new Cdr(fieldName);
+                                intChild.set(fieldName, (int) listVal);
+                                cdr.getItem(fieldName).addCdrToList(intChild);
+                            }
+                        } else {
+                            cdr.set(fieldName, (int) value);
+                        }
                         break;
                     case LONG:
-                        cdr.set(fieldName, (Long) value);
+                        if(fieldDescriptor.isRepeated() && value instanceof List) {
+                            if(!cdr.containsKey(fieldName)) {
+                                cdr.setItem(fieldName, new CdrItem(CdrItem.CdrItemType.CDR_ARRAY));
+                            }
+                            for (Object listVal : (List) value) {
+                                Cdr intChild = new Cdr(fieldName);
+                                intChild.set(fieldName, (Long) listVal);
+                                cdr.getItem(fieldName).addCdrToList(intChild);
+                            }
+                        } else {
+                            cdr.set(fieldName, (Long) value);
+                        }
                         break;
                     case DOUBLE:
-                        cdr.set(fieldName, (Double) value);
+                        if(fieldDescriptor.isRepeated() && value instanceof List) {
+                            if(!cdr.containsKey(fieldName)) {
+                                cdr.setItem(fieldName, new CdrItem(CdrItem.CdrItemType.CDR_ARRAY));
+                            }
+                            for (Object listVal : (List) value) {
+                                Cdr intChild = new Cdr(fieldName);
+                                intChild.set(fieldName, (Double) listVal);
+                                cdr.getItem(fieldName).addCdrToList(intChild);
+                            }
+                        } else {
+                            cdr.set(fieldName, (Double) value);
+                        }
                         break;
                     case FLOAT:
-                        cdr.set(fieldName, new Double((float) value));
-                        break;
-                    case ENUM:
-                        cdr.set(fieldName, value.toString());
+                        if(fieldDescriptor.isRepeated() && value instanceof List) {
+                            if(!cdr.containsKey(fieldName)) {
+                                cdr.setItem(fieldName, new CdrItem(CdrItem.CdrItemType.CDR_ARRAY));
+                            }
+                            for (Object listVal : (List) value) {
+                                Cdr intChild = new Cdr(fieldName);
+                                intChild.set(fieldName, new Double((float) listVal));
+                                cdr.getItem(fieldName).addCdrToList(intChild);
+                            }
+                        } else {
+                            cdr.set(fieldName, new Double((float) value));
+                        }
                         break;
                     case BOOLEAN:
                         cdr.set(fieldName, (Boolean) value);

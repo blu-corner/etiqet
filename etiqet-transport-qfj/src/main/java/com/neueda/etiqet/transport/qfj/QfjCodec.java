@@ -211,6 +211,12 @@ public class QfjCodec implements Codec<Cdr, Message> {
         try {
             com.neueda.etiqet.core.config.dtos.Message messageConfig =
                 protocolConfig.getMessage(cdr.getType());
+            if(messageConfig == null) {
+                messageConfig = protocolConfig.getMessage(protocolConfig.getMsgName(cdr.getType()));
+            }
+            if(messageConfig == null) {
+                throw new SerializeException("Could not find message type " + cdr.getType() + " in Etiqet Config");
+            }
             ParserUtils.fillDefault(messageConfig, cdr);
             return encode(cdr, (Message) Class.forName(messageConfig.getImplementation()).getConstructor()
                                               .newInstance());
