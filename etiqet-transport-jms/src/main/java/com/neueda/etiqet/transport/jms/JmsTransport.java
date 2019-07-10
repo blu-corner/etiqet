@@ -4,9 +4,11 @@ import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.transport.BrokerTransport;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.TransportDelegate;
+import com.neueda.etiqet.core.transport.delegate.BinaryMessageConverterDelegate;
 import com.neueda.etiqet.transport.jms.config.JmsConfigExtractor;
 import com.neueda.etiqet.transport.jms.config.JmsConfigXmlParser;
 import com.neueda.etiqet.transport.jms.config.model.ConstructorArgument;
@@ -20,6 +22,7 @@ import javax.jms.*;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -37,9 +40,10 @@ public class JmsTransport implements BrokerTransport {
     private Connection connection;
     private Session session;
     private Codec<Cdr, ?> codec;
+    private AbstractDictionary dictionary;
     private String defaultTopic;
     private ClientDelegate delegate;
-    private TransportDelegate<String, Cdr> transDel;
+    private BinaryMessageConverterDelegate binaryMessageConverterDelegate;
 
     /**
      * Instantiates a Jms connection factory and determines the default topic to publish messages to
@@ -51,6 +55,7 @@ public class JmsTransport implements BrokerTransport {
     public void init(String configPath) throws EtiqetException {
         JmsConfigExtractor jmsConfigExtractor = new JmsConfigExtractor(new JmsConfigXmlParser());
         JmsConfig configuration = jmsConfigExtractor.retrieveConfiguration(configPath);
+        binaryMessageConverterDelegate = instantiateBinaryMessageConverterDelegate(configuration);
         connectionFactory = createConnectionFactory(configuration);
         defaultTopic = configuration.getDefaultTopic();
     }
@@ -86,7 +91,20 @@ public class JmsTransport implements BrokerTransport {
         }
     }
 
-
+    private BinaryMessageConverterDelegate instantiateBinaryMessageConverterDelegate(JmsConfig config) throws EtiqetException {
+        Optional<Class> delegateClass = config.getBinaryMessageConverterDelegateClass();
+        if (delegateClass.isPresent()) {
+            try {
+                BinaryMessageConverterDelegate delegate = (BinaryMessageConverterDelegate) delegateClass.get().newInstance();
+                delegate.setDictionary(dictionary);
+                return delegate;
+            } catch (ReflectiveOperationException e) {
+                throw new EtiqetException("Unable to instantiate BinaryMessageConverterDelegate " + delegateClass.get().getName());
+            }
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Starts a connection to the configured Jms bus
@@ -174,7 +192,6 @@ public class JmsTransport implements BrokerTransport {
      */
     @Override
     public void setTransportDelegate(TransportDelegate<String, Cdr> transDel) {
-        this.transDel = transDel;
     }
 
     /**
@@ -272,8 +289,12 @@ public class JmsTransport implements BrokerTransport {
         final Message message;
         if (payload instanceof String) {
             message = session.createTextMessage((String) payload);
-        } else {
+        } else if (binaryMessageConverterDelegate == null) {
             message = session.createObjectMessage((Serializable) payload);
+        } else {
+            BytesMessage bytesMessage = session.createBytesMessage();
+            bytesMessage.writeBytes(binaryMessageConverterDelegate.toByteArray(payload));
+            message = bytesMessage;
         }
         producer.send(message);
     }
@@ -377,4 +398,12 @@ public class JmsTransport implements BrokerTransport {
         this.defaultTopic = defaultTopic;
     }
 
+    @Override
+    public void setDictionary(AbstractDictionary dictionary) {
+        this.dictionary = dictionary;
+    }
+
+    public void setBinaryMessageConverterDelegate(BinaryMessageConverterDelegate binaryMessageConverterDelegate) {
+        this.binaryMessageConverterDelegate = binaryMessageConverterDelegate;
+    }
 }

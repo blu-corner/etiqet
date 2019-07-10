@@ -1,5 +1,6 @@
 package com.neueda.etiqet.transport.amqp;
 
+import com.neueda.etiqet.amqp.embeddedBroker.EmbeddedQpidBrokerRule;
 import com.neueda.etiqet.core.config.dtos.Protocol;
 import com.neueda.etiqet.core.json.JsonCodec;
 import com.neueda.etiqet.core.message.cdr.Cdr;
@@ -9,8 +10,7 @@ import com.neueda.etiqet.core.message.dictionary.ProtobufDictionary;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.ExchangeTransport;
 import com.neueda.etiqet.core.transport.ProtobufCodec;
-import com.neueda.etiqet.core.transport.delegate.ProtobufBinaryMessageConverterDelegate;
-import com.neueda.etiqet.amqp.embeddedBroker.EmbeddedQpidBrokerRule;
+import com.neueda.etiqet.core.transport.delegate.ByteArrayConverterDelegate;
 import com.neueda.etiqet.transport.amqp.config.AmqpConfigExtractor;
 import com.neueda.etiqet.transport.amqp.config.model.AmqpConfig;
 import org.junit.After;
@@ -43,10 +43,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class AmqpTransportIntegrationTest {
-    private List<ExchangeTransport> transports;
-
     @Rule
     public EmbeddedQpidBrokerRule qpidBrokerRule = new EmbeddedQpidBrokerRule();
+    private List<ExchangeTransport> transports;
 
     @Before
     public void setup() {
@@ -63,28 +62,28 @@ public class AmqpTransportIntegrationTest {
         final String exchangeName = "exchangeFanout";
         ExchangeTransport producerTransport = createAndInitializeTransport(
             aAmqpConfig()
-            .addExchangeConfig(
-                aExchangeConfig(exchangeName, FANOUT)
-                .build()
-            ).build()
+                .addExchangeConfig(
+                    aExchangeConfig(exchangeName, FANOUT)
+                        .build()
+                ).build()
         );
         ExchangeTransport consumerTransport1 = createAndInitializeTransport(
             aAmqpConfig()
-            .addExchangeConfig(
-                aExchangeConfig(exchangeName, FANOUT)
-                .addQueueConfig(
-                    aQueueConfig("queue1").build()
+                .addExchangeConfig(
+                    aExchangeConfig(exchangeName, FANOUT)
+                        .addQueueConfig(
+                            aQueueConfig("queue1").build()
+                        ).build()
                 ).build()
-            ).build()
         );
         ExchangeTransport consumerTransport2 = createAndInitializeTransport(
             aAmqpConfig()
-            .addExchangeConfig(
-                aExchangeConfig(exchangeName, FANOUT)
-                .addQueueConfig(
-                    aQueueConfig("queue2").build()
+                .addExchangeConfig(
+                    aExchangeConfig(exchangeName, FANOUT)
+                        .addQueueConfig(
+                            aQueueConfig("queue2").build()
+                        ).build()
                 ).build()
-            ).build()
         );
         Cdr cdrRequest = aCdr("NONE").withField("field1", "value1").build();
         BlockingQueue<Cdr> cdrMessages1 = new LinkedBlockingQueue<>();
@@ -107,9 +106,9 @@ public class AmqpTransportIntegrationTest {
             aAmqpConfig()
                 .addExchangeConfig(
                     aExchangeConfig(exchangeName, FANOUT)
-                    .addQueueConfig(
-                        aQueueConfig("queue1").build()
-                    ).addQueueConfig(
+                        .addQueueConfig(
+                            aQueueConfig("queue1").build()
+                        ).addQueueConfig(
                         aQueueConfig("queue2").build()
                     ).build()
                 ).build()
@@ -161,9 +160,9 @@ public class AmqpTransportIntegrationTest {
         final String exchangeName = "exchangeDirectRouting";
         ExchangeTransport producerTransport = createAndInitializeTransport(
             aAmqpConfig()
-            .addExchangeConfig(
-                aExchangeConfig(exchangeName, DIRECT).build()
-            ).build()
+                .addExchangeConfig(
+                    aExchangeConfig(exchangeName, DIRECT).build()
+                ).build()
         );
         ExchangeTransport consumerTransport1 = createAndInitializeTransport(
             aAmqpConfig()
@@ -171,21 +170,21 @@ public class AmqpTransportIntegrationTest {
                     aExchangeConfig(exchangeName, DIRECT)
                         .addQueueConfig(
                             aQueueConfig("queue1")
-                            .withBindingKey("odd")
-                            .build()
+                                .withBindingKey("odd")
+                                .build()
                         ).build()
                 ).build()
         );
         ExchangeTransport consumerTransport2 = createAndInitializeTransport(
             aAmqpConfig()
-            .addExchangeConfig(
-                aExchangeConfig(exchangeName, DIRECT)
-                .addQueueConfig(
-                    aQueueConfig("queue2")
-                    .withBindingKey("even")
-                    .build()
+                .addExchangeConfig(
+                    aExchangeConfig(exchangeName, DIRECT)
+                        .addQueueConfig(
+                            aQueueConfig("queue2")
+                                .withBindingKey("even")
+                                .build()
+                        ).build()
                 ).build()
-            ).build()
         );
         BlockingQueue<Cdr> cdrMessages1 = new LinkedBlockingQueue<>();
         BlockingQueue<Cdr> cdrMessages2 = new LinkedBlockingQueue<>();
@@ -256,37 +255,37 @@ public class AmqpTransportIntegrationTest {
         final String exchangeName = "exchangeTopic";
         ExchangeTransport producerTransport = createAndInitializeTransport(
             aAmqpConfig()
-            .addExchangeConfig(
-                aExchangeConfig(exchangeName, TOPIC).build()
-            ).build()
+                .addExchangeConfig(
+                    aExchangeConfig(exchangeName, TOPIC).build()
+                ).build()
         );
         ExchangeTransport consumerTransport1 = createAndInitializeTransport(
             aAmqpConfig()
-            .addExchangeConfig(
-                aExchangeConfig(exchangeName, TOPIC)
-                .addQueueConfig(
-                    aQueueConfig("queue1")
-                    .withBindingKey("*.orange.*")
-                    .build()
-                )
-                .build()
-            ).build()
+                .addExchangeConfig(
+                    aExchangeConfig(exchangeName, TOPIC)
+                        .addQueueConfig(
+                            aQueueConfig("queue1")
+                                .withBindingKey("*.orange.*")
+                                .build()
+                        )
+                        .build()
+                ).build()
         );
         ExchangeTransport consumerTransport2 = createAndInitializeTransport(
             aAmqpConfig()
-            .addExchangeConfig(
-                aExchangeConfig(exchangeName, TOPIC)
-                .addQueueConfig(
-                    aQueueConfig("queue2")
-                    .withBindingKey("*.*.rabbit")
-                    .build()
-                ).addQueueConfig(
-                    aQueueConfig("queue2")
-                    .withBindingKey("lazy.#")
-                    .build()
-                )
-                .build()
-            ).build()
+                .addExchangeConfig(
+                    aExchangeConfig(exchangeName, TOPIC)
+                        .addQueueConfig(
+                            aQueueConfig("queue2")
+                                .withBindingKey("*.*.rabbit")
+                                .build()
+                        ).addQueueConfig(
+                        aQueueConfig("queue2")
+                            .withBindingKey("lazy.#")
+                            .build()
+                    )
+                        .build()
+                ).build()
         );
 
         String[] messageRoutingKeys = new String[]{"quick.orange.rabbit", "lazy.orange.elephant", "quick.orange.fox",
@@ -313,6 +312,58 @@ public class AmqpTransportIntegrationTest {
                                                           messageRoutingKeys[1],
                                                           messageRoutingKeys[3],
                                                           messageRoutingKeys[4])));
+    }
+
+    @Test
+    public void testFanout_withProtobuf() throws Exception {
+        final String exchangeName = "exchangeFanoutProtobuf";
+
+        ProtobufCodec codec = new ProtobufCodec();
+
+        // Had issues reading the URL when running from Maven command line (couldn't find the test protocol in the JAR),
+        // so we're annoyingly parsing the protocol config manually
+        InputStream protocolIS = getClass().getClassLoader()
+                                           .getResourceAsStream("config/protobuf/testProtobufProtocol.xml");
+        assertNotNull("Unable to find test protocol config", protocolIS);
+        Protocol protocol = (Protocol) JAXBContext.newInstance(Protocol.class)
+                                                  .createUnmarshaller()
+                                                  .unmarshal(protocolIS);
+
+        codec.setProtocolConfig(new ProtocolConfig(protocol));
+
+        ExchangeTransport transport = createAndInitializeTransport(
+            aAmqpConfig()
+                .withBinaryMessageConverterDelegateClass(ByteArrayConverterDelegate.class)
+                .addExchangeConfig(
+                    aExchangeConfig(exchangeName, FANOUT)
+                        .addQueueConfig(
+                            aQueueConfig("queue1").build()
+                        ).addQueueConfig(
+                        aQueueConfig("queue2").build()
+                    ).build()
+                ).build(),
+            codec,
+            new ProtobufDictionary("config/dictionary/addressbook.desc")
+        );
+        Cdr cdrRequest = aCdr("Person")
+            .withField("name", "PersonName")
+            .withField("id", 34)
+            .build();
+        BlockingQueue<Cdr> cdrMessages1 = new LinkedBlockingQueue<>();
+        BlockingQueue<Cdr> cdrMessages2 = new LinkedBlockingQueue<>();
+
+        transport.subscribeToQueue("queue1", cdrMessages1::add);
+        transport.subscribeToQueue("queue2", cdrMessages2::add);
+        transport.sendToExchange(cdrRequest, exchangeName);
+
+        Cdr msg1 = cdrMessages1.poll(2, SECONDS);
+        assertNotNull(msg1);
+        assertEquals("PersonName", msg1.getAsString("name"));
+        Cdr msg2 = cdrMessages2.poll(2, SECONDS);
+        assertNotNull(msg2);
+        assertEquals("PersonName", msg2.getAsString("name"));
+        assertTrue(cdrMessages1.isEmpty());
+        assertTrue(cdrMessages2.isEmpty());
     }
 
     private ExchangeTransport createAndInitializeTransport(AmqpConfig config) throws Exception {

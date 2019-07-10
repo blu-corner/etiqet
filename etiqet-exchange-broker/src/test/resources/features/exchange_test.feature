@@ -18,6 +18,7 @@ Feature: Jms Testing
         Given a "broker" client as "client_b"
         And client "client_a" is started
         And client "client_b" is started
+        Then wait for 500 milliseconds
         Then send a "TestMessage" message with "Test=Value" using "client_a" to exchange "exchange"
         Then wait for "client_b" to receive a message on queue "exchange_queue" within 2 seconds as "response"
         And check that "Test" in "response" is equal to "Value"

@@ -31,15 +31,14 @@ public class JmsConfigExtractor {
         }
         return new JmsConfig(
             constructorClass,
-            getConstructorArguments(jmsConfiguration.getConstructorArgs()),
-            getSetterArguments(jmsConfiguration.getProperties()),
-            jmsConfiguration.getDefaultTopic()
+            constructorArguments(jmsConfiguration.getConstructorArgs()),
+            setterArguments(jmsConfiguration.getProperties()),
+            jmsConfiguration.getDefaultTopic(),
+            binaryMessageConverterDelegateClass(jmsConfiguration)
         );
     }
 
-
-
-    private List<ConstructorArgument> getConstructorArguments(final ConstructorArgs constructorArgs) {
+    private List<ConstructorArgument> constructorArguments(final ConstructorArgs constructorArgs) {
         if (constructorArgs == null) {
             return Collections.emptyList();
         }
@@ -68,7 +67,7 @@ public class JmsConfigExtractor {
     }
 
 
-    private List<SetterArgument> getSetterArguments(final Properties properties) {
+    private List<SetterArgument> setterArguments(final Properties properties) {
         if (properties == null) {
             return Collections.emptyList();
         }
@@ -85,4 +84,17 @@ public class JmsConfigExtractor {
             getArgumentValue(argumentType, prop.getArgValue())
         );
     }
+
+    private Class binaryMessageConverterDelegateClass(JmsConfiguration xmlConfiguration) throws EtiqetException{
+        try {
+            String binaryMessageConverterDelegateClassName = xmlConfiguration.getBinaryMessageConverterDelegate();
+            if (binaryMessageConverterDelegateClassName == null) {
+                return null;
+            }
+            return Class.forName(binaryMessageConverterDelegateClassName);
+        } catch (ReflectiveOperationException e) {
+            throw new EtiqetException("Unable to find BinaryMessageConverterDelegate class " + xmlConfiguration.getBinaryMessageConverterDelegate());
+        }
+    }
+
 }

@@ -11,6 +11,7 @@
             </xs:sequence>
             <xs:attribute name="implementation" type="xs:string" use="required"/>
             <xs:attribute name="defaultTopic" type="xs:string" use="required"/>
+            <xs:attribute name="binaryMessageConverterDelegate" type="xs:string"/>
         </xs:complexType>
     </xs:element>
 

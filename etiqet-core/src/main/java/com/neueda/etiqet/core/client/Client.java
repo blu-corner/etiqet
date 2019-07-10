@@ -303,10 +303,10 @@ public abstract class Client implements Transport, Runnable {
       }
       setTransport((Transport) Class.forName(protocolConfig.getClient().getTransportImpl())
           .newInstance());
-      transport.init(config);
-      transport.setDelegate(delegate);
       AbstractDictionary dictionary = protocolConfig.getDictionary();
       transport.setDictionary(dictionary);
+      transport.init(config);
+      transport.setDelegate(delegate);
       Codec codec = (Codec) Class.forName(protocolConfig.getClient().getCodecImpl()).newInstance();
       codec.setProtocolConfig(protocolConfig);
       setCodec(codec);
