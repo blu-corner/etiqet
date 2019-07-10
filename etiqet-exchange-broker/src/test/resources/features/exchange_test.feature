@@ -3,11 +3,13 @@ Feature: Jms Testing
     Scenario: Connection Test
         Given a "broker" client as "broker_client"
         And client "broker_client" is started
+        Then wait for 500 milliseconds
         Then send an "TestMessage" message with "Test=Value" using "broker_client" to exchange "exchange"
 
     Scenario: Queue consumer
         Given a "broker" client as "broker_client"
         And client "broker_client" is started
+        Then wait for 500 milliseconds
         Then send an "TestMessage" message with "Test=Value" using "broker_client" to exchange "exchange"
         Then wait for "broker_client" to receive a message on queue "exchange_queue" within 2 seconds
 
@@ -28,7 +30,7 @@ Feature: Jms Testing
         Given a "broker" client as "client_b"
         And client "client_a" is started
         And client "client_b" is started
-        Then wait for 200 milliseconds
+        Then wait for 500 milliseconds
         And client "client_b" is subscribed to queue "exchange_queue"
         Then send a "TestMessage" message with "field1=a1,field2=a2" using "client_a" to exchange "exchange"
         Then send a "TestMessage" message with "field1=b1,field2=b2" using "client_a" to exchange "exchange"
@@ -40,7 +42,7 @@ Feature: Jms Testing
         Given a "broker" client as "client_b"
         And client "client_a" is started
         And client "client_b" is started
-        Then wait for 200 milliseconds
+        Then wait for 500 milliseconds
         And client "client_b" is subscribed to queue "exchange_queue"
         Then send a "TestMessage" message with "field1=a1,field2=a2" using "client_a" to exchange "exchange"
         Then check that "client_b" has received 1 messages from queue "exchange_queue"

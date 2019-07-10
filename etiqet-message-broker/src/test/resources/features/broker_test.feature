@@ -3,11 +3,13 @@ Feature: Jms Testing
     Scenario: Connection Test
         Given a "broker" client as "broker_client"
         And client "broker_client" is started
+        Then wait for 500 milliseconds
         Then send an "TestMessage" message with "Test=Value" using "broker_client" to topic "topic_broker"
 
     Scenario: Topic consumer
         Given a "broker" client as "broker_client"
         And client "broker_client" is started
+        Then wait for 500 milliseconds
         Then send an "TestMessage" message with "Test=Value" using "broker_client" to topic "topic_broker"
         Then wait for "broker_client" to receive a message on topic "topic_broker"
 
@@ -16,7 +18,7 @@ Feature: Jms Testing
         Given a "broker" client as "client_b"
         And client "client_a" is started
         And client "client_b" is started
-        Then wait for 200 milliseconds
+        Then wait for 500 milliseconds
         Then send a "TestMessage" message with "Test=Value" using "client_a" to topic "topic"
         Then wait for "client_b" to receive a message on topic "topic" within 2 seconds as "response"
         And check that "Test" in "response" is equal to "Value"
@@ -29,7 +31,7 @@ Feature: Jms Testing
         Given a "broker" client as "client_b"
         And client "client_a" is started
         And client "client_b" is started
-        Then wait for 200 milliseconds
+        Then wait for 500 milliseconds
         And client "client_b" is subscribed to topic "topic"
         Then send a "TestMessage" message with "field1=a1,field2=a2" using "client_a" to topic "topic"
         Then send a "TestMessage" message with "field1=b1,field2=b2" using "client_a" to topic "topic"

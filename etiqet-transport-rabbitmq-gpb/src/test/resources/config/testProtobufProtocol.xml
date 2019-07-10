@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocol name="testProtobuf" xmlns="http://www.neueda.com/etiqet">
     <client defaultConfig="${user.dir}/src/test/resources/properties/test.properties"
-        impl="com.neueda.etiqet.core.testing.client.TestClient"
-        codecImpl="com.neueda.etiqet.core.transport.ProtobufCodec"
-        transportImpl="com.neueda.etiqet.core.transport.ConsoleTransport">
+            impl="com.neueda.etiqet.core.testing.client.TestClient"
+            codecImpl="com.neueda.etiqet.core.transport.ProtobufCodec"
+            transportImpl="com.neueda.etiqet.core.transport.ConsoleTransport">
         <delegates>
             <delegate impl="com.neueda.etiqet.core.client.delegate.LoggerClientDelegate"
-                key="logger"/>
+                      key="logger"/>
             <delegate impl="com.neueda.etiqet.core.client.delegate.SinkClientDelegate" key="sink"/>
         </delegates>
     </client>

@@ -20,14 +20,15 @@ import com.neueda.etiqet.core.transport.TransportDelegate;
 import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
 import com.neueda.etiqet.core.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract client
@@ -305,7 +306,7 @@ public abstract class Client implements Transport, Runnable {
       transport.init(config);
       transport.setDelegate(delegate);
       Codec codec = (Codec) Class.forName(protocolConfig.getClient().getCodecImpl()).newInstance();
-      codec.setDictionary(protocolConfig.getDictionary());
+        codec.setProtocolConfig(protocolConfig);
       setCodec(codec);
     } catch (Exception e) {
       logger.error("Could not initialise client. Reason " + e.getCause().getMessage());

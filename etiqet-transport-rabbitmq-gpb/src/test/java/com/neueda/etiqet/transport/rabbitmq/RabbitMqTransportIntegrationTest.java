@@ -1,8 +1,9 @@
 package com.neueda.etiqet.transport.rabbitmq;
 
+import com.neueda.etiqet.core.config.dtos.Protocol;
 import com.neueda.etiqet.core.json.JsonCodec;
 import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.core.message.dictionary.ProtobufDictionary;
+import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.ExchangeTransport;
 import com.neueda.etiqet.core.transport.ProtobufCodec;
@@ -14,6 +15,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import javax.xml.bind.JAXBContext;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,8 +87,8 @@ public class RabbitMqTransportIntegrationTest {
         BlockingQueue<Cdr> cdrMessages1 = new LinkedBlockingQueue<>();
         BlockingQueue<Cdr> cdrMessages2 = new LinkedBlockingQueue<>();
 
-        consumerTransport1.subscribeToQueue("queue1", cdr -> cdrMessages1.add(cdr));
-        consumerTransport2.subscribeToQueue("queue2", cdr -> cdrMessages2.add(cdr));
+        consumerTransport1.subscribeToQueue("queue1", cdrMessages1::add);
+        consumerTransport2.subscribeToQueue("queue2", cdrMessages2::add);
         producerTransport.sendToExchange(cdrRequest, exchangeName);
 
         assertEquals("value1", cdrMessages1.poll(2, SECONDS).getAsString("field1"));
@@ -112,8 +115,8 @@ public class RabbitMqTransportIntegrationTest {
         BlockingQueue<Cdr> cdrMessages1 = new LinkedBlockingQueue<>();
         BlockingQueue<Cdr> cdrMessages2 = new LinkedBlockingQueue<>();
 
-        transport.subscribeToQueue("queue1", cdr -> cdrMessages1.add(cdr));
-        transport.subscribeToQueue("queue2", cdr -> cdrMessages2.add(cdr));
+        transport.subscribeToQueue("queue1", cdrMessages1::add);
+        transport.subscribeToQueue("queue2", cdrMessages2::add);
         transport.sendToExchange(cdrRequest, exchangeName);
 
         assertEquals("value1", cdrMessages1.poll(2, SECONDS).getAsString("field1"));
@@ -142,7 +145,7 @@ public class RabbitMqTransportIntegrationTest {
         );
         CompletableFuture<Cdr> eventualMessage = new CompletableFuture<>();
 
-        consumerTransport.subscribeToQueue("queue", cdr -> eventualMessage.complete(cdr));
+        consumerTransport.subscribeToQueue("queue", eventualMessage::complete);
         producerTransport.sendToExchange(aCdr("NONE").withField("field1", "value1").build(), exchangeName);
 
         Cdr message = eventualMessage.get(200, MILLISECONDS);
@@ -288,8 +291,8 @@ public class RabbitMqTransportIntegrationTest {
         BlockingQueue<Cdr> cdrMessages1 = new LinkedBlockingQueue<>();
         BlockingQueue<Cdr> cdrMessages2 = new LinkedBlockingQueue<>();
 
-        consumerTransport1.subscribeToQueue("queue1", cdr -> cdrMessages1.add(cdr));
-        consumerTransport2.subscribeToQueue("queue2", cdr -> cdrMessages2.add(cdr));
+        consumerTransport1.subscribeToQueue("queue1", cdrMessages1::add);
+        consumerTransport2.subscribeToQueue("queue2", cdrMessages2::add);
         for (String messageRoutingKey : messageRoutingKeys) {
             Cdr cdr = aCdr("NONE").withField("key", messageRoutingKey).build();
             producerTransport.sendToExchange(cdr, exchangeName, messageRoutingKey);
@@ -298,17 +301,31 @@ public class RabbitMqTransportIntegrationTest {
 
         List<String> messageKeys1 = cdrMessages1.stream().map(cdr -> cdr.getAsString("key")).collect(toList());
         assertEquals(3, messageKeys1.size());
-        assertTrue(messageKeys1.containsAll(Arrays.asList(new String[]{messageRoutingKeys[0], messageRoutingKeys[1], messageRoutingKeys[2]})));
+        assertTrue(messageKeys1.containsAll(Arrays.asList(messageRoutingKeys[0],
+                                                          messageRoutingKeys[1],
+                                                          messageRoutingKeys[2])));
         List<String> messageKeys2 = cdrMessages2.stream().map(cdr -> cdr.getAsString("key")).collect(toList());
         assertEquals(4, messageKeys2.size());
-        assertTrue(messageKeys2.containsAll(Arrays.asList(new String[]{messageRoutingKeys[0], messageRoutingKeys[1], messageRoutingKeys[3], messageRoutingKeys[4]})));
+        assertTrue(messageKeys2.containsAll(Arrays.asList(messageRoutingKeys[0],
+                                                          messageRoutingKeys[1],
+                                                          messageRoutingKeys[3],
+                                                          messageRoutingKeys[4])));
     }
 
     @Test
     public void testFanout_withProtobuf() throws Exception {
         final String exchangeName = "exchangeFanoutProtobuf";
         ProtobufCodec codec = new ProtobufCodec();
-        codec.setDictionary(new ProtobufDictionary("config/dictionary/addressbook.desc"));
+        // Had issues reading the URL when running from Maven command line (couldn't find the test protocol in the JAR),
+        // so we're annoyingly parsing the protocol config manually
+        InputStream protocolIS = getClass().getClassLoader().getResourceAsStream("config/testProtobufProtocol.xml");
+        assertNotNull("Unable to find test config", protocolIS);
+        Protocol protocol = (Protocol) JAXBContext.newInstance(Protocol.class)
+                                                  .createUnmarshaller()
+                                                  .unmarshal(protocolIS);
+
+        codec.setProtocolConfig(new ProtocolConfig(protocol));
+
         ExchangeTransport transport = createAndInitializeTransport(
             aAmqpConfig()
             .addExchangeConfig(
@@ -328,8 +345,8 @@ public class RabbitMqTransportIntegrationTest {
         BlockingQueue<Cdr> cdrMessages1 = new LinkedBlockingQueue<>();
         BlockingQueue<Cdr> cdrMessages2 = new LinkedBlockingQueue<>();
 
-        transport.subscribeToQueue("queue1", cdr -> cdrMessages1.add(cdr));
-        transport.subscribeToQueue("queue2", cdr -> cdrMessages2.add(cdr));
+        transport.subscribeToQueue("queue1", cdrMessages1::add);
+        transport.subscribeToQueue("queue2", cdrMessages2::add);
         transport.sendToExchange(cdrRequest, exchangeName);
 
         assertEquals("PersonName", cdrMessages1.poll(2, SECONDS).getAsString("name"));

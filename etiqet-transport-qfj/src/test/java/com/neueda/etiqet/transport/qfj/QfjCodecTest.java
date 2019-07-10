@@ -55,6 +55,7 @@ public class QfjCodecTest {
         when(protocolConfig.getNameForTag(eq(453))).thenReturn("NoPartyIDs");
         when(protocolConfig.getNameForTag(eq(802))).thenReturn("NoPartySubIDs");
         when(protocolConfig.getNameForTag(eq(523))).thenReturn("PartySubID");
+        when(protocolConfig.getDictionary()).thenReturn(dictionary);
     }
 
     @Test
@@ -69,7 +70,7 @@ public class QfjCodecTest {
         when(protocolConfig.getMessage(eq("NewOrderSingle"))).thenReturn(message);
 
         QfjCodec codec = new QfjCodec(protocolConfig);
-        codec.setDictionary(dictionary);
+        codec.setProtocolConfig(protocolConfig);
         quickfix.FieldMap fixMessage = codec.encode(newOrderSingle);
         assertTrue(fixMessage instanceof NewOrderSingle);
         assertEquals("ZINC.MI", fixMessage.getString(55));
@@ -114,7 +115,7 @@ public class QfjCodecTest {
         when(protocolConfig.getMessage(eq("NoPartyIDs"))).thenReturn(noParties);
 
         QfjCodec codec = new QfjCodec(protocolConfig);
-        codec.setDictionary(dictionary);
+        codec.setProtocolConfig(protocolConfig);
         quickfix.FieldMap fixMessage = codec.encode(newOrderSingle);
         assertTrue(fixMessage instanceof NewOrderSingle);
         assertEquals("ZINC.MI", fixMessage.getString(55));

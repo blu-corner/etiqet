@@ -20,7 +20,7 @@ public class CdrBuilder {
     }
 
     public CdrBuilder withField(String field, int value) {
-        cdr.set(field, String.valueOf(value));
+        cdr.set(field, value);
         return this;
     }
 
