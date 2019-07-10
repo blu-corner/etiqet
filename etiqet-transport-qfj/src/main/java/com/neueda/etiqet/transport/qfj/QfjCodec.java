@@ -1,6 +1,7 @@
 package com.neueda.etiqet.transport.qfj;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
+import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.common.exceptions.SerializeException;
 import com.neueda.etiqet.core.common.exceptions.UnknownTagException;
 import com.neueda.etiqet.core.config.GlobalConfig;
@@ -146,7 +147,12 @@ public class QfjCodec implements Codec<Cdr, Message> {
 
     private Group createEmptyGroup(Integer tag) throws UnknownTagException {
         String fieldName = protocolConfig.getNameForTag(tag);
-        Component[] components = dictionary.getFixDictionary().getComponents().getComponent();
+        AbstractDictionary abstractDictionary = protocolConfig.getDictionary();
+        if (!(abstractDictionary instanceof FixDictionary)) {
+            throw new EtiqetRuntimeException("QuickFIX protocol is not using a FIXDictionary");
+        }
+        FixDictionary fixDictionary = (FixDictionary) abstractDictionary;
+        Component[] components = fixDictionary.getFixDictionary().getComponents().getComponent();
         com.neueda.etiqet.fix.message.dictionary.Group groupDef
             = Arrays.stream(components)
                     .map(Component::getGroup)
@@ -249,10 +255,8 @@ public class QfjCodec implements Codec<Cdr, Message> {
     }
 
     @Override
-    public void setDictionary(AbstractDictionary dictionary) {
-        if (dictionary != null && dictionary instanceof FixDictionary) {
-            this.dictionary = (FixDictionary) dictionary;
-        }
+    public void setProtocolConfig(ProtocolConfig protocolConfig) {
+        this.protocolConfig = protocolConfig;
     }
 }
 

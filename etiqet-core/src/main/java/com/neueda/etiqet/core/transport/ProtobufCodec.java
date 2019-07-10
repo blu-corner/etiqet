@@ -1,151 +1,130 @@
 package com.neueda.etiqet.core.transport;
 
-import com.google.protobuf.Descriptors;
-import com.google.protobuf.Message;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.protobuf.ProtobufMapper;
+import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufField;
+import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchema;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
+import com.neueda.etiqet.core.config.dtos.Message;
+import com.neueda.etiqet.core.json.JsonUtils;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
-import com.neueda.etiqet.core.message.config.AbstractDictionary;
+import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URL;
 
-import static com.google.protobuf.Descriptors.FieldDescriptor.JavaType.MESSAGE;
+public class ProtobufCodec implements Codec<Cdr, byte[]> {
 
-public class ProtobufCodec implements Codec<Cdr, Message> {
-
-    private AbstractDictionary dictionary;
-
-    final static Logger logger = LoggerFactory.getLogger(ProtobufCodec.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProtobufCodec.class);
+    private ProtocolConfig protocolConfig;
 
     @Override
-    public Message encode(Cdr cdr) throws EtiqetException {
+    public byte[] encode(Cdr cdr) throws EtiqetException {
         try {
-            String type = dictionary.getMsgType(cdr.getType());
-            if (type == null) {
+            Message message = protocolConfig.getMessage(cdr.getType());
+            if (message == null) {
                 throw new EtiqetException("Could not find message class for type " + cdr.getType());
             }
-            Message.Builder builder = (Message.Builder) Class.forName(type).getMethod("newBuilder").invoke(this);
-            return encode(cdr, builder);
+            URL schemaURL = getClass().getClassLoader().getResource(message.getImplementation());
+            ProtobufMapper protobufMapper = new ProtobufMapper();
+            ProtobufSchema schema = protobufMapper.schemaLoader().load(schemaURL);
+            ProtobufSchema typeSchema = schema.withRootType(cdr.getType());
+            correctCdrTypes(cdr, typeSchema);
+            String cdrString = JsonUtils.cdrToJson(cdr);
+            return protobufMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+                                 .writer(typeSchema)
+                                 .writeValueAsBytes(new ObjectMapper().readTree(cdrString));
         } catch (Exception e) {
             throw new EtiqetException(e);
         }
     }
 
-    private Message encode(Cdr cdr, Message.Builder builder) {
-        Descriptors.Descriptor descriptor = builder.getDescriptorForType();
-        cdr.getItems().forEach(
-            (fieldName, fieldValue) -> {
-                Descriptors.FieldDescriptor fieldDescriptor = descriptor.findFieldByName(fieldName);
-                if (fieldDescriptor == null) {
-                    throw new EtiqetRuntimeException("Unable to find field " + fieldName);
-                }
-                if (fieldDescriptor.isRepeated()) {
-                    fieldValue.getCdrs().stream()
-                        .map(item -> encode(item, builder.newBuilderForField(fieldDescriptor)))
-                        .forEach(
-                            valueItem -> builder.addRepeatedField(fieldDescriptor, valueItem)
-                        );
+    private void correctCdrTypes(Cdr cdr, ProtobufSchema schema) {
+        for (ProtobufField field : schema.getRootType().fields()) {
+            if (cdr.containsKey(field.name)) {
+                CdrItem item = cdr.getItem(field.name);
+                if (!field.repeated) {
+                    String strval = item.getStrval();
+                    switch (field.type) {
+                        case FIXINT32:
+                        case FIXINT64:
+                        case VINT32_STD:
+                        case VINT32_Z:
+                        case VINT64_STD:
+                        case VINT64_Z:
+                            if (item.getIntval() == null) {
+                                item.setStrval(null);
+                                item.setIntval(Long.parseLong(strval));
+                            }
+                            break;
+                        case DOUBLE:
+                        case FLOAT:
+                            if (item.getDoubleval() == null) {
+                                item.setStrval(null);
+                                item.setDoubleval(Double.parseDouble(strval));
+                            }
+                            break;
+                        case BOOLEAN:
+                            if (item.getBoolVal() == null) {
+                                item.setStrval(null);
+                                item.setBoolVal(Boolean.parseBoolean(strval));
+                            }
+                            break;
+                        default:
+                            LOG.debug("{} appears to require no further conversion", field.name);
+                    }
                 } else {
-                    final Object value;
-                    if (fieldDescriptor.getJavaType() == MESSAGE) {
-                        value = encode(fieldValue.getCdrs().get(0), builder.newBuilderForField(fieldDescriptor));
-                    } else {
-                        value = getValue(fieldValue, fieldDescriptor);
-                    }
-                    if (value == null && fieldDescriptor.isRequired()) {
-                        throw new EtiqetRuntimeException("Unable to encode Cdr with type /*" + cdr + "*/. No value found for required field " + fieldDescriptor.getName());
-                    }
-                    builder.setField(fieldDescriptor, value);
+                    item.setType(CdrItem.CdrItemType.CDR_ARRAY);
                 }
+                cdr.setItem(field.name, item);
             }
-        );
-        return builder.build();
-    }
-
-
-
-    private Object getValue(CdrItem cdrItem, Descriptors.FieldDescriptor fieldDescriptor){
-        switch (fieldDescriptor.getJavaType()) {
-            case INT:
-                return Integer.parseInt(cdrItem.getStrval());
-            case LONG:
-                return cdrItem.getIntval();
-            case DOUBLE:
-                return cdrItem.getDoubleval();
-            case FLOAT:
-                return cdrItem.getDoubleval().floatValue();
-            case ENUM:
-                Descriptors.EnumDescriptor enumDescriptor = fieldDescriptor.getEnumType();
-                return enumDescriptor.findValueByName(cdrItem.getStrval());
-            case STRING:
-                return cdrItem.getStrval();
-            case BOOLEAN:
-                return cdrItem.getBoolVal();
-            default:
-                throw new EtiqetRuntimeException("Unable to encode value of type " + fieldDescriptor.getJavaType() +
-                    " for field " + fieldDescriptor.getName());
         }
     }
 
     @Override
-    public Cdr decode(Message message) {
-        Cdr cdr = new Cdr(dictionary.getMsgName(message.getClass().getName()));
-        message.getAllFields().forEach(
-            (fieldDescriptor, value) -> {
-                String fieldName = fieldDescriptor.getName();
-                switch (fieldDescriptor.getJavaType()) {
-                    case STRING:
-                        cdr.set(fieldName, (String) value);
-                        break;
-                    case INT:
-                        cdr.set(fieldName, (int) value);
-                        break;
-                    case LONG:
-                        cdr.set(fieldName, (Long) value);
-                        break;
-                    case DOUBLE:
-                        cdr.set(fieldName, (Double) value);
-                        break;
-                    case FLOAT:
-                        cdr.set(fieldName, new Double((float) value));
-                        break;
-                    case ENUM:
-                        cdr.set(fieldName, value.toString());
-                        break;
-                    case BOOLEAN:
-                        cdr.set(fieldName, (Boolean) value);
-                        break;
-                    case MESSAGE:
-                        CdrItem item = new CdrItem();
-                        if (value instanceof Collection) {
-                            for (Object itemValue : (Collection) value) {
-                                item.addCdrToList(decode((Message) itemValue));
-                            }
-                        } else if (value instanceof Message){
-                            Message messageValue = (Message) value;
-                            item.addCdrToList(decode(messageValue));
-                        }
-                        cdr.setItem(fieldName, item);
-                        break;
-                    default:
-                        throw new EtiqetRuntimeException("Unable to decode value of type " + fieldDescriptor.getJavaType() +
-                            " for field " + fieldName);
-                }
+    public Cdr decode(byte[] message) throws EtiqetException {
+        ProtobufMapper protobufMapper = new ProtobufMapper();
+        ProtobufSchema schema = null;
+        String msgType = null;
+        for (Message configMessage : protocolConfig.getMessages()) {
+            try {
+                URL schemaURL = getClass().getClassLoader().getResource(configMessage.getImplementation());
+                schema = protobufMapper.schemaLoader().load(schemaURL);
+                msgType = configMessage.getName();
+                break;
+            } catch (Exception e) {
+                LOG.debug("Message received is not of type {}", configMessage.getName());
             }
-        );
+        }
+        if (schema == null) {
+            throw new EtiqetException("Could not find suitable schema to parse message with");
+        }
+
+        Cdr cdr = new Cdr(msgType);
+        try {
+            String jsonString = protobufMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                                              .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+                                              .reader()
+                                              .with(schema.withRootType(msgType))
+                                              .readTree(new ByteArrayInputStream(message))
+                                              .toString();
+            Cdr toCdr = JsonUtils.jsonToCdr(jsonString);
+            cdr.update(toCdr);
+        } catch (IOException e) {
+            throw new EtiqetException("Unable to parse Protobuf message with schema " + schema, e);
+        }
         return cdr;
     }
 
     @Override
-    public void setDictionary(AbstractDictionary dictionary) {
-        if (dictionary == null) {
-            logger.warn("Protobuf dictionary missing");
-        } else {
-            this.dictionary = dictionary;
-        }
+    public void setProtocolConfig(ProtocolConfig protocolConfig) {
+        this.protocolConfig = protocolConfig;
     }
 
 }

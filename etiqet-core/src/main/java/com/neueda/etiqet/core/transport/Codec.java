@@ -1,7 +1,7 @@
 package com.neueda.etiqet.core.transport;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
-import com.neueda.etiqet.core.message.config.AbstractDictionary;
+import com.neueda.etiqet.core.message.config.ProtocolConfig;
 
 /**
  * This interface is responsible for providing the encoding / decoding methods from specific messages from / to CDR.
@@ -27,6 +27,7 @@ public interface Codec<U, M> {
      */
     U decode(M message) throws EtiqetException;
 
-    default void setDictionary(AbstractDictionary dictionary) {}
+    default void setProtocolConfig(ProtocolConfig protocolConfig) {
+    }
 
 }

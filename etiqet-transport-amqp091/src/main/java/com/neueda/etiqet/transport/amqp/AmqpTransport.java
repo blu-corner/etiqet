@@ -180,9 +180,13 @@ public class AmqpTransport<T> implements ExchangeTransport {
     public void sendToExchange(Cdr cdr, String exchangeName, Optional<String> routingKey) throws EtiqetException {
         final Channel channel = getChannelByExchangeName(exchangeName);
         final T payload = codec.encode(processMessageUsingDelegate(cdr));
-        final byte[] binaryMessage = binaryMessageConverterDelegate.toByteArray(payload);
         try {
-            channel.basicPublish(exchangeName, routingKey.orElse(""), null, binaryMessage);
+            if(payload instanceof byte[]) {
+                channel.basicPublish(exchangeName, routingKey.orElse(""), null, (byte[]) payload);
+            } else {
+                final byte[] binaryMessage = binaryMessageConverterDelegate.toByteArray(payload);
+                channel.basicPublish(exchangeName, routingKey.orElse(""), null, binaryMessage);
+            }
         } catch (IOException e) {
             throw new EtiqetException(e);
         }

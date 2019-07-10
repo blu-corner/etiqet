@@ -339,7 +339,7 @@ public class JmsTransport implements BrokerTransport {
             }
             message.acknowledge();
         } catch (JMSException | EtiqetException e) {
-            throw new EtiqetRuntimeException("Unable to convert message to Cdr:" + e.getMessage());
+            throw new EtiqetRuntimeException("Unable to convert message to Cdr:" + e.getMessage(), e);
         }
         return processMessageWithDelegate(decodedMessage);
     }
@@ -351,10 +351,9 @@ public class JmsTransport implements BrokerTransport {
             TextMessage txt = (TextMessage) message;
             messageContent = txt.getText();
         } else if (message instanceof BytesMessage) {
-            BytesMessage bytesXMLMessage = (BytesMessage) message;
-            byte[] binaryMessage = new byte[(int) bytesXMLMessage.getBodyLength()];
-            bytesXMLMessage.readBytes(binaryMessage);
-            messageContent = binaryMessageConverterDelegate.fromByteArray(binaryMessage);
+            BytesMessage bytesXMLMessage = ((BytesMessage) message);
+            messageContent = new byte[(int) bytesXMLMessage.getBodyLength()];
+            bytesXMLMessage.readBytes((byte[]) messageContent);
         } else if (message instanceof ObjectMessage) {
             messageContent = ((ObjectMessage) message).getObject();
         } else {

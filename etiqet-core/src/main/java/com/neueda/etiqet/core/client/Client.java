@@ -308,7 +308,7 @@ public abstract class Client implements Transport, Runnable {
       transport.init(config);
       transport.setDelegate(delegate);
       Codec codec = (Codec) Class.forName(protocolConfig.getClient().getCodecImpl()).newInstance();
-      codec.setDictionary(dictionary);
+      codec.setProtocolConfig(protocolConfig);
       setCodec(codec);
     } catch (Exception e) {
       logger.error("Could not initialise client. Reason " + e.getCause().getMessage());

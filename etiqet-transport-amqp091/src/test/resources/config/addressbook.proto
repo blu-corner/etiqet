@@ -1,0 +1,48 @@
+syntax = "proto2";
+
+package com.example.tutorial;
+
+option java_package = "com.example.tutorial";
+option java_outer_classname = "AddressBookProtos";
+
+message Person {
+    required string name = 1;
+    required int32 id = 2;
+    optional string email = 3;
+
+    enum PhoneType {
+        MOBILE = 0;
+        HOME = 1;
+        WORK = 2;
+    }
+
+    message PhoneNumber {
+        required string number = 1;
+        optional PhoneType type = 2 [default = HOME];
+    }
+
+    repeated PhoneNumber phones = 4;
+}
+
+message AddressBook {
+    repeated Person people = 1;
+}
+
+message PersonWithRequiredAddress {
+    required int32 id = 1;
+    required Address address = 2;
+
+    message Address {
+        required string city = 1;
+        required string street = 2;
+        optional string houseNo = 3;
+    }
+}
+
+message PersonWithMultipleFieldTypes {
+    optional int64 longId = 1;
+    optional double weight = 2;
+    optional float height = 3;
+    optional bool eligible = 4;
+    optional sfixed32 fixed32 = 5;
+}
