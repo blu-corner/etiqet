@@ -57,7 +57,7 @@ public class JmsTransportTest {
             fail("Should have failed because the above config file shouldn't exist");
         } catch (Exception e) {
             assertTrue(e instanceof EtiqetException);
-            assertEquals("Error retrieving Jms configuration from " + configPath , e.getMessage());
+            assertEquals("Exception thrown while trying to read " + configPath, e.getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ public class JmsTransportTest {
             fail("Should have failed because the above config file is not valid");
         } catch (Exception e) {
             assertTrue(e instanceof EtiqetException);
-            assertEquals("Error retrieving Jms configuration from " + configPath , e.getMessage());
+            assertEquals("Exception thrown while parsing " + configPath + " as com.neueda.etiqet.transport.jms.JmsConfiguration" , e.getMessage());
         }
     }
 

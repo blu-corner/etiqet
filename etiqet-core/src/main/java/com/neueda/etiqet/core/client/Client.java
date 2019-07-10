@@ -13,6 +13,7 @@ import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.config.dtos.UrlExtension;
 import com.neueda.etiqet.core.message.cdr.Cdr;
+import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.Transport;
@@ -20,15 +21,14 @@ import com.neueda.etiqet.core.transport.TransportDelegate;
 import com.neueda.etiqet.core.util.Config;
 import com.neueda.etiqet.core.util.PropertiesFileReader;
 import com.neueda.etiqet.core.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract client
@@ -305,8 +305,10 @@ public abstract class Client implements Transport, Runnable {
           .newInstance());
       transport.init(config);
       transport.setDelegate(delegate);
+      AbstractDictionary dictionary = protocolConfig.getDictionary();
+      transport.setDictionary(dictionary);
       Codec codec = (Codec) Class.forName(protocolConfig.getClient().getCodecImpl()).newInstance();
-        codec.setProtocolConfig(protocolConfig);
+      codec.setProtocolConfig(protocolConfig);
       setCodec(codec);
     } catch (Exception e) {
       logger.error("Could not initialise client. Reason " + e.getCause().getMessage());

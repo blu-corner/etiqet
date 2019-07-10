@@ -1,6 +1,5 @@
 package com.neueda.etiqet.core.transport;
 
-import com.example.tutorial.AddressBookProtos;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.message.cdr.Cdr;
@@ -9,16 +8,14 @@ import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.util.ParserUtils;
 import org.junit.Before;
 import org.junit.Test;
+import com.example.tutorial.AddressBookProtos;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static com.ibm.icu.impl.Assert.fail;
 import static com.neueda.etiqet.core.message.CdrBuilder.aCdr;
 import static com.neueda.etiqet.core.message.CdrItemBuilder.aCdrItem;
 import static com.neueda.etiqet.core.message.cdr.CdrItem.CdrItemType.CDR_ARRAY;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -253,7 +250,7 @@ public class ProtobufCodecTest {
 
         byte[] message = codec.encode(cdr);
         Map<String, CdrItem> result = codec.decode(message).getItems();
-        assertEquals(89.95, result.get("weight").getDoubleval());
+        assertEquals(89.95, result.get("weight").getDoubleval(), 0);
     }
 
     @Test
@@ -264,7 +261,7 @@ public class ProtobufCodecTest {
 
         byte[] message = codec.encode(cdr);
         Map<String, CdrItem> result = codec.decode(message).getItems();
-        assertEquals(1.89f, result.get("height").getDoubleval().floatValue());
+        assertEquals(1.89f, result.get("height").getDoubleval().floatValue(), 0);
     }
 
     @Test
@@ -291,20 +288,4 @@ public class ProtobufCodecTest {
         }
     }
 
-    @Test
-    public void testBinaryMessage() throws EtiqetException {
-        Cdr cdr = aCdr(PERSON)
-            .withField("name", "person name")
-            .withField("email", "aaa@aaa.aaa")
-            .withField("id", 23)
-            .build();
-
-        byte[] encodedMessage = codec.encode(cdr);
-        Cdr result = codec.decodeBinary(encodedMessage);
-
-        assertEquals(PERSON, result.getType());
-        assertEquals("person name", result.getAsString("name"));
-        assertEquals("aaa@aaa.aaa", result.getAsString("email"));
-        assertEquals(23, Math.round(result.getItem("id").getIntval()));
-    }
 }

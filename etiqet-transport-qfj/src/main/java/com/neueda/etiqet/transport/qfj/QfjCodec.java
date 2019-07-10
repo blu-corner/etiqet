@@ -255,15 +255,6 @@ public class QfjCodec implements Codec<Cdr, Message> {
     }
 
     @Override
-    public Cdr decodeBinary(byte[] binaryMessage) throws EtiqetException {
-        try {
-            return decode(new Message(new String(binaryMessage)));
-        } catch(InvalidMessage e) {
-            throw new EtiqetException(e);
-        }
-    }
-
-    @Override
     public void setProtocolConfig(ProtocolConfig protocolConfig) {
         this.protocolConfig = protocolConfig;
     }

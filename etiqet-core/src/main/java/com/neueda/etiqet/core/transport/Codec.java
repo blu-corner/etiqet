@@ -27,8 +27,6 @@ public interface Codec<U, M> {
      */
     U decode(M message) throws EtiqetException;
 
-    U decodeBinary(byte[] message) throws EtiqetException;
-
     default void setProtocolConfig(ProtocolConfig protocolConfig) {
     }
 

@@ -123,11 +123,6 @@ public class ProtobufCodec implements Codec<Cdr, byte[]> {
     }
 
     @Override
-    public Cdr decodeBinary(byte[] message) throws EtiqetException {
-        return decode(message);
-    }
-
-    @Override
     public void setProtocolConfig(ProtocolConfig protocolConfig) {
         this.protocolConfig = protocolConfig;
     }
