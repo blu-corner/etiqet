@@ -1,6 +1,6 @@
 <e:amqpConfiguration
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:e="http://www.neueda.com/etiqet/transport/amqp_091"
+    xmlns:e="http://www.neueda.com/etiqet/transport/amqp"
     host="localhost"
     binaryMessageConverterDelegate="com.neueda.etiqet.core.transport.delegate.StringBinaryMessageConverterDelegate">
     <queues>

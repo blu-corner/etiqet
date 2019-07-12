@@ -10,7 +10,7 @@
         <version>1.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>etiqet-transport-amqp091</artifactId>
+    <artifactId>etiqet-transport-amqp</artifactId>
 
     <properties>
         <etiqet.core.version>1.2-SNAPSHOT</etiqet.core.version>
@@ -30,7 +30,7 @@
     </profiles>
 
     <build>
-        <finalName>etiqet-transport-amqp091</finalName>
+        <finalName>etiqet-transport-amqp</finalName>
         <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -63,7 +63,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
                 <configuration>
-                    <argLine>-Detiqet.directory=${project.parent.basedir} -Detiqet.global.config=${etiqet.directory}/etiqet-transport-amqp091/src/test/resources/config/etiqet.config.xml ${argLine}</argLine>
+                    <argLine>-Detiqet.directory=${project.parent.basedir} -Detiqet.global.config=${etiqet.directory}/etiqet-transport-amqp/src/test/resources/config/etiqet.config.xml ${argLine}</argLine>
                 </configuration>
             </plugin>
             <!-- Maven Assembly Plugin -->
