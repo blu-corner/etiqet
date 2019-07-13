@@ -2,7 +2,7 @@ package com.neueda.etiqet.transport.amqp.config;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.config.xml.XmlParser;
-import com.neueda.etiqet.transport.amqp_091.AmqpConfiguration;
+import com.neueda.etiqet.transport.amqp.AmqpConfiguration;
 
 public class AmqpConfigXmlParser extends XmlParser {
 

@@ -2,7 +2,7 @@ package com.neueda.etiqet.transport.amqp.config;
 
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
-import com.neueda.etiqet.transport.amqp_091.*;
+import com.neueda.etiqet.transport.amqp.*;
 import com.neueda.etiqet.transport.amqp.config.model.AmqpConfig;
 import com.neueda.etiqet.transport.amqp.config.model.ExchangeConfig;
 import com.neueda.etiqet.transport.amqp.config.model.QueueConfig;
@@ -26,11 +26,10 @@ public class AmqpConfigExtractor {
     public AmqpConfig retrieveConfiguration(final String configFile) throws EtiqetException {
         AmqpConfiguration xmlConfiguration = configXmlParser.parse(configFile);
         queues = queues(xmlConfiguration.getQueues().getQueue());
-        Class binaryMessageConverterDelegateClass = binaryMessageConverterDelegateClass(xmlConfiguration);
         return new AmqpConfig(
             xmlConfiguration.getHost(),
             exchangeConfigs(xmlConfiguration),
-            binaryMessageConverterDelegateClass
+            binaryMessageConverterDelegateClass(xmlConfiguration)
         );
     }
 
