@@ -2,12 +2,16 @@
 <etiqetConfiguration xmlns="http://www.neueda.com/etiqet">
     <protocols>
         <protocol name="jms_protobuf">
-            <client defaultConfig="${user.dir}/src/test/resources/config/protobuf/jmsProtobufConfig.xml"
+            <client defaultConfig="${user.dir}/src/test/resources/config/jmsConfig.xml"
                     impl = "com.neueda.etiqet.core.client.GenericClient"
                     transportImpl="com.neueda.etiqet.transport.jms.JmsTransport"
                     codecImpl="com.neueda.etiqet.core.transport.ProtobufCodec">
             </client>
-            <dictionary handler="com.neueda.etiqet.core.message.dictionary.ProtobufDictionary">config/dictionary/addressbook.desc</dictionary>
+            <messages>
+                <message name="Person">
+                    <implementation>config/protobuf/addressbook.proto</implementation>
+                </message>
+            </messages>
         </protocol>
     </protocols>
 </etiqetConfiguration>

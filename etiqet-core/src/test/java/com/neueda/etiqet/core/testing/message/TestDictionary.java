@@ -25,11 +25,6 @@ public class TestDictionary extends AbstractDictionary {
     }
 
     @Override
-    public List<String> getMessageNames() {
-        return emptyList();
-    }
-
-    @Override
     public String getNameForTag(Integer tag) {
         return tag.toString();
     }

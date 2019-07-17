@@ -4,9 +4,7 @@ import com.neueda.etiqet.amqp.embeddedBroker.EmbeddedQpidBrokerRule;
 import com.neueda.etiqet.core.config.dtos.Protocol;
 import com.neueda.etiqet.core.json.JsonCodec;
 import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
-import com.neueda.etiqet.core.message.dictionary.ProtobufDictionary;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.ExchangeTransport;
 import com.neueda.etiqet.core.transport.ProtobufCodec;
@@ -342,8 +340,7 @@ public class AmqpTransportIntegrationTest {
                         aQueueConfig("queue2").build()
                     ).build()
                 ).build(),
-            codec,
-            new ProtobufDictionary("config/dictionary/addressbook.desc")
+            codec
         );
         Cdr cdrRequest = aCdr("Person")
             .withField("name", "PersonName")
@@ -367,15 +364,14 @@ public class AmqpTransportIntegrationTest {
     }
 
     private ExchangeTransport createAndInitializeTransport(AmqpConfig config) throws Exception {
-        return createAndInitializeTransport(config, new JsonCodec(), null);
+        return createAndInitializeTransport(config, new JsonCodec());
     }
 
-    private ExchangeTransport createAndInitializeTransport(AmqpConfig config, Codec codec, AbstractDictionary dictionary) throws Exception {
+    private ExchangeTransport createAndInitializeTransport(AmqpConfig config, Codec codec) throws Exception {
         AmqpConfigExtractor extractor = mock(AmqpConfigExtractor.class);
         when(extractor.retrieveConfiguration(anyString())).thenReturn(config);
         final ExchangeTransport transport = new AmqpTransport(extractor);
         transport.setCodec(codec);
-        transport.setDictionary(dictionary);
         transport.init("");
         transports.add(transport);
         return transport;

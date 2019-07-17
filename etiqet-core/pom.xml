@@ -106,13 +106,6 @@
             <version>${jackson.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.googlecode.protobuf-java-format/protobuf-java-format -->
-        <dependency>
-            <groupId>com.googlecode.protobuf-java-format</groupId>
-            <artifactId>protobuf-java-format</artifactId>
-            <version>1.4</version>
-        </dependency>
-
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -289,10 +282,6 @@
                             <outputTargets>
                                 <outputTarget>
                                     <type>java</type>
-                                </outputTarget>
-                                <outputTarget>
-                                    <type>descriptor</type>
-                                    <outputDirectory>${project.build.directory}/test-classes/config/dictionary</outputDirectory>
                                 </outputTarget>
                             </outputTargets>
                         </configuration>

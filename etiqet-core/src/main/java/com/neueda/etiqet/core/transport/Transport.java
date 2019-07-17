@@ -3,7 +3,6 @@ package com.neueda.etiqet.core.transport;
 import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.core.message.config.AbstractDictionary;
 
 public interface Transport {
 
@@ -61,8 +60,6 @@ public interface Transport {
   void setCodec(Codec c);
 
   Codec getCodec();
-
-  default void setDictionary(AbstractDictionary dictionary){}
 
   void setDelegate(ClientDelegate delegate);
 
