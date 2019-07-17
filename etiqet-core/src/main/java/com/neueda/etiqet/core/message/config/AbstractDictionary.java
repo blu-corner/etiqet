@@ -16,8 +16,6 @@ public abstract class AbstractDictionary implements Serializable {
 
     public abstract String getMsgName(String messageType);
 
-    public abstract List<String> getMessageNames();
-
     public abstract String getNameForTag(Integer tag);
 
     public abstract Integer getTagForName(String n) throws UnknownTagException;

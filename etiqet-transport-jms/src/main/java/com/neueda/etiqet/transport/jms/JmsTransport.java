@@ -4,7 +4,6 @@ import com.neueda.etiqet.core.client.delegate.ClientDelegate;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.common.exceptions.EtiqetRuntimeException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.transport.BrokerTransport;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.TransportDelegate;
@@ -22,7 +21,6 @@ import javax.jms.*;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +38,6 @@ public class JmsTransport implements BrokerTransport {
     private Connection connection;
     private Session session;
     private Codec<Cdr, ?> codec;
-    private AbstractDictionary dictionary;
     private String defaultTopic;
     private ClientDelegate delegate;
     private BinaryMessageConverterDelegate binaryMessageConverterDelegate;
@@ -95,9 +92,7 @@ public class JmsTransport implements BrokerTransport {
         Optional<Class> delegateClass = config.getBinaryMessageConverterDelegateClass();
         if (delegateClass.isPresent()) {
             try {
-                BinaryMessageConverterDelegate delegate = (BinaryMessageConverterDelegate) delegateClass.get().newInstance();
-                delegate.setDictionary(dictionary);
-                return delegate;
+                return (BinaryMessageConverterDelegate) delegateClass.get().newInstance();
             } catch (ReflectiveOperationException e) {
                 throw new EtiqetException("Unable to instantiate BinaryMessageConverterDelegate " + delegateClass.get().getName());
             }
@@ -398,12 +393,4 @@ public class JmsTransport implements BrokerTransport {
         this.defaultTopic = defaultTopic;
     }
 
-    @Override
-    public void setDictionary(AbstractDictionary dictionary) {
-        this.dictionary = dictionary;
-    }
-
-    public void setBinaryMessageConverterDelegate(BinaryMessageConverterDelegate binaryMessageConverterDelegate) {
-        this.binaryMessageConverterDelegate = binaryMessageConverterDelegate;
-    }
 }

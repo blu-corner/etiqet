@@ -87,11 +87,6 @@ public class FixDictionary extends AbstractDictionary {
     }
 
     @Override
-    public List<String> getMessageNames() {
-        return new ArrayList(messageMap.keySet());
-    }
-
-    @Override
     public String getNameForTag(Integer tag) {
         if (!names.containsKey(tag)) {
             return tag.toString();

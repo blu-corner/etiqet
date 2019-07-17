@@ -34,7 +34,6 @@ public class AmqpTransport<T> implements ExchangeTransport {
     private Connection connection;
     private Map<String, Channel> channelsByExchange;
     private Codec<Cdr, T> codec;
-    private AbstractDictionary dictionary;
     private ClientDelegate delegate;
     private BinaryMessageConverterDelegate<T> binaryMessageConverterDelegate;
     private AmqpConfigExtractor configExtractor;
@@ -211,9 +210,7 @@ public class AmqpTransport<T> implements ExchangeTransport {
         Optional<Class> delegateClass = config.getBinaryMessageConverterDelegateClass();
         if (delegateClass.isPresent()) {
             try {
-                BinaryMessageConverterDelegate<T> delegate = (BinaryMessageConverterDelegate<T>) delegateClass.get().newInstance();
-                delegate.setDictionary(dictionary);
-                return delegate;
+               return (BinaryMessageConverterDelegate<T>) delegateClass.get().newInstance();
             } catch (ReflectiveOperationException e) {
                 throw new EtiqetException("Unable to instantiate BinaryMessageConverterDelegate " + delegateClass.get().getName());
             }
@@ -245,11 +242,6 @@ public class AmqpTransport<T> implements ExchangeTransport {
     @Override
     public void setCodec(Codec c) {
         codec = c;
-    }
-
-    @Override
-    public void setDictionary(AbstractDictionary dictionary) {
-        this.dictionary = dictionary;
     }
 
     @Override

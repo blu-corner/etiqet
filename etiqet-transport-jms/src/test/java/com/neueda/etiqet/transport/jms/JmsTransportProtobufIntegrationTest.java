@@ -5,14 +5,13 @@ import com.neueda.etiqet.core.config.dtos.Protocol;
 import com.neueda.etiqet.core.message.cdr.Cdr;
 import com.neueda.etiqet.core.message.cdr.CdrItem;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
-import com.neueda.etiqet.core.message.config.AbstractDictionary;
-import com.neueda.etiqet.core.message.dictionary.ProtobufDictionary;
 import com.neueda.etiqet.core.transport.ProtobufCodec;
-import com.neueda.etiqet.core.transport.delegate.BinaryMessageConverterDelegate;
-import com.neueda.etiqet.core.transport.delegate.ByteArrayConverterDelegate;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 import javax.xml.bind.JAXBContext;
 import java.io.InputStream;
@@ -67,7 +66,7 @@ public class JmsTransportProtobufIntegrationTest {
 
     @Test
     public void testSubscribeToTopicAndReceiveMessages() throws Exception {
-        initTransport(null);
+        initTransport();
         final String topicName = "topicTest01";
         BlockingQueue<Cdr> receivedMessages = new LinkedBlockingQueue<>();
         Cdr cdr = aCdr("Person")
@@ -91,7 +90,7 @@ public class JmsTransportProtobufIntegrationTest {
 
     @Test
     public void testSubscribeToTopicAndReceiveBinaryMessages() throws Exception {
-        initTransport(new ByteArrayConverterDelegate());
+        initTransport();
         final String topicName = "topicTest01";
         BlockingQueue<Cdr> receivedMessages = new LinkedBlockingQueue<>();
         Cdr cdr = aCdr("Person")
@@ -111,18 +110,12 @@ public class JmsTransportProtobufIntegrationTest {
         assertEquals("aaa@aaa.aaa", values.get("email").getStrval());
     }
 
-    private void initTransport(BinaryMessageConverterDelegate binaryMessageConverterDelegate) throws Exception {
+    private void initTransport() throws Exception {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
         connectionFactory.setTrustAllPackages(true);
-        AbstractDictionary dictionary = new ProtobufDictionary("config/dictionary/addressbook.desc");
         jmsTransport = new JmsTransport();
-        jmsTransport.setDictionary(dictionary);
         jmsTransport.setCodec(codec);
         jmsTransport.setConnectionFactory(connectionFactory);
-        if (binaryMessageConverterDelegate != null) {
-            binaryMessageConverterDelegate.setDictionary(dictionary);
-        }
-        jmsTransport.setBinaryMessageConverterDelegate(binaryMessageConverterDelegate);
         jmsTransport.setDelegate(new SinkClientDelegate());
         jmsTransport.start();
     }

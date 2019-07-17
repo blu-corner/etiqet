@@ -13,7 +13,6 @@ import com.neueda.etiqet.core.config.dtos.Field;
 import com.neueda.etiqet.core.config.dtos.Message;
 import com.neueda.etiqet.core.config.dtos.UrlExtension;
 import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.core.message.config.AbstractDictionary;
 import com.neueda.etiqet.core.message.config.ProtocolConfig;
 import com.neueda.etiqet.core.transport.Codec;
 import com.neueda.etiqet.core.transport.Transport;
@@ -303,8 +302,6 @@ public abstract class Client implements Transport, Runnable {
       }
       setTransport((Transport) Class.forName(protocolConfig.getClient().getTransportImpl())
           .newInstance());
-      AbstractDictionary dictionary = protocolConfig.getDictionary();
-      transport.setDictionary(dictionary);
       transport.init(config);
       transport.setDelegate(delegate);
       Codec codec = (Codec) Class.forName(protocolConfig.getClient().getCodecImpl()).newInstance();
