@@ -3,7 +3,6 @@ package com.neueda.etiqet.fixture;
 import com.neueda.etiqet.core.client.Client;
 import com.neueda.etiqet.core.common.exceptions.EtiqetException;
 import com.neueda.etiqet.core.message.cdr.Cdr;
-import com.neueda.etiqet.core.util.ParserUtils;
 import com.neueda.etiqet.messageBroker.client.MessageBrokerClient;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -223,6 +222,20 @@ public class MessageBrokerFixtures {
         Optional<Cdr> lastMessage = client.getLastMessageFromQueue(queueName);
         assertTrue("No message found for queue", lastMessage.isPresent());
         handlers.checkMessageContent(lastMessage.get(), params);
+    }
+
+    /**
+     * Consumes and acknowledges messages from the queue specified on the client. This will continue consuming messages
+     * from the queue until we receive nothing for a 5 second period.
+     *
+     * @param queueName  name of the queue to clear
+     * @param clientName name of the client
+     * @throws EtiqetException when an error occurs trying to consume / acknowledge the messages
+     */
+    @Then("clear the queue \"([^\"]*)\" for client \"([^\"]*)\"$")
+    public void clearQueue(String queueName, String clientName) throws EtiqetException {
+        MessageBrokerClient client = getMessageBrokerClient(clientName);
+        client.clearQueue(queueName);
     }
 
     private MessageBrokerClient getMessageBrokerClient(final String clientName) {

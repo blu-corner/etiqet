@@ -6,13 +6,13 @@ import com.neueda.etiqet.core.transport.EchoTransport;
 import com.neueda.etiqet.core.util.MapUtils;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
 
 public class BrokerTransportStub extends EchoTransport implements BrokerTransport {
 
@@ -51,7 +51,12 @@ public class BrokerTransportStub extends EchoTransport implements BrokerTranspor
     @Override
     public void sendToQueue(Cdr cdr, String queueName) {
         listenersByQueue.getOrDefault(queueName, emptyList())
-            .forEach(listener -> listener.accept(cdr));
+                        .forEach(listener -> listener.accept(cdr));
 
+    }
+
+    @Override
+    public void clearQueue(String queueName) {
+        // nothing to do here
     }
 }

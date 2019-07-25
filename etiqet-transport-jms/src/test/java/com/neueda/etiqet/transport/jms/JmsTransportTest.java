@@ -315,4 +315,29 @@ public class JmsTransportTest {
         assertEquals(23, receivedPerson.getId());
     }
 
+    @Test
+    public void testClearQueue() throws JMSException, EtiqetException {
+        Queue queue = mock(Queue.class);
+        Session session = mock(Session.class);
+        when(session.createQueue(anyString())).thenReturn(queue);
+        MessageConsumer consumer = mock(MessageConsumer.class);
+        when(session.createConsumer(queue)).thenReturn(consumer);
+
+        javax.jms.Message msg1 = mock(javax.jms.Message.class);
+        javax.jms.Message msg2 = mock(javax.jms.Message.class);
+        javax.jms.Message msg3 = mock(javax.jms.Message.class);
+        javax.jms.Message msg4 = mock(javax.jms.Message.class);
+        javax.jms.Message msg5 = mock(javax.jms.Message.class);
+
+        when(consumer.receive(anyLong())).thenReturn(msg1, msg2, msg3, msg4, msg5, null);
+
+        transport.setSession(session);
+        transport.clearQueue("testQueue");
+        verify(msg1, times(1)).acknowledge();
+        verify(msg2, times(1)).acknowledge();
+        verify(msg3, times(1)).acknowledge();
+        verify(msg4, times(1)).acknowledge();
+        verify(msg5, times(1)).acknowledge();
+    }
+
 }

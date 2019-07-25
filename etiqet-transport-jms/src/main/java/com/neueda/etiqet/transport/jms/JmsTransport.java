@@ -277,6 +277,26 @@ public class JmsTransport implements BrokerTransport {
         }
     }
 
+    @Override
+    public void clearQueue(String queueName) throws EtiqetException {
+        try {
+            Queue queue = session.createQueue(queueName);
+            int i = 0;
+            MessageConsumer consumer = session.createConsumer(queue);
+            Message consumed;
+            while ((consumed = consumer.receive(5000)) != null) {
+                i++;
+                consumed.acknowledge();
+                logger.debug("Consumed message {} from queue {}", consumed, queueName);
+            }
+
+            consumer.close();
+            logger.info("Removed {} messages from queue {}", i, queueName);
+        } catch (JMSException e) {
+            throw new EtiqetException("JMS Exception thrown trying to clear queue " + queueName, e);
+        }
+    }
+
     private void sendToDestination(final Cdr cdr, final Destination destination) throws JMSException, EtiqetException {
         MessageProducer producer = session.createProducer(destination);
         final Cdr processedMessage = processMessageWithDelegate(cdr);

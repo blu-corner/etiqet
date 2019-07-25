@@ -105,6 +105,10 @@ public class MessageBrokerClient extends Client {
         );
     }
 
+    public void clearQueue(String queueName) throws EtiqetException {
+        getTransport().clearQueue(queueName);
+    }
+
     @Override
     public BrokerTransport getTransport() {
         if (transport == null) {
