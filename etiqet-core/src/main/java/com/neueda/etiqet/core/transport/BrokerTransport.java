@@ -21,4 +21,6 @@ public interface BrokerTransport extends Transport {
 
     void sendToQueue(Cdr cdr, String queueName) throws EtiqetException;
 
+    void clearQueue(String queueName) throws EtiqetException;
+
 }
