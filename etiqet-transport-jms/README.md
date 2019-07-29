@@ -33,11 +33,4 @@ connectionFactory.setUserName("USERNAME");
 connectionFactory.setPassword("PASSWORD");
 ```
 
-## Testing ##
-The ActiveMQ client is provided as dependency for testing purposes.
 
-In order to test the sample features, a Maven profile, `integration-tests`, has been added. When running the tests with this profile, an ActiveMQ broker will be instantiated:
-
-```
-mvn clean test -Pintegration-tests
-```

@@ -4,14 +4,19 @@ import com.neueda.etiqet.core.transport.delegate.StringBinaryMessageConverterDel
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
+
+import static java.util.OptionalInt.empty;
 
 public class AmqpConfigBuilder {
     private String host;
+    private OptionalInt port;
     private List<ExchangeConfig> exchangeConfigs;
     private Class binaryMessageConverterDelegateClass;
 
     private AmqpConfigBuilder() {
         host = "localhost";
+        port = empty();
         exchangeConfigs = new ArrayList<>();
         binaryMessageConverterDelegateClass = StringBinaryMessageConverterDelegate.class;
     }
@@ -33,6 +38,7 @@ public class AmqpConfigBuilder {
     public AmqpConfig build() {
         return new AmqpConfig(
             host,
+            port,
             exchangeConfigs,
             binaryMessageConverterDelegateClass
         );
