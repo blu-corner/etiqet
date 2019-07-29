@@ -57,6 +57,7 @@ public class AmqpTransport<T> implements ExchangeTransport {
         this.binaryMessageConverterDelegate = instantiateBinaryMessageConverterDelegate(configuration);
         final ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.setHost(configuration.getHost());
+        configuration.getPort().ifPresent(connectionFactory::setPort);
         try {
             connection = connectionFactory.newConnection();
         } catch (Exception e) {
@@ -207,15 +208,11 @@ public class AmqpTransport<T> implements ExchangeTransport {
     }
 
     private BinaryMessageConverterDelegate<T> instantiateBinaryMessageConverterDelegate(AmqpConfig config) throws EtiqetException {
-        Optional<Class> delegateClass = config.getBinaryMessageConverterDelegateClass();
-        if (delegateClass.isPresent()) {
-            try {
-               return (BinaryMessageConverterDelegate<T>) delegateClass.get().newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new EtiqetException("Unable to instantiate BinaryMessageConverterDelegate " + delegateClass.get().getName());
-            }
-        } else {
-            throw new EtiqetException("Missing BinaryMessgeConverterDelegate in transport configuration");
+        Class delegateClass = config.getBinaryMessageConverterDelegateClass();
+        try {
+           return (BinaryMessageConverterDelegate<T>) delegateClass.newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new EtiqetException("Unable to instantiate BinaryMessageConverterDelegate " + delegateClass.getName());
         }
     }
 
