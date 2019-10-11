@@ -70,6 +70,12 @@
         </dependency>
     </dependencies>
 
+    <scm>
+        <connection>scm:git:https://github.com/blu-corner/etiqet.git</connection>
+        <developerConnection>scm:git:git@github.com:blu-corner/etiqet.git</developerConnection>
+        <url>https://github.com/blu-corner/etiqet</url>
+    </scm>
+
     <distributionManagement>
         <snapshotRepository>
             <id>cloudsmith-snapshots</id>
