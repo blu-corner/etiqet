@@ -46,22 +46,6 @@
         </profile>
     </profiles>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>cloudsmith-api</id>
-            <name>Cloudsmith API Releases</name>
-            <url>https://dl.cloudsmith.io/public/cloudsmith/api/maven</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <repositories>
-        <repository>
-            <id>cloudsmith-api</id>
-            <name>Cloudsmith API Releases</name>
-            <url>https://dl.cloudsmith.io/public/cloudsmith/api/maven</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -85,16 +69,6 @@
             <version>2.11.1</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <extensions>
-            <extension>
-                <groupId>io.cloudsmith.maven.wagon</groupId>
-                <artifactId>cloudsmith-maven-wagon</artifactId>
-                <version>0.4.0</version>
-            </extension>
-        </extensions>
-    </build>
 
     <distributionManagement>
         <snapshotRepository>
