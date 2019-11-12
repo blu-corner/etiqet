@@ -19,7 +19,8 @@ public class BrowserBase {
     @XmlElements({
         @XmlElement(name = "Firefox", type = Firefox.class),
         @XmlElement(name = "Chrome", type = Chrome.class),
-        @XmlElement(name = "Edge", type = Edge.class)
+        @XmlElement(name = "Edge", type = Edge.class),
+        @XmlElement(name = "Android", type = Android.class)
     })
     private List<Browser> browsers;
     private static HashMap<String, Browser> browserMap;
