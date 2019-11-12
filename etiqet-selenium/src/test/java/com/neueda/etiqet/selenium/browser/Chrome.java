@@ -1,13 +1,14 @@
 package com.neueda.etiqet.selenium.browser;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @XmlRootElement(name = "Chrome")
@@ -37,13 +38,15 @@ public class Chrome extends Browser {
     @XmlElement(name = "script_timeout")
     private long scriptTimeout;
 
+    private List<BrowserSetting> capabilities;
+
+    private List<String> startupArguments;
+
+    private List<String> extensions;
+
     private WebDriver driver;
 
-    @XmlElement(name = "Options")
-    private Options options;
-
     public Chrome(){
-        options = new ChromeSettings();
         pageLoadTimeout = -1;
     }
 
@@ -51,8 +54,12 @@ public class Chrome extends Browser {
     public void setupDriver() {
         System.setProperty("webdriver.chrome.driver", driverPath);
         org.openqa.selenium.chrome.ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments(options.getStartupArgs());
-        chromeOptions.addEncodedExtensions(options.getStartupArgs());
+        if (startupArguments != null) {
+            chromeOptions.addArguments(startupArguments);
+        }
+        if (extensions != null) {
+            chromeOptions.addEncodedExtensions(extensions);
+        }
         chromeOptions.setHeadless(isHeadless());
 
         logger.info("Launching browser: " + name);
@@ -73,6 +80,26 @@ public class Chrome extends Browser {
         logger.info("Closing browser: " + name);
         driver.close();
         logger.info("Browser closed: " + name);
+    }
+
+    @XmlElementWrapper
+    @XmlElement(name="startup_arguments")
+    public List<String> getStartupArguments() {
+        return startupArguments;
+    }
+
+    public void setStartupArguments(List<String> startupArguments) {
+        this.startupArguments = startupArguments;
+    }
+
+    @XmlElementWrapper
+    @XmlElement(name="extensions")
+    public List<String> getExtensions() {
+        return extensions;
+    }
+
+    public void setExtensions(List<String> extensions) {
+        this.startupArguments = extensions;
     }
 
     @Override
