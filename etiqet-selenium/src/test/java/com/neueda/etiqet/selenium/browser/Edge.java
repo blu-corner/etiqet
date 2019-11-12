@@ -54,7 +54,7 @@ public class Edge extends Browser {
 
         logger.info("Launching browser: " + name);
         EdgeOptions edgeOptions = new EdgeOptions();
-        if (capabilities == null) {
+        if (capabilities != null) {
             for (BrowserSetting browserSetting : capabilities) {
                 edgeOptions.setCapability(browserSetting.getName(), browserSetting.getValue());
             }
