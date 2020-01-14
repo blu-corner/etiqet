@@ -20,6 +20,7 @@
         <close_on_exit>true</close_on_exit>
     </Chrome>
     <Android name="android">
+        <remote_url>http://127.0.0.1:4723/wd/hub</remote_url>
         <headless>false</headless>
         <screenshot_on_exit>true</screenshot_on_exit>
         <close_on_exit>true</close_on_exit>
@@ -37,6 +38,5 @@
                 <value>Android Emulator</value>
             </capability>
         </capabilities>
-        <remote_url>http://127.0.0.1:4723/wd/hub</remote_url>
     </Android>
 </Browsers>
