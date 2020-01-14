@@ -1,7 +1,6 @@
 package com.neueda.etiqet.selenium.browser;
 
 import io.appium.java_client.android.AndroidDriver;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -51,9 +50,6 @@ public class Android extends Browser {
 
     @Override
     public void setupDriver() {
-
-        WebDriverManager.edgedriver().setup();
-
         logger.info("Launching browser: " + name);
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         if (capabilities != null) {

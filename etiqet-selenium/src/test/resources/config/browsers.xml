@@ -14,13 +14,12 @@
             <keyword>bar</keyword>
         </keywords>
     </Firefox>
-    <Chrome name="chrome" driver_path="src/test/resources/drivers/chromedriver.exe">
+    <Chrome name="chrome">
         <headless>false</headless>
         <screenshot_on_exit>true</screenshot_on_exit>
         <close_on_exit>true</close_on_exit>
     </Chrome>
-    <Android name="android" driver_path="src/test/resources/drivers/chromedriver.exe">
-        <remote_url>https://www.google.com</remote_url>
+    <Android name="android">
         <headless>false</headless>
         <screenshot_on_exit>true</screenshot_on_exit>
         <close_on_exit>true</close_on_exit>
