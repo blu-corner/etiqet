@@ -9,12 +9,8 @@
         <headless>false</headless>
         <screenshot_on_exit>true</screenshot_on_exit>
         <close_on_exit>true</close_on_exit>
-        <keywords>
-            <keyword>foo</keyword>
-            <keyword>bar</keyword>
-        </keywords>
     </Firefox>
-    <Chrome name="chrome">
+    <Chrome name="chrome" driver_path="src/test/resources/drivers/chromedriver.exe">
         <headless>false</headless>
         <screenshot_on_exit>true</screenshot_on_exit>
         <close_on_exit>true</close_on_exit>
