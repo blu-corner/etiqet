@@ -15,4 +15,24 @@
         <screenshot_on_exit>true</screenshot_on_exit>
         <close_on_exit>true</close_on_exit>
     </Chrome>
+    <Android name="android">
+        <remote_url>http://127.0.0.1:4723/wd/hub</remote_url>
+        <headless>false</headless>
+        <screenshot_on_exit>true</screenshot_on_exit>
+        <close_on_exit>true</close_on_exit>
+        <capabilities>
+            <capability>
+                <name>platformName</name>
+                <value>Android</value>
+            </capability>
+            <capability>
+                <name>platformVersion</name>
+                <value>4.4</value>
+            </capability>
+            <capability>
+                <name>deviceName</name>
+                <value>Android Emulator</value>
+            </capability>
+        </capabilities>
+    </Android>
 </Browsers>

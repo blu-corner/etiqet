@@ -4,10 +4,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @XmlRootElement
@@ -37,16 +35,11 @@ public class Firefox extends Browser {
     @XmlElement(name = "script_timeout")
     private long scriptTimeout;
 
+    private List<String> startupArguments;
+
     private WebDriver driver;
 
-    @XmlElements({
-        @XmlElement(name = "FirefoxOptions", type = FirefoxSettings.class),
-        @XmlElement(name = "ChromeOptions", type = ChromeSettings.class)
-    })
-    private Options options;
-
     public Firefox(){
-        options = new FirefoxSettings();
         pageLoadTimeout = -1;
     }
 
@@ -55,7 +48,9 @@ public class Firefox extends Browser {
         WebDriverManager.firefoxdriver().setup();
 
         org.openqa.selenium.firefox.FirefoxOptions firefoxOptions = new org.openqa.selenium.firefox.FirefoxOptions();
-        firefoxOptions.addArguments(options.getStartupArgs());
+        if (startupArguments != null) {
+            firefoxOptions.addArguments(startupArguments);
+        }
         firefoxOptions.setHeadless(isHeadless());
 
         logger.info("Launching browser: " + name);
@@ -91,6 +86,16 @@ public class Firefox extends Browser {
     @Override
     public WebDriver getDriver() {
         return driver;
+    }
+
+    @XmlElementWrapper
+    @XmlElement(name="startup_arguments")
+    public List<String> getStartupArguments() {
+        return startupArguments;
+    }
+
+    public void setStartupArguments(List<String> startupArguments) {
+        this.startupArguments = startupArguments;
     }
 
     @Override

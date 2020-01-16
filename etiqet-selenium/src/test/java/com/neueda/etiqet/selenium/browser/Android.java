@@ -1,29 +1,31 @@
 package com.neueda.etiqet.selenium.browser;
 
+import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@XmlRootElement(name = "Chrome")
-public class Chrome extends Browser {
+@XmlRootElement(name = "Android")
+public class Android extends Browser {
 
     @XmlAttribute
     private String name;
 
-    @XmlAttribute(name="driver_path")
+    @XmlAttribute(name = "driver_path")
     private String driverPath;
+
+    @XmlElement(name = "remote_url")
+    private String remoteUrl;
 
     @XmlElement
     private boolean headless;
 
-    @XmlElement
+    @XmlElement(name = "close_on_exit")
     private boolean closeOnExit;
 
     @XmlElement(name = "screenshot_on_exit")
@@ -40,30 +42,29 @@ public class Chrome extends Browser {
 
     private List<BrowserSetting> capabilities;
 
-    private List<String> startupArguments;
-
-    private List<String> extensions;
-
     private WebDriver driver;
 
-    public Chrome(){
+    public Android() {
         pageLoadTimeout = -1;
     }
 
     @Override
     public void setupDriver() {
-        System.setProperty("webdriver.chrome.driver", driverPath);
-        org.openqa.selenium.chrome.ChromeOptions chromeOptions = new ChromeOptions();
-        if (startupArguments != null) {
-            chromeOptions.addArguments(startupArguments);
-        }
-        if (extensions != null) {
-            chromeOptions.addEncodedExtensions(extensions);
-        }
-        chromeOptions.setHeadless(isHeadless());
-
         logger.info("Launching browser: " + name);
-        driver = new ChromeDriver(chromeOptions);
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        if (capabilities != null) {
+            for (BrowserSetting browserSetting : capabilities) {
+                desiredCapabilities.setCapability(browserSetting.getName(), browserSetting.getValue());
+            }
+        }
+
+        try {
+            URL url = new URL(remoteUrl);
+            driver = new AndroidDriver(url, desiredCapabilities);
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
         driver.manage().timeouts().implicitlyWait(implicitWait, TimeUnit.SECONDS);
         if (pageLoadTimeout >= 0) {
@@ -82,24 +83,14 @@ public class Chrome extends Browser {
         logger.info("Browser closed: " + name);
     }
 
-    @XmlElementWrapper
-    @XmlElement(name="startup_arguments")
-    public List<String> getStartupArguments() {
-        return startupArguments;
+    @XmlElementWrapper(name = "capabilities")
+    @XmlElement(name="capability")
+    public List<BrowserSetting> getCapabilities() {
+        return capabilities;
     }
 
-    public void setStartupArguments(List<String> startupArguments) {
-        this.startupArguments = startupArguments;
-    }
-
-    @XmlElementWrapper
-    @XmlElement(name="extensions")
-    public List<String> getExtensions() {
-        return extensions;
-    }
-
-    public void setExtensions(List<String> extensions) {
-        this.startupArguments = extensions;
+    public void setCapabilities(List<BrowserSetting> capabilities) {
+        this.capabilities = capabilities;
     }
 
     @Override

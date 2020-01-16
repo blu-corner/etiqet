@@ -33,7 +33,7 @@ public class Config {
             e.printStackTrace();
         }
         catch (JAXBException e) {
-            logger.error("Failed to unmarshall BrowserBase to setup browser configs");
+            logger.error("Failed to unmarshal BrowserBase to setup browser configs");
             e.printStackTrace();
         }
     }
