@@ -302,14 +302,14 @@ public class JmsTransport implements BrokerTransport {
         final Cdr processedMessage = processMessageWithDelegate(cdr);
         Object payload = codec.encode(processedMessage);
         final Message message;
-        if (payload instanceof String) {
+	if (binaryMessageConverterDelegate != null) {
+	    BytesMessage bytesMessage = session.createBytesMessage();
+	    bytesMessage.writeBytes(binaryMessageConverterDelegate.toByteArray(payload));
+	    message = bytesMessage;
+	} else if (payload instanceof String) {
             message = session.createTextMessage((String) payload);
-        } else if (binaryMessageConverterDelegate == null) {
-            message = session.createObjectMessage((Serializable) payload);
         } else {
-            BytesMessage bytesMessage = session.createBytesMessage();
-            bytesMessage.writeBytes(binaryMessageConverterDelegate.toByteArray(payload));
-            message = bytesMessage;
+            message = session.createObjectMessage((Serializable) payload);
         }
         producer.send(message);
     }
