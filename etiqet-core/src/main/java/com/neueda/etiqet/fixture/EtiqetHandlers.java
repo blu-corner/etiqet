@@ -740,12 +740,8 @@ public class EtiqetHandlers {
         do {
             int remainingMs = Math.max(1, (int) (timeout - System.currentTimeMillis()));
             Cdr rsp = client.waitForMsgType(messageType, remainingMs);
-            String receivedMsgType = client.getMsgName(rsp.getType());
+            String receivedMsgType = rsp.getType();
 
-            assertNotNull(
-                "Dictionary does not contain a definition for received message type '" + rsp.getType()
-                    + "'",
-                receivedMsgType);
             if (!filteredMsgs.contains(receivedMsgType) && (!skipOther || (skipOther && receivedMsgType
                 .equals(messageType)))) {
                 if (!DEFAULT_MESSAGE_NAME.equals(messageType)) {
