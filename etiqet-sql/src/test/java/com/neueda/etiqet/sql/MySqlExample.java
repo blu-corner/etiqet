@@ -1,4 +1,4 @@
-package com.neueda.etiqet.sql.runner;
+package com.neueda.etiqet.sql;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
     plugin = {"pretty", "html:target/cucumber"},
     strict = true,
     monochrome = true,
-    features="src/test/resources/scenarios/connecting.feature",
+    features="src/test/resources/scenarios/mysql-example.feature",
     glue={"com.neueda.etiqet"})
-public class ConnectRunner {
+public class MySqlExample {
 }

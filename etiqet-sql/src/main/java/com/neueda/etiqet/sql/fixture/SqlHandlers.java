@@ -24,9 +24,9 @@ import java.util.HashSet;
 
 public class SqlHandlers {
 
-    private static Logger logger = Logger.getLogger(SqlHandlers.class);
-    private static Settings settings;
-    private static HashSet<SQLDialect> usesDictinctOn;
+    private static final Logger LOG = Logger.getLogger(SqlHandlers.class);
+    private static final Settings settings;
+    private static final HashSet<SQLDialect> usesDictinctOn;
     public static final String DEFAULT_SERVER_ALIAS = "default";
 
     private static Session session;
@@ -34,7 +34,7 @@ public class SqlHandlers {
     private static DSLContext dslContext;
 
     private static Result<Record> results;
-    private static HashMap<String, SelectQuery<Record>> queries;
+    private static final HashMap<String, SelectQuery<Record>> queries;
 
     static {
         queries = new HashMap<>();
@@ -62,10 +62,10 @@ public class SqlHandlers {
             conn = DriverManager.getConnection(url, dbConn.getUser(), dbConn.getPassword());
             dslContext = DSL.using(conn, dbConn.getDialect());
             dslContext.configuration().settings().withExecuteLogging(settings.getUseJooqLogging());
-            logger.info("Successfully connected to " + url);
+            LOG.info("Successfully connected to " + url);
         }
         catch (ClassNotFoundException | SQLException e) {
-            logger.error("Failed to connect to database with connection settings " + dbConn, e);
+            LOG.error("Failed to connect to database with connection settings " + dbConn, e);
         }
     }
 
@@ -82,7 +82,7 @@ public class SqlHandlers {
             session = jSch.getSession(dbConn.getUser(), dbConn.getHost(), dbConn.getPort());
         }
         catch (JSchException e) {
-            logger.error("Failed to setup ssh session with " + dbConn.getUser() +
+            LOG.error("Failed to setup ssh session with " + dbConn.getUser() +
                 " for host " + dbConn.getHost() + " " +
                 " on port " + dbConn.getPort() + ".\n", e);
         }
@@ -94,7 +94,7 @@ public class SqlHandlers {
 
         }
         catch (JSchException e) {
-            logger.error("Failed to setup ssh tunnel from local port " + sshTunnel.getLocalPort() +
+            LOG.error("Failed to setup ssh tunnel from local port " + sshTunnel.getLocalPort() +
                 " to remote host " + sshTunnel.getRemoteHost() + " " +
                 " on remote port " + sshTunnel.getRemotePort() + ".\n", e);
         }
@@ -108,7 +108,7 @@ public class SqlHandlers {
             session.connect();
         }
         catch (JSchException e) {
-            logger.error("Failed to connect to ssh tunnel session. \n", e);
+            LOG.error("Failed to connect to ssh tunnel session. \n", e);
         }
     }
 
