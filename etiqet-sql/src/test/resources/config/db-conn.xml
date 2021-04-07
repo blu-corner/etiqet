@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DbConns>
 
+    <DbConn name="default" driver_class="com.mysql.cj.jdbc.Driver" dialect="MYSQL">
+        <subprotocol>jdbc:mysql://</subprotocol>
+        <host>0.0.0.0</host>
+        <port>3306</port>
+        <db_name>db_name</db_name>
+        <user>user</user>
+        <password>pass</password>
+    </DbConn>
+
     <DbConn name="mysql-example" driver_class="com.mysql.cj.jdbc.Driver" dialect="MYSQL">
         <subprotocol>jdbc:mysql://</subprotocol>
         <host>0.0.0.0</host>

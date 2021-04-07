@@ -10,16 +10,16 @@ Feature: Interacting
         And I clear the selected element
 
     Scenario: Right clicking
-        Given I select element by id using value "et_search_icon"
+        Given I select element by tag using value "button"
         And I right click the selected element
         And I clear the selected element
 
     Scenario: Moving / hovering over
-        Given I select element by id using value "et_search_icon"
+        Given I select element by tag using value "button"
         And I move to the selected element
         And I clear the selected element
 
     Scenario: Clicking and holding
-        Given I select element by id using value "et_search_icon"
+        Given I select element by tag using value "button"
         And I click and hold element
         And I clear the selected element
