@@ -38,6 +38,33 @@ public class FixFixturesTest {
     }
 
     @Test
+    public void testAddingToTopLevelRepeatingGroup() {
+        Cdr fixMsg = new Cdr("TEST_FIX");
+        String group1 = "Side=0,Currency=GBP";
+        String group2 = "Side=1,Currency=EUR";
+
+        when(handlers.getSentMessage("testMessage")).thenReturn(fixMsg);
+        when(handlers.preTreatParams(group1)).thenReturn(group1);
+        when(handlers.preTreatParams(group2)).thenReturn(group2);
+
+        fixtures.createRepeatingGroup("NoSides", "testMessage");
+        fixtures.addFieldsToRepeatingGroup("Side=0,Currency=GBP", "NoSides", "testMessage");
+        fixtures.addFieldsToRepeatingGroup("Side=1,Currency=EUR", "NoSides", "testMessage");
+
+        assertTrue(fixMsg.containsKey("NoSides"));
+        CdrItem noSidesGroup = fixMsg.getItem("NoSides");
+        assertNotNull(noSidesGroup);
+        assertNotNull(noSidesGroup.getCdrs());
+        assertEquals(2, noSidesGroup.getCdrs().size());
+
+        assertEquals("0", noSidesGroup.getCdrs().get(0).getItem("Side").getStrval());
+        assertEquals("GBP", noSidesGroup.getCdrs().get(0).getItem("Currency").getStrval());
+
+        assertEquals("1", noSidesGroup.getCdrs().get(1).getItem("Side").getStrval());
+        assertEquals("EUR", noSidesGroup.getCdrs().get(1).getItem("Currency").getStrval());
+    }
+
+    @Test
     public void testCreateRepeatingGroupWithFields() {
         Cdr fixMsg = new Cdr("TEST_FIX");
         when(handlers.getSentMessage("testMessage")).thenReturn(fixMsg);
@@ -89,7 +116,7 @@ public class FixFixturesTest {
             item.setStrval("Not an Array");
             cdr.setItem("Parties", item);
             when(handlers.getSentMessage(eq("testMessage"))).thenReturn(cdr);
-            fixtures.addFieldsToRepeatingGroup("PartyID=PRIME_BROKER,PartyRole=1", "Parties", "testMessage");
+            fixtures.getGroup(cdr, "Test", "Parties");
             fail("Should have thrown an AssertionError because group is a String type, not Array");
         } catch (Throwable t) {
             assertTrue(t instanceof AssertionError);
@@ -311,4 +338,58 @@ public class FixFixturesTest {
         assertEquals("value2", nestedChild.getAsString("field2"));
     }
 
+    @Test
+    public void testCreateRepeatingGroupWithFieldsInGroupAtIndex() {
+        Cdr fixMsg = new Cdr("TEST_FIX");
+        when(handlers.getSentMessage("TEST_FIX")).thenReturn(fixMsg);
+        when(handlers.preTreatParams(anyString())).thenCallRealMethod();
+
+        CdrItem noSidesGroup = new CdrItem(CdrItem.CdrItemType.CDR_ARRAY);
+        fixMsg.setItem("NoSides", noSidesGroup);
+
+        Cdr noSidesGroup1 = new Cdr("NoSides");
+        Cdr noSidesGroup2 = new Cdr("NoSides");
+        Cdr noSidesGroup3 = new Cdr("NoSides");
+
+        noSidesGroup.addCdrToList(noSidesGroup1);
+        noSidesGroup.addCdrToList(noSidesGroup2);
+        noSidesGroup.addCdrToList(noSidesGroup3);
+
+        String expectedParty1Id = "000000000000000BANK1-BRN01";
+        String expectedParty2Id = "000000000000000BANK1-BRN02";
+        String expectedParty3Id = "000000000000000BANK1-BRN03";
+
+        String expectedParty1Role = "13";
+        String expectedParty2Role = "14";
+        String expectedParty3Role = "15";
+
+        String party1Params = String.format("PartyID=%s,PartyRole=%s", expectedParty1Id, expectedParty1Role);
+        String party2Params = String.format("PartyID=%s,PartyRole=%s", expectedParty2Id, expectedParty2Role);
+        String party3Params = String.format("PartyID=%s,PartyRole=%s", expectedParty3Id, expectedParty3Role);
+
+        fixtures.createRepeatingGroupWithFieldsInGroupAtIndex("Parties", party1Params, "NoSides", 0, "TEST_FIX");
+        fixtures.createRepeatingGroupWithFieldsInGroupAtIndex("Parties", party2Params, "NoSides", 2, "TEST_FIX");
+        fixtures.createRepeatingGroupWithFieldsInGroupAtIndex("Parties", party3Params, "NoSides", 2, "TEST_FIX");
+
+        assertEquals(3, noSidesGroup.getCdrs().size());
+        assertTrue(noSidesGroup1.getItems().containsKey("Parties"));
+        assertFalse(noSidesGroup2.getItems().containsKey("Parties"));
+        assertTrue(noSidesGroup3.getItems().containsKey("Parties"));
+
+        assertEquals(1, noSidesGroup1.getItems().get("Parties").getCdrs().size());
+        assertEquals(2, noSidesGroup3.getItems().get("Parties").getCdrs().size());
+
+        Cdr partiesGroup1 = noSidesGroup1.getItems().get("Parties").getCdrs().get(0);
+        Cdr partiesGroup2 = noSidesGroup3.getItems().get("Parties").getCdrs().get(0);
+        Cdr partiesGroup3 = noSidesGroup3.getItems().get("Parties").getCdrs().get(1);
+
+        assertEquals(expectedParty1Id, partiesGroup1.getItem("PartyID").getStrval());
+        assertEquals(expectedParty1Role, partiesGroup1.getItem("PartyRole").getStrval());
+
+        assertEquals(expectedParty2Id, partiesGroup2.getItem("PartyID").getStrval());
+        assertEquals(expectedParty2Role, partiesGroup2.getItem("PartyRole").getStrval());
+
+        assertEquals(expectedParty3Id, partiesGroup3.getItem("PartyID").getStrval());
+        assertEquals(expectedParty3Role, partiesGroup3.getItem("PartyRole").getStrval());
+    }
 }
