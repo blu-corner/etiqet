@@ -15,6 +15,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Sphere;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +55,9 @@ public class FIXServerController implements Initializable, Runnable, Application
     private TableView<Action> actionTableView;
 
     @FXML
+    private Sphere sphere;
+
+    @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
     public TableColumn<Order, String> timeBuyTableColumn;
     public TableColumn<Order, String> sizeBuyTableColumn;
@@ -69,10 +75,13 @@ public class FIXServerController implements Initializable, Runnable, Application
     public TableColumn<Action, String> actionSizeTableColumn;
     public TableColumn<Action, String> actionPriceTableColumn;
 
+    public Circle circle;
+    private Acceptor acceptor;
+    private Thread orderBook;
+
 
     public void startAcceptor(ActionEvent actionEvent) {
         URL resource = getClass().getClassLoader().getResource("server.cfg");
-        Acceptor acceptor = null;
         try {
             SessionSettings sessionSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
             MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
@@ -80,13 +89,24 @@ public class FIXServerController implements Initializable, Runnable, Application
             MessageFactory messageFactory = new DefaultMessageFactory();
             acceptor = new SocketAcceptor(this, messageStoreFactory, sessionSettings, logFactory, messageFactory);
             acceptor.start();
-            Thread thread = new Thread(this);
-            thread.start();
+            orderBook = new Thread(this);
+            orderBook.start();
+            circle.setFill(Color.GREENYELLOW);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    public void stopAcceptor(){
+        try{
+            this.acceptor.stop();
+            this.orderBook.stop();
+            this.circle.setFill(Color.RED);
+        }catch (Exception ex){
+            this.logger.error(ex.getLocalizedMessage());
+        }
     }
 
     @Override
