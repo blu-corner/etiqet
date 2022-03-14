@@ -1,13 +1,20 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseEvent;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +98,12 @@ public class FIXServerController implements Initializable, Runnable, Application
         actionTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
         orderBookBuyTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
         orderBookSellTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
+//        orderBookBuyTableView.getSelectionModel().setCellSelectionEnabled(true);
+//        orderBookBuyTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        orderBookBuyTableView.setOnMouseClicked(e -> {
+            cellToClipBoard(e);
+        });
+
 
         orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
         timeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
@@ -110,6 +123,21 @@ public class FIXServerController implements Initializable, Runnable, Application
         actionSizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
         actionPriceTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
 
+
+    }
+
+    private void cellToClipBoard(MouseEvent e) {
+        try{
+            final Clipboard clipboard = Clipboard.getSystemClipboard();
+            final ClipboardContent content = new ClipboardContent();
+            String targetString = e.getTarget().toString();
+            int firstQuote = targetString.indexOf('"');
+            int secondQuote = targetString.indexOf('"', firstQuote + 1);
+            content.putString(targetString.substring(firstQuote + 1, secondQuote));
+            clipboard.setContent(content);
+        }catch (Exception ex){
+            this.logger.error(ex.getLocalizedMessage());
+        }
 
     }
 
