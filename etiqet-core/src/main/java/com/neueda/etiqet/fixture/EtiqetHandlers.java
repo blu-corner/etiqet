@@ -90,6 +90,7 @@ public class EtiqetHandlers {
     private NavigableMap<String, Cdr> messageMap = new TreeMap<>();
 
     private NavigableMap<String, Cdr> responseMap = new TreeMap<>();
+    private NavigableMap<String, String> variableMap = new TreeMap<>();
 
     private Set<String> filteredMsgs = ConcurrentHashMap.newKeySet();
 
@@ -158,7 +159,7 @@ public class EtiqetHandlers {
     }
 
     public void startClientWithFailover(String impl, String clientName, String primaryConfig,
-        String secondaryConfig) {
+                                        String secondaryConfig) {
         Client client;
         try {
             client = clientMap.containsKey(clientName) ? clientMap.get(clientName)
@@ -189,7 +190,7 @@ public class EtiqetHandlers {
      * Creates a client with a secondary config which enables failover
      */
     public Client createClientWithFailover(String clientType, String clientName, String primaryConfig,
-        String secondaryConfig) throws EtiqetException {
+                                           String secondaryConfig) throws EtiqetException {
         if (StringUtils.isNullOrEmpty(secondaryConfig)) {
             throw new EtiqetException(
                 "Secondary Config must be provided when trying to create a client with failover capabilities");
@@ -440,7 +441,7 @@ public class EtiqetHandlers {
     }
 
     public void compareValuesEqual(String firstField, String firstMessageAlias, String secondField,
-        String secondMessageAlias) {
+                                   String secondMessageAlias) {
         String sFirstValue = getValueFromField(firstMessageAlias, firstField);
         String sSecondValue = getValueFromField(secondMessageAlias, secondField);
         assertTrue("Test for equality: " + firstField + " in " + firstMessageAlias +
@@ -449,7 +450,7 @@ public class EtiqetHandlers {
     }
 
     public void compareValuesNotEqual(String firstField, String firstMessageAlias, String secondField,
-        String secondMessageAlias) {
+                                      String secondMessageAlias) {
         String sFirstValue = getValueFromField(firstMessageAlias, firstField);
         String sSecondValue = getValueFromField(secondMessageAlias, secondField);
         assertFalse("Test for inequality: " + firstField + " in " + firstMessageAlias +
@@ -458,7 +459,7 @@ public class EtiqetHandlers {
     }
 
     public void compareValues(String firstField, String firstMessageAlias, String secondField,
-        String secondMessageAlias, Long millis) {
+                              String secondMessageAlias, Long millis) {
         String sFirstValue = getValueFromField(firstMessageAlias, firstField);
         assertFalse("Only timestamps and numeric values can be compared for greater/lesser than",
             sFirstValue.contains("[a-zA-Z]+"));
@@ -476,7 +477,7 @@ public class EtiqetHandlers {
         }
         if (firstToCompare != NOT_SET && secondToCompare != NOT_SET) {
             assertTrue(String.format(ERROR_FIELD_COMPARISON, firstField, firstMessageAlias, secondField,
-                secondMessageAlias),
+                    secondMessageAlias),
                 firstToCompare >= secondToCompare);
             if (millis != null) {
                 assertTrue(String
@@ -497,7 +498,7 @@ public class EtiqetHandlers {
      * @param millis optional time-frame for checking response time
      */
     public void compareTimestamps(String firstValue, String secondValue, String firstField,
-        String firstMessageAlias, String secondField, String secondMessageAlias, Long millis) {
+                                  String firstMessageAlias, String secondField, String secondMessageAlias, Long millis) {
         Long lFirstTimestamp = dateToNanos(firstValue);
         assertTrue("Could not read " + firstField + " in " + firstMessageAlias, lFirstTimestamp != -1);
 
@@ -506,7 +507,7 @@ public class EtiqetHandlers {
             lSecondTimestamp != -1);
 
         assertTrue(String.format(ERROR_FIELD_COMPARISON, firstField, firstMessageAlias, secondField,
-            secondMessageAlias),
+                secondMessageAlias),
             lFirstTimestamp >= lSecondTimestamp);
         if (millis != null) {
             assertTrue(String
@@ -541,19 +542,19 @@ public class EtiqetHandlers {
     }
 
     public void compareTimestampGreaterCukeVar(String field, String messageAlias,
-        String sSecondTimestamp) {
+                                               String sSecondTimestamp) {
         Long[] timestamps = extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
         assertTrue(timestamps[0] > timestamps[1]);
     }
 
     public void compareTimestampLesserCukeVar(String field, String messageAlias,
-        String sSecondTimestamp) {
+                                              String sSecondTimestamp) {
         Long[] timestamps = extractTimestampAndCukeVar(field, messageAlias, sSecondTimestamp);
         assertTrue(timestamps[0] < timestamps[1]);
     }
 
     public void compareTimestampEqualsCukeVar(String field, String messageAlias,
-        String sSecondTimestamp) {
+                                              String sSecondTimestamp) {
         String sFirstTimestamp = null == messageAlias ?
             responseMap.lastEntry().getValue().getAsString(field) :
             (preTreatParams("=" + messageAlias + "->" + field)).substring(1);
@@ -572,7 +573,7 @@ public class EtiqetHandlers {
      * @param field field to find value of from message
      */
     public void validateTimestampAgainstFormatParam(String formatParam, String messageAlias,
-        String field) {
+                                                    String field) {
         try {
             String timestamp = (preTreatParams("=" + messageAlias + "->" + field)).substring(1);
             SimpleDateFormat df = new SimpleDateFormat(formatParam);
@@ -606,7 +607,7 @@ public class EtiqetHandlers {
      * @param params list of params with pattern "field1=value1,field2=value2,...,fieldN=valueN"
      */
     public void createMessageForClient(String msgType, String clientName, String messageName, Optional<String> params) throws EtiqetException {
-        final String pretreatedParams;
+        String pretreatedParams;
         if (params.isPresent()) {
             pretreatedParams = preTreatParams(params.get());
         } else {
@@ -614,6 +615,7 @@ public class EtiqetHandlers {
         }
         Client client = getClient(clientName);
         ProtocolConfig config = client.getProtocolConfig();
+        pretreatedParams = handleScenarioVariables(pretreatedParams);
         Cdr message = ParserUtils.stringToCdr(msgType, pretreatedParams);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
         assertNotNull("Could not find protocol " + client.getProtocolName(), config);
@@ -731,7 +733,7 @@ public class EtiqetHandlers {
      * @param skipOther skip any other messages found in the queue, rather than stopping and failing the test.
      */
     public void waitForResponseOfType(String messageName, String clientName, String messageType,
-        int milliseconds, boolean skipOther)
+                                      int milliseconds, boolean skipOther)
         throws EtiqetException {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
@@ -765,7 +767,7 @@ public class EtiqetHandlers {
     }
 
     public void waitForNoResponse(String messageName, String clientName, String messageType,
-        int milliseconds)
+                                  int milliseconds)
         throws EtiqetException {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
@@ -788,7 +790,7 @@ public class EtiqetHandlers {
     }
 
     public void validateMessage(String messageName, String clientName, String messageType,
-        Boolean checkValuesMatch) {
+                                Boolean checkValuesMatch) {
         Client client = getClient(clientName);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
 
@@ -850,13 +852,14 @@ public class EtiqetHandlers {
     }
 
     public void checkResponseKeyPresenceAndValue(String messageName, String params,
-        List<String> values, String part, int position, boolean checkValuesMatch) {
+                                                 List<String> values, String part, int position, boolean checkValuesMatch) {
         // Check if there are some params to check
         assertTrue("checkResponseKeyPresenceAndValue: Nothing to match",
             !StringUtils.isNullOrEmpty(params));
 
         String preTreatedParams = preTreatParams(params);
 
+        preTreatedParams = handleScenarioVariables(preTreatedParams);
         Cdr response = getResponse(messageName);
         assertNotNull("checkResponseKeyPresenceAndValue: response for " + messageName + " not found",
             response);
@@ -876,7 +879,7 @@ public class EtiqetHandlers {
     }
 
     public void checkResponseKeyPresenceAndValue(String messageName, String params,
-        boolean checkValuesMatch) {
+                                                 boolean checkValuesMatch) {
         checkResponseKeyPresenceAndValue(messageName, params, null, null, -1, checkValuesMatch);
     }
 
@@ -953,7 +956,7 @@ public class EtiqetHandlers {
      * @return string with param_value that don't match.
      */
     private Map<String, String> checkMsgContainsKeysAndValues(Cdr msg, String params,
-        List<String> values, String split, int position, boolean checkValuesMatch) {
+                                                              List<String> values, String split, int position, boolean checkValuesMatch) {
         Map<String, String> unmatched = new HashMap<>();
         String[] pairs = params.trim().split(Separators.PARAM_SEPARATOR);
         if (pairs.length > 0) {
@@ -1361,7 +1364,7 @@ public class EtiqetHandlers {
 
     public void sendNamedRestMessageWithPayloadHeaders
         (String httpVerb, Map<String, String> headers, String payload, String endpoint,
-            UrlExtension extensionsUrl)
+         UrlExtension extensionsUrl)
         throws EtiqetException, IOException {
         if (endpoint == null) {
             throw new EtiqetException("Cannot send REST request without an endpoint");
@@ -1456,7 +1459,7 @@ public class EtiqetHandlers {
      * @param indexes Comma separated integers representing the indexes of the bitmap to check
      */
     void checkMessageNumericFieldBitValues(String messageName, String field, boolean value,
-        String indexes) {
+                                           String indexes) {
         long bitmap = getResponse(messageName).getItem(field).getIntval();
 
         List<Integer> parsedIndexs = new ArrayList<>();
@@ -1484,4 +1487,28 @@ public class EtiqetHandlers {
     }
 
 
+    public void setVariable(String variable, String content) {
+        this.variableMap.put(variable, getScenarioVariableContent(content));
+    }
+
+    private String getScenarioVariableContent(String content) {
+        while (content.contains("${")) {
+            int startingIndex = content.indexOf("${") + 2;
+            int endIndex = content.indexOf("}", startingIndex);
+            String substring = content.substring(startingIndex, endIndex);
+            String value = this.variableMap.get(substring);
+            String subtituted = content.substring(startingIndex - 2, endIndex + 1);
+            content = content.replace(subtituted, value);
+        }
+        return content;
+
+    }
+
+    private String handleScenarioVariables(String preTreatedParams) {
+        preTreatedParams = getScenarioVariableContent(preTreatedParams);
+        if (this.variableMap.containsKey(preTreatedParams)) {
+            preTreatedParams = this.variableMap.get(preTreatedParams);
+        }
+        return preTreatedParams;
+    }
 }

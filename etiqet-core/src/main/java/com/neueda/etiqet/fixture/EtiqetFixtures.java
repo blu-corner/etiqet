@@ -157,8 +157,18 @@ public class EtiqetFixtures {
      */
     @Given("^a \"([^\"]*)\" client \"([^\"]*)\" with primary config \"([^\"]*)\" and secondary config \"([^\"]*)\"$")
     public void startANamedClientWithSecondaryConfig(String implementation, String clientName, String primaryConfig,
-        String secondaryConfig) {
+                                                     String secondaryConfig) {
         handlers.startClientWithFailover(implementation, clientName, primaryConfig, secondaryConfig);
+    }
+
+    @Given("^\"([^\"]*)\"=\"([^\"]*)\"")
+    public void givenSetVariable(String variable, String content){
+        this.handlers.setVariable(variable, content);
+    }
+
+    @Then("^set \"([^\"]*)\"=\"([^\"]*)\"")
+    public void thenSetVariable(String variable, String content){
+        this.handlers.setVariable(variable, content);
     }
 
     @Then("^failover$")
@@ -313,7 +323,7 @@ public class EtiqetFixtures {
 
     @Then("^send an? \"([^\"]*)\" message with \"([^\"]*)\" using \"([^\"]*)\" with session id \"([^\"]*)\" as \"([^\"]*)\"$")
     public void sendAMsgParamClientSessionAs(String msgType, String params, String clientName, String sessionId,
-        String alias) throws EtiqetException {
+                                             String alias) throws EtiqetException {
         handlers.createMessageForClient(msgType, clientName, alias, Optional.of(params));
         handlers.sendMessage(alias, clientName, sessionId);
     }
@@ -337,14 +347,14 @@ public class EtiqetFixtures {
 
     @Then("^send an? \"([^\"]*)\" \"([^\"]*)\" message with \"([^\"]*)\" using \"([^\"]*)\" with session id \"([^\"]*)\"$")
     public void sendAMsgProtocolParamClientSession(String msgType, String protocolName, String params,
-        String clientName, String sessionId) throws EtiqetException {
+                                                   String clientName, String sessionId) throws EtiqetException {
         sendAMsgProtocolParamClientSessionAs(msgType, protocolName, params, clientName, sessionId,
             EtiqetHandlers.DEFAULT_MESSAGE_NAME);
     }
 
     @Then("^send an? \"([^\"]*)\" \"([^\"]*)\" message with \"([^\"]*)\" using \"([^\"]*)\" with session id \"([^\"]*)\" as \"([^\"]*)\"$")
     public void sendAMsgProtocolParamClientSessionAs(String msgType, String protocolName, String params,
-        String clientName, String sessionId, String alias) throws EtiqetException {
+                                                     String clientName, String sessionId, String alias) throws EtiqetException {
         handlers.createMessage(msgType, protocolName, alias, params);
         handlers.sendMessage(alias, clientName, sessionId);
     }
@@ -477,7 +487,7 @@ public class EtiqetFixtures {
 
     @Then("^get response \"([^\"]*)\" to \"([^\"]*)\" from \"(.*)\" by \"([^\"]*)\"$")
     public void getResponseToMessageFromListByField(String responseName, String messageName, String responseList,
-        String fieldName) {
+                                                    String fieldName) {
         handlers.getResponseToMessageFromListByField(responseName, messageName, responseList, fieldName);
     }
 
@@ -742,50 +752,50 @@ public class EtiqetFixtures {
 
     @Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is equal to \"([^\"]*)\" in \"([^\"]*)\"$")
     public void checkThatInIsEqualToIn(String firstField, String firstMessageAlias, String secondField,
-        String secondMessageAlias) {
+                                       String secondMessageAlias) {
         handlers.compareValuesEqual(firstField, firstMessageAlias, secondField, secondMessageAlias);
     }
 
     @Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is not equal to \"([^\"]*)\" in \"([^\"]*)\"$")
     public void checkThatInIsNotEqualToIn(String firstField, String firstMessageAlias, String secondField,
-        String secondMessageAlias) {
+                                          String secondMessageAlias) {
         handlers.compareValuesNotEqual(firstField, firstMessageAlias, secondField, secondMessageAlias);
     }
 
     @Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is greater than \"([^\"]*)\" in \"([^\"]*)\"$")
     public void checkThatInIsGreaterThanIn(String firstField, String firstMessageAlias, String secondField,
-        String secondMessageAlias) {
+                                           String secondMessageAlias) {
         handlers.compareValues(firstField, firstMessageAlias, secondField, secondMessageAlias, null);
     }
 
     @Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is greater than \"([^\"]*)\" in \"([^\"]*)\" by no more than \"([^\"]*)\" milliseconds$")
     public void checkThatInIsGreaterThanInByNoMoreThanMilliseconds(String firstField, String firstMessageAlias,
-        String secondField, String secondMessageAlias, String millis) {
+                                                                   String secondField, String secondMessageAlias, String millis) {
         handlers.compareValues(firstField, firstMessageAlias, secondField, secondMessageAlias, Long.parseLong(millis));
     }
 
     @Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is greater than \"([^\"]*)\" in \"([^\"]*)\" by no more than \"([^\"]*)\" seconds$")
     public void checkThatInIsGreaterThanInByNoMoreThanSeconds(String firstField, String firstMessageAlias,
-        String secondField, String secondMessageAlias, String seconds) {
+                                                              String secondField, String secondMessageAlias, String seconds) {
         handlers.compareValues(firstField, firstMessageAlias, secondField, secondMessageAlias,
             (Long.parseLong(seconds) * 1000));
     }
 
     @Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is less than \"([^\"]*)\" in \"([^\"]*)\"$")
     public void checkThatInIsLessThanIn(String firstField, String firstMessageAlias, String secondField,
-        String secondMessageAlias) {
+                                        String secondMessageAlias) {
         handlers.compareValues(secondField, secondMessageAlias, firstField, firstMessageAlias, null);
     }
 
     @Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is less than \"([^\"]*)\" in \"([^\"]*)\" by no more than \"([^\"]*)\" milliseconds$")
     public void checkThatInIsLessThanInByNoMoreThanMilliseconds(String firstField, String firstMessageAlias,
-        String secondField, String secondMessageAlias, String millis) {
+                                                                String secondField, String secondMessageAlias, String millis) {
         handlers.compareValues(secondField, secondMessageAlias, firstField, firstMessageAlias, Long.parseLong(millis));
     }
 
     @Then("^check that \"([^\"]*)\" in \"([^\"]*)\" is less than \"([^\"]*)\" in \"([^\"]*)\" by no more than \"([^\"]*)\" seconds$")
     public void checkThatInIsLessThanInByNoMoreThanSeconds(String firstField, String firstMessageAlias,
-        String secondField, String secondMessageAlias, String seconds) {
+                                                           String secondField, String secondMessageAlias, String seconds) {
         handlers.compareValues(secondField, secondMessageAlias, firstField, firstMessageAlias,
             (Long.parseLong(seconds) * 1000));
     }
