@@ -29,7 +29,7 @@
                 <Menu mnemonicParsing="false" text="Session">
                     <items>
                         <MenuItem fx:id="startacceptor" mnemonicParsing="false" onAction="#startAcceptor" text="Start acceptor" />
-                        <MenuItem mnemonicParsing="false" text="Start initiator" />
+                        <MenuItem mnemonicParsing="false" text="Start initiator" fx:id="startInitiator" onAction="#startInitiator"/>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#stopAcceptor" text="Stop" />
                     </items>

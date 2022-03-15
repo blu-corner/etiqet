@@ -24,10 +24,13 @@ import org.slf4j.LoggerFactory;
 import quickfix.*;
 import quickfix.field.*;
 import quickfix.fix44.ExecutionReport;
+import quickfix.fix44.Logon;
 import quickfix.fix44.OrderCancelReject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -99,14 +102,53 @@ public class FIXServerController implements Initializable, Runnable, Application
 
     }
 
-    public void stopAcceptor(){
-        try{
+    public void stopAcceptor() {
+        try {
             this.acceptor.stop();
             this.orderBook.stop();
             this.circle.setFill(Color.RED);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             this.logger.error(ex.getLocalizedMessage());
         }
+    }
+
+    public void startInitiator(ActionEvent actionEvent) {
+        SocketInitiator socketInitiator;
+        try {
+            URL resource = getClass().getClassLoader().getResource("client.cfg");
+            SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
+
+            FileStoreFactory fileStoreFactory = new FileStoreFactory(
+                initiatorSettings);
+            FileLogFactory fileLogFactory = new FileLogFactory(
+                initiatorSettings);
+            MessageFactory messageFactory = new DefaultMessageFactory();
+
+            socketInitiator = new SocketInitiator(this, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
+            socketInitiator.start();
+            SessionID sessionId = (SessionID) socketInitiator.getSessions().get(0);
+            Session.lookupSession(sessionId).logon();
+            Logon logon = new Logon();
+            logon.set(new quickfix.field.HeartBtInt(30));
+            logon.set(new quickfix.field.ResetSeqNumFlag(true));
+            logon.set(new quickfix.field.EncryptMethod(0));
+
+            try {
+                Session.sendToTarget(logon, sessionId);
+            } catch (SessionNotFound sessionNotFound) {
+                sessionNotFound.printStackTrace();
+            }
+
+
+        } catch (ConfigError e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
@@ -118,12 +160,10 @@ public class FIXServerController implements Initializable, Runnable, Application
         actionTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
         orderBookBuyTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
         orderBookSellTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
-//        orderBookBuyTableView.getSelectionModel().setCellSelectionEnabled(true);
-//        orderBookBuyTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        orderBookBuyTableView.setOnMouseClicked(e -> {
-            cellToClipBoard(e);
-        });
 
+        actionTableView.setOnMouseClicked(this::cellToClipBoard);
+        orderBookBuyTableView.setOnMouseClicked(this::cellToClipBoard);
+        orderBookSellTableView.setOnMouseClicked(this::cellToClipBoard);
 
         orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
         timeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
@@ -147,7 +187,7 @@ public class FIXServerController implements Initializable, Runnable, Application
     }
 
     private void cellToClipBoard(MouseEvent e) {
-        try{
+        try {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
             String targetString = e.getTarget().toString();
@@ -155,7 +195,7 @@ public class FIXServerController implements Initializable, Runnable, Application
             int secondQuote = targetString.indexOf('"', firstQuote + 1);
             content.putString(targetString.substring(firstQuote + 1, secondQuote));
             clipboard.setContent(content);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             this.logger.error(ex.getLocalizedMessage());
         }
 
@@ -177,7 +217,7 @@ public class FIXServerController implements Initializable, Runnable, Application
         tempList.add(buy);
         tempList = tempList.stream().sorted(Comparator.comparing(Order::getPrice)).collect(Collectors.toList());
         orderBookBuyTableView.getItems().clear();
-        tempList.forEach( b -> {
+        tempList.forEach(b -> {
             orderBookBuyTableView.getItems().add(b);
         });
         orderBookBuyTableView.getSelectionModel().clearAndSelect(0);
@@ -193,7 +233,7 @@ public class FIXServerController implements Initializable, Runnable, Application
         tempList.add(sell);
         tempList = tempList.stream().sorted(Comparator.comparing(Order::getPrice).reversed()).collect(Collectors.toList());
         orderBookSellTableView.getItems().clear();
-        tempList.forEach( b -> {
+        tempList.forEach(b -> {
             orderBookSellTableView.getItems().add(b);
         });
         orderBookSellTableView.getSelectionModel().clearAndSelect(0);
@@ -307,7 +347,7 @@ public class FIXServerController implements Initializable, Runnable, Application
                     } else {
                         logger.info("################################ ORDER CANCEL REQUEST");
                         //clOrdID, orderId, execId, symbol, side, price, ordQty
-                        cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, null, null );
+                        cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, null, null);
                         reports.add(generateExecReport(ExecType.PENDING_CANCEL, clOrdID, NEW, NEW, symbol, side, new DoubleField(0), new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.CANCELED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
 
@@ -349,7 +389,6 @@ public class FIXServerController implements Initializable, Runnable, Application
             }
         });
     }
-
 
 
     private Message rejectDuplicated(int rejResponseTo, int cxlRejReason) {
@@ -451,7 +490,6 @@ public class FIXServerController implements Initializable, Runnable, Application
     }
 
 
-
     private ExecutionReport cancelOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol, CharField side, DoubleField size, DoubleField price) {
         if (side.getValue() == (Side.BUY)) {
             this.getBuy().removeIf(b -> b.getOrderID().equals(origClOrdID));
@@ -465,7 +503,6 @@ public class FIXServerController implements Initializable, Runnable, Application
         // StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty
         return lookForNewTrade(clOrdID, orderId, execId, symbol, side, size, price);
     }
-
 
 
     private void replaceOrder(CharField side, Order order) {
@@ -520,7 +557,7 @@ public class FIXServerController implements Initializable, Runnable, Application
                     printTrade(topBuy, topSell);
                     orderBookSellTableView.getItems().remove(topSell);
                     //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price
-                    Action action = new Action(Action.Type.FILL,topBuy.getOrderID(), topSell.getOrderID(), null, LocalDateTime.now(), topBuy.getSize(), topBuy.getPrice());
+                    Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), null, LocalDateTime.now(), topBuy.getSize(), topBuy.getPrice());
                     actionTableView.getItems().add(action);
                     actionTableView.getSelectionModel().clearAndSelect(0);
                     return generateExecReport(ExecType.FILL, clOrdID, ordId, execId, symbol, side, ordQty, price);
@@ -542,7 +579,7 @@ public class FIXServerController implements Initializable, Runnable, Application
                         orderBookSellTableView.getItems().remove(0);
                         orderBookSellTableView.getItems().add(topSell);
                     }
-                    Action action = new Action(Action.Type.PARTIAL_FILL,topBuy.getOrderID(), topSell.getOrderID(), null, LocalDateTime.now(), leaveQty, topBuy.getPrice());
+                    Action action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), null, LocalDateTime.now(), leaveQty, topBuy.getPrice());
                     actionTableView.getItems().add(action);
                     actionTableView.getSelectionModel().clearAndSelect(0);
                     printTrade(topBuy, topSell);
