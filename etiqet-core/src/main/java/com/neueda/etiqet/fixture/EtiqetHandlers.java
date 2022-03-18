@@ -657,7 +657,8 @@ public class EtiqetHandlers {
     public void createMessage(String msgType, String protocol, String messageName, String params)
         throws EtiqetException {
         ProtocolConfig config = globalConfig.getProtocol(protocol);
-        Cdr message = ParserUtils.stringToCdr(msgType, preTreatParams(params));
+        String pretreatedParams = handleScenarioVariables(params);
+        Cdr message = ParserUtils.stringToCdr(msgType, preTreatParams(pretreatedParams));
         assertNotNull("Could find protocol " + protocol, config);
         ParserUtils.fillDefault(config.getMessage(msgType), message);
         messageMap.put(messageName, message);
@@ -1504,7 +1505,7 @@ public class EtiqetHandlers {
 
     }
 
-    private String handleScenarioVariables(String preTreatedParams) {
+    protected String handleScenarioVariables(String preTreatedParams) {
         preTreatedParams = getScenarioVariableContent(preTreatedParams);
 
         if (this.variableMap.containsKey(preTreatedParams)) {

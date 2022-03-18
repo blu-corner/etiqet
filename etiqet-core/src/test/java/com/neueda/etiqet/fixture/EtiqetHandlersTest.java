@@ -1732,4 +1732,68 @@ public class EtiqetHandlersTest {
         handlers.checkExtensionsEnabled("neueda2", clientName);
     }
 
+    @Test
+    public void testVariableAssignment() {
+        String key = "testVar";
+        String val = "testVal";
+        handlers.setVariable(key, val);
+        String treatedVar = handlers.handleScenarioVariables("${"+key+"}");
+
+        await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
+        assertEquals(treatedVar, val);
+    }
+
+    @Test
+    public void testSendMessageWithVariables() throws EtiqetException {
+        String clientName = "testClient";
+        Client client = handlers.createClient("testProtocol", clientName);
+        assertTrue(client instanceof TestClient);
+
+        TestClient testClient = (TestClient) client;
+
+        String key = "variableValue";
+        String val = "value";
+        handlers.setVariable(key, val);
+        handlers.startClient(clientName);
+        handlers.createMessage("TestMsg", "testProtocol", "testMessage",
+                        "otherParam=1,test=${variableValue},otherAddParam=1");
+        await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
+        handlers.sendMessage("testMessage", clientName);
+
+        assertFalse(testClient.getMessagesSent().isEmpty());
+        assertEquals(1, testClient.getMessagesSent().size());
+        Cdr message = testClient.getMessagesSent().poll();
+        assertEquals("TestMsg", message.getType());
+        assertEquals("value", message.getAsString("test"));
+        assertEquals("1", message.getAsString("otherParam"));
+        assertEquals("1", message.getAsString("otherAddParam"));
+    }
+
+    @Test
+    public void testSendMessageWithBlockVariable() throws EtiqetException {
+        String clientName = "testClient";
+        Client client = handlers.createClient("testProtocol", clientName);
+        assertTrue(client instanceof TestClient);
+
+        TestClient testClient = (TestClient) client;
+
+        String key = "variableBlock";
+        String val = "test=value,otherAddParam=b";
+        handlers.setVariable(key, val);
+        handlers.startClient(clientName);
+        handlers.createMessage("TestMsg", "testProtocol", "testMessage",
+            "otherParam=1,${variableBlock},lastParam=1");
+        await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
+        handlers.sendMessage("testMessage", clientName);
+
+        assertFalse(testClient.getMessagesSent().isEmpty());
+        assertEquals(1, testClient.getMessagesSent().size());
+        Cdr message = testClient.getMessagesSent().poll();
+        assertEquals("TestMsg", message.getType());
+        assertEquals("value", message.getAsString("test"));
+        assertEquals("1", message.getAsString("otherParam"));
+        assertEquals("b", message.getAsString("otherAddParam"));
+        assertEquals("1", message.getAsString("lastParam"));
+    }
+
 }
