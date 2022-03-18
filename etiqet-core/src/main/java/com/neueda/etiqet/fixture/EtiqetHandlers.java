@@ -609,13 +609,13 @@ public class EtiqetHandlers {
     public void createMessageForClient(String msgType, String clientName, String messageName, Optional<String> params) throws EtiqetException {
         String pretreatedParams;
         if (params.isPresent()) {
-            pretreatedParams = preTreatParams(params.get());
+            pretreatedParams = handleScenarioVariables(params.get());
+            pretreatedParams = preTreatParams(pretreatedParams);
         } else {
             pretreatedParams = DEFAULT_PARAMS;
         }
         Client client = getClient(clientName);
         ProtocolConfig config = client.getProtocolConfig();
-        pretreatedParams = handleScenarioVariables(pretreatedParams);
         Cdr message = ParserUtils.stringToCdr(msgType, pretreatedParams);
         assertNotNull(String.format(ERROR_CLIENT_NOT_FOUND, clientName), client);
         assertNotNull("Could not find protocol " + client.getProtocolName(), config);
@@ -857,9 +857,9 @@ public class EtiqetHandlers {
         assertTrue("checkResponseKeyPresenceAndValue: Nothing to match",
             !StringUtils.isNullOrEmpty(params));
 
-        String preTreatedParams = preTreatParams(params);
+        String preTreatedParams = handleScenarioVariables(params);
+        preTreatedParams = preTreatParams(preTreatedParams);
 
-        preTreatedParams = handleScenarioVariables(preTreatedParams);
         Cdr response = getResponse(messageName);
         assertNotNull("checkResponseKeyPresenceAndValue: response for " + messageName + " not found",
             response);
@@ -1506,6 +1506,7 @@ public class EtiqetHandlers {
 
     private String handleScenarioVariables(String preTreatedParams) {
         preTreatedParams = getScenarioVariableContent(preTreatedParams);
+
         if (this.variableMap.containsKey(preTreatedParams)) {
             preTreatedParams = this.variableMap.get(preTreatedParams);
         }
