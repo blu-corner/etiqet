@@ -28,8 +28,15 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Session">
                     <items>
-                        <MenuItem fx:id="startacceptor" mnemonicParsing="false" onAction="#startAcceptor" text="Start acceptor" />
-                        <MenuItem mnemonicParsing="false" text="Start initiator" fx:id="startInitiator" onAction="#startInitiator"/>
+                        <MenuItem fx:id="startInitiator" mnemonicParsing="false" onAction="#startInitiator" text="Start initiator">
+                     <graphic>
+                        <Circle fx:id="circleStartInitiator" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
+                     </graphic></MenuItem>
+                  <MenuItem fx:id="startAcceptor" mnemonicParsing="false" onAction="#startAcceptor" text="Start acceptor">
+                     <graphic>
+                        <Circle fx:id="circleStartAcceptor" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE"/>
+                     </graphic>
+                  </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#stopAcceptor" text="Stop" />
                     </items>

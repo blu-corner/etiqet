@@ -1,23 +1,20 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
-import javafx.scene.control.TableView;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Sphere;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +27,14 @@ import quickfix.fix44.OrderCancelReject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class FIXServerController implements Initializable, Runnable, Application {
+public class FIXServerController implements Initializable ,Runnable, Application {
 
     public static final String NEW = "0000";
     public static final String NONE = "NONE";
@@ -58,7 +56,18 @@ public class FIXServerController implements Initializable, Runnable, Application
     private TableView<Action> actionTableView;
 
     @FXML
-    private Sphere sphere;
+    private Circle circleStartAcceptor;
+    @FXML
+    private Circle circleStartInitiator;
+
+    @FXML
+    private MenuItem startAcceptor;
+
+    @FXML
+    private MenuItem startInitiator;
+
+    @FXML
+    private MenuBar menuBarGeneral;
 
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
@@ -79,8 +88,9 @@ public class FIXServerController implements Initializable, Runnable, Application
     public TableColumn<Action, String> actionPriceTableColumn;
 
     public Circle circle;
-    private Acceptor acceptor;
+    private SocketAcceptor socketAcceptor;
     private Thread orderBook;
+    private SocketInitiator socketInitiator;
 
 
     public void startAcceptor(ActionEvent actionEvent) {
@@ -90,11 +100,14 @@ public class FIXServerController implements Initializable, Runnable, Application
             MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
             LogFactory logFactory = new FileLogFactory(sessionSettings);
             MessageFactory messageFactory = new DefaultMessageFactory();
-            acceptor = new SocketAcceptor(this, messageStoreFactory, sessionSettings, logFactory, messageFactory);
-            acceptor.start();
+            socketAcceptor = new SocketAcceptor(this, messageStoreFactory, sessionSettings, logFactory, messageFactory);
+            socketAcceptor.start();
             orderBook = new Thread(this);
             orderBook.start();
             circle.setFill(Color.GREENYELLOW);
+            this.startAcceptor.setDisable(true);
+            this.startInitiator.setDisable(true);
+            this.circleStartAcceptor.setFill(Color.GREENYELLOW);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,36 +115,46 @@ public class FIXServerController implements Initializable, Runnable, Application
 
     }
 
-    public void stopAcceptor() {
+    public void stop() {
         try {
-            this.acceptor.stop();
-            this.orderBook.stop();
+            if (socketInitiator != null){
+                socketInitiator.stop();
+            }else{
+                socketAcceptor.stop();
+            }
             this.circle.setFill(Color.RED);
+            this.startAcceptor.setDisable(false);
+            this.startInitiator.setDisable(false);
+            this.circleStartAcceptor.setFill(Color.RED);
+            this.circleStartInitiator.setFill(Color.RED);
+            this.orderBook.stop();
+
         } catch (Exception ex) {
             this.logger.error(ex.getLocalizedMessage());
         }
     }
 
     public void startInitiator(ActionEvent actionEvent) {
-        SocketInitiator socketInitiator;
         try {
             URL resource = getClass().getClassLoader().getResource("client.cfg");
             SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
 
-            FileStoreFactory fileStoreFactory = new FileStoreFactory(
-                initiatorSettings);
-            FileLogFactory fileLogFactory = new FileLogFactory(
-                initiatorSettings);
+            FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
+            FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
             MessageFactory messageFactory = new DefaultMessageFactory();
 
             socketInitiator = new SocketInitiator(this, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
             socketInitiator.start();
-            SessionID sessionId = (SessionID) socketInitiator.getSessions().get(0);
+            SessionID sessionId = socketInitiator.getSessions().get(0);
             Session.lookupSession(sessionId).logon();
             Logon logon = new Logon();
             logon.set(new quickfix.field.HeartBtInt(30));
             logon.set(new quickfix.field.ResetSeqNumFlag(true));
             logon.set(new quickfix.field.EncryptMethod(0));
+            circle.setFill(Color.GREENYELLOW);
+            this.startInitiator.setDisable(true);
+            this.startAcceptor.setDisable(true);
+            this.circleStartInitiator.setFill(Color.GREENYELLOW);
 
             try {
                 Session.sendToTarget(logon, sessionId);
@@ -145,6 +168,8 @@ public class FIXServerController implements Initializable, Runnable, Application
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
