@@ -70,6 +70,18 @@ public class FIXServerController implements Initializable ,Runnable, Application
     private MenuBar menuBarGeneral;
 
     @FXML
+    private Tab tabAcceptor;
+
+    @FXML
+    private Tab tabInitiator;
+
+    @FXML
+    private ComboBox comboOrders;
+
+    @FXML
+    private ComboBox comboSide;
+
+    @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
     public TableColumn<Order, String> timeBuyTableColumn;
     public TableColumn<Order, String> sizeBuyTableColumn;
@@ -93,6 +105,8 @@ public class FIXServerController implements Initializable ,Runnable, Application
     private SocketInitiator socketInitiator;
 
 
+
+
     public void startAcceptor(ActionEvent actionEvent) {
         URL resource = getClass().getClassLoader().getResource("server.cfg");
         try {
@@ -108,6 +122,7 @@ public class FIXServerController implements Initializable ,Runnable, Application
             this.startAcceptor.setDisable(true);
             this.startInitiator.setDisable(true);
             this.circleStartAcceptor.setFill(Color.GREENYELLOW);
+            this.tabInitiator.setDisable(true);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,7 +142,10 @@ public class FIXServerController implements Initializable ,Runnable, Application
             this.startInitiator.setDisable(false);
             this.circleStartAcceptor.setFill(Color.RED);
             this.circleStartInitiator.setFill(Color.RED);
+            this.tabAcceptor.setDisable(false);
+            this.tabInitiator.setDisable(false);
             this.orderBook.stop();
+
 
         } catch (Exception ex) {
             this.logger.error(ex.getLocalizedMessage());
@@ -155,6 +173,7 @@ public class FIXServerController implements Initializable ,Runnable, Application
             this.startInitiator.setDisable(true);
             this.startAcceptor.setDisable(true);
             this.circleStartInitiator.setFill(Color.GREENYELLOW);
+            this.tabAcceptor.setDisable(true);
 
             try {
                 Session.sendToTarget(logon, sessionId);
@@ -208,6 +227,11 @@ public class FIXServerController implements Initializable ,Runnable, Application
         actionSizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
         actionPriceTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
 
+        comboOrders.getItems().addAll("NEW ORDER", "CANCEL", "REPLACE");
+        comboOrders.getSelectionModel().select(0);
+
+        comboSide.getItems().addAll("BUY", "SELL");
+        comboSide.getSelectionModel().select(0);
 
     }
 
