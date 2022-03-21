@@ -19,6 +19,7 @@ import quickfix.*;
 import quickfix.field.*;
 import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.Logon;
+import quickfix.fix44.NewOrderSingle;
 import quickfix.fix44.OrderCancelReject;
 
 import java.io.File;
@@ -72,11 +73,18 @@ public class MainController implements Initializable ,Runnable, Application {
     @FXML
     private Tab tabInitiator;
 
-    @FXML
-    private ComboBox comboOrders;
+    @FXML private ComboBox comboOrders;
+    @FXML private ComboBox comboSide;
+    @FXML private TextArea logTextArea;
+    @FXML private TabPane mainTabPane;
 
-    @FXML
-    private ComboBox comboSide;
+    @FXML public TextField textFieldSize;
+    @FXML public TextField textFieldPrice;
+    @FXML public TextField textFieldOrderID;
+    @FXML public TextField textFieldOrigOrderID;
+    @FXML public CheckBox checkBoxAutoGen;
+    @FXML public CheckBox checkBoxResetSeq;
+    @FXML public Button buttonSendOrder;
 
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
@@ -100,8 +108,7 @@ public class MainController implements Initializable ,Runnable, Application {
     private SocketAcceptor socketAcceptor;
     private Thread orderBook;
     private SocketInitiator socketInitiator;
-
-
+    private SessionID sessionId;
 
 
     public void startAcceptor(ActionEvent actionEvent) {
@@ -120,6 +127,7 @@ public class MainController implements Initializable ,Runnable, Application {
             this.startInitiator.setDisable(true);
             this.circleStartAcceptor.setFill(Color.GREENYELLOW);
             this.tabInitiator.setDisable(true);
+            this.mainTabPane.getSelectionModel().select(0);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,7 +168,7 @@ public class MainController implements Initializable ,Runnable, Application {
 
             socketInitiator = new SocketInitiator(this, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
             socketInitiator.start();
-            SessionID sessionId = socketInitiator.getSessions().get(0);
+            sessionId = socketInitiator.getSessions().get(0);
             Session.lookupSession(sessionId).logon();
             Logon logon = new Logon();
             logon.set(new quickfix.field.HeartBtInt(30));
@@ -171,6 +179,7 @@ public class MainController implements Initializable ,Runnable, Application {
             this.startAcceptor.setDisable(true);
             this.circleStartInitiator.setFill(Color.GREENYELLOW);
             this.tabAcceptor.setDisable(true);
+            this.mainTabPane.getSelectionModel().select(1);
 
             try {
                 Session.sendToTarget(logon, sessionId);
@@ -247,11 +256,11 @@ public class MainController implements Initializable ,Runnable, Application {
 
     }
 
-    private ObservableList<Order> getOrders() {
-        ObservableList<Order> orders = FXCollections.observableArrayList();
-        orders.add(new Order("4579", LocalDateTime.now(), 34d, 2d));
-        return orders;
-    }
+//    private ObservableList<Order> getOrders() {
+//        ObservableList<Order> orders = FXCollections.observableArrayList();
+//        orders.add(new Order("4579", LocalDateTime.now(), 34d, 2d));
+//        return orders;
+//    }
 
     public List<Order> getBuy() {
         return buy;
@@ -287,36 +296,43 @@ public class MainController implements Initializable ,Runnable, Application {
 
     @Override
     public void onCreate(SessionID sessionID) {
+        this.logTextArea.appendText(String.format("onCreate -> sessionID: %s\n", sessionID));
         this.logger.info("onCreate -> sessionID: {}", sessionID);
     }
 
     @Override
     public void onLogon(SessionID sessionID) {
+        this.logTextArea.appendText(String.format("onLogon -> sessionID: %s\n", sessionID));
         this.logger.info("onLogon -> sessionID: {}", sessionID);
     }
 
     @Override
     public void onLogout(SessionID sessionID) {
+        this.logTextArea.appendText(String.format("onLogout -> sessionID: %s\n", sessionID));
         this.logger.info("onLogout -> sessionID: {}", sessionID);
     }
 
     @Override
     public void toAdmin(Message message, SessionID sessionID) {
+        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toAdmin -> message: %s / sessionID: %s\n", replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toAdmin -> message: {} / sessionID: {}", replaceSOH(message), sessionID);
     }
 
     @Override
     public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
+        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromAdmin -> message: %s / sessionID: %s\n", replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromAdmin -> message: {} / sessionID: {}", replaceSOH(message), sessionID);
     }
 
     @Override
     public void toApp(Message message, SessionID sessionID) throws DoNotSend {
+        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toApp -> message: %s / sessionID: %s\n", replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toApp -> message: {} / sessionID: {}", replaceSOH(message), sessionID);
     }
 
     @Override
     public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
+        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromApp -> message: %s / sessionID: %s\n", replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromApp -> message: {} / sessionID: {}", replaceSOH(message), sessionID);
         onMessage(message, sessionID);
     }
@@ -649,5 +665,38 @@ public class MainController implements Initializable ,Runnable, Application {
         this.orderBookLooger.info(".....................................ASK.........................................");
         this.orderBookLooger.info(sell.toString());
         this.orderBookLooger.info("=================================================================================\n\n");
+    }
+
+    //initator: send order
+    public void sendOrder(ActionEvent actionEvent) {
+        String textFieldSizeText = this.textFieldSize.getText();
+        String textFieldPrice = this.textFieldPrice.getText();
+        String textFieldOrderID = this.textFieldOrderID.getText();
+        String textFieldOrigOrderID = this.textFieldOrigOrderID.getText();
+        boolean checkBoxAutoGenSelected = checkBoxAutoGen.isSelected();
+        boolean checkBoxResetSeqSelected = checkBoxResetSeq.isSelected();
+        String comboOrdersValue = this.comboOrders.getValue().toString();
+        char comboSideValue = this.comboSide.getValue().toString().equals("SELL") ? '2' : '1';
+
+        switch (comboOrdersValue){
+            case "NEW ORDER":
+                NewOrderSingle newOrderSingle = new NewOrderSingle();
+                newOrderSingle.set(new OrderQty(Double.parseDouble(textFieldSizeText)));
+                newOrderSingle.set(new Price(Double.parseDouble(textFieldPrice)));
+                newOrderSingle.set(new ClOrdID(textFieldOrderID));
+                newOrderSingle.set(new Side(comboSideValue));
+                newOrderSingle.set(new OrdType('2'));
+
+                try {
+                    Session.sendToTarget(newOrderSingle, sessionId);
+                } catch (SessionNotFound sessionNotFound) {
+                    sessionNotFound.printStackTrace();
+                }
+                break;
+        }
+
+
+
+
     }
 }
