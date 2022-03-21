@@ -1742,6 +1742,21 @@ public class EtiqetHandlersTest {
         await().atLeast(Duration.ONE_HUNDRED_MILLISECONDS);
         assertEquals(treatedVar, val);
     }
+    @Test
+    public void testVariableAssignmentFromMessage() throws EtiqetException {
+
+        String clientName = "testClient";
+        Client client = handlers.createClient("testProtocol", clientName);
+        handlers.startClient(clientName);
+
+        handlers.createMessageForClient("TestMsg", clientName,
+            "message1", Optional.of("test=null,messageId=123"));
+        handlers.sendMessage("message1", clientName);
+        handlers.waitForResponseOfType("response1", clientName, "testResponse");
+
+        handlers.compareTimestampEqualsCukeVar("test", "response1", "");
+    }
+
 
     @Test
     public void testSendMessageWithVariables() throws EtiqetException {

@@ -353,23 +353,26 @@ Then check bit flags of "<message>" on field "<field>" are (true|false) at index
 ```
 Checks that the bit flags of a field are true or false at specified indexes.
 
+--
 ```gherkin
 Then set "<varName>"="<value>"
+Then set "<varName>"="<messageID->fieldName>"
 ```
 Sets a variable with specified value, to be later used in message compositions. When read, it must be surrounded by "${varName}" For now it only supports being read at message definition steps, e.g.
 ```gherkin
 Then set "referenceOrdID"="12345"
-Then send a "<msgType>" messages with "OrigClOrdID=${referenceOrdID}"
+Then send a "<msgType>" messages with "OrigClOrdID=${referenceOrdID}" as "testMsg"
 ```
+
 It can also read a variable to set another variable, or include chunks of messages
 ```gherkin
-Then set "referenceOrdID"="12345"
+Then set "referenceOrdID"="testMsg->OrigClOrdID"
 Then set "redundantID"="${referenceOrdID}"
 Then set "commonMsgChunk"="OrigClOrdID=${redundantID},Symbol=EURUSD"
 ...
 Then send a "<msgType>" messages with "ClOrdID=12,${commonMsgChunk},Side=1"
 ```
-
+--
 <!--
 
 THESE STEPS NEED EXPLANATIONS!

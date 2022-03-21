@@ -1489,7 +1489,15 @@ public class EtiqetHandlers {
 
 
     public void setVariable(String variable, String content) {
-        this.variableMap.put(variable, getScenarioVariableContent(content));
+
+        String messageValue;
+        if (content.contains(Separators.LEVEL_SEPARATOR)) {
+            messageValue = searchRhs(content);
+        } else {
+            messageValue = content;
+        }
+
+        this.variableMap.put(variable, getScenarioVariableContent(messageValue));
     }
 
     private String getScenarioVariableContent(String content) {
