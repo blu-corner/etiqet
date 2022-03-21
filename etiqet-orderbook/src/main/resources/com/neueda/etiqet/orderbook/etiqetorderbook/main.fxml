@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="mainVbox" alignment="TOP_CENTER" prefHeight="792.0" prefWidth="841.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.FIXServerController">
+<VBox fx:id="container" prefHeight="800.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.FIXServerController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -29,16 +41,16 @@
                 <Menu mnemonicParsing="false" text="Session">
                     <items>
                         <MenuItem fx:id="startInitiator" mnemonicParsing="false" onAction="#startInitiator" text="Start initiator">
-                     <graphic>
-                        <Circle fx:id="circleStartInitiator" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
-                     </graphic></MenuItem>
-                  <MenuItem fx:id="startAcceptor" mnemonicParsing="false" onAction="#startAcceptor" text="Start acceptor">
-                     <graphic>
-                        <Circle fx:id="circleStartAcceptor" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE"/>
-                     </graphic>
-                  </MenuItem>
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#stopAcceptor" text="Stop" />
+                            <graphic>
+                                <Circle fx:id="circleStartInitiator" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
+                            </graphic></MenuItem>
+                        <MenuItem fx:id="startAcceptor" mnemonicParsing="false" onAction="#startAcceptor" text="Start acceptor">
+                            <graphic>
+                                <Circle fx:id="circleStartAcceptor" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
+                            </graphic>
+                        </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#stop" text="Stop" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false">
@@ -46,7 +58,6 @@
                         <Circle fx:id="circle" fill="#ff2d1f" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
                     </graphic>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Log" />
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
                         <MenuItem mnemonicParsing="false" text="Delete" />
@@ -60,6 +71,127 @@
 
             </menus>
         </MenuBar>
-
+      <TabPane prefHeight="905.0" prefWidth="803.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="tabAcceptor" text="Acceptor">
+            <content>
+                <VBox minHeight="0.0" minWidth="0.0" prefHeight="902.0" prefWidth="802.0">
+                    <FlowPane fx:id="orderBookTableViewLabels" prefHeight="37.0" prefWidth="801.0">
+                        <children>
+                            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="397.0" text="BID">
+                                <font>
+                                    <Font name="System Bold" size="18.0" />
+                                </font>
+                            </Label>
+                            <Label alignment="CENTER" prefHeight="27.0" prefWidth="401.0" text="OFFER">
+                                <font>
+                                    <Font name="System Bold" size="18.0" />
+                                </font>
+                            </Label>
+                        </children>
+                    </FlowPane>
+                    <FlowPane fx:id="orderBookTableViews" prefHeight="300.0" prefWidth="882.0">
+                        <children>
+                            <StackPane prefHeight="300.0" prefWidth="400.0">
+                                <children>
+                                    <TableView fx:id="orderBookBuyTableView">
+                                        <columns>
+                                            <TableColumn fx:id="timeBuyTableColumn" prefWidth="200.0" text="Time" />
+                                            <TableColumn fx:id="orderIDBuyTableColumn" prefWidth="100.0" text="OrderID" />
+                                            <TableColumn fx:id="sizeBuyTableColumn" prefWidth="50.0" text="Size" />
+                                            <TableColumn fx:id="priceBuyTableColumn" prefWidth="50.0" text="Price" />
+                                        </columns>
+                                    </TableView>
+                                </children>
+                            </StackPane>
+                            <StackPane prefHeight="300.0" prefWidth="400.0">
+                                <children>
+                                    <TableView fx:id="orderBookSellTableView">
+                                        <columns>
+                                            <TableColumn fx:id="timeSellTableColumn" prefWidth="200.0" text="Time" />
+                                            <TableColumn fx:id="orderIDSellTableColumn" prefWidth="100.0" text="OrderID" />
+                                            <TableColumn fx:id="sizeSellTableColumn" prefWidth="50.0" text="Size" />
+                                            <TableColumn fx:id="priceSellTableColumn" prefWidth="50.0" text="Price" />
+                                        </columns>
+                                    </TableView>
+                                </children>
+                            </StackPane>
+                        </children>
+                    </FlowPane>
+                    <StackPane prefHeight="386.0" prefWidth="801.0">
+                        <children>
+                            <TableView fx:id="actionTableView" prefHeight="200.0" prefWidth="200.0">
+                                <columns>
+                                    <TableColumn fx:id="actionTimeTableColumn" prefWidth="200.0" text="Time" />
+                                    <TableColumn fx:id="actionTypeTableColumn" prefWidth="100.0" text="Type" />
+                                    <TableColumn fx:id="actionOrderIdBuyTableColumn" prefWidth="100.0" text="BuyID" />
+                                    <TableColumn fx:id="actionOrderIdSellTableColumn" prefWidth="100.0" text="SellID" />
+                                    <TableColumn fx:id="actionOrigOrderIDTableColumn" prefWidth="100.0" text="OrigID" />
+                                    <TableColumn fx:id="actionSizeTableColumn" prefWidth="100.0" text="Size" />
+                                    <TableColumn fx:id="actionPriceTableColumn" prefWidth="100.0" text="Price" />
+                                </columns>
+                            </TableView>
+                        </children>
+                    </StackPane>
+                </VBox>
+            </content>
+          </Tab>
+          <Tab fx:id="tabInitiator" text="Initiator">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="546.0" prefWidth="810.0">
+                     <children>
+                        <GridPane alignment="CENTER" prefHeight="113.0" prefWidth="810.0">
+                          <columnConstraints>
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="72.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="126.0" />
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="77.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="0.0" prefWidth="115.0" />
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="68.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="113.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="41.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="197.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="104.0" minHeight="10.0" prefHeight="68.0" valignment="CENTER" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="158.0" minHeight="10.0" prefHeight="45.0" valignment="CENTER" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label alignment="TOP_LEFT" text="Transaction" />
+                              <ComboBox fx:id="comboOrders" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="1" />
+                              <Label text="Side" GridPane.columnIndex="2" />
+                              <ComboBox fx:id="comboSide" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="3" />
+                              <Label text="Qty" GridPane.columnIndex="4" />
+                              <TextField maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="5" />
+                              <Label text="Price" GridPane.columnIndex="6" />
+                              <TextField maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="7" />
+                              <Label text="OrderID" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <TextField maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <Label text="OrigOrderID" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                              <TextField maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                              <CheckBox mnemonicParsing="false" text="Auto gen orderID" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                              <CheckBox mnemonicParsing="false" text="Reset Seq" GridPane.rowIndex="1" />
+                              <Button mnemonicParsing="false" text="SEND" GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                        <ListView layoutX="14.0" layoutY="161.0" prefHeight="529.0" prefWidth="782.0" />
+                     </children>
+                </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Log">
+                <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextArea editable="false" layoutX="14.0" layoutY="14.0" prefHeight="686.0" prefWidth="790.0" wrapText="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </TextArea>
+                     </children>
+                    </AnchorPane>
+                </content>
+            </Tab>
+        </tabs>
+      </TabPane>
     </children>
 </VBox>
