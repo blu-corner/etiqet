@@ -138,7 +138,7 @@
                                 <id>default-cli</id>
                                 <configuration>
                                     <mainClass>
-                                        com.neueda.etiqet.orderbook.etiqetorderbook/com.neueda.etiqet.orderbook.etiqetorderbook.FIXServerApplication
+                                        com.neueda.etiqet.orderbook.etiqetorderbook/com.neueda.etiqet.orderbook.etiqetorderbook.Main
                                     </mainClass>
                                     <launcher>app</launcher>
                                     <jlinkZipName>app</jlinkZipName>
