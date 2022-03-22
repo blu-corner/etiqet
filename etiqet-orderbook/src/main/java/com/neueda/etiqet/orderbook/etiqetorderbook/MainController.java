@@ -1,5 +1,6 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,11 +17,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
+import quickfix.Message;
+import quickfix.MessageFactory;
 import quickfix.field.*;
-import quickfix.fix44.ExecutionReport;
-import quickfix.fix44.Logon;
-import quickfix.fix44.NewOrderSingle;
-import quickfix.fix44.OrderCancelReject;
+import quickfix.fix44.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,8 +38,6 @@ public class MainController implements Initializable ,Runnable, Application {
     public static final String NONE = "NONE";
     Logger logger = LoggerFactory.getLogger(MainController.class);
     Logger orderBookLooger = LoggerFactory.getLogger("ORDER BOOK");
-    public static final char SOH = '\u0001';
-    public static final char VERTICAL_BAR = '\u007C';
     private List<Order> buy;
     private List<Order> sell;
     private boolean changed;
@@ -109,6 +107,7 @@ public class MainController implements Initializable ,Runnable, Application {
     private Thread orderBook;
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
+    private Initator initator;
 
 
     public void startAcceptor(ActionEvent actionEvent) {
@@ -165,15 +164,16 @@ public class MainController implements Initializable ,Runnable, Application {
             FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
             FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
             MessageFactory messageFactory = new DefaultMessageFactory();
-
-            socketInitiator = new SocketInitiator(this, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
+            socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
             socketInitiator.start();
+
             sessionId = socketInitiator.getSessions().get(0);
-            Session.lookupSession(sessionId).logon();
-            Logon logon = new Logon();
-            logon.set(new quickfix.field.HeartBtInt(30));
-            logon.set(new quickfix.field.ResetSeqNumFlag(true));
-            logon.set(new quickfix.field.EncryptMethod(0));
+//            sendLogoutRequest(sessionId);
+            sendLogonRequest(sessionId);
+
+            //            Thread threadInitiator = new Thread(initator);
+//            threadInitiator.start();
+
             circle.setFill(Color.GREENYELLOW);
             this.startInitiator.setDisable(true);
             this.startAcceptor.setDisable(true);
@@ -181,24 +181,33 @@ public class MainController implements Initializable ,Runnable, Application {
             this.tabAcceptor.setDisable(true);
             this.mainTabPane.getSelectionModel().select(1);
 
-            try {
-                Session.sendToTarget(logon, sessionId);
-            } catch (SessionNotFound sessionNotFound) {
-                sessionNotFound.printStackTrace();
-            }
+//            do{
+//                Thread.sleep(5000);
+//                logger.info("Logged on -> {}", socketInitiator.isLoggedOn());
+//            }while (true);
 
-
-        } catch (ConfigError e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ConfigError | IOException | URISyntaxException | SessionNotFound e) {
             e.printStackTrace();
         }
 
 
+    }
+
+    private void sendLogonRequest(SessionID sessionID)throws SessionNotFound{
+        Logon logon = new Logon();
+        Message.Header header = logon.getHeader();
+        header.setField(new BeginString("FIX.4.4"));
+        logon.set(new HeartBtInt(30));
+        logon.set(new ResetSeqNumFlag(true));
+        logon.set(new EncryptMethod(0));
+        boolean sent = Session.sendToTarget(logon, sessionID);
+        logger.info("Logon message sent: {}", sent);
+    }
+
+    private void sendLogoutRequest(SessionID sessionID)throws SessionNotFound{
+        Logout logout = new Logout();
+        boolean sent = Session.sendToTarget(logout, sessionID);
+        logger.info("Logout message sent: {}", sent);
     }
 
     @Override
@@ -238,6 +247,8 @@ public class MainController implements Initializable ,Runnable, Application {
 
         comboSide.getItems().addAll("BUY", "SELL");
         comboSide.getSelectionModel().select(0);
+
+        initator = new Initator(logTextArea);
 
     }
 
@@ -314,26 +325,26 @@ public class MainController implements Initializable ,Runnable, Application {
 
     @Override
     public void toAdmin(Message message, SessionID sessionID) {
-        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toAdmin -> message: %s / sessionID: %s\n", replaceSOH(message), sessionID));
-        this.logger.info("[>>>>OUT>>>]:toAdmin -> message: {} / sessionID: {}", replaceSOH(message), sessionID);
+        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        this.logger.info("[>>>>OUT>>>]:toAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
     }
 
     @Override
     public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
-        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromAdmin -> message: %s / sessionID: %s\n", replaceSOH(message), sessionID));
-        this.logger.info("[<<<<<IN<<<]:fromAdmin -> message: {} / sessionID: {}", replaceSOH(message), sessionID);
+        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        this.logger.info("[<<<<<IN<<<]:fromAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
     }
 
     @Override
     public void toApp(Message message, SessionID sessionID) throws DoNotSend {
-        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toApp -> message: %s / sessionID: %s\n", replaceSOH(message), sessionID));
-        this.logger.info("[>>>>OUT>>>]:toApp -> message: {} / sessionID: {}", replaceSOH(message), sessionID);
+        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        this.logger.info("[>>>>OUT>>>]:toApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
     }
 
     @Override
     public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
-        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromApp -> message: %s / sessionID: %s\n", replaceSOH(message), sessionID));
-        this.logger.info("[<<<<<IN<<<]:fromApp -> message: {} / sessionID: {}", replaceSOH(message), sessionID);
+        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        this.logger.info("[<<<<<IN<<<]:fromApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
         onMessage(message, sessionID);
     }
 
@@ -537,10 +548,7 @@ public class MainController implements Initializable ,Runnable, Application {
         return executionReport;
     }
 
-    private String replaceSOH(Message message) {
-        String content = message.toString();
-        return content.replace(SOH, VERTICAL_BAR);
-    }
+
 
     private void addNewOrder(CharField side, Order order) {
         if (side.getValue() == (Side.BUY)) {
@@ -680,18 +688,8 @@ public class MainController implements Initializable ,Runnable, Application {
 
         switch (comboOrdersValue){
             case "NEW ORDER":
-                NewOrderSingle newOrderSingle = new NewOrderSingle();
-                newOrderSingle.set(new OrderQty(Double.parseDouble(textFieldSizeText)));
-                newOrderSingle.set(new Price(Double.parseDouble(textFieldPrice)));
-                newOrderSingle.set(new ClOrdID(textFieldOrderID));
-                newOrderSingle.set(new Side(comboSideValue));
-                newOrderSingle.set(new OrdType('2'));
-
-                try {
-                    Session.sendToTarget(newOrderSingle, sessionId);
-                } catch (SessionNotFound sessionNotFound) {
-                    sessionNotFound.printStackTrace();
-                }
+                initator.sendNewOrderSingle(textFieldSizeText,textFieldPrice,textFieldOrderID,
+                    checkBoxAutoGenSelected, checkBoxResetSeqSelected, comboSideValue);
                 break;
         }
 
