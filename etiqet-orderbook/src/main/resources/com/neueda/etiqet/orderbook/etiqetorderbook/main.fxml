@@ -71,7 +71,7 @@
 
             </menus>
         </MenuBar>
-      <TabPane prefHeight="905.0" prefWidth="803.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane prefHeight="905.0" prefWidth="803.0" tabClosingPolicy="UNAVAILABLE" fx:id="mainTabPane">
         <tabs>
           <Tab fx:id="tabAcceptor" text="Acceptor">
             <content>
@@ -161,16 +161,16 @@
                               <Label text="Side" GridPane.columnIndex="2" />
                               <ComboBox fx:id="comboSide" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="3" />
                               <Label text="Qty" GridPane.columnIndex="4" />
-                              <TextField maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="5" />
+                              <TextField fx:id="textFieldSize" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="5" />
                               <Label text="Price" GridPane.columnIndex="6" />
-                              <TextField maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="7" />
+                              <TextField fx:id="textFieldPrice" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="7" />
                               <Label text="OrderID" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                              <TextField maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <TextField fx:id="textFieldOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                               <Label text="OrigOrderID" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                              <TextField maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                              <CheckBox mnemonicParsing="false" text="Auto gen orderID" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-                              <CheckBox mnemonicParsing="false" text="Reset Seq" GridPane.rowIndex="1" />
-                              <Button mnemonicParsing="false" text="SEND" GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                              <TextField fx:id="textFieldOrigOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="checkBoxAutoGen" mnemonicParsing="false" text="Auto gen orderID" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="checkBoxResetSeq" mnemonicParsing="false" text="Reset Seq" GridPane.rowIndex="1" />
+                              <Button fx:id="buttonSendOrder" onAction="#sendOrder" mnemonicParsing="false" text="SEND" GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
                         <ListView layoutX="14.0" layoutY="161.0" prefHeight="529.0" prefWidth="782.0" />
