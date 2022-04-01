@@ -1,8 +1,7 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,13 +23,15 @@ import quickfix.fix44.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MainController implements Initializable ,Runnable, Application {
 
@@ -42,40 +43,20 @@ public class MainController implements Initializable ,Runnable, Application {
     private List<Order> sell;
     private boolean changed;
 
-    @FXML
-    private TableView<Order> orderBookBuyTableView;
-
-    @FXML
-    private TableView<Order> orderBookSellTableView;
-
-    @FXML
-    private TableView<Action> actionTableView;
-
-    @FXML
-    private Circle circleStartAcceptor;
-    @FXML
-    private Circle circleStartInitiator;
-
-    @FXML
-    private MenuItem startAcceptor;
-
-    @FXML
-    private MenuItem startInitiator;
-
-    @FXML
-    private MenuBar menuBarGeneral;
-
-    @FXML
-    private Tab tabAcceptor;
-
-    @FXML
-    private Tab tabInitiator;
-
+    @FXML private TableView<Order> orderBookBuyTableView;
+    @FXML private TableView<Order> orderBookSellTableView;
+    @FXML private TableView<Action> actionTableView;
+    @FXML private Circle circleStartAcceptor;
+    @FXML private Circle circleStartInitiator;
+    @FXML private MenuItem startAcceptor;
+    @FXML private MenuItem startInitiator;
+    @FXML private MenuBar menuBarGeneral;
+    @FXML private Tab tabAcceptor;
+    @FXML private Tab tabInitiator;
     @FXML private ComboBox comboOrders;
     @FXML private ComboBox comboSide;
     @FXML private TextArea logTextArea;
     @FXML private TabPane mainTabPane;
-
     @FXML public TextField textFieldSize;
     @FXML public TextField textFieldPrice;
     @FXML public TextField textFieldOrderID;
@@ -83,6 +64,7 @@ public class MainController implements Initializable ,Runnable, Application {
     @FXML public CheckBox checkBoxAutoGen;
     @FXML public CheckBox checkBoxResetSeq;
     @FXML public Button buttonSendOrder;
+    @FXML public ListView listViewLog;
 
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
@@ -110,9 +92,18 @@ public class MainController implements Initializable ,Runnable, Application {
     private Initator initator;
 
 
+    private void deleteAcceptorStore(){
+        try{
+            Files.deleteIfExists(Path.of("store"));
+        }catch (Exception e){
+
+        }
+    }
+
     public void startAcceptor(ActionEvent actionEvent) {
         URL resource = getClass().getClassLoader().getResource("server.cfg");
         try {
+            deleteAcceptorStore();
             SessionSettings sessionSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
             MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
             LogFactory logFactory = new FileLogFactory(sessionSettings);
@@ -132,6 +123,28 @@ public class MainController implements Initializable ,Runnable, Application {
             e.printStackTrace();
         }
 
+    }
+
+    private void killProcessByPort(int port) {
+        try {
+            ArrayList<Long> pids = new ArrayList<Long>();
+            Stream<ProcessHandle> processStream = ProcessHandle.allProcesses();
+
+            List<ProcessHandle> processHandleList = processStream.collect(Collectors.toList());
+
+            for (ProcessHandle p: processHandleList) {
+                if (p.isAlive()){
+                    ProcessHandle.Info info = p.info();
+                    Optional<String> command = p.info().command();
+                    if (command.get().contains("java")){
+                        String doso = "";
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void stop() {
@@ -200,6 +213,10 @@ public class MainController implements Initializable ,Runnable, Application {
         logon.set(new HeartBtInt(30));
         logon.set(new ResetSeqNumFlag(true));
         logon.set(new EncryptMethod(0));
+        GapFillFlag gapFillFlag = new GapFillFlag();
+        SequenceReset sequenceReset = new SequenceReset();
+        sequenceReset.set(gapFillFlag);
+
         boolean sent = Session.sendToTarget(logon, sessionID);
         logger.info("Logon message sent: {}", sent);
     }
@@ -247,8 +264,9 @@ public class MainController implements Initializable ,Runnable, Application {
 
         comboSide.getItems().addAll("BUY", "SELL");
         comboSide.getSelectionModel().select(0);
+        initator = new Initator(listViewLog);
 
-        initator = new Initator(logTextArea);
+
 
     }
 
@@ -264,7 +282,6 @@ public class MainController implements Initializable ,Runnable, Application {
         } catch (Exception ex) {
             this.logger.error(ex.getLocalizedMessage());
         }
-
     }
 
 //    private ObservableList<Order> getOrders() {
@@ -305,46 +322,56 @@ public class MainController implements Initializable ,Runnable, Application {
         orderBookSellTableView.getSelectionModel().clearAndSelect(0);
     }
 
+
+
     @Override
     public void onCreate(SessionID sessionID) {
-        this.logTextArea.appendText(String.format("onCreate -> sessionID: %s\n", sessionID));
+        //this.logTextArea.appendText(String.format("onCreate -> sessionID: %s\n", sessionID));
         this.logger.info("onCreate -> sessionID: {}", sessionID);
     }
 
     @Override
     public void onLogon(SessionID sessionID) {
-        this.logTextArea.appendText(String.format("onLogon -> sessionID: %s\n", sessionID));
+        //this.logTextArea.appendText(String.format("onLogon -> sessionID: %s\n", sessionID));
         this.logger.info("onLogon -> sessionID: {}", sessionID);
     }
 
     @Override
     public void onLogout(SessionID sessionID) {
-        this.logTextArea.appendText(String.format("onLogout -> sessionID: %s\n", sessionID));
+        //this.logTextArea.appendText(String.format("onLogout -> sessionID: %s\n", sessionID));
         this.logger.info("onLogout -> sessionID: {}", sessionID);
     }
 
     @Override
     public void toAdmin(Message message, SessionID sessionID) {
-        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+//        message.setBoolean(ResetSeqNumFlag.FIELD, true);
+        //this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
+        this.messageAnalizer(message, Constants.OUT);
+
     }
 
     @Override
     public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
-        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        //this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
+        this.messageAnalizer(message, Constants.IN);
+
     }
 
     @Override
     public void toApp(Message message, SessionID sessionID) throws DoNotSend {
-        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        //this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
+        this.messageAnalizer(message, Constants.OUT);
+
     }
 
     @Override
     public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
-        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        //this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
+        this.messageAnalizer(message, Constants.IN);
         onMessage(message, sessionID);
     }
 
@@ -692,9 +719,15 @@ public class MainController implements Initializable ,Runnable, Application {
                     checkBoxAutoGenSelected, checkBoxResetSeqSelected, comboSideValue);
                 break;
         }
+    }
 
 
+    public void messageAnalizer(Message message, String direction){
+        listViewLog.getItems().add(String.format("%s %s",direction, Utils.replaceSOH(message)));
+        if (direction.equals(Constants.OUT)){
 
+        }else{
 
+        }
     }
 }

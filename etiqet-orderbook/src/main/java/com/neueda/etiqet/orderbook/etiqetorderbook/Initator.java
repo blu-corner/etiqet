@@ -1,6 +1,8 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +10,11 @@ import quickfix.*;
 import quickfix.field.*;
 import quickfix.fix44.NewOrderSingle;
 
+import java.io.IOException;
+
 public class Initator implements Application, Runnable{
 
+    private final ListView listViewActions;
     private Logger logger = LoggerFactory.getLogger(Initator.class);
 
     public static String size;
@@ -19,54 +24,59 @@ public class Initator implements Application, Runnable{
     public static boolean autoGen;
     public static boolean restSeq;
     public static char side;
-    private final TextArea logTextArea;
+    private TextArea logTextArea;
     private SessionID sessionID;
 
-    public Initator(TextArea logTextArea) {
-        this.logTextArea = logTextArea;
+    public Initator(ListView listViewActions) {
+        this.listViewActions = listViewActions;
     }
 
     @Override
     public void onCreate(SessionID sessionID) {
-        this.logTextArea.appendText(String.format("onCreate -> sessionID: %s\n", sessionID));
+        //this.logTextArea.appendText(String.format("onCreate -> sessionID: %s\n", sessionID));
         this.logger.info("onCreate -> sessionID: {}", sessionID);
         this.sessionID = sessionID;
     }
 
     @Override
     public void onLogon(SessionID sessionID) {
-        this.logTextArea.appendText(String.format("onLogon -> sessionID: %s\n", sessionID));
+        //this.logTextArea.appendText(String.format("onLogon -> sessionID: %s\n", sessionID));
         this.logger.info("onLogon -> sessionID: {}", sessionID);
     }
 
     @Override
     public void onLogout(SessionID sessionID) {
-        this.logTextArea.appendText(String.format("onLogout -> sessionID: %s\n", sessionID));
+        //this.logTextArea.appendText(String.format("onLogout -> sessionID: %s\n", sessionID));
         this.logger.info("onLogout -> sessionID: {}", sessionID);
     }
 
     @Override
     public void toAdmin(Message message, SessionID sessionID) {
-        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+//        message.setBoolean(ResetSeqNumFlag.FIELD, true);
+        //this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
+        this.messageAnalizer(message, Constants.OUT);
     }
 
     @Override
     public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
-        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        //this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
+        this.messageAnalizer(message, Constants.IN);
     }
 
     @Override
     public void toApp(Message message, SessionID sessionID) throws DoNotSend {
-        this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        //this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
+        this.messageAnalizer(message, Constants.OUT);
     }
 
     @Override
     public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
-        this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
+        //this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
+        this.messageAnalizer(message, Constants.IN);
     }
 
     public void sendNewOrderSingle(String size, String price, String orderOd, boolean autoGen, boolean resetSeq, char side){
@@ -79,6 +89,7 @@ public class Initator implements Application, Runnable{
         newOrderSingle.set(new HandlInst('3'));
         newOrderSingle.set(new TransactTime());
         newOrderSingle.set(new Symbol("N/A"));
+
 
         try {
             Session.sendToTarget(newOrderSingle, sessionID);
@@ -97,6 +108,16 @@ public class Initator implements Application, Runnable{
 
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    public void messageAnalizer(Message message, String direction){
+        listViewActions.getItems().add(String.format("%s %s",direction, Utils.replaceSOH(message)));
+        if (direction.equals(">>>")){
+
+        }else{
+
         }
     }
 }
