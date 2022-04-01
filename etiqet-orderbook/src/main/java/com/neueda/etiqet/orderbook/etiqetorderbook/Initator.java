@@ -4,6 +4,10 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
@@ -15,6 +19,7 @@ import java.io.IOException;
 public class Initator implements Application, Runnable{
 
     private final ListView listViewActions;
+    private final ListView listViewLog;
     private Logger logger = LoggerFactory.getLogger(Initator.class);
 
     public static String size;
@@ -27,8 +32,9 @@ public class Initator implements Application, Runnable{
     private TextArea logTextArea;
     private SessionID sessionID;
 
-    public Initator(ListView listViewActions) {
+    public Initator(ListView listViewActions, ListView listViewLog) {
         this.listViewActions = listViewActions;
+        this.listViewLog= listViewLog;
     }
 
     @Override
@@ -113,11 +119,24 @@ public class Initator implements Application, Runnable{
 
 
     public void messageAnalizer(Message message, String direction){
-        listViewActions.getItems().add(String.format("%s %s",direction, Utils.replaceSOH(message)));
-        if (direction.equals(">>>")){
+        listViewLog.getItems().add(String.format("%s %s",direction, Utils.replaceSOH(message)));
+        try {
+            IntField msgSeqNum = message.getHeader().getField(new MsgSeqNum());
+            String strMsgSeqNum = "[" + msgSeqNum + "]" ;
+            StringField msgType = message.getHeader().getField(new MsgType());
+            String msgTypeDescription = Constants.hmMsgType.get(msgType.getValue());
+            if (msgType.getValue().equals(Constants.EXECUTION_REPORT)) {
+                CharField ordStatus = message.getField(new OrdStatus());
+                CharField execType = message.getField(new ExecType());
+                String ordStatusDescription = Constants.hmOrdStatus.get(String.valueOf(ordStatus.getValue()));
+                String execTypeDescription = Constants.hmExecType.get(String.valueOf(execType.getValue()));
 
-        }else{
-
+                msgTypeDescription += " -> " + execTypeDescription + " : " + ordStatusDescription;
+            }
+            listViewActions.getItems().add(String.format("%s %s %s",direction,strMsgSeqNum, msgTypeDescription));
+        } catch (FieldNotFound e) {
+            e.printStackTrace();
         }
+
     }
 }

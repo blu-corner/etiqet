@@ -2,6 +2,7 @@ package com.neueda.etiqet.orderbook.etiqetorderbook;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,15 +34,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MainController implements Initializable ,Runnable, Application {
+public class MainController implements Initializable, Application {
 
     public static final String NEW = "0000";
     public static final String NONE = "NONE";
     Logger logger = LoggerFactory.getLogger(MainController.class);
-    Logger orderBookLooger = LoggerFactory.getLogger("ORDER BOOK");
     private List<Order> buy;
     private List<Order> sell;
     private boolean changed;
+
+    public boolean isChanged() {
+        return changed;
+    }
+
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+    }
 
     @FXML private TableView<Order> orderBookBuyTableView;
     @FXML private TableView<Order> orderBookSellTableView;
@@ -65,6 +73,7 @@ public class MainController implements Initializable ,Runnable, Application {
     @FXML public CheckBox checkBoxResetSeq;
     @FXML public Button buttonSendOrder;
     @FXML public ListView listViewLog;
+    @FXML public ListView listViewActions;
 
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
@@ -110,8 +119,10 @@ public class MainController implements Initializable ,Runnable, Application {
             MessageFactory messageFactory = new DefaultMessageFactory();
             socketAcceptor = new SocketAcceptor(this, messageStoreFactory, sessionSettings, logFactory, messageFactory);
             socketAcceptor.start();
-            orderBook = new Thread(this);
+            OrderBookThread orderBookThread = new OrderBookThread(this);
+            orderBook = new Thread(orderBookThread);
             orderBook.start();
+
             circle.setFill(Color.GREENYELLOW);
             this.startAcceptor.setDisable(true);
             this.startInitiator.setDisable(true);
@@ -264,7 +275,7 @@ public class MainController implements Initializable ,Runnable, Application {
 
         comboSide.getItems().addAll("BUY", "SELL");
         comboSide.getSelectionModel().select(0);
-        initator = new Initator(listViewLog);
+        initator = new Initator(listViewActions, listViewLog);
 
 
 
@@ -375,27 +386,7 @@ public class MainController implements Initializable ,Runnable, Application {
         onMessage(message, sessionID);
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                Thread.sleep(1000);
-                if (this.changed) {
-                    System.out.print("\n\n");
-                    this.orderBookLooger.info("=================================================================================");
-                    this.orderBookLooger.info(".....................................BID.........................................");
-                    this.getBuy().stream().sorted(Comparator.comparing(Order::getPrice)).forEach(System.out::println);
-                    this.orderBookLooger.info(".....................................OFFER.......................................");
-                    this.getSell().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).forEach(System.out::println);
-                    this.orderBookLooger.info("=================================================================================\n\n");
-                    this.changed = false;
-                }
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     private void onMessage(Message message, SessionID sessionID) throws FieldNotFound, IncorrectTagValue {
 //        StringField beginString = message.getHeader().getField(new BeginString());
@@ -694,12 +685,12 @@ public class MainController implements Initializable ,Runnable, Application {
 
     private void printTrade(Order buy, Order sell) {
         System.out.print("\n\n");
-        this.orderBookLooger.info("=================================================================================");
-        this.orderBookLooger.info(".....................................BID.........................................");
-        this.orderBookLooger.info(buy.toString());
-        this.orderBookLooger.info(".....................................ASK.........................................");
-        this.orderBookLooger.info(sell.toString());
-        this.orderBookLooger.info("=================================================================================\n\n");
+        Constants.orderBookLooger.info("=================================================================================");
+        Constants.orderBookLooger.info(".....................................BID.........................................");
+        Constants.orderBookLooger.info(buy.toString());
+        Constants.orderBookLooger.info(".....................................ASK.........................................");
+        Constants.orderBookLooger.info(sell.toString());
+        Constants.orderBookLooger.info("=================================================================================\n\n");
     }
 
     //initator: send order
@@ -724,10 +715,5 @@ public class MainController implements Initializable ,Runnable, Application {
 
     public void messageAnalizer(Message message, String direction){
         listViewLog.getItems().add(String.format("%s %s",direction, Utils.replaceSOH(message)));
-        if (direction.equals(Constants.OUT)){
-
-        }else{
-
-        }
     }
 }
