@@ -16,7 +16,7 @@ import quickfix.fix44.NewOrderSingle;
 
 import java.io.IOException;
 
-public class Initator implements Application, Runnable{
+public class Initator implements Application{
 
     private final ListView listViewActions;
     private final ListView listViewLog;
@@ -104,18 +104,18 @@ public class Initator implements Application, Runnable{
         }
     }
 
-    @Override
-    public void run() {
-        try {
-            while(true){
-                Thread.sleep(5000);
-                System.out.println("INITIATOR RUNNING");
-            }
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Override
+//    public void run() {
+//        try {
+//            while(true){
+//                Thread.sleep(5000);
+//                System.out.println("INITIATOR RUNNING");
+//            }
+//
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     public void messageAnalizer(Message message, String direction){

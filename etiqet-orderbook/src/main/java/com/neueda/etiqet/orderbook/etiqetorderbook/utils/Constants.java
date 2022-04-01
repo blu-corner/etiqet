@@ -13,7 +13,8 @@ public class Constants {
     public static final HashMap<String,String> hmOrdStatus;
     public static final HashMap<String,String> hmExecType;
     public static final String EXECUTION_REPORT = "8";
-
+    public static final String NEW = "0000";
+    public static final String NONE = "NONE";
     static {
         hmMsgType = new HashMap<>();
         hmMsgType.put("0", "HEARTBEAT");
