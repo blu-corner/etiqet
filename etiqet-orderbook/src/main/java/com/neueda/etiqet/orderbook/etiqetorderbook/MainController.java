@@ -121,6 +121,7 @@ public class MainController implements Initializable{
             socketAcceptor.start();
             OrderBookThread orderBookThread = new OrderBookThread(this);
             orderBook = new Thread(orderBookThread);
+            orderBook.setDaemon(true);
             orderBook.start();
 
             circle.setFill(Color.GREENYELLOW);
@@ -195,9 +196,6 @@ public class MainController implements Initializable{
 //            sendLogoutRequest(sessionId);
             sendLogonRequest(sessionId);
 
-            //            Thread threadInitiator = new Thread(initator);
-//            threadInitiator.start();
-
             circle.setFill(Color.GREENYELLOW);
             this.startInitiator.setDisable(true);
             this.startAcceptor.setDisable(true);
@@ -224,12 +222,23 @@ public class MainController implements Initializable{
         logon.set(new HeartBtInt(30));
         logon.set(new ResetSeqNumFlag(true));
         logon.set(new EncryptMethod(0));
-        GapFillFlag gapFillFlag = new GapFillFlag();
-        SequenceReset sequenceReset = new SequenceReset();
-        sequenceReset.set(gapFillFlag);
-
+        logon.set(new ResetSeqNumFlag(true));
         boolean sent = Session.sendToTarget(logon, sessionID);
         logger.info("Logon message sent: {}", sent);
+    }
+
+
+    private void sendSeqReset(SessionID sessionID)throws SessionNotFound{
+        SequenceReset sequenceReset = new SequenceReset();
+//        GapFillFlag gapFillFlag = new GapFillFlag();
+        NewSeqNo newSeqNo = new NewSeqNo(10);
+//        sequenceReset.set(gapFillFlag);
+        sequenceReset.set(newSeqNo);
+        MsgSeqNum msgSeqNum = new MsgSeqNum(10);
+
+
+        boolean sent = Session.sendToTarget(sequenceReset, sessionID);
+        logger.info("Sequence reset message sent: {}", sent);
     }
 
     private void sendLogoutRequest(SessionID sessionID)throws SessionNotFound{

@@ -2,12 +2,15 @@ package com.neueda.etiqet.orderbook.etiqetorderbook;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
@@ -119,12 +122,12 @@ public class Initator implements Application{
 
 
     public void messageAnalizer(Message message, String direction){
-        listViewLog.getItems().add(String.format("%s %s",direction, Utils.replaceSOH(message)));
         try {
             IntField msgSeqNum = message.getHeader().getField(new MsgSeqNum());
             String strMsgSeqNum = "[" + msgSeqNum + "]" ;
             StringField msgType = message.getHeader().getField(new MsgType());
             String msgTypeDescription = Constants.hmMsgType.get(msgType.getValue());
+            String text = getText(message);
             if (msgType.getValue().equals(Constants.EXECUTION_REPORT)) {
                 CharField ordStatus = message.getField(new OrdStatus());
                 CharField execType = message.getField(new ExecType());
@@ -133,9 +136,33 @@ public class Initator implements Application{
 
                 msgTypeDescription += " -> " + execTypeDescription + " : " + ordStatusDescription;
             }
-            listViewActions.getItems().add(String.format("%s %s %s",direction,strMsgSeqNum, msgTypeDescription));
+            msgTypeDescription = StringUtils.isEmpty(text) ? msgTypeDescription : msgTypeDescription + text;
+            String finalMsgTypeDescription = msgTypeDescription;
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    Platform.runLater( () -> {
+                        listViewLog.getItems().add(String.format("%s %s",direction, Utils.replaceSOH(message)));
+                        listViewActions.getItems().add(String.format("%s %s %s",direction,strMsgSeqNum, finalMsgTypeDescription));
+                    });
+                    return null;
+                }
+            };
+
+            task.run();
+
         } catch (FieldNotFound e) {
             e.printStackTrace();
+        }
+
+    }
+
+    private String getText(Message message) throws FieldNotFound {
+        try{
+            StringField text = message.getField(new Text());
+            return " : " + text.getValue();
+        }catch (Exception e){
+            return "";
         }
 
     }

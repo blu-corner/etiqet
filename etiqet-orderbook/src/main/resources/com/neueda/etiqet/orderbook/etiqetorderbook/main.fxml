@@ -26,6 +26,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ScrollPane?>
 <VBox fx:id="container" prefHeight="800.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.MainController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -173,22 +174,21 @@
                               <Button fx:id="buttonSendOrder" onAction="#sendOrder" mnemonicParsing="false" text="SEND" GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
-                        <ListView layoutX="14.0" layoutY="161.0" prefHeight="529.0" prefWidth="782.0" />
+                        <ListView fx:id="listViewActions" layoutX="14.0" layoutY="161.0" prefHeight="529.0" prefWidth="782.0" />
                      </children>
                 </AnchorPane>
             </content>
           </Tab>
             <Tab text="Log">
                 <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TextArea fx:id="logTextArea" editable="false" layoutX="14.0" layoutY="14.0" prefHeight="686.0" prefWidth="790.0" wrapText="true">
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                        </TextArea>
-                     </children>
-                    </AnchorPane>
+<!--                    <ScrollPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">-->
+<!--                        <TextArea fx:id="logTextArea" editable="false" layoutX="14.0" layoutY="14.0" prefHeight="686.0" prefWidth="790.0" wrapText="true">-->
+<!--                           <font>-->
+<!--                              <Font size="13.0" />-->
+<!--                           </font>-->
+<!--                        </TextArea>-->
+<!--                    </ScrollPane>-->
+                    <ListView fx:id="listViewLog" layoutX="14.0" layoutY="161.0" prefHeight="529.0" prefWidth="782.0" />
                 </content>
             </Tab>
         </tabs>

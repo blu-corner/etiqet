@@ -2,6 +2,8 @@ package com.neueda.etiqet.orderbook.etiqetorderbook;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -385,7 +387,16 @@ public class Acceptor implements Application {
 
 
     public void messageAnalizer(Message message, String direction){
-        mainController.listViewLog.getItems().add(String.format("%s %s",direction, Utils.replaceSOH(message)));
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Platform.runLater(() -> {
+                    mainController.listViewLog.getItems().add(String.format("%s %s",direction, Utils.replaceSOH(message)));
+                });
+                return null;
+            }
+        };
+        task.run();
     }
 
 }
