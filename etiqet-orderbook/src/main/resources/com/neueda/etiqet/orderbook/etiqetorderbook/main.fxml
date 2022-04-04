@@ -14,8 +14,8 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
@@ -26,7 +26,6 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.ScrollPane?>
 <VBox fx:id="container" prefHeight="800.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.MainController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -59,9 +58,10 @@
                         <Circle fx:id="circle" fill="#ff2d1f" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
                     </graphic>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="false" text="Options">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Delete" />
+                        <MenuItem mnemonicParsing="false" text="Clear acceptor log" />
+                  <MenuItem mnemonicParsing="false" text="Clear initiator log" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -72,7 +72,7 @@
 
             </menus>
         </MenuBar>
-      <TabPane prefHeight="905.0" prefWidth="803.0" tabClosingPolicy="UNAVAILABLE" fx:id="mainTabPane">
+      <TabPane fx:id="mainTabPane" prefHeight="752.0" prefWidth="810.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab fx:id="tabAcceptor" text="Acceptor">
             <content>
@@ -139,42 +139,61 @@
           </Tab>
           <Tab fx:id="tabInitiator" text="Initiator">
             <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="546.0" prefWidth="810.0">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="643.0" prefWidth="810.0">
                      <children>
-                        <GridPane alignment="CENTER" prefHeight="113.0" prefWidth="810.0">
+                        <GridPane alignment="CENTER" layoutY="21.0" prefHeight="50.0" prefWidth="810.0">
                           <columnConstraints>
-                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="72.0" />
-                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="126.0" />
-                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="77.0" />
-                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="0.0" prefWidth="115.0" />
-                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="68.0" />
-                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="113.0" />
-                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="41.0" />
-                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="197.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="122.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="113.0" />
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="81.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="0.0" prefWidth="68.0" />
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="96.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="99.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="74.0" />
                           </columnConstraints>
                           <rowConstraints>
-                            <RowConstraints maxHeight="104.0" minHeight="10.0" prefHeight="68.0" valignment="CENTER" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="158.0" minHeight="10.0" prefHeight="45.0" valignment="CENTER" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="108.0" minHeight="10.0" prefHeight="66.0" valignment="CENTER" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label alignment="TOP_LEFT" text="Transaction" />
-                              <ComboBox fx:id="comboOrders" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="1" />
-                              <Label text="Side" GridPane.columnIndex="2" />
-                              <ComboBox fx:id="comboSide" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="3" />
-                              <Label text="Qty" GridPane.columnIndex="4" />
-                              <TextField fx:id="textFieldSize" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="5" />
-                              <Label text="Price" GridPane.columnIndex="6" />
-                              <TextField fx:id="textFieldPrice" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="7" />
-                              <Label text="OrderID" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                              <TextField fx:id="textFieldOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                              <Label text="OrigOrderID" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                              <TextField fx:id="textFieldOrigOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                              <CheckBox fx:id="checkBoxAutoGen" mnemonicParsing="false" text="Auto gen orderID" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-                              <CheckBox fx:id="checkBoxResetSeq" mnemonicParsing="false" text="Reset Seq" GridPane.rowIndex="1" />
-                              <Button fx:id="buttonSendOrder" onAction="#sendOrder" mnemonicParsing="false" text="SEND" GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                              <ComboBox fx:id="comboOrders" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" />
+                              <ComboBox fx:id="comboSide" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                              <TextField fx:id="textFieldSize" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="58.0" promptText="Qty" GridPane.columnIndex="2">
+                                 <tooltip>
+                                    <Tooltip text="Quantity">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip></TextField>
+                              <TextField fx:id="textFieldPrice" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="55.0" promptText="Price" GridPane.columnIndex="3" GridPane.halignment="CENTER">
+                                 <tooltip>
+                                    <Tooltip text="Price">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip></TextField>
+                              <TextField fx:id="textFieldOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="81.0" promptText="OrderID" GridPane.columnIndex="5" GridPane.halignment="CENTER">
+                                 <tooltip>
+                                    <Tooltip text="OrderID" />
+                                 </tooltip></TextField>
+                              <TextField fx:id="textFieldOrigOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="84.0" promptText="OrigOrderID" GridPane.columnIndex="4">
+                                 <tooltip>
+                                    <Tooltip text="Origin OrderID">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip></TextField>
+                              <CheckBox fx:id="checkBoxAutoGen" mnemonicParsing="false" prefHeight="17.0" prefWidth="102.0" text="Auto gen" GridPane.columnIndex="6" GridPane.halignment="CENTER" />
+                              <Button fx:id="buttonSendOrder" mnemonicParsing="false" onAction="#sendOrder" text="SEND" GridPane.columnIndex="8" GridPane.halignment="CENTER" />
+                              <CheckBox fx:id="checkBoxResetSeq" mnemonicParsing="false" text="Reset Seq" GridPane.columnIndex="7" GridPane.halignment="CENTER" />
                            </children>
                         </GridPane>
-                        <ListView fx:id="listViewActions" layoutX="14.0" layoutY="161.0" prefHeight="529.0" prefWidth="782.0" />
+                        <ListView fx:id="listViewActions" layoutX="14.0" layoutY="109.0" prefHeight="584.0" prefWidth="782.0" />
+                        <Button layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="CLEAR" />
                      </children>
                 </AnchorPane>
             </content>

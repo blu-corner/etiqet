@@ -3431,3 +3431,81 @@ java.lang.NullPointerException
 20220402-17:33:59: Initiated logout request
 20220402-17:33:59: Received logout response
 20220402-17:33:59: Disconnecting: Received logout response
+20220402-17:50:11: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220402-17:50:11: Created session: FIX.4.4:CLIENT->SERVER
+20220402-17:50:11: Configured socket addresses for session: [/127.0.0.1:55555]
+20220402-17:50:11: MINA session created: local=/127.0.0.1:53726, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220402-17:50:11: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220402-17:50:11: Received logon
+20220402-17:51:24: Disconnecting: Encountered END_OF_STREAM
+20220402-17:51:24: MINA session created: local=/127.0.0.1:53750, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220402-17:51:25: Initiated logon request
+20220402-17:51:25: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220402-17:51:25: Received logon
+20220402-17:57:33: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220402-17:57:33: Created session: FIX.4.4:CLIENT->SERVER
+20220402-17:57:33: Configured socket addresses for session: [/127.0.0.1:55555]
+20220402-17:57:33: MINA session created: local=/127.0.0.1:53832, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220402-17:57:33: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220402-17:57:33: Received logon
+20220402-17:58:08: Disconnecting: Encountered END_OF_STREAM
+20220402-17:59:24: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220402-17:59:24: Created session: FIX.4.4:CLIENT->SERVER
+20220402-17:59:25: Configured socket addresses for session: [/127.0.0.1:55555]
+20220402-17:59:25: MINA session created: local=/127.0.0.1:53863, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220402-17:59:25: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220402-17:59:25: Received logon
+20220402-18:00:37: Disconnecting: Encountered END_OF_STREAM
+20220402-18:00:38: MINA session created: local=/127.0.0.1:53898, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220402-18:00:39: Initiated logon request
+20220402-18:00:39: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220402-18:00:39: Received logon
+20220402-18:00:46: Initiated logout request
+20220402-18:00:46: Received logout response
+20220402-18:00:46: Disconnecting: Received logout response
+20220402-18:13:52: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220402-18:13:52: Created session: FIX.4.4:CLIENT->SERVER
+20220402-18:13:52: Configured socket addresses for session: [/127.0.0.1:55555]
+20220402-18:13:52: MINA session created: local=/127.0.0.1:53970, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220402-18:13:52: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220402-18:13:52: Received logon
+20220402-18:15:04: Disconnecting: Encountered END_OF_STREAM
+20220402-18:15:05: MINA session created: local=/127.0.0.1:54020, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220402-18:15:06: Initiated logon request
+20220402-18:15:06: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220402-18:15:06: Received logon
+20220402-18:16:11: Initiated logout request
+20220402-18:16:11: Received logout response
+20220402-18:16:11: Disconnecting: Received logout response
+20220402-18:18:34: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220402-18:18:34: Created session: FIX.4.4:CLIENT->SERVER
+20220402-18:18:34: Configured socket addresses for session: [/127.0.0.1:55555]
+20220402-18:18:34: No responder, not sending message: 8=FIX.4.49=7335=A34=149=CLIENT52=20220402-18:18:34.51256=SERVER98=0108=30141=Y10=192
+20220402-18:18:36: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220402-18:18:41: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-09:19:35: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-09:19:35: Session state is not current; resetting FIX.4.4:CLIENT->SERVER
+20220404-09:19:35: Created session: FIX.4.4:CLIENT->SERVER
+20220404-09:19:35: Configured socket addresses for session: [/127.0.0.1:55555]
+20220404-09:19:35: MINA session created: local=/127.0.0.1:64481, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220404-09:19:35: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-09:19:35: Received logon
+20220404-09:19:44: Disconnecting: Encountered END_OF_STREAM
+20220404-09:38:44: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-09:38:44: Created session: FIX.4.4:CLIENT->SERVER
+20220404-09:38:44: Configured socket addresses for session: [/127.0.0.1:55555]
+20220404-09:38:44: No responder, not sending message: 8=FIX.4.49=7335=A34=149=CLIENT52=20220404-09:38:44.87256=SERVER98=0108=30141=Y10=206
+20220404-09:38:46: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-09:40:00: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-09:40:00: Created session: FIX.4.4:CLIENT->SERVER
+20220404-09:40:00: Configured socket addresses for session: [/127.0.0.1:55555]
+20220404-09:40:00: No responder, not sending message: 8=FIX.4.49=7335=A34=149=CLIENT52=20220404-09:40:00.58556=SERVER98=0108=30141=Y10=192
+20220404-09:40:02: Pending connection not established after 2008 ms.
+20220404-09:40:03: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-09:40:07: Pending connection not established after 2002 ms.
+20220404-09:40:08: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-09:40:12: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-09:40:17: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-09:40:22: Pending connection not established after 2001 ms.
+20220404-09:40:23: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-09:40:27: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)

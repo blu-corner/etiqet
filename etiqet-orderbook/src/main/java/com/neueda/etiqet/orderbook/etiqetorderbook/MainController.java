@@ -1,8 +1,6 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
-import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,7 +11,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
@@ -29,13 +26,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MainController implements Initializable{
-
 
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
@@ -109,10 +104,11 @@ public class MainController implements Initializable{
     }
 
     public void startAcceptor(ActionEvent actionEvent) {
-        URL resource = getClass().getClassLoader().getResource("server.cfg");
+        URL resource = getClass().getClassLoader().getResource(Constants.SERVER_CFG);
         try {
-            deleteAcceptorStore();
+
             SessionSettings sessionSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
+            setPort(sessionSettings, Constants.ACCEPTOR_ROLE);
             MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
             LogFactory logFactory = new FileLogFactory(sessionSettings);
             MessageFactory messageFactory = new DefaultMessageFactory();
@@ -135,6 +131,30 @@ public class MainController implements Initializable{
             e.printStackTrace();
         }
 
+    }
+
+    private void setPort(SessionSettings sessionSettings, String role) {
+        TextInputDialog dialog = null;
+        if (role.equals(Constants.ACCEPTOR_ROLE)){
+            String port = sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT);
+            dialog = new TextInputDialog(port);
+            dialog.setTitle(Constants.ACCEPTOR_PORT_DIALOG_TITLE);
+//            dialog.initStyle(StageStyle.UTILITY);
+            dialog.setHeaderText(Constants.ACCEPTOR_PORT_DIALOG_HEADER);
+            dialog.setContentText(Constants.ACCEPTOR_PORT_DIALOG_TEXT);
+        }else{
+            String port = sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT);
+            dialog = new TextInputDialog(port);
+            dialog.setTitle(Constants.INITIATOR_PORT_DIALOG_TITLE);
+//            dialog.initStyle(StageStyle.UTILITY);
+            dialog.setHeaderText(Constants.INITIATOR_PORT_DIALOG_HEADER);
+            dialog.setContentText(Constants.INITIATOR_PORT_DIALOG_TEXT);
+        }
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(s -> {
+            sessionSettings.getDefaultProperties().setProperty(Constants.SOCKET_ACCEPTOR_PORT, result.get());
+        });
     }
 
     private void killProcessByPort(int port) {
@@ -183,9 +203,9 @@ public class MainController implements Initializable{
 
     public void startInitiator(ActionEvent actionEvent) {
         try {
-            URL resource = getClass().getClassLoader().getResource("client.cfg");
+            URL resource = getClass().getClassLoader().getResource(Constants.CLIENT_CFG);
             SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
-
+            setPort(initiatorSettings, Constants.INITIATOR_ROLE);
             FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
             FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
             MessageFactory messageFactory = new DefaultMessageFactory();

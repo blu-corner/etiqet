@@ -15,6 +15,19 @@ public class Constants {
     public static final String EXECUTION_REPORT = "8";
     public static final String NEW = "0000";
     public static final String NONE = "NONE";
+    public static final String SOCKET_ACCEPTOR_PORT = "SocketAcceptPort";
+    public static final String ACCEPTOR_PORT_DIALOG_TITLE = "ACCEPTOR PORT";
+    public static final String ACCEPTOR_PORT_DIALOG_HEADER = "Introduce port to listen on";
+    public static final String ACCEPTOR_PORT_DIALOG_TEXT = "Port:";
+    public static final String ACCEPTOR_ROLE = "ACCEPTOR";
+    public static final String INITIATOR_ROLE = "INITIATOR";
+    public static final String CLIENT_CFG = "client.cfg";
+    public static final String SERVER_CFG = "server.cfg";
+    public static final String SOCKET_INITIATOR_PORT = "SocketConnectPort";
+    public static final String INITIATOR_PORT_DIALOG_TITLE = "INITIATOR PORT";
+    public static final String INITIATOR_PORT_DIALOG_HEADER = "Introduce port to connect";
+    public static final String INITIATOR_PORT_DIALOG_TEXT = "Port:";
+
     static {
         hmMsgType = new HashMap<>();
         hmMsgType.put("0", "HEARTBEAT");
