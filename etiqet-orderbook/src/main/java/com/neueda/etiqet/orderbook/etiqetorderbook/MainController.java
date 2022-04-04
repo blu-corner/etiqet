@@ -2,6 +2,7 @@ package com.neueda.etiqet.orderbook.etiqetorderbook;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import javafx.event.ActionEvent;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -36,7 +37,7 @@ public class MainController implements Initializable{
     private List<Order> buy;
     private List<Order> sell;
     private boolean changed;
-
+    private boolean useDefaultPort;
     public boolean isChanged() {
         return changed;
     }
@@ -68,6 +69,8 @@ public class MainController implements Initializable{
     @FXML public Button buttonSendOrder;
     @FXML public ListView listViewLog;
     @FXML public ListView listViewActions;
+    @FXML public CheckMenuItem checkMenuItemRemPort;
+    @FXML public Menu menuItemMessagePort;
 
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
@@ -95,6 +98,14 @@ public class MainController implements Initializable{
     private Initator initator;
 
 
+    public boolean isUseDefaultPort() {
+        return useDefaultPort;
+    }
+
+    public void setUseDefaultPort(boolean useDefaultPort) {
+        this.useDefaultPort = useDefaultPort;
+    }
+
     private void deleteAcceptorStore(){
         try{
             Files.deleteIfExists(Path.of("store"));
@@ -108,7 +119,8 @@ public class MainController implements Initializable{
         try {
 
             SessionSettings sessionSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
-            setPort(sessionSettings, Constants.ACCEPTOR_ROLE);
+            setPort(sessionSettings, Constants.SOCKET_ACCEPTOR_PORT);
+            menuItemMessagePort.setText("Listening on port: "+ sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT));
             MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
             LogFactory logFactory = new FileLogFactory(sessionSettings);
             MessageFactory messageFactory = new DefaultMessageFactory();
@@ -133,27 +145,58 @@ public class MainController implements Initializable{
 
     }
 
+    public void startInitiator(ActionEvent actionEvent) {
+        try {
+            URL resource = getClass().getClassLoader().getResource(Constants.CLIENT_CFG);
+            SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
+            setPort(initiatorSettings, Constants.SOCKET_INITIATOR_PORT);
+            menuItemMessagePort.setText("Connected to port: " + initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT));
+            FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
+            FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
+            MessageFactory messageFactory = new DefaultMessageFactory();
+            socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
+            socketInitiator.start();
+            sessionId = socketInitiator.getSessions().get(0);
+//            sendLogoutRequest(sessionId);
+            sendLogonRequest(sessionId);
+            circle.setFill(Color.GREENYELLOW);
+            this.startInitiator.setDisable(true);
+            this.startAcceptor.setDisable(true);
+            this.circleStartInitiator.setFill(Color.GREENYELLOW);
+            this.tabAcceptor.setDisable(true);
+            this.mainTabPane.getSelectionModel().select(1);
+
+//            do{
+//                Thread.sleep(5000);
+//                logger.info("Logged on -> {}", socketInitiator.isLoggedOn());
+//            }while (true);
+
+        } catch (ConfigError | IOException | URISyntaxException | SessionNotFound e) {
+            e.printStackTrace();
+        }
+    }
+
     private void setPort(SessionSettings sessionSettings, String role) {
+        if (this.isUseDefaultPort()) return;
         TextInputDialog dialog = null;
-        if (role.equals(Constants.ACCEPTOR_ROLE)){
-            String port = sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT);
+        if (role.equals(Constants.SOCKET_ACCEPTOR_PORT)){
+            String port = sessionSettings.getDefaultProperties().getProperty(role);
             dialog = new TextInputDialog(port);
             dialog.setTitle(Constants.ACCEPTOR_PORT_DIALOG_TITLE);
 //            dialog.initStyle(StageStyle.UTILITY);
             dialog.setHeaderText(Constants.ACCEPTOR_PORT_DIALOG_HEADER);
             dialog.setContentText(Constants.ACCEPTOR_PORT_DIALOG_TEXT);
         }else{
-            String port = sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT);
+            String port = sessionSettings.getDefaultProperties().getProperty(role);
             dialog = new TextInputDialog(port);
             dialog.setTitle(Constants.INITIATOR_PORT_DIALOG_TITLE);
-//            dialog.initStyle(StageStyle.UTILITY);
             dialog.setHeaderText(Constants.INITIATOR_PORT_DIALOG_HEADER);
             dialog.setContentText(Constants.INITIATOR_PORT_DIALOG_TEXT);
         }
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(s -> {
-            sessionSettings.getDefaultProperties().setProperty(Constants.SOCKET_ACCEPTOR_PORT, result.get());
+            sessionSettings.getDefaultProperties().setProperty(role, result.get());
         });
     }
 
@@ -194,6 +237,7 @@ public class MainController implements Initializable{
             this.tabAcceptor.setDisable(false);
             this.tabInitiator.setDisable(false);
             this.orderBook.stop();
+            menuItemMessagePort.setText("");
 
 
         } catch (Exception ex) {
@@ -201,39 +245,7 @@ public class MainController implements Initializable{
         }
     }
 
-    public void startInitiator(ActionEvent actionEvent) {
-        try {
-            URL resource = getClass().getClassLoader().getResource(Constants.CLIENT_CFG);
-            SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
-            setPort(initiatorSettings, Constants.INITIATOR_ROLE);
-            FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
-            FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
-            MessageFactory messageFactory = new DefaultMessageFactory();
-            socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
-            socketInitiator.start();
 
-            sessionId = socketInitiator.getSessions().get(0);
-//            sendLogoutRequest(sessionId);
-            sendLogonRequest(sessionId);
-
-            circle.setFill(Color.GREENYELLOW);
-            this.startInitiator.setDisable(true);
-            this.startAcceptor.setDisable(true);
-            this.circleStartInitiator.setFill(Color.GREENYELLOW);
-            this.tabAcceptor.setDisable(true);
-            this.mainTabPane.getSelectionModel().select(1);
-
-//            do{
-//                Thread.sleep(5000);
-//                logger.info("Logged on -> {}", socketInitiator.isLoggedOn());
-//            }while (true);
-
-        } catch (ConfigError | IOException | URISyntaxException | SessionNotFound e) {
-            e.printStackTrace();
-        }
-
-
-    }
 
     private void sendLogonRequest(SessionID sessionID)throws SessionNotFound{
         Logon logon = new Logon();
@@ -379,6 +391,16 @@ public class MainController implements Initializable{
                     checkBoxAutoGenSelected, checkBoxResetSeqSelected, comboSideValue);
                 break;
         }
+    }
+
+    public void clearMainLog(ActionEvent event){
+        this.listViewActions.getItems().clear();
+    }
+
+    public void setRememberPort(ActionEvent actionEvent) {
+        EventTarget target = actionEvent.getTarget();
+        String targetString = target.toString();
+        setUseDefaultPort(targetString.contains("selected"));
     }
 
 }

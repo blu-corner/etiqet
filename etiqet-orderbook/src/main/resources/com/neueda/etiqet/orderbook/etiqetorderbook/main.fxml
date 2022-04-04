@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -26,7 +27,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="container" prefHeight="800.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.MainController">
+<VBox fx:id="container" prefHeight="723.0" prefWidth="841.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.MainController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -49,6 +50,7 @@
                                 <Circle fx:id="circleStartAcceptor" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
                             </graphic>
                         </MenuItem>
+                        <CheckMenuItem fx:id="checkMenuItemRemPort" mnemonicParsing="false" onAction="#setRememberPort" text="Use default port" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#stop" text="Stop" />
                     </items>
@@ -69,6 +71,11 @@
                         <MenuItem mnemonicParsing="false" text="About" />
                     </items>
                 </Menu>
+            <Menu fx:id="menuItemMessagePort" mnemonicParsing="false">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+              </items>
+            </Menu>
 
             </menus>
         </MenuBar>
@@ -121,7 +128,7 @@
                     </FlowPane>
                     <StackPane prefHeight="386.0" prefWidth="801.0">
                         <children>
-                            <TableView fx:id="actionTableView" prefHeight="200.0" prefWidth="200.0">
+                            <TableView fx:id="actionTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="800.0">
                                 <columns>
                                     <TableColumn fx:id="actionTimeTableColumn" prefWidth="200.0" text="Time" />
                                     <TableColumn fx:id="actionTypeTableColumn" prefWidth="100.0" text="Type" />
@@ -193,7 +200,7 @@
                            </children>
                         </GridPane>
                         <ListView fx:id="listViewActions" layoutX="14.0" layoutY="109.0" prefHeight="584.0" prefWidth="782.0" />
-                        <Button layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="CLEAR" />
+                        <Button fx:id="buttonClearMainLog" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" onAction="#clearMainLog" text="CLEAR" />
                      </children>
                 </AnchorPane>
             </content>

@@ -19,6 +19,7 @@ public class Main extends Application {
         Image icon = new Image("fix.png");
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.getIcons().add(icon);
         stage.show();
     }
@@ -26,6 +27,7 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
+//        System.setProperty("prism.allowhidpi", "false");
         launch();
     }
 }
