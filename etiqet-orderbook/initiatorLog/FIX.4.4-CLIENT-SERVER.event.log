@@ -3596,3 +3596,123 @@ java.lang.NullPointerException
 20220404-10:53:36: Sent logout response
 20220404-10:53:36: Disconnecting: Received logout request
 20220404-10:53:38: java.net.ConnectException during connection to /127.0.0.1:55554: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-12:25:07: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-12:25:07: Created session: FIX.4.4:CLIENT->SERVER
+20220404-12:25:07: Configured socket addresses for session: [/127.0.0.1:55554]
+20220404-12:25:07: MINA session created: local=/127.0.0.1:56826, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-12:25:08: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-12:25:08: Received logon
+20220404-12:26:20: Disconnecting: Encountered END_OF_STREAM
+20220404-12:26:21: MINA session created: local=/127.0.0.1:56848, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-12:26:21: Initiated logon request
+20220404-12:26:21: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-12:26:21: Received logon
+20220404-12:27:04: Initiated logout request
+20220404-12:27:04: Received logout response
+20220404-12:27:04: Disconnecting: Received logout response
+20220404-12:31:01: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-12:31:01: Created session: FIX.4.4:CLIENT->SERVER
+20220404-12:31:01: Configured socket addresses for session: [/127.0.0.1:55554]
+20220404-12:31:01: MINA session created: local=/127.0.0.1:56913, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-12:31:01: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-12:31:01: Received logon
+20220404-12:32:13: Disconnecting: Encountered END_OF_STREAM
+20220404-12:32:14: MINA session created: local=/127.0.0.1:56939, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-12:32:15: Initiated logon request
+20220404-12:32:15: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-12:32:15: Received logon
+20220404-12:33:42: Initiated logout request
+20220404-12:33:42: Received logout response
+20220404-12:33:42: Disconnecting: Received logout response
+20220404-12:53:54: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-12:53:54: Created session: FIX.4.4:CLIENT->SERVER
+20220404-12:53:54: Configured socket addresses for session: [/127.0.0.1:55555]
+20220404-12:53:54: MINA session created: local=/127.0.0.1:50262, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220404-12:53:54: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-12:53:54: Received logon
+20220404-12:55:06: Disconnecting: Encountered END_OF_STREAM
+20220404-12:55:07: MINA session created: local=/127.0.0.1:50285, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220404-12:55:08: Initiated logon request
+20220404-12:55:08: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-12:55:08: Received logon
+20220404-12:55:36: Initiated logout request
+20220404-12:55:36: Received logout response
+20220404-12:55:36: Disconnecting: Received logout response
+20220404-13:03:37: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-13:03:37: Created session: FIX.4.4:CLIENT->SERVER
+20220404-13:03:37: Configured socket addresses for session: [/127.0.0.1:55554]
+20220404-13:03:37: MINA session created: local=/127.0.0.1:50381, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:03:37: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-13:03:37: Received logon
+20220404-13:04:00: Disconnecting: Encountered END_OF_STREAM
+20220404-13:04:08: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-13:04:08: Created session: FIX.4.4:CLIENT->SERVER
+20220404-13:04:08: Configured socket addresses for session: [/127.0.0.1:55554]
+20220404-13:04:08: MINA session created: local=/127.0.0.1:50403, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:04:08: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-13:04:08: Received logon
+20220404-13:05:20: Disconnecting: Encountered END_OF_STREAM
+20220404-13:05:21: MINA session created: local=/127.0.0.1:50428, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:05:22: Initiated logon request
+20220404-13:05:22: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-13:05:22: Received logon
+20220404-13:06:07: Initiated logout request
+20220404-13:06:07: Received logout response
+20220404-13:06:07: Disconnecting: Received logout response
+20220404-13:06:57: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-13:06:57: Created session: FIX.4.4:CLIENT->SERVER
+20220404-13:06:57: Configured socket addresses for session: [/127.0.0.1:55554]
+20220404-13:06:57: MINA session created: local=/127.0.0.1:50474, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:06:57: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-13:06:57: Received logon
+20220404-13:07:19: Disconnecting: Encountered END_OF_STREAM
+20220404-13:12:41: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-13:12:41: Created session: FIX.4.4:CLIENT->SERVER
+20220404-13:12:42: Configured socket addresses for session: [/127.0.0.1:55554]
+20220404-13:12:42: MINA session created: local=/127.0.0.1:50582, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:12:42: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-13:12:42: Received logon
+20220404-13:13:54: Disconnecting: Encountered END_OF_STREAM
+20220404-13:13:55: MINA session created: local=/127.0.0.1:50610, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:13:56: Initiated logon request
+20220404-13:13:56: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-13:13:56: Received logon
+20220404-13:15:14: Initiated logout request
+20220404-13:15:14: Received logout response
+20220404-13:15:14: Disconnecting: Received logout response
+20220404-13:18:48: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-13:18:48: Created session: FIX.4.4:CLIENT->SERVER
+20220404-13:18:48: Configured socket addresses for session: [/127.0.0.1:55554]
+20220404-13:18:48: MINA session created: local=/127.0.0.1:51623, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:18:49: Disconnecting: Received logon response before sending request
+20220404-13:18:53: MINA session created: local=/127.0.0.1:51644, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:18:54: Initiated logon request
+20220404-13:18:54: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-13:18:54: Received logon
+20220404-13:21:33: Initiated logout request
+20220404-13:21:33: Received logout response
+20220404-13:21:33: Disconnecting: Received logout response
+20220404-13:22:39: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-13:22:39: Created session: FIX.4.4:CLIENT->SERVER
+20220404-13:22:39: Configured socket addresses for session: [/127.0.0.1:55554]
+20220404-13:22:39: MINA session created: local=/127.0.0.1:51699, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:22:39: Disconnecting: Received logon response before sending request
+20220404-13:22:44: MINA session created: local=/127.0.0.1:51720, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:22:45: Initiated logon request
+20220404-13:22:45: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-13:22:45: Received logon
+20220404-13:24:36: Initiated logout request
+20220404-13:24:36: Received logout response
+20220404-13:24:36: Disconnecting: Received logout response
+20220404-13:24:45: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-13:24:45: Created session: FIX.4.4:CLIENT->SERVER
+20220404-13:24:45: Configured socket addresses for session: [/127.0.0.1:55554]
+20220404-13:24:45: MINA session created: local=/127.0.0.1:51763, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:24:45: Disconnecting: Received logon response before sending request
+20220404-13:24:50: MINA session created: local=/127.0.0.1:51784, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55554
+20220404-13:24:51: Initiated logon request
+20220404-13:24:51: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220404-13:24:51: Received logon
+20220404-13:27:21: Initiated logout request
+20220404-13:27:21: Received logout response
+20220404-13:27:21: Disconnecting: Received logout response

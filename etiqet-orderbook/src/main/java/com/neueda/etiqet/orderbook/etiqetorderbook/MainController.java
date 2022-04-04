@@ -1,6 +1,7 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
@@ -106,39 +107,42 @@ public class MainController implements Initializable{
         this.useDefaultPort = useDefaultPort;
     }
 
-    private void deleteAcceptorStore(){
+    private void deleteDir(String directory){
         try{
-            Files.deleteIfExists(Path.of("store"));
+            Files.walk(Path.of("initiatorStore"))
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
         }catch (Exception e){
-
+            this.logger.error(e.getLocalizedMessage());
         }
     }
 
     public void startAcceptor(ActionEvent actionEvent) {
         URL resource = getClass().getClassLoader().getResource(Constants.SERVER_CFG);
         try {
-
             SessionSettings sessionSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
-            setPort(sessionSettings, Constants.SOCKET_ACCEPTOR_PORT);
-            menuItemMessagePort.setText("Listening on port: "+ sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT));
-            MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
-            LogFactory logFactory = new FileLogFactory(sessionSettings);
-            MessageFactory messageFactory = new DefaultMessageFactory();
-            Acceptor acceptor = new Acceptor(this);
-            socketAcceptor = new SocketAcceptor(acceptor, messageStoreFactory, sessionSettings, logFactory, messageFactory);
-            socketAcceptor.start();
-            OrderBookThread orderBookThread = new OrderBookThread(this);
-            orderBook = new Thread(orderBookThread);
-            orderBook.setDaemon(true);
-            orderBook.start();
+            if (setPort(sessionSettings, Constants.SOCKET_ACCEPTOR_PORT)){
+                //deleteDir("store");
+                menuItemMessagePort.setText("Listening on port: "+ sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT));
+                MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
+                LogFactory logFactory = new FileLogFactory(sessionSettings);
+                MessageFactory messageFactory = new DefaultMessageFactory();
+                Acceptor acceptor = new Acceptor(this);
+                socketAcceptor = new SocketAcceptor(acceptor, messageStoreFactory, sessionSettings, logFactory, messageFactory);
+                socketAcceptor.start();
+                OrderBookThread orderBookThread = new OrderBookThread(this);
+                orderBook = new Thread(orderBookThread);
+                orderBook.setDaemon(true);
+                orderBook.start();
 
-            circle.setFill(Color.GREENYELLOW);
-            this.startAcceptor.setDisable(true);
-            this.startInitiator.setDisable(true);
-            this.circleStartAcceptor.setFill(Color.GREENYELLOW);
-            this.tabInitiator.setDisable(true);
-            this.mainTabPane.getSelectionModel().select(0);
-
+                circle.setFill(Color.GREENYELLOW);
+                this.startAcceptor.setDisable(true);
+                this.startInitiator.setDisable(true);
+                this.circleStartAcceptor.setFill(Color.GREENYELLOW);
+                this.tabInitiator.setDisable(true);
+                this.mainTabPane.getSelectionModel().select(0);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -149,35 +153,31 @@ public class MainController implements Initializable{
         try {
             URL resource = getClass().getClassLoader().getResource(Constants.CLIENT_CFG);
             SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
-            setPort(initiatorSettings, Constants.SOCKET_INITIATOR_PORT);
-            menuItemMessagePort.setText("Connected to port: " + initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT));
-            FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
-            FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
-            MessageFactory messageFactory = new DefaultMessageFactory();
-            socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
-            socketInitiator.start();
-            sessionId = socketInitiator.getSessions().get(0);
+            if (setPort(initiatorSettings, Constants.SOCKET_INITIATOR_PORT)){
+                //deleteDir("initiatorStore");
+                menuItemMessagePort.setText("Connected to port: " + initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT));
+                FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
+                FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
+                MessageFactory messageFactory = new DefaultMessageFactory();
+                socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
+                socketInitiator.start();
+                sessionId = socketInitiator.getSessions().get(0);
 //            sendLogoutRequest(sessionId);
-            sendLogonRequest(sessionId);
-            circle.setFill(Color.GREENYELLOW);
-            this.startInitiator.setDisable(true);
-            this.startAcceptor.setDisable(true);
-            this.circleStartInitiator.setFill(Color.GREENYELLOW);
-            this.tabAcceptor.setDisable(true);
-            this.mainTabPane.getSelectionModel().select(1);
-
-//            do{
-//                Thread.sleep(5000);
-//                logger.info("Logged on -> {}", socketInitiator.isLoggedOn());
-//            }while (true);
-
+                sendLogonRequest(sessionId);
+                circle.setFill(Color.GREENYELLOW);
+                this.startInitiator.setDisable(true);
+                this.startAcceptor.setDisable(true);
+                this.circleStartInitiator.setFill(Color.GREENYELLOW);
+                this.tabAcceptor.setDisable(true);
+                this.mainTabPane.getSelectionModel().select(1);
+            }
         } catch (ConfigError | IOException | URISyntaxException | SessionNotFound e) {
             e.printStackTrace();
         }
     }
 
-    private void setPort(SessionSettings sessionSettings, String role) {
-        if (this.isUseDefaultPort()) return;
+    private boolean setPort(SessionSettings sessionSettings, String role) {
+        if (this.isUseDefaultPort()) return true;
         TextInputDialog dialog = null;
         if (role.equals(Constants.SOCKET_ACCEPTOR_PORT)){
             String port = sessionSettings.getDefaultProperties().getProperty(role);
@@ -195,9 +195,11 @@ public class MainController implements Initializable{
         }
 
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(s -> {
+        if (result.isPresent()) {
             sessionSettings.getDefaultProperties().setProperty(role, result.get());
-        });
+            return true;
+        }
+        return false;
     }
 
     private void killProcessByPort(int port) {
@@ -252,9 +254,9 @@ public class MainController implements Initializable{
         Message.Header header = logon.getHeader();
         header.setField(new BeginString("FIX.4.4"));
         logon.set(new HeartBtInt(30));
-        logon.set(new ResetSeqNumFlag(true));
+//        logon.set(new ResetSeqNumFlag(true));
         logon.set(new EncryptMethod(0));
-        logon.set(new ResetSeqNumFlag(true));
+        //logon.set(new ResetSeqNumFlag(true));
         boolean sent = Session.sendToTarget(logon, sessionID);
         logger.info("Logon message sent: {}", sent);
     }
@@ -397,10 +399,19 @@ public class MainController implements Initializable{
         this.listViewActions.getItems().clear();
     }
 
+    public void clearGlobalLog(ActionEvent event){
+        this.listViewLog.getItems().clear();
+    }
+
     public void setRememberPort(ActionEvent actionEvent) {
         EventTarget target = actionEvent.getTarget();
         String targetString = target.toString();
         setUseDefaultPort(targetString.contains("selected"));
+    }
+
+    public void closeApplication(ActionEvent actionEvent){
+        stop();
+        Platform.exit();
     }
 
 }
