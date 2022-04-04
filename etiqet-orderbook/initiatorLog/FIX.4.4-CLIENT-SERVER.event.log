@@ -3716,3 +3716,19 @@ java.lang.NullPointerException
 20220404-13:27:21: Initiated logout request
 20220404-13:27:21: Received logout response
 20220404-13:27:21: Disconnecting: Received logout response
+20220404-14:50:45: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-14:50:45: Created session: FIX.4.4:CLIENT->SERVER
+20220404-14:50:45: Configured socket addresses for session: [/127.0.0.1:55552]
+20220404-14:50:45: No responder, not sending message: 8=FIX.4.49=6835=A34=1049=CLIENT52=20220404-14:50:45.34556=SERVER98=0108=3010=199
+20220404-14:50:47: Pending connection not established after 2003 ms.
+20220404-14:50:48: java.net.ConnectException during connection to /127.0.0.1:55552: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-14:50:52: java.net.ConnectException during connection to /127.0.0.1:55552: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-14:50:57: java.net.ConnectException during connection to /127.0.0.1:55552: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-14:51:00: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220404-14:51:00: Created session: FIX.4.4:CLIENT->SERVER
+20220404-14:51:00: Configured socket addresses for session: [/127.0.0.1:55522]
+20220404-14:51:00: No responder, not sending message: 8=FIX.4.49=6835=A34=1149=CLIENT52=20220404-14:51:00.43756=SERVER98=0108=3010=194
+20220404-14:51:02: Pending connection not established after 2002 ms.
+20220404-14:51:03: java.net.ConnectException during connection to /127.0.0.1:55522: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-14:51:07: java.net.ConnectException during connection to /127.0.0.1:55522: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220404-14:51:12: java.net.ConnectException during connection to /127.0.0.1:55522: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)

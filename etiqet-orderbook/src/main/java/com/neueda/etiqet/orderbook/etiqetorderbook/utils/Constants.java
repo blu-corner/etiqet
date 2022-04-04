@@ -27,6 +27,7 @@ public class Constants {
     public static final String INITIATOR_PORT_DIALOG_TITLE = "INITIATOR PORT";
     public static final String INITIATOR_PORT_DIALOG_HEADER = "Introduce port to connect";
     public static final String INITIATOR_PORT_DIALOG_TEXT = "Port:";
+    public static final String SET_DEFAULT_PORT = "Set default port: ";
 
     static {
         hmMsgType = new HashMap<>();

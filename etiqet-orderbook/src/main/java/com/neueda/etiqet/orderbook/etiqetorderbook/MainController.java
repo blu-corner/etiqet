@@ -13,6 +13,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
@@ -28,6 +29,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,6 +41,7 @@ public class MainController implements Initializable{
     private List<Order> sell;
     private boolean changed;
     private boolean useDefaultPort;
+    private String changedDefaultPort = "";
     public boolean isChanged() {
         return changed;
     }
@@ -162,8 +165,8 @@ public class MainController implements Initializable{
                 socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
                 socketInitiator.start();
                 sessionId = socketInitiator.getSessions().get(0);
-//            sendLogoutRequest(sessionId);
                 sendLogonRequest(sessionId);
+
                 circle.setFill(Color.GREENYELLOW);
                 this.startInitiator.setDisable(true);
                 this.startAcceptor.setDisable(true);
@@ -177,6 +180,11 @@ public class MainController implements Initializable{
     }
 
     private boolean setPort(SessionSettings sessionSettings, String role) {
+        if (!StringUtils.isEmpty(this.changedDefaultPort)){
+            sessionSettings.getDefaultProperties().setProperty(role, this.changedDefaultPort);
+            this.changedDefaultPort = "";
+            return true;
+        }
         if (this.isUseDefaultPort()) return true;
         TextInputDialog dialog = null;
         if (role.equals(Constants.SOCKET_ACCEPTOR_PORT)){
@@ -202,27 +210,6 @@ public class MainController implements Initializable{
         return false;
     }
 
-    private void killProcessByPort(int port) {
-        try {
-            ArrayList<Long> pids = new ArrayList<Long>();
-            Stream<ProcessHandle> processStream = ProcessHandle.allProcesses();
-
-            List<ProcessHandle> processHandleList = processStream.collect(Collectors.toList());
-
-            for (ProcessHandle p: processHandleList) {
-                if (p.isAlive()){
-                    ProcessHandle.Info info = p.info();
-                    Optional<String> command = p.info().command();
-                    if (command.get().contains("java")){
-                        String doso = "";
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public void stop() {
         try {
@@ -247,20 +234,15 @@ public class MainController implements Initializable{
         }
     }
 
-
-
     private void sendLogonRequest(SessionID sessionID)throws SessionNotFound{
         Logon logon = new Logon();
         Message.Header header = logon.getHeader();
         header.setField(new BeginString("FIX.4.4"));
         logon.set(new HeartBtInt(30));
-//        logon.set(new ResetSeqNumFlag(true));
         logon.set(new EncryptMethod(0));
-        //logon.set(new ResetSeqNumFlag(true));
         boolean sent = Session.sendToTarget(logon, sessionID);
         logger.info("Logon message sent: {}", sent);
     }
-
 
     private void sendSeqReset(SessionID sessionID)throws SessionNotFound{
         SequenceReset sequenceReset = new SequenceReset();
@@ -338,12 +320,6 @@ public class MainController implements Initializable{
         }
     }
 
-//    private ObservableList<Order> getOrders() {
-//        ObservableList<Order> orders = FXCollections.observableArrayList();
-//        orders.add(new Order("4579", LocalDateTime.now(), 34d, 2d));
-//        return orders;
-//    }
-
     public List<Order> getBuy() {
         return buy;
     }
@@ -376,7 +352,6 @@ public class MainController implements Initializable{
         orderBookSellTableView.getSelectionModel().clearAndSelect(0);
     }
 
-    //initator: send order
     public void sendOrder(ActionEvent actionEvent) {
         String textFieldSizeText = this.textFieldSize.getText();
         String textFieldPrice = this.textFieldPrice.getText();
@@ -412,6 +387,68 @@ public class MainController implements Initializable{
     public void closeApplication(ActionEvent actionEvent){
         stop();
         Platform.exit();
+    }
+
+    public void setDefaultPort(ActionEvent actionEvent){
+        TextInputDialog dialog = null;
+        List<String> writtenLines = new ArrayList<>();
+        int index = 0, portIndex = 0;
+        try {
+            if (tabAcceptor.isSelected()){
+                Path path = Paths.get("src/main/resources/server.cfg");
+                List<String> lines = Files.readAllLines(path);
+                String port = "";
+                for (String line : lines){
+                    if (!line.contains("#") && line.contains(Constants.SOCKET_ACCEPTOR_PORT)){
+                        port = line.substring(line.indexOf('=') + 1);
+                        line = line.replace(port, "");
+                        portIndex = index;
+                    }
+                    writtenLines.add(line);
+                    index++;
+                }
+                dialog = new TextInputDialog(port);
+                dialog.setTitle(Constants.ACCEPTOR_ROLE);
+                dialog.setHeaderText(Constants.SET_DEFAULT_PORT);
+                dialog.setContentText(Constants.ACCEPTOR_PORT_DIALOG_TEXT);
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    String current = writtenLines.get(portIndex);
+                    writtenLines.set(portIndex, current + result.get());
+                    Files.write(Paths.get("src/main/resources/server.cfg"), writtenLines);
+                    this.changedDefaultPort = result.get();
+                }
+
+            }else if (tabInitiator.isSelected()){
+                Path path = Paths.get("src/main/resources/client.cfg");
+                List<String> lines = Files.readAllLines(path);
+                String port = "";
+                for (String line : lines){
+                    if (!line.contains("#") && line.contains(Constants.SOCKET_INITIATOR_PORT)){
+                        port = line.substring(line.indexOf('=') + 1);
+                        line = line.replace(port, "");
+                        portIndex = index;
+                    }
+                    writtenLines.add(line);
+                    index++;
+                }
+                dialog = new TextInputDialog(port);
+                dialog.setTitle(Constants.INITIATOR_ROLE);
+                dialog.setHeaderText(Constants.SET_DEFAULT_PORT);
+                dialog.setContentText(Constants.ACCEPTOR_PORT_DIALOG_TEXT);
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    String current = writtenLines.get(portIndex);
+                    writtenLines.set(portIndex, current + result.get());
+                    Files.write(Paths.get("src/main/resources/client.cfg"), writtenLines);
+                    this.changedDefaultPort = result.get();
+                }
+            }
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
