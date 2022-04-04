@@ -74,10 +74,11 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Options">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Clear bid"/>
-                        <MenuItem mnemonicParsing="false" text="Clear offer"/>
-                        <MenuItem mnemonicParsing="false" text="Clear bid &amp; offer"/>
-                        <MenuItem mnemonicParsing="false" text="Clear trade panel"/>
+                        <MenuItem mnemonicParsing="false" text="Clear bid" fx:id="menuItemClearBid" onAction="#cleanBid"/>
+                        <MenuItem mnemonicParsing="false" text="Clear offer" fx:id="menuItemClearOffer" onAction="#cleanOffer"/>
+                        <MenuItem mnemonicParsing="false" text="Clear bid &amp; offer" fx:id="menuItemClearBidAndOffer" onAction="#cleanBidAndOffer"/>
+                        <MenuItem mnemonicParsing="false" text="Clear trade panel" fx:id="menuItemClearTrades" onAction="#cleanTrades"/>
+                        <MenuItem mnemonicParsing="false" text="Clear all" fx:id="menuItemClearAll" onAction="#cleanAll"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

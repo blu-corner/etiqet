@@ -451,4 +451,27 @@ public class MainController implements Initializable{
 
     }
 
+    public void cleanBid(ActionEvent actionEvent){
+        this.getBuy().clear();
+        orderBookBuyTableView.getItems().clear();
+    }
+
+    public void cleanOffer(ActionEvent actionEvent){
+        this.getSell().clear();
+        orderBookSellTableView.getItems().clear();
+    }
+
+    public void cleanBidAndOffer(ActionEvent actionEvent){
+        cleanBid(actionEvent);
+        cleanOffer(actionEvent);
+    }
+
+    public void cleanTrades(ActionEvent actionEvent){
+        this.actionTableView.getItems().clear();
+    }
+
+    public void cleanAll(ActionEvent actionEvent){
+        cleanBidAndOffer(actionEvent);
+        cleanTrades(actionEvent);
+    }
 }
