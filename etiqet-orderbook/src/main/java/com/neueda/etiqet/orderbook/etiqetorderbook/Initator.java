@@ -11,12 +11,15 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
 import quickfix.field.*;
 import quickfix.fix44.NewOrderSingle;
+import quickfix.fix44.OrderCancelReplaceRequest;
+import quickfix.fix44.OrderCancelRequest;
 
 import java.io.IOException;
 
@@ -89,17 +92,17 @@ public class Initator implements Application{
         this.messageAnalizer(message, Constants.IN);
     }
 
-    public void sendNewOrderSingle(String size, String price, String orderOd, boolean autoGen, boolean resetSeq, char side){
+    public void sendNewOrderSingle(String size, String price, String orderOd, boolean autoGen, char side){
         NewOrderSingle newOrderSingle = new NewOrderSingle();
         newOrderSingle.set(new OrderQty(Double.parseDouble(size)));
         newOrderSingle.set(new Price(Double.parseDouble(price)));
-        newOrderSingle.set(new ClOrdID(orderOd));
+        String autoGenOrderID = RandomStringUtils.randomAlphanumeric(5);
+        newOrderSingle.set(autoGen ? new ClOrdID(autoGenOrderID) : new ClOrdID(orderOd));;
         newOrderSingle.set(new Side(side));
         newOrderSingle.set(new OrdType(OrdType.LIMIT));
         newOrderSingle.set(new HandlInst('3'));
         newOrderSingle.set(new TransactTime());
         newOrderSingle.set(new Symbol("N/A"));
-
 
         try {
             Session.sendToTarget(newOrderSingle, sessionID);
@@ -108,18 +111,39 @@ public class Initator implements Application{
         }
     }
 
-//    @Override
-//    public void run() {
-//        try {
-//            while(true){
-//                Thread.sleep(5000);
-//                System.out.println("INITIATOR RUNNING");
-//            }
-//
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void sendOrderCancelRequest(String orderOd, String origOrderOd, boolean autoGen, char side)  {
+        OrderCancelRequest orderCancelRequest = new OrderCancelRequest();
+        orderCancelRequest.set(new Side(side));
+        orderCancelRequest.set(new OrigClOrdID(origOrderOd));
+        String autoGenOrderID = RandomStringUtils.randomAlphanumeric(5);
+        orderCancelRequest.set(autoGen ? new ClOrdID(autoGenOrderID) : new ClOrdID(orderOd));
+        orderCancelRequest.set(new TransactTime());
+        orderCancelRequest.set(new Symbol("N/A"));
+        try {
+            Session.sendToTarget(orderCancelRequest, sessionID);
+        } catch (SessionNotFound e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void sendOrderCancelReplaceRequest(String size, String price, String orderOd,  String origOrderOd, boolean autoGen, char side) {
+        OrderCancelReplaceRequest orderCancelReplaceRequest = new OrderCancelReplaceRequest();
+        orderCancelReplaceRequest.set(new Side(side));
+        orderCancelReplaceRequest.set(new OrdType(OrdType.LIMIT));
+        String autoGenOrderID = RandomStringUtils.randomAlphanumeric(5);
+        orderCancelReplaceRequest.set(autoGen ? new ClOrdID(autoGenOrderID) : new ClOrdID(orderOd));
+        orderCancelReplaceRequest.set(new OrigClOrdID(origOrderOd));
+        orderCancelReplaceRequest.set(new TransactTime());
+        orderCancelReplaceRequest.set(new Symbol("N/A"));
+        orderCancelReplaceRequest.set(new Price(Double.parseDouble(price)));
+        orderCancelReplaceRequest.set(new OrderQty(Double.parseDouble(size)));
+        try {
+            Session.sendToTarget(orderCancelReplaceRequest, sessionID);
+        } catch (SessionNotFound e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public void messageAnalizer(Message message, String direction){

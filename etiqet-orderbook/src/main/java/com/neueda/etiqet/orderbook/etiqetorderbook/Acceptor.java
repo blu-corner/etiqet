@@ -272,12 +272,12 @@ public class Acceptor implements Application {
 
     private ExecutionReport cancelOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol, CharField side, DoubleField size, DoubleField price) {
         if (side.getValue() == (Side.BUY)) {
-            this.mainController.getBuy().removeIf(b -> b.getOrderID().equals(origClOrdID));
-            this.mainController.orderBookBuyTableView.getItems().removeIf(b -> b.getOrderID().equals(origClOrdID));
+            this.mainController.getBuy().removeIf(b -> b.getOrderID().equals(origClOrdID.getValue()));
+            this.mainController.orderBookBuyTableView.getItems().removeIf(b -> b.getOrderID().equals(origClOrdID.getValue()));
 
         } else {
-            this.mainController.getSell().removeIf(s -> s.getOrderID().equals(origClOrdID));
-            this.mainController.orderBookSellTableView.getItems().removeIf(b -> b.getOrderID().equals(origClOrdID));
+            this.mainController.getSell().removeIf(s -> s.getOrderID().equals(origClOrdID.getValue()));
+            this.mainController.orderBookSellTableView.getItems().removeIf(b -> b.getOrderID().equals(origClOrdID.getValue()));
         }
         this.mainController.setChanged(true);
         // StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty
@@ -290,19 +290,24 @@ public class Acceptor implements Application {
             for (Order o : this.mainController.getBuy()) {
                 String orderID = o.getOrderID();
                 if (orderID.equals(order.getOrderID())) {
-                    this.mainController.getBuy().remove(o);
-                    this.mainController.getBuy().add(order);
+                    o.setPrice(order.getPrice());
+                    o.setSize(order.getSize());
                 }
+                this.mainController.orderBookBuyTableView.getItems().clear();
+                this.mainController.orderBookBuyTableView.getItems().addAll(this.mainController.getBuy());
+
             }
 
         } else {
             for (Order o : this.mainController.getSell()) {
                 String orderID = o.getOrderID();
                 if (orderID.equals(order.getOrderID())) {
-                    this.mainController.getSell().remove(o);
-                    this.mainController.getSell().add(order);
+                    o.setPrice(order.getPrice());
+                    o.setSize(order.getSize());
                 }
             }
+            this.mainController.orderBookSellTableView.getItems().clear();
+            this.mainController.orderBookSellTableView.getItems().addAll(this.mainController.getSell());
         }
         this.mainController.setChanged(true);
     }
@@ -334,6 +339,7 @@ public class Acceptor implements Application {
                     this.mainController.getBuy().remove(topBuy);
                     this.mainController.orderBookBuyTableView.getItems().remove(topBuy);
                     this.mainController.getSell().remove(topSell);
+                    this.mainController.orderBookSellTableView.getItems().remove(topSell);
                     printTrade(topBuy, topSell);
                     this.mainController.orderBookSellTableView.getItems().remove(topSell);
                     //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price

@@ -112,7 +112,7 @@ public class MainController implements Initializable{
 
     private void deleteDir(String directory){
         try{
-            Files.walk(Path.of("initiatorStore"))
+            Files.walk(Path.of(directory))
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
                 .forEach(File::delete);
@@ -295,7 +295,7 @@ public class MainController implements Initializable{
         actionSizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
         actionPriceTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
 
-        comboOrders.getItems().addAll("NEW ORDER", "CANCEL", "REPLACE");
+        comboOrders.getItems().addAll(Constants.COMBO_NEW_ORDER, Constants.COMBO_CANCEL, Constants.COMBO_REPLACE);
         comboOrders.getSelectionModel().select(0);
 
         comboSide.getItems().addAll("BUY", "SELL");
@@ -363,9 +363,15 @@ public class MainController implements Initializable{
         char comboSideValue = this.comboSide.getValue().toString().equals("SELL") ? '2' : '1';
 
         switch (comboOrdersValue){
-            case "NEW ORDER":
+            case Constants.COMBO_NEW_ORDER:
                 initator.sendNewOrderSingle(textFieldSizeText,textFieldPrice,textFieldOrderID,
-                    checkBoxAutoGenSelected, checkBoxResetSeqSelected, comboSideValue);
+                    checkBoxAutoGenSelected, comboSideValue);
+                break;
+            case Constants.COMBO_CANCEL:
+                initator.sendOrderCancelRequest(textFieldOrderID,textFieldOrigOrderID,checkBoxAutoGenSelected, comboSideValue);
+                break;
+            case Constants.COMBO_REPLACE:
+                initator.sendOrderCancelReplaceRequest(textFieldSizeText, textFieldPrice,textFieldOrderID, textFieldOrigOrderID, checkBoxAutoGenSelected,comboSideValue);
                 break;
         }
     }
