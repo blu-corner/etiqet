@@ -485,7 +485,7 @@ public class MainController implements Initializable{
     }
 
     public void setAutoGenValue(ActionEvent actionEvent){
-        this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(5));
+        this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(8));
         if (!this.checkBoxAutoGen.isSelected()){
             this.textFieldOrderID.setText("");
         }

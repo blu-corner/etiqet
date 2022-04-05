@@ -4315,3 +4315,692 @@ java.lang.NullPointerException
 20220405-13:26:22: Initiated logout request
 20220405-13:26:22: Received logout response
 20220405-13:26:22: Disconnecting: Received logout response
+20220405-13:28:37: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-13:28:37: Created session: FIX.4.4:CLIENT->SERVER
+20220405-13:28:37: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-13:28:37: MINA session created: local=/127.0.0.1:64009, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:28:37: Disconnecting: Received logon response before sending request
+20220405-13:28:42: MINA session created: local=/127.0.0.1:64031, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:28:43: Initiated logon request
+20220405-13:28:43: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-13:28:43: Received logon
+20220405-13:29:58: Initiated logout request
+20220405-13:29:58: Received logout response
+20220405-13:29:58: Disconnecting: Received logout response
+20220405-13:30:32: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-13:30:32: Created session: FIX.4.4:CLIENT->SERVER
+20220405-13:30:32: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-13:30:32: No responder, not sending message: 8=FIX.4.49=6735=A34=849=CLIENT52=20220405-13:30:32.69256=SERVER98=0108=3010=156
+20220405-13:30:34: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:30:39: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:30:44: Pending connection not established after 2001 ms.
+20220405-13:30:45: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:32:03: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-13:32:03: Created session: FIX.4.4:CLIENT->SERVER
+20220405-13:32:03: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-13:32:03: MINA session created: local=/127.0.0.1:64106, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:32:03: Disconnecting: Received logon response before sending request
+20220405-13:32:08: MINA session created: local=/127.0.0.1:64127, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:32:09: Initiated logon request
+20220405-13:32:09: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-13:32:09: Received logon
+20220405-13:35:38: Disconnecting: Encountered END_OF_STREAM
+20220405-13:35:39: MINA session created: local=/127.0.0.1:64167, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:35:39: Initiated logon request
+20220405-13:35:39: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-13:35:39: Received logon
+20220405-13:38:55: Sent test request TEST
+20220405-13:39:22: Disconnecting: Timed out waiting for heartbeat
+20220405-13:39:23: MINA session created: local=/127.0.0.1:64202, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:39:23: Initiated logon request
+20220405-13:39:34: Disconnecting: Timed out waiting for logon response
+20220405-13:39:35: MINA session created: local=/127.0.0.1:64223, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:39:35: Initiated logon request
+20220405-13:39:46: Disconnecting: Timed out waiting for logon response
+20220405-13:39:47: MINA session created: local=/127.0.0.1:64245, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:39:47: Initiated logon request
+20220405-13:39:58: Disconnecting: Timed out waiting for logon response
+20220405-13:39:59: MINA session created: local=/127.0.0.1:64268, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:39:59: Initiated logon request
+20220405-13:40:10: Disconnecting: Timed out waiting for logon response
+20220405-13:40:11: MINA session created: local=/127.0.0.1:64390, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:40:11: Initiated logon request
+20220405-13:40:22: Disconnecting: Timed out waiting for logon response
+20220405-13:40:23: MINA session created: local=/127.0.0.1:64411, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:40:23: Initiated logon request
+20220405-13:40:34: Disconnecting: Timed out waiting for logon response
+20220405-13:40:35: MINA session created: local=/127.0.0.1:64532, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:40:35: Initiated logon request
+20220405-13:40:46: Disconnecting: Timed out waiting for logon response
+20220405-13:40:47: MINA session created: local=/127.0.0.1:64557, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:40:47: Initiated logon request
+20220405-13:40:58: Disconnecting: Timed out waiting for logon response
+20220405-13:40:59: MINA session created: local=/127.0.0.1:64578, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:40:59: Initiated logon request
+20220405-13:41:10: Disconnecting: Timed out waiting for logon response
+20220405-13:41:11: MINA session created: local=/127.0.0.1:64599, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:41:11: Initiated logon request
+20220405-13:41:22: Disconnecting: Timed out waiting for logon response
+20220405-13:41:23: MINA session created: local=/127.0.0.1:64660, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:41:23: Initiated logon request
+20220405-13:41:34: Disconnecting: Timed out waiting for logon response
+20220405-13:41:35: MINA session created: local=/127.0.0.1:64684, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:41:35: Initiated logon request
+20220405-13:41:46: Disconnecting: Timed out waiting for logon response
+20220405-13:41:47: MINA session created: local=/127.0.0.1:64709, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:41:47: Initiated logon request
+20220405-13:41:58: Disconnecting: Timed out waiting for logon response
+20220405-13:41:59: MINA session created: local=/127.0.0.1:64730, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:41:59: Initiated logon request
+20220405-13:42:10: Disconnecting: Timed out waiting for logon response
+20220405-13:42:11: MINA session created: local=/127.0.0.1:64751, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:42:11: Initiated logon request
+20220405-13:42:22: Disconnecting: Timed out waiting for logon response
+20220405-13:42:23: MINA session created: local=/127.0.0.1:64773, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:42:23: Initiated logon request
+20220405-13:42:34: Disconnecting: Timed out waiting for logon response
+20220405-13:42:35: MINA session created: local=/127.0.0.1:64794, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:42:35: Initiated logon request
+20220405-13:42:46: Disconnecting: Timed out waiting for logon response
+20220405-13:42:47: MINA session created: local=/127.0.0.1:64815, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:42:47: Initiated logon request
+20220405-13:42:58: Disconnecting: Timed out waiting for logon response
+20220405-13:42:59: MINA session created: local=/127.0.0.1:64837, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:42:59: Initiated logon request
+20220405-13:43:10: Disconnecting: Timed out waiting for logon response
+20220405-13:43:11: MINA session created: local=/127.0.0.1:64863, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:43:11: Initiated logon request
+20220405-13:43:22: Disconnecting: Timed out waiting for logon response
+20220405-13:43:23: MINA session created: local=/127.0.0.1:64885, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:43:23: Initiated logon request
+20220405-13:43:34: Disconnecting: Timed out waiting for logon response
+20220405-13:43:35: MINA session created: local=/127.0.0.1:64906, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:43:35: Initiated logon request
+20220405-13:43:46: Disconnecting: Timed out waiting for logon response
+20220405-13:43:47: MINA session created: local=/127.0.0.1:64929, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:43:47: Initiated logon request
+20220405-13:43:58: Disconnecting: Timed out waiting for logon response
+20220405-13:43:58: MINA session created: local=/127.0.0.1:64950, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:43:59: Initiated logon request
+20220405-13:44:10: Disconnecting: Timed out waiting for logon response
+20220405-13:44:10: MINA session created: local=/127.0.0.1:64973, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:44:11: Initiated logon request
+20220405-13:44:22: Disconnecting: Timed out waiting for logon response
+20220405-13:44:22: MINA session created: local=/127.0.0.1:64996, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:44:23: Initiated logon request
+20220405-13:44:34: Disconnecting: Timed out waiting for logon response
+20220405-13:44:34: MINA session created: local=/127.0.0.1:65018, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:44:35: Initiated logon request
+20220405-13:44:46: Disconnecting: Timed out waiting for logon response
+20220405-13:44:46: MINA session created: local=/127.0.0.1:65039, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:44:47: Initiated logon request
+20220405-13:44:52: Disconnecting: Encountered END_OF_STREAM
+20220405-13:44:53: MINA session created: local=/127.0.0.1:65060, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-13:44:54: Initiated logon request
+20220405-13:44:54: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-13:44:54: Received logon
+20220405-13:48:29: Disconnecting: Socket exception (/127.0.0.1:55555): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220405-13:48:32: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:48:37: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:48:42: Pending connection not established after 2001 ms.
+20220405-13:48:43: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:48:47: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:48:52: Pending connection not established after 2001 ms.
+20220405-13:48:53: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:48:57: Pending connection not established after 2002 ms.
+20220405-13:48:58: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:02: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:07: Pending connection not established after 2001 ms.
+20220405-13:49:08: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:12: Pending connection not established after 2001 ms.
+20220405-13:49:13: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:17: Pending connection not established after 2001 ms.
+20220405-13:49:18: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:22: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:27: Pending connection not established after 2002 ms.
+20220405-13:49:28: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:32: Pending connection not established after 2002 ms.
+20220405-13:49:33: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:37: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:42: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:47: Pending connection not established after 2002 ms.
+20220405-13:49:48: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:52: Pending connection not established after 2002 ms.
+20220405-13:49:53: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:49:57: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:02: Pending connection not established after 2001 ms.
+20220405-13:50:03: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:07: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:12: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:17: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:22: Pending connection not established after 2001 ms.
+20220405-13:50:23: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:27: Pending connection not established after 2001 ms.
+20220405-13:50:28: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:32: Pending connection not established after 2001 ms.
+20220405-13:50:33: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:37: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:42: Pending connection not established after 2001 ms.
+20220405-13:50:43: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:47: Pending connection not established after 2002 ms.
+20220405-13:50:48: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:52: Pending connection not established after 2002 ms.
+20220405-13:50:53: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:50:57: Pending connection not established after 2001 ms.
+20220405-13:50:58: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:02: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:07: Pending connection not established after 2002 ms.
+20220405-13:51:08: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:12: Pending connection not established after 2001 ms.
+20220405-13:51:13: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:17: Pending connection not established after 2001 ms.
+20220405-13:51:18: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:22: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:28: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:33: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:38: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:43: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:48: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:53: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:51:58: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:03: Pending connection not established after 2002 ms.
+20220405-13:52:04: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:08: Pending connection not established after 2002 ms.
+20220405-13:52:09: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:13: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:18: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:23: Pending connection not established after 2001 ms.
+20220405-13:52:24: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:28: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:33: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:38: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:43: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:48: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:53: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:52:58: Pending connection not established after 2002 ms.
+20220405-13:52:59: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:03: Pending connection not established after 2002 ms.
+20220405-13:53:04: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:08: Pending connection not established after 2001 ms.
+20220405-13:53:09: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:13: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:18: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:23: Pending connection not established after 2001 ms.
+20220405-13:53:24: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:28: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:33: Pending connection not established after 2002 ms.
+20220405-13:53:34: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:38: Pending connection not established after 2001 ms.
+20220405-13:53:39: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:43: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:48: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:53: Pending connection not established after 2001 ms.
+20220405-13:53:54: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:53:58: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:03: Pending connection not established after 2001 ms.
+20220405-13:54:04: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:09: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:14: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:19: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:24: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:29: Pending connection not established after 2002 ms.
+20220405-13:54:30: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:34: Pending connection not established after 2001 ms.
+20220405-13:54:35: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:39: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:44: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:49: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:54: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:54:59: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:04: Pending connection not established after 2002 ms.
+20220405-13:55:05: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:09: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:14: Pending connection not established after 2001 ms.
+20220405-13:55:15: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:19: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:24: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:29: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:34: Pending connection not established after 2002 ms.
+20220405-13:55:35: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:39: Pending connection not established after 2001 ms.
+20220405-13:55:40: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:44: Pending connection not established after 2002 ms.
+20220405-13:55:45: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:49: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:54: Pending connection not established after 2001 ms.
+20220405-13:55:55: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:55:59: Pending connection not established after 2001 ms.
+20220405-13:56:00: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:04: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:09: Pending connection not established after 2001 ms.
+20220405-13:56:10: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:14: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:19: Pending connection not established after 2002 ms.
+20220405-13:56:20: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:24: Pending connection not established after 2002 ms.
+20220405-13:56:25: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:29: Pending connection not established after 2001 ms.
+20220405-13:56:30: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:34: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:39: Pending connection not established after 2001 ms.
+20220405-13:56:40: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:44: Pending connection not established after 2002 ms.
+20220405-13:56:45: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:49: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:54: Pending connection not established after 2001 ms.
+20220405-13:56:55: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:56:59: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:04: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:09: Pending connection not established after 2002 ms.
+20220405-13:57:10: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:15: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:20: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:25: Pending connection not established after 2002 ms.
+20220405-13:57:26: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:30: Pending connection not established after 2001 ms.
+20220405-13:57:31: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:35: Pending connection not established after 2002 ms.
+20220405-13:57:36: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:40: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:45: Pending connection not established after 2002 ms.
+20220405-13:57:46: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:50: Pending connection not established after 2001 ms.
+20220405-13:57:51: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:57:55: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:00: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:05: Pending connection not established after 2001 ms.
+20220405-13:58:06: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:10: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:15: Pending connection not established after 2002 ms.
+20220405-13:58:16: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:20: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:25: Pending connection not established after 2001 ms.
+20220405-13:58:26: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:30: Pending connection not established after 2001 ms.
+20220405-13:58:31: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:35: Pending connection not established after 2002 ms.
+20220405-13:58:36: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:40: Pending connection not established after 2001 ms.
+20220405-13:58:41: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:45: Pending connection not established after 2001 ms.
+20220405-13:58:46: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:50: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:58:55: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:00: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:05: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:10: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:15: Pending connection not established after 2002 ms.
+20220405-13:59:16: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:20: Pending connection not established after 2002 ms.
+20220405-13:59:21: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:25: Pending connection not established after 2002 ms.
+20220405-13:59:26: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:30: Pending connection not established after 2001 ms.
+20220405-13:59:31: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:35: Pending connection not established after 2001 ms.
+20220405-13:59:36: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:40: Pending connection not established after 2001 ms.
+20220405-13:59:41: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:45: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:50: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-13:59:55: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:00: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:05: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:10: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:15: Pending connection not established after 2001 ms.
+20220405-14:00:16: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:20: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:25: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:30: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:35: Pending connection not established after 2002 ms.
+20220405-14:00:36: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:40: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:45: Pending connection not established after 2001 ms.
+20220405-14:00:46: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:50: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:00:56: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:01: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:06: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:11: Pending connection not established after 2002 ms.
+20220405-14:01:12: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:16: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:21: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:26: Pending connection not established after 2001 ms.
+20220405-14:01:27: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:31: Pending connection not established after 2002 ms.
+20220405-14:01:32: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:36: Pending connection not established after 2002 ms.
+20220405-14:01:37: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:41: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:46: Pending connection not established after 2002 ms.
+20220405-14:01:47: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:51: Pending connection not established after 2002 ms.
+20220405-14:01:52: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:01:56: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:01: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:06: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:11: Pending connection not established after 2001 ms.
+20220405-14:02:12: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:16: Pending connection not established after 2001 ms.
+20220405-14:02:17: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:21: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:26: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:31: Pending connection not established after 2001 ms.
+20220405-14:02:32: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:36: Pending connection not established after 2002 ms.
+20220405-14:02:37: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:41: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:02:44: MINA session created: local=/127.0.0.1:65363, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:02:44: Initiated logon request
+20220405-14:02:44: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-14:02:44: Received logon
+20220405-14:02:48: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-14:02:48: Created session: FIX.4.4:CLIENT->SERVER
+20220405-14:02:48: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-14:02:48: MINA session created: local=/127.0.0.1:65386, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:02:48: Disconnecting: Encountered END_OF_STREAM
+20220405-14:02:53: MINA session created: local=/127.0.0.1:65408, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:02:54: Initiated logon request
+20220405-14:02:54: Disconnecting: Encountered END_OF_STREAM
+20220405-14:02:58: MINA session created: local=/127.0.0.1:65430, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:02:59: Initiated logon request
+20220405-14:02:59: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:03: MINA session created: local=/127.0.0.1:65452, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:03:04: Initiated logon request
+20220405-14:03:04: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:08: MINA session created: local=/127.0.0.1:65474, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:03:09: Initiated logon request
+20220405-14:03:09: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:13: MINA session created: local=/127.0.0.1:65496, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:03:14: Initiated logon request
+20220405-14:03:14: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:18: MINA session created: local=/127.0.0.1:65517, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:03:19: Initiated logon request
+20220405-14:03:19: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:23: MINA session created: local=/127.0.0.1:49155, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:03:24: Initiated logon request
+20220405-14:03:24: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:28: MINA session created: local=/127.0.0.1:49177, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:03:29: Initiated logon request
+20220405-14:03:29: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:33: MINA session created: local=/127.0.0.1:49198, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:03:34: Initiated logon request
+20220405-14:03:34: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:38: MINA session created: local=/127.0.0.1:49219, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:03:39: Initiated logon request
+20220405-14:03:39: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:43: MINA session created: local=/127.0.0.1:49241, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:03:44: Initiated logon request
+20220405-14:03:44: Disconnecting: Encountered END_OF_STREAM
+20220405-14:03:50: Received logout request
+20220405-14:03:50: Sent logout response
+20220405-14:03:50: Disconnecting: Received logout request
+20220405-14:04:11: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-14:04:11: Created session: FIX.4.4:CLIENT->SERVER
+20220405-14:04:11: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-14:04:11: MINA session created: local=/127.0.0.1:49325, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:04:11: Disconnecting: Received logon response before sending request
+20220405-14:04:16: MINA session created: local=/127.0.0.1:49346, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:04:17: Initiated logon request
+20220405-14:04:17: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-14:04:17: Received logon
+20220405-14:04:40: Initiated logout request
+20220405-14:04:40: Received logout response
+20220405-14:04:40: Disconnecting: Received logout response
+20220405-14:05:29: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-14:05:29: Created session: FIX.4.4:CLIENT->SERVER
+20220405-14:05:29: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-14:05:29: MINA session created: local=/127.0.0.1:49785, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:05:29: Disconnecting: Received logon response before sending request
+20220405-14:05:34: MINA session created: local=/127.0.0.1:49807, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:05:35: Initiated logon request
+20220405-14:05:35: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-14:05:35: Received logon
+20220405-14:05:52: Initiated logout request
+20220405-14:05:52: Received logout response
+20220405-14:05:52: Disconnecting: Received logout response
+20220405-14:06:40: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-14:06:40: Created session: FIX.4.4:CLIENT->SERVER
+20220405-14:06:41: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-14:06:41: MINA session created: local=/127.0.0.1:49875, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:06:41: Disconnecting: Received logon response before sending request
+20220405-14:06:46: MINA session created: local=/127.0.0.1:49900, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:06:47: Initiated logon request
+20220405-14:06:47: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-14:06:47: Received logon
+20220405-14:08:05: Received logout request
+20220405-14:08:05: Sent logout response
+20220405-14:08:05: Disconnecting: Received logout request
+20220405-14:08:08: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:10:22: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-14:10:22: Created session: FIX.4.4:CLIENT->SERVER
+20220405-14:10:23: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-14:10:23: MINA session created: local=/127.0.0.1:49989, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:10:23: Disconnecting: Received logon response before sending request
+20220405-14:10:28: MINA session created: local=/127.0.0.1:50071, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:10:29: Initiated logon request
+20220405-14:10:29: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-14:10:29: Received logon
+20220405-14:14:57: Received logout request
+20220405-14:14:57: Sent logout response
+20220405-14:14:57: Disconnecting: Received logout request
+20220405-14:15:00: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:20:12: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-14:20:12: Created session: FIX.4.4:CLIENT->SERVER
+20220405-14:20:12: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-14:20:12: MINA session created: local=/127.0.0.1:50195, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:20:12: Disconnecting: Received logon response before sending request
+20220405-14:20:17: MINA session created: local=/127.0.0.1:50216, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:20:18: Initiated logon request
+20220405-14:20:18: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-14:20:18: Received logon
+20220405-14:25:28: Received logout request
+20220405-14:25:28: Sent logout response
+20220405-14:25:28: Disconnecting: Received logout request
+20220405-14:26:18: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-14:26:18: Created session: FIX.4.4:CLIENT->SERVER
+20220405-14:26:18: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-14:26:18: MINA session created: local=/127.0.0.1:50303, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:26:18: Disconnecting: Received logon response before sending request
+20220405-14:26:23: MINA session created: local=/127.0.0.1:50324, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:26:23: Disconnecting: Encountered END_OF_STREAM
+20220405-14:26:52: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-14:26:52: Created session: FIX.4.4:CLIENT->SERVER
+20220405-14:26:52: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-14:26:52: MINA session created: local=/127.0.0.1:50371, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:26:52: Disconnecting: Received logon response before sending request
+20220405-14:26:57: MINA session created: local=/127.0.0.1:50392, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:26:58: Initiated logon request
+20220405-14:26:58: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-14:26:58: Received logon
+20220405-14:30:21: Disconnecting: Socket exception (/127.0.0.1:55555): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220405-14:30:23: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:30:28: Pending connection not established after 2002 ms.
+20220405-14:30:29: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:30:33: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:30:38: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:30:43: Pending connection not established after 2002 ms.
+20220405-14:30:44: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:30:48: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:30:53: Pending connection not established after 2002 ms.
+20220405-14:30:54: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:30:58: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:03: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:08: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:13: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:18: Pending connection not established after 2002 ms.
+20220405-14:31:19: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:23: Pending connection not established after 2002 ms.
+20220405-14:31:25: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:29: Pending connection not established after 2001 ms.
+20220405-14:31:30: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:34: Pending connection not established after 2001 ms.
+20220405-14:31:35: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:39: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:44: Pending connection not established after 2002 ms.
+20220405-14:31:45: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:49: Pending connection not established after 2002 ms.
+20220405-14:31:50: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:54: Pending connection not established after 2002 ms.
+20220405-14:31:55: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:31:59: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:04: Pending connection not established after 2001 ms.
+20220405-14:32:05: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:09: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:14: Pending connection not established after 2001 ms.
+20220405-14:32:15: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:19: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:24: Pending connection not established after 2002 ms.
+20220405-14:32:25: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:29: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:34: Pending connection not established after 2001 ms.
+20220405-14:32:35: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:39: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:44: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:49: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:54: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:32:59: Pending connection not established after 2002 ms.
+20220405-14:33:00: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:04: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:09: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:14: Pending connection not established after 2002 ms.
+20220405-14:33:15: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:19: Pending connection not established after 2002 ms.
+20220405-14:33:20: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:24: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:29: Pending connection not established after 2002 ms.
+20220405-14:33:30: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:34: Pending connection not established after 2002 ms.
+20220405-14:33:35: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:39: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:44: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:49: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:54: Pending connection not established after 2002 ms.
+20220405-14:33:55: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:33:59: Pending connection not established after 2002 ms.
+20220405-14:34:00: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:04: Pending connection not established after 2002 ms.
+20220405-14:34:05: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:09: Pending connection not established after 2002 ms.
+20220405-14:34:10: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:14: Pending connection not established after 2002 ms.
+20220405-14:34:15: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:19: Pending connection not established after 2002 ms.
+20220405-14:34:20: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:24: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:29: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:34: Pending connection not established after 2002 ms.
+20220405-14:34:35: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:39: Pending connection not established after 2002 ms.
+20220405-14:34:40: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:44: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:50: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:34:55: Pending connection not established after 2001 ms.
+20220405-14:34:56: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:00: Pending connection not established after 2001 ms.
+20220405-14:35:01: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:05: Pending connection not established after 2023 ms.
+20220405-14:35:06: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:10: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:15: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:20: Pending connection not established after 2001 ms.
+20220405-14:35:21: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:25: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:30: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:35: Pending connection not established after 2001 ms.
+20220405-14:35:36: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:40: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:45: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:50: Pending connection not established after 2001 ms.
+20220405-14:35:51: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:35:55: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:00: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:05: Pending connection not established after 2001 ms.
+20220405-14:36:06: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:10: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:15: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:20: Pending connection not established after 2001 ms.
+20220405-14:36:21: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:25: Pending connection not established after 2002 ms.
+20220405-14:36:26: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:30: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:35: Pending connection not established after 2002 ms.
+20220405-14:36:36: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:40: Pending connection not established after 2001 ms.
+20220405-14:36:41: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:45: Pending connection not established after 2002 ms.
+20220405-14:36:46: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:50: Pending connection not established after 2002 ms.
+20220405-14:36:51: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:36:55: Pending connection not established after 2001 ms.
+20220405-14:36:56: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:00: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:05: Pending connection not established after 2002 ms.
+20220405-14:37:06: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:10: Pending connection not established after 2001 ms.
+20220405-14:37:11: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:15: Pending connection not established after 2002 ms.
+20220405-14:37:16: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:20: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:25: Pending connection not established after 2001 ms.
+20220405-14:37:26: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:30: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:35: Pending connection not established after 2001 ms.
+20220405-14:37:36: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:40: Pending connection not established after 2002 ms.
+20220405-14:37:41: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:45: Pending connection not established after 2002 ms.
+20220405-14:37:46: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:50: Pending connection not established after 2003 ms.
+20220405-14:37:51: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:37:55: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:00: Pending connection not established after 2006 ms.
+20220405-14:38:01: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:05: Pending connection not established after 2002 ms.
+20220405-14:38:06: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:10: Pending connection not established after 2002 ms.
+20220405-14:38:11: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:15: Pending connection not established after 2002 ms.
+20220405-14:38:16: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:20: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:25: Pending connection not established after 2002 ms.
+20220405-14:38:26: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:31: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:36: Pending connection not established after 2002 ms.
+20220405-14:38:37: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:41: Pending connection not established after 2002 ms.
+20220405-14:38:42: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:46: Pending connection not established after 2002 ms.
+20220405-14:38:47: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:51: Pending connection not established after 2001 ms.
+20220405-14:38:52: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:38:56: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:01: Pending connection not established after 2001 ms.
+20220405-14:39:02: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:06: Pending connection not established after 2001 ms.
+20220405-14:39:07: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:11: Pending connection not established after 2001 ms.
+20220405-14:39:12: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:16: Pending connection not established after 2001 ms.
+20220405-14:39:17: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:21: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:26: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:31: Pending connection not established after 2002 ms.
+20220405-14:39:32: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:36: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:41: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:46: Pending connection not established after 2002 ms.
+20220405-14:39:47: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220405-14:39:51: Pending connection not established after 2001 ms.
+20220405-14:44:09: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220405-14:44:09: Created session: FIX.4.4:CLIENT->SERVER
+20220405-14:44:10: Configured socket addresses for session: [/127.0.0.1:55555]
+20220405-14:44:10: MINA session created: local=/127.0.0.1:50719, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:44:10: Disconnecting: Received logon response before sending request
+20220405-14:44:15: MINA session created: local=/127.0.0.1:50741, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220405-14:44:16: Initiated logon request
+20220405-14:44:16: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220405-14:44:16: Received logon
+20220405-14:59:36: Initiated logout request
+20220405-14:59:36: Received logout response
+20220405-14:59:36: Disconnecting: Received logout response
