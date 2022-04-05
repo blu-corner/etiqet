@@ -13,6 +13,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +101,6 @@ public class MainController implements Initializable{
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
     private Initator initator;
-
 
     public boolean isUseDefaultPort() {
         return useDefaultPort;
@@ -210,7 +210,6 @@ public class MainController implements Initializable{
         return false;
     }
 
-
     public void stop() {
         try {
             if (socketInitiator != null){
@@ -300,9 +299,10 @@ public class MainController implements Initializable{
 
         comboSide.getItems().addAll("BUY", "SELL");
         comboSide.getSelectionModel().select(0);
-        initator = new Initator(listViewActions, listViewLog);
+        initator = new Initator(listViewActions, listViewLog, textFieldOrderID );
 
-
+        checkMenuItemRemPort.setSelected(true);
+        setUseDefaultPort(true);
 
     }
 
@@ -356,6 +356,9 @@ public class MainController implements Initializable{
         String textFieldSizeText = this.textFieldSize.getText();
         String textFieldPrice = this.textFieldPrice.getText();
         String textFieldOrderID = this.textFieldOrderID.getText();
+        if (StringUtils.isEmpty(textFieldOrderID)){
+            return;
+        }
         String textFieldOrigOrderID = this.textFieldOrigOrderID.getText();
         boolean checkBoxAutoGenSelected = checkBoxAutoGen.isSelected();
         boolean checkBoxResetSeqSelected = checkBoxResetSeq.isSelected();
@@ -479,5 +482,12 @@ public class MainController implements Initializable{
     public void cleanAll(ActionEvent actionEvent){
         cleanBidAndOffer(actionEvent);
         cleanTrades(actionEvent);
+    }
+
+    public void setAutoGenValue(ActionEvent actionEvent){
+        this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(5));
+        if (!this.checkBoxAutoGen.isSelected()){
+            this.textFieldOrderID.setText("");
+        }
     }
 }

@@ -62,7 +62,7 @@
 
 
                         <CheckMenuItem fx:id="checkMenuItemRemPort" mnemonicParsing="false" onAction="#setRememberPort"
-                                       text="Use default port"/>
+                                       text="Use default port" />
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem mnemonicParsing="false" onAction="#stop" text="Stop"/>
                     </items>
@@ -267,7 +267,7 @@
                                         </TextField>
                                         <CheckBox fx:id="checkBoxAutoGen" mnemonicParsing="false" prefHeight="17.0"
                                                   prefWidth="102.0" text="Auto gen" GridPane.columnIndex="6"
-                                                  GridPane.halignment="CENTER"/>
+                                                  GridPane.halignment="CENTER" onAction="#setAutoGenValue"/>
                                         <Button fx:id="buttonSendOrder" mnemonicParsing="false" onAction="#sendOrder"
                                                 text="SEND" GridPane.columnIndex="8" GridPane.halignment="CENTER"/>
                                         <CheckBox fx:id="checkBoxResetSeq" mnemonicParsing="false" text="Reset Seq"

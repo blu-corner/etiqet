@@ -234,7 +234,7 @@ public class Acceptor implements Application {
                 break;
             case ExecType.REPLACED:
                 executionReport.setField(new ExecType(execType));
-                executionReport.setField(new OrdStatus(OrdStatus.REPLACED));
+//                executionReport.setField(new OrdStatus(OrdStatus.REPLACED));
                 break;
             case ExecType.REJECTED:
                 executionReport.setField(new ExecType(execType));
