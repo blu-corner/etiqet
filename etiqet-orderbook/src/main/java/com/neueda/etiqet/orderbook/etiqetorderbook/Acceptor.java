@@ -153,11 +153,13 @@ public class Acceptor implements Application {
                         reports.add(rejectDuplicated(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER));
                     } else {
                         logger.info("################################ ORDER CANCEL REPLACE REQUEST");
-                        replaceOrder(side, new Order(origClOrdID.getValue(), LocalDateTime.now(), ordQty.getValue(), price.getValue()));
+                        Order order = new Order(origClOrdID.getValue(), LocalDateTime.now(), ordQty.getValue(), price.getValue());
                         reports.add(generateExecReport(ExecType.PENDING_REPLACE, clOrdID, Constants.NEW, Constants.NEW, symbol, side, ordQty, new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.REPLACED, clOrdID, orderId, execId, symbol, side, ordQty, price));
-
-
+                        ExecutionReport tradeWhenReplacing = replaceOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, ordQty, price, order);
+                        if (tradeWhenReplacing != null){
+                            reports.add(tradeWhenReplacing);
+                        }
                     }
                 }
 
@@ -284,7 +286,8 @@ public class Acceptor implements Application {
         return lookForNewTrade(clOrdID, orderId, execId, symbol, side, size, price);
     }
 
-    private void replaceOrder(CharField side, Order order) {
+    private ExecutionReport replaceOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol,
+                              CharField side, DoubleField size, DoubleField priceOrder, Order order) {
         if (side.getValue() == (Side.BUY)) {
             for (Order o : this.mainController.getBuy()) {
                 String orderID = o.getOrderID();
@@ -306,6 +309,7 @@ public class Acceptor implements Application {
             this.mainController.reorderBookSellTableView();
         }
         this.mainController.setChanged(true);
+        return lookForNewTrade(clOrdID, orderId, execId, symbol, side, size, priceOrder);
     }
 
     private boolean containsOrder(CharField side, String orderId) {

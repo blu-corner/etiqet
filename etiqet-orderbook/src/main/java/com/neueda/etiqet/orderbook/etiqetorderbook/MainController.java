@@ -127,7 +127,7 @@ public class MainController implements Initializable{
         try {
             SessionSettings sessionSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
             if (setPort(sessionSettings, Constants.SOCKET_ACCEPTOR_PORT)){
-                //deleteDir("store");
+//                deleteDir("store"); //Just in case it fails deleting when restarting seq number
                 menuItemMessagePort.setText("Listening on port: "+ sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT));
                 MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
                 LogFactory logFactory = new FileLogFactory(sessionSettings);
@@ -150,7 +150,6 @@ public class MainController implements Initializable{
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void startInitiator(ActionEvent actionEvent) {
@@ -158,7 +157,7 @@ public class MainController implements Initializable{
             URL resource = getClass().getClassLoader().getResource(Constants.CLIENT_CFG);
             SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
             if (setPort(initiatorSettings, Constants.SOCKET_INITIATOR_PORT)){
-                //deleteDir("initiatorStore");
+//                deleteDir("initiatorStore"); // Just in case it fails when restarting seq number
                 menuItemMessagePort.setText("Connected to port: " + initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT));
                 FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
                 FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
@@ -415,9 +414,6 @@ public class MainController implements Initializable{
         stop();
         Platform.exit();
     }
-
-
-
 
     public void setDefaultPort(ActionEvent actionEvent){
         TextInputDialog dialog = null;
