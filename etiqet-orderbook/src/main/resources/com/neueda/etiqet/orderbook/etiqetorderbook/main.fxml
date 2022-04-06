@@ -62,7 +62,7 @@
 
 
                         <CheckMenuItem fx:id="checkMenuItemRemPort" mnemonicParsing="false" onAction="#setRememberPort"
-                                       text="Use default port" />
+                                       text="Use default port"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem mnemonicParsing="false" onAction="#stop" text="Stop"/>
                     </items>
@@ -74,11 +74,16 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Options">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Clear bid" fx:id="menuItemClearBid" onAction="#cleanBid"/>
-                        <MenuItem mnemonicParsing="false" text="Clear offer" fx:id="menuItemClearOffer" onAction="#cleanOffer"/>
-                        <MenuItem mnemonicParsing="false" text="Clear bid &amp; offer" fx:id="menuItemClearBidAndOffer" onAction="#cleanBidAndOffer"/>
-                        <MenuItem mnemonicParsing="false" text="Clear trade panel" fx:id="menuItemClearTrades" onAction="#cleanTrades"/>
-                        <MenuItem mnemonicParsing="false" text="Clear all" fx:id="menuItemClearAll" onAction="#cleanAll"/>
+                        <MenuItem fx:id="menuItemClearBid" mnemonicParsing="false" onAction="#cleanBid"
+                                  text="Clear bid"/>
+                        <MenuItem fx:id="menuItemClearOffer" mnemonicParsing="false" onAction="#cleanOffer"
+                                  text="Clear offer"/>
+                        <MenuItem fx:id="menuItemClearBidAndOffer" mnemonicParsing="false" onAction="#cleanBidAndOffer"
+                                  text="Clear bid &amp; offer"/>
+                        <MenuItem fx:id="menuItemClearTrades" mnemonicParsing="false" onAction="#cleanTrades"
+                                  text="Clear trade panel"/>
+                        <MenuItem fx:id="menuItemClearAll" mnemonicParsing="false" onAction="#cleanAll"
+                                  text="Clear all"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -158,10 +163,14 @@
                                                          text="BuyID"/>
                                             <TableColumn fx:id="actionOrderIdSellTableColumn" prefWidth="80.0"
                                                          text="SellID"/>
-                                            <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="80.0" text="BuySize"/>
-                                            <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="80.0" text="SellSize"/>
-                                            <TableColumn fx:id="actionLeaveQtyTableColumn" prefWidth="80.0" text="LeaveQty"/>
-                                            <TableColumn fx:id="actionAgreedPriceTableColumn" prefWidth="100.0" text="AgreedPrice"/>
+                                            <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="80.0"
+                                                         text="BuySize"/>
+                                            <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="80.0"
+                                                         text="SellSize"/>
+                                            <TableColumn fx:id="actionLeaveQtyTableColumn" prefWidth="80.0"
+                                                         text="LeaveQty"/>
+                                            <TableColumn fx:id="actionAgreedPriceTableColumn" prefWidth="100.0"
+                                                         text="AgreedPrice"/>
                                         </columns>
                                     </TableView>
                                 </children>
@@ -208,6 +217,9 @@
                                                     </font>
                                                 </Tooltip>
                                             </tooltip>
+                                            <GridPane.margin>
+                                                <Insets left="20.0"/>
+                                            </GridPane.margin>
                                         </ComboBox>
                                         <ComboBox fx:id="comboSide" maxWidth="-Infinity" minWidth="-Infinity"
                                                   prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="1"
@@ -219,6 +231,9 @@
                                                     </font>
                                                 </Tooltip>
                                             </tooltip>
+                                            <GridPane.margin>
+                                                <Insets left="10.0"/>
+                                            </GridPane.margin>
 
                                         </ComboBox>
                                         <TextField fx:id="textFieldSize" maxWidth="-Infinity" minWidth="-Infinity"
@@ -265,13 +280,18 @@
                                                 </Tooltip>
                                             </tooltip>
                                         </TextField>
-                                        <CheckBox fx:id="checkBoxAutoGen" mnemonicParsing="false" prefHeight="17.0"
-                                                  prefWidth="102.0" text="Auto gen" GridPane.columnIndex="6"
-                                                  GridPane.halignment="CENTER" onAction="#setAutoGenValue"/>
+                                        <CheckBox fx:id="checkBoxAutoGen" mnemonicParsing="false"
+                                                  onAction="#setAutoGenValue" prefHeight="17.0" prefWidth="102.0"
+                                                  text="Auto gen" GridPane.columnIndex="6"
+                                                  GridPane.halignment="CENTER"/>
                                         <Button fx:id="buttonSendOrder" mnemonicParsing="false" onAction="#sendOrder"
-                                                text="SEND" GridPane.columnIndex="8" GridPane.halignment="CENTER"/>
-                                        <CheckBox fx:id="checkBoxResetSeq" mnemonicParsing="false" text="Reset Seq"
-                                                  GridPane.columnIndex="7" GridPane.halignment="CENTER"/>
+                                                text="SEND" GridPane.columnIndex="7" GridPane.halignment="LEFT"/>
+                                        <Button mnemonicParsing="false" text="RESET" GridPane.columnIndex="8"
+                                                GridPane.halignment="CENTER" onAction="#resetSequenceNumber">
+                                            <GridPane.margin>
+                                                <Insets right="10.0"/>
+                                            </GridPane.margin>
+                                        </Button>
                                     </children>
                                 </GridPane>
                                 <ListView fx:id="listViewActions" layoutX="14.0" layoutY="109.0" prefHeight="584.0"

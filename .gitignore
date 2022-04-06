@@ -11,3 +11,6 @@
 *.iml
 /.idea/
 
+/etiqet-orderbook/initiatorStore/
+/etiqet-orderbook/initiatorLog/
+/etiqet-orderbook/initiatorLog/

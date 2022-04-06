@@ -3,6 +3,7 @@ package com.neueda.etiqet.orderbook.etiqetorderbook;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
+import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
@@ -72,7 +73,6 @@ public class MainController implements Initializable{
     @FXML public TextField textFieldOrderID;
     @FXML public TextField textFieldOrigOrderID;
     @FXML public CheckBox checkBoxAutoGen;
-    @FXML public CheckBox checkBoxResetSeq;
     @FXML public Button buttonSendOrder;
     @FXML public ListView listViewLog;
     @FXML public ListView listViewActions;
@@ -129,6 +129,9 @@ public class MainController implements Initializable{
         try {
             SessionSettings sessionSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
             if (setPort(sessionSettings, Constants.SOCKET_ACCEPTOR_PORT)){
+//                if (!checkPort(sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT))){
+//                    return;
+//                }
 //                deleteDir("store"); //Just in case it fails deleting when restarting seq number
                 menuItemMessagePort.setText("Listening on port: "+ sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT));
                 MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
@@ -160,6 +163,9 @@ public class MainController implements Initializable{
             SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
             if (setPort(initiatorSettings, Constants.SOCKET_INITIATOR_PORT)){
 //                deleteDir("initiatorStore"); // Just in case it fails when restarting seq number
+//                if (!checkPort(initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT))){
+//                    return;
+//                }
                 menuItemMessagePort.setText("Connected to port: " + initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT));
                 FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
                 FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
@@ -167,7 +173,7 @@ public class MainController implements Initializable{
                 socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
                 socketInitiator.start();
                 sessionId = socketInitiator.getSessions().get(0);
-                sendLogonRequest(sessionId);
+                sendLogonRequest();
 
                 circle.setFill(Color.GREENYELLOW);
                 this.startInitiator.setDisable(true);
@@ -212,6 +218,18 @@ public class MainController implements Initializable{
         return false;
     }
 
+//    public boolean checkPort(String port){
+//        if (!Utils.availablePort(Integer.parseInt(port))){
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setTitle("ERROR");
+//            alert.setHeaderText("The port is not available");
+//            alert.setContentText("Choose another port");
+//            alert.showAndWait();
+//            return false;
+//        }
+//        return true;
+//    }
+
     public void stop() {
         try {
             if (socketInitiator != null){
@@ -235,32 +253,40 @@ public class MainController implements Initializable{
         }
     }
 
-    private void sendLogonRequest(SessionID sessionID)throws SessionNotFound{
+    private void sendLogonRequest()throws SessionNotFound{
         Logon logon = new Logon();
         Message.Header header = logon.getHeader();
         header.setField(new BeginString("FIX.4.4"));
         logon.set(new HeartBtInt(30));
         logon.set(new EncryptMethod(0));
-        boolean sent = Session.sendToTarget(logon, sessionID);
+        boolean sent = Session.sendToTarget(logon, this.sessionId);
         logger.info("Logon message sent: {}", sent);
     }
 
-    private void sendSeqReset(SessionID sessionID)throws SessionNotFound{
+    private void sendSeqReset()throws SessionNotFound{
         SequenceReset sequenceReset = new SequenceReset();
 //        GapFillFlag gapFillFlag = new GapFillFlag();
-        NewSeqNo newSeqNo = new NewSeqNo(10);
+        NewSeqNo newSeqNo = new NewSeqNo(100);
 //        sequenceReset.set(gapFillFlag);
         sequenceReset.set(newSeqNo);
-        MsgSeqNum msgSeqNum = new MsgSeqNum(10);
+        try {
+            Path path = Paths.get("initiatorStore/FIX.4.4-CLIENT-SERVER.senderseqnums");
+            Files.write(path, Collections.singleton(" \u0001100"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        boolean sent = Session.sendToTarget(sequenceReset, this.sessionId);
 
-
-        boolean sent = Session.sendToTarget(sequenceReset, sessionID);
+//        MsgSeqNum msgSeqNum = new MsgSeqNum(100);
+//          Heartbeat heartbeat = new Heartbeat();
+//        heartbeat.set(msgSeqNum);
+//        Session.sendToTarget()
         logger.info("Sequence reset message sent: {}", sent);
     }
 
-    private void sendLogoutRequest(SessionID sessionID)throws SessionNotFound{
+    private void sendLogoutRequest()throws SessionNotFound{
         Logout logout = new Logout();
-        boolean sent = Session.sendToTarget(logout, sessionID);
+        boolean sent = Session.sendToTarget(logout, this.sessionId);
         logger.info("Logout message sent: {}", sent);
     }
 
@@ -381,7 +407,6 @@ public class MainController implements Initializable{
         }
         String textFieldOrigOrderID = this.textFieldOrigOrderID.getText();
         boolean checkBoxAutoGenSelected = checkBoxAutoGen.isSelected();
-        boolean checkBoxResetSeqSelected = checkBoxResetSeq.isSelected();
         String comboOrdersValue = this.comboOrders.getValue().toString();
         char comboSideValue = this.comboSide.getValue().toString().equals("SELL") ? '2' : '1';
 
@@ -508,6 +533,18 @@ public class MainController implements Initializable{
         this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(8));
         if (!this.checkBoxAutoGen.isSelected()){
             this.textFieldOrderID.setText("");
+        }
+    }
+
+    public void resetSequenceNumber(ActionEvent actionEvent) {
+        try {
+            sendLogoutRequest();
+            deleteDir("store");
+            deleteDir("initatorStore");
+            sendLogonRequest();
+
+        } catch (SessionNotFound e) {
+            e.printStackTrace();
         }
     }
 }
