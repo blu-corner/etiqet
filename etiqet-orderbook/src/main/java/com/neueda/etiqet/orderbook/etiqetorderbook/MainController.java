@@ -339,6 +339,18 @@ public class MainController implements Initializable{
         reorderBookSellTableView();
     }
 
+    public List<Order> getOrderedBuy() {
+        return this.getBuy().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).collect(Collectors.toList());
+    }
+
+    public List<Order> getOrderedSell() {
+        return this.getSell().stream().sorted(Comparator.comparing(Order::getPrice)).collect(Collectors.toList());
+    }
+
+    public List<Action> getOrderedTrades() {
+        return this.actionTableView.getItems().stream().sorted(Comparator.comparing(Action::getTime, Comparator.reverseOrder())).collect(Collectors.toList());
+    }
+
     public void reorderBookBuyTableView() {
         orderBookBuyTableView.getItems().clear();
         orderBookBuyTableView.getItems().addAll(this.getOrderedBuy());
@@ -349,6 +361,13 @@ public class MainController implements Initializable{
         orderBookSellTableView.getItems().clear();
         orderBookSellTableView.getItems().addAll(this.getOrderedSell());
         orderBookSellTableView.getSelectionModel().clearAndSelect(0);
+    }
+
+    public void reorderActionTableView(){
+        List<Action> orderedTrades = getOrderedTrades();
+        actionTableView.getItems().clear();
+        actionTableView.getItems().addAll(orderedTrades);
+        actionTableView.getSelectionModel().clearAndSelect(0);
     }
 
     public void sendOrder(ActionEvent actionEvent) {
@@ -397,13 +416,7 @@ public class MainController implements Initializable{
         Platform.exit();
     }
 
-    public List<Order> getOrderedBuy() {
-        return this.getBuy().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).collect(Collectors.toList());
-    }
 
-    public List<Order> getOrderedSell() {
-        return this.getSell().stream().sorted(Comparator.comparing(Order::getPrice)).collect(Collectors.toList());
-    }
 
 
     public void setDefaultPort(ActionEvent actionEvent){

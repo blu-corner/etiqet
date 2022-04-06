@@ -127,10 +127,13 @@ public class Acceptor implements Application {
                     } else {
                         logger.info("################################ ORDER CANCEL REQUEST");
                         //clOrdID, orderId, execId, symbol, side, price, ordQty
-                        cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, null, null);
+
                         reports.add(generateExecReport(ExecType.PENDING_CANCEL, clOrdID, Constants.NEW, Constants.NEW, symbol, side, new DoubleField(0), new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.CANCELED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
-
+                        ExecutionReport tradeWhenCancelling = cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, null, null);
+                        if (tradeWhenCancelling != null){
+                            reports.add(tradeWhenCancelling);
+                        }
                     }
                 }
 
@@ -198,6 +201,7 @@ public class Acceptor implements Application {
 
     private ExecutionReport generateExecReport(char execType, StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         ExecutionReport executionReport = new ExecutionReport();
+
         switch (execType) {
             case ExecType.PENDING_NEW:
                 executionReport.setField(new ExecType(execType));
@@ -266,8 +270,6 @@ public class Acceptor implements Application {
         this.mainController.setChanged(true);
     }
 
-
-
     private ExecutionReport cancelOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol, CharField side, DoubleField size, DoubleField price) {
         if (side.getValue() == (Side.BUY)) {
             this.mainController.getBuy().removeIf(b -> b.getOrderID().equals(origClOrdID.getValue()));
@@ -281,7 +283,6 @@ public class Acceptor implements Application {
         // StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty
         return lookForNewTrade(clOrdID, orderId, execId, symbol, side, size, price);
     }
-
 
     private void replaceOrder(CharField side, Order order) {
         if (side.getValue() == (Side.BUY)) {
@@ -320,7 +321,6 @@ public class Acceptor implements Application {
             || this.mainController.getSell().stream().anyMatch(s -> s.getOrderID().equals(clOrdID.getValue()));
     }
 
-
     private ExecutionReport lookForNewTrade(StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         try {
             Order topBuy = this.mainController.getBuy().size() > 0 ? this.mainController.getOrderedBuy().get(0) : null;
@@ -340,7 +340,7 @@ public class Acceptor implements Application {
                         //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price
                         Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), null, LocalDateTime.now(), topBuy.getSize(), topBuy.getPrice());
                         this.mainController.actionTableView.getItems().add(action);
-                        this.mainController.actionTableView.getSelectionModel().clearAndSelect(0);
+                        this.mainController.reorderActionTableView();
                         this.mainController.reorderBookBuyTableView();
                         this.mainController.reorderBookSellTableView();
                         return generateExecReport(ExecType.FILL, clOrdID, ordId, execId, symbol, side, ordQty, price);
@@ -363,9 +363,9 @@ public class Acceptor implements Application {
                             mainController.orderBookSellTableView.getItems().add(topSell);
                         }
                         Action action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), null, LocalDateTime.now(), leaveQty, topBuy.getPrice());
-                        mainController.actionTableView.getItems().add(action);
-                        mainController.actionTableView.getSelectionModel().clearAndSelect(0);
-                        printTrade(topBuy, topSell);
+                        this.mainController.actionTableView.getItems().add(action);
+                        this.mainController.reorderActionTableView();
+                        this.printTrade(topBuy, topSell);
                         this.mainController.reorderBookBuyTableView();
                         this.mainController.reorderBookSellTableView();
                         return generateExecReport(ExecType.PARTIAL_FILL, clOrdID, ordId, execId, symbol, side, price, new DoubleField(leaveQty.intValue()));

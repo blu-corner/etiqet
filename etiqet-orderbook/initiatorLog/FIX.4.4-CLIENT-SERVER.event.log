@@ -5117,3 +5117,52 @@ java.lang.NullPointerException
 20220406-08:59:14: Initiated logout request
 20220406-08:59:14: Received logout response
 20220406-08:59:14: Disconnecting: Received logout response
+20220406-09:04:16: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-09:04:16: Created session: FIX.4.4:CLIENT->SERVER
+20220406-09:04:16: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-09:04:16: MINA session created: local=/127.0.0.1:52605, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-09:04:16: Disconnecting: Received logon response before sending request
+20220406-09:04:21: MINA session created: local=/127.0.0.1:52627, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-09:04:22: Initiated logon request
+20220406-09:04:22: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-09:04:22: Received logon
+20220406-09:07:04: Initiated logout request
+20220406-09:07:04: Received logout response
+20220406-09:07:04: Disconnecting: Received logout response
+20220406-09:10:13: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-09:10:13: Created session: FIX.4.4:CLIENT->SERVER
+20220406-09:10:13: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-09:10:13: MINA session created: local=/127.0.0.1:52703, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-09:10:13: Disconnecting: Received logon response before sending request
+20220406-09:10:18: MINA session created: local=/127.0.0.1:52724, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-09:10:19: Initiated logon request
+20220406-09:10:19: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-09:10:19: Received logon
+20220406-09:16:35: Initiated logout request
+20220406-09:16:35: Received logout response
+20220406-09:16:35: Disconnecting: Received logout response
+20220406-09:28:09: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-09:28:09: Created session: FIX.4.4:CLIENT->SERVER
+20220406-09:28:10: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-09:28:10: MINA session created: local=/127.0.0.1:52829, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-09:28:10: Disconnecting: Received logon response before sending request
+20220406-09:28:15: MINA session created: local=/127.0.0.1:52851, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-09:28:16: Initiated logon request
+20220406-09:28:16: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-09:28:16: Received logon
+20220406-09:30:34: Received logout request
+20220406-09:30:34: Sent logout response
+20220406-09:30:34: Disconnecting: Received logout request
+20220406-09:30:37: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-09:37:21: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-09:37:21: Created session: FIX.4.4:CLIENT->SERVER
+20220406-09:37:21: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-09:37:21: MINA session created: local=/127.0.0.1:52945, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-09:37:21: Disconnecting: Received logon response before sending request
+20220406-09:37:26: MINA session created: local=/127.0.0.1:52967, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-09:37:27: Initiated logon request
+20220406-09:37:27: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-09:37:27: Received logon
+20220406-09:39:46: Initiated logout request
+20220406-09:39:46: Received logout response
+20220406-09:39:46: Disconnecting: Received logout response
