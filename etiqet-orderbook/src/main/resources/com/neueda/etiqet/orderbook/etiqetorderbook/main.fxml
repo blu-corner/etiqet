@@ -154,14 +154,14 @@
                                         <columns>
                                             <TableColumn fx:id="actionTimeTableColumn" prefWidth="200.0" text="Time"/>
                                             <TableColumn fx:id="actionTypeTableColumn" prefWidth="100.0" text="Type"/>
-                                            <TableColumn fx:id="actionOrderIdBuyTableColumn" prefWidth="100.0"
+                                            <TableColumn fx:id="actionOrderIdBuyTableColumn" prefWidth="80.0"
                                                          text="BuyID"/>
-                                            <TableColumn fx:id="actionOrderIdSellTableColumn" prefWidth="100.0"
+                                            <TableColumn fx:id="actionOrderIdSellTableColumn" prefWidth="80.0"
                                                          text="SellID"/>
-                                            <TableColumn fx:id="actionOrigOrderIDTableColumn" prefWidth="100.0"
-                                                         text="OrigID"/>
-                                            <TableColumn fx:id="actionSizeTableColumn" prefWidth="100.0" text="Size"/>
-                                            <TableColumn fx:id="actionPriceTableColumn" prefWidth="100.0" text="Price"/>
+                                            <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="80.0" text="BuySize"/>
+                                            <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="80.0" text="SellSize"/>
+                                            <TableColumn fx:id="actionLeaveQtyTableColumn" prefWidth="80.0" text="LeaveQty"/>
+                                            <TableColumn fx:id="actionAgreedPriceTableColumn" prefWidth="100.0" text="AgreedPrice"/>
                                         </columns>
                                     </TableView>
                                 </children>

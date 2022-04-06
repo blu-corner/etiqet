@@ -7,8 +7,10 @@ public class Action {
     private String buyID;
     private String sellID;
     private LocalDateTime time;
-    private Double size;
-    private Double price;
+    private Double buySize;
+    private Double sellSize;
+    private Double leaveQty;
+    private Double agreedPrice;
 
     public enum Type{
         PARTIAL_FILL,
@@ -17,13 +19,15 @@ public class Action {
         REPLACED
     }
 
-    public Action(Type type, String orderIDBuy, String orderIDSell, LocalDateTime time, Double size, Double price) {
+    public Action(Type type, String orderIDBuy, String orderIDSell, LocalDateTime time, Double buySize, Double sellSize, Double leaveQty, Double agreedPrice) {
         this.type = type;
         this.buyID = orderIDBuy;
         this.sellID = orderIDSell;
         this.time = time;
-        this.size = size;
-        this.price = price;
+        this.buySize = buySize;
+        this.sellSize = sellSize;
+        this.leaveQty = leaveQty;
+        this.agreedPrice = agreedPrice;
     }
 
     public Type getType() {
@@ -50,20 +54,36 @@ public class Action {
         this.time = time;
     }
 
-    public Double getSize() {
-        return size;
+    public Double getBuySize() {
+        return buySize;
     }
 
-    public void setSize(Double size) {
-        this.size = size;
+    public void setBuySize(Double buySize) {
+        this.buySize = buySize;
     }
 
-    public Double getPrice() {
-        return price;
+    public Double getLeaveQty() {
+        return leaveQty;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
+    public void setLeaveQty(Double leaveQty) {
+        this.leaveQty = leaveQty;
+    }
+
+    public Double getSellSize() {
+        return sellSize;
+    }
+
+    public void setSellSize(Double sellSize) {
+        this.sellSize = sellSize;
+    }
+
+    public Double getAgreedPrice() {
+        return agreedPrice;
+    }
+
+    public void setAgreedPrice(Double agreedPrice) {
+        this.agreedPrice = agreedPrice;
     }
 
     public String getSellID() {
@@ -77,12 +97,14 @@ public class Action {
     @Override
     public String toString() {
         return "Action{" +
-                "type=" + type +
-                ", orderIDBuy='" + buyID + '\'' +
-                ", orderIDSell='" + sellID + '\'' +
-                ", time=" + time +
-                ", size=" + size +
-                ", price=" + price +
-                '}';
+            "type=" + type +
+            ", buyID='" + buyID + '\'' +
+            ", sellID='" + sellID + '\'' +
+            ", time=" + time +
+            ", buySize=" + buySize +
+            ", sellSize=" + sellSize +
+            ", leaveQty=" + leaveQty +
+            ", agreedPrice=" + agreedPrice +
+            '}';
     }
 }

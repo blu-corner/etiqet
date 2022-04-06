@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 public class MainController implements Initializable{
 
+
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
     private List<Order> sell;
@@ -92,8 +93,10 @@ public class MainController implements Initializable{
     public TableColumn<Action, String> actionOrderIdBuyTableColumn;
     public TableColumn<Action, String> actionOrderIdSellTableColumn;
     public TableColumn<Action, String> actionTimeTableColumn;
-    public TableColumn<Action, String> actionSizeTableColumn;
-    public TableColumn<Action, String> actionPriceTableColumn;
+    public TableColumn<Action, String> actionBuySizeTableColumn;
+    public TableColumn<Action, String> actionSellSizeTableColumn;
+    public TableColumn<Action, String> actionLeaveQtyTableColumn;
+    public TableColumn<Action, String> actionAgreedPriceTableColumn;
 
     public Circle circle;
     private SocketAcceptor socketAcceptor;
@@ -289,8 +292,10 @@ public class MainController implements Initializable{
         actionOrderIdBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuyID"));
         actionOrderIdSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellID"));
         actionTimeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
-        actionSizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
-        actionPriceTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
+        actionBuySizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuySize"));
+        actionSellSizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellSize"));
+        actionLeaveQtyTableColumn.setCellValueFactory(new PropertyValueFactory<>("LeaveQty"));
+        actionAgreedPriceTableColumn.setCellValueFactory(new PropertyValueFactory<>("AgreedPrice"));
 
         comboOrders.getItems().addAll(Constants.COMBO_NEW_ORDER, Constants.COMBO_CANCEL, Constants.COMBO_REPLACE);
         comboOrders.getSelectionModel().select(0);

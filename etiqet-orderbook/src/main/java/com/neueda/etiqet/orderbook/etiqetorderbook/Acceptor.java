@@ -176,7 +176,6 @@ public class Acceptor implements Application {
         });
     }
 
-
     private Message rejectOrder(int rejResponseTo, int cxlRejReason) {
         String clOrdId = RandomStringUtils.randomAlphanumeric(5);
         OrderCancelReject orderCancelReject = new OrderCancelReject();
@@ -198,7 +197,6 @@ public class Acceptor implements Application {
 
         return orderCancelReject;
     }
-
 
     private ExecutionReport generateExecReport(char execType, StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         ExecutionReport executionReport = new ExecutionReport();
@@ -343,7 +341,7 @@ public class Acceptor implements Application {
                         printTrade(topBuy, topSell);
                         this.mainController.orderBookSellTableView.getItems().remove(topSell);
                         //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price
-                        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(), topBuy.getSize(), topBuy.getPrice());
+                        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(), topBuy.getSize(), topSell.getSize(), 0d, topSell.getPrice());
                         this.mainController.actionTableView.getItems().add(action);
                         this.mainController.reorderActionTableView();
                         this.mainController.reorderBookBuyTableView();
@@ -352,22 +350,28 @@ public class Acceptor implements Application {
                     } else {//Partial fill
                         logger.info("################################ TRADE PARTIAL FILL");
                         Double leaveQty;
+                        Action action = null;
+                        Double originalSize = 0d;
                         if (topBuy.getSize() > topSell.getSize()) {
                             leaveQty = topBuy.getSize() - topSell.getSize();
+                            originalSize = topBuy.getSize();
                             topBuy.setSize(leaveQty);
                             this.mainController.getSell().remove(topSell);
                             this.mainController.orderBookSellTableView.getItems().remove(topSell);
                             mainController.orderBookBuyTableView.getItems().remove(0);
                             mainController.orderBookBuyTableView.getItems().add(topBuy);
+                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(), originalSize, topSell.getSize(), leaveQty, topSell.getPrice());
                         } else {
                             leaveQty = topSell.getSize() - topBuy.getSize();
+                            originalSize = topSell.getSize();
                             topSell.setSize(leaveQty);
                             this.mainController.getBuy().remove(topBuy);
                             mainController.orderBookBuyTableView.getItems().remove(topBuy);
                             mainController.orderBookSellTableView.getItems().remove(0);
                             mainController.orderBookSellTableView.getItems().add(topSell);
+                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(),topBuy.getSize(),  originalSize, leaveQty, topSell.getPrice());
                         }
-                        Action action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(), leaveQty, topBuy.getPrice());
+
                         this.mainController.actionTableView.getItems().add(action);
                         this.mainController.reorderActionTableView();
                         this.printTrade(topBuy, topSell);
@@ -394,7 +398,6 @@ public class Acceptor implements Application {
         Constants.orderBookLooger.info(sell.toString());
         Constants.orderBookLooger.info("=================================================================================\n\n");
     }
-
 
     public void messageAnalizer(Message message, String direction) {
         Task<Void> task = new Task<Void>() {
