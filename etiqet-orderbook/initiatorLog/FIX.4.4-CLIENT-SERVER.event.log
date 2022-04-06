@@ -5259,3 +5259,27 @@ java.lang.NullPointerException
 20220406-10:05:35: Initiated logout request
 20220406-10:05:35: Received logout response
 20220406-10:05:35: Disconnecting: Received logout response
+20220406-10:28:40: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-10:28:40: Created session: FIX.4.4:CLIENT->SERVER
+20220406-10:28:40: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-10:28:40: MINA session created: local=/127.0.0.1:54578, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-10:28:40: Disconnecting: Received logon response before sending request
+20220406-10:28:45: MINA session created: local=/127.0.0.1:54600, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-10:28:46: Initiated logon request
+20220406-10:28:46: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-10:28:46: Received logon
+20220406-10:29:27: Initiated logout request
+20220406-10:29:27: Received logout response
+20220406-10:29:27: Disconnecting: Received logout response
+20220406-10:33:36: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-10:33:36: Created session: FIX.4.4:CLIENT->SERVER
+20220406-10:33:36: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-10:33:36: MINA session created: local=/127.0.0.1:54682, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-10:33:36: Disconnecting: Received logon response before sending request
+20220406-10:33:41: MINA session created: local=/127.0.0.1:54704, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-10:33:42: Initiated logon request
+20220406-10:33:42: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-10:33:42: Received logon
+20220406-10:35:42: Initiated logout request
+20220406-10:35:42: Received logout response
+20220406-10:35:42: Disconnecting: Received logout response

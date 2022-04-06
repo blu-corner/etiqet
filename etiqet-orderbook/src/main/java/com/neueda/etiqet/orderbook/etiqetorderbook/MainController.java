@@ -91,7 +91,6 @@ public class MainController implements Initializable{
     public TableColumn<Action, String> actionTypeTableColumn;
     public TableColumn<Action, String> actionOrderIdBuyTableColumn;
     public TableColumn<Action, String> actionOrderIdSellTableColumn;
-    public TableColumn<Action, String> actionOrigOrderIDTableColumn;
     public TableColumn<Action, String> actionTimeTableColumn;
     public TableColumn<Action, String> actionSizeTableColumn;
     public TableColumn<Action, String> actionPriceTableColumn;
@@ -289,7 +288,6 @@ public class MainController implements Initializable{
         actionTypeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Type"));
         actionOrderIdBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuyID"));
         actionOrderIdSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellID"));
-        actionOrigOrderIDTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrigID"));
         actionTimeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
         actionSizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
         actionPriceTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));

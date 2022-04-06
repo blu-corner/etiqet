@@ -16,7 +16,6 @@ import quickfix.fix44.OrderCancelReject;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Acceptor implements Application {
 
@@ -120,10 +119,10 @@ public class Acceptor implements Application {
             case MsgType.ORDER_CANCEL_REQUEST:
                 origClOrdID = message.getField(new OrigClOrdID());
                 if (duplicatedOrderId(clOrdID)) {
-                    reports.add(rejectDuplicated(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED));
+                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED));
                 } else {
                     if (!containsOrder(side, origClOrdID.getValue())) {
-                        reports.add(rejectDuplicated(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.UNKNOWN_ORDER));
+                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.UNKNOWN_ORDER));
                     } else {
                         logger.info("################################ ORDER CANCEL REQUEST");
                         //clOrdID, orderId, execId, symbol, side, price, ordQty
@@ -147,10 +146,10 @@ public class Acceptor implements Application {
                     throw new IncorrectTagValue(ordType.getField());
                 }
                 if (duplicatedOrderId(clOrdID)) {
-                    reports.add(rejectDuplicated(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED));
+                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED));
                 } else {
                     if (!containsOrder(side, origClOrdID.getValue())) {
-                        reports.add(rejectDuplicated(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER));
+                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER));
                     } else {
                         logger.info("################################ ORDER CANCEL REPLACE REQUEST");
                         Order order = new Order(origClOrdID.getValue(), LocalDateTime.now(), ordQty.getValue(), price.getValue());
@@ -178,7 +177,7 @@ public class Acceptor implements Application {
     }
 
 
-    private Message rejectDuplicated(int rejResponseTo, int cxlRejReason) {
+    private Message rejectOrder(int rejResponseTo, int cxlRejReason) {
         String clOrdId = RandomStringUtils.randomAlphanumeric(5);
         OrderCancelReject orderCancelReject = new OrderCancelReject();
         switch (rejResponseTo) {
@@ -322,7 +321,9 @@ public class Acceptor implements Application {
 
     private boolean duplicatedOrderId(StringField clOrdID) {
         return this.mainController.getBuy().stream().anyMatch(b -> b.getOrderID().equals(clOrdID.getValue()))
-            || this.mainController.getSell().stream().anyMatch(s -> s.getOrderID().equals(clOrdID.getValue()));
+            || this.mainController.getSell().stream().anyMatch(s -> s.getOrderID().equals(clOrdID.getValue()))
+            || this.mainController.actionTableView.getItems().stream().anyMatch(s -> s.getBuyID().equals(clOrdID.getValue())
+            || s.getSellID().equals(clOrdID.getValue()) );
     }
 
     private ExecutionReport lookForNewTrade(StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
@@ -342,7 +343,7 @@ public class Acceptor implements Application {
                         printTrade(topBuy, topSell);
                         this.mainController.orderBookSellTableView.getItems().remove(topSell);
                         //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price
-                        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), null, LocalDateTime.now(), topBuy.getSize(), topBuy.getPrice());
+                        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(), topBuy.getSize(), topBuy.getPrice());
                         this.mainController.actionTableView.getItems().add(action);
                         this.mainController.reorderActionTableView();
                         this.mainController.reorderBookBuyTableView();
@@ -366,7 +367,7 @@ public class Acceptor implements Application {
                             mainController.orderBookSellTableView.getItems().remove(0);
                             mainController.orderBookSellTableView.getItems().add(topSell);
                         }
-                        Action action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), null, LocalDateTime.now(), leaveQty, topBuy.getPrice());
+                        Action action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(), leaveQty, topBuy.getPrice());
                         this.mainController.actionTableView.getItems().add(action);
                         this.mainController.reorderActionTableView();
                         this.printTrade(topBuy, topSell);
