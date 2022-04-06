@@ -1,4 +1,4 @@
-package com.neueda.etiqet.orderbook.etiqetorderbook;
+package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 
 import java.time.LocalDateTime;
 

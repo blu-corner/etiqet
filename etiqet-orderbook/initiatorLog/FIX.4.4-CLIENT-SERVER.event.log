@@ -5004,3 +5004,116 @@ java.lang.NullPointerException
 20220405-14:59:36: Initiated logout request
 20220405-14:59:36: Received logout response
 20220405-14:59:36: Disconnecting: Received logout response
+20220406-07:44:57: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-07:44:57: Session state is not current; resetting FIX.4.4:CLIENT->SERVER
+20220406-07:44:57: Created session: FIX.4.4:CLIENT->SERVER
+20220406-07:44:57: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-07:44:57: MINA session created: local=/127.0.0.1:55535, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-07:44:57: Disconnecting: Received logon response before sending request
+20220406-07:45:02: MINA session created: local=/127.0.0.1:55557, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-07:45:03: Initiated logon request
+20220406-07:45:03: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-07:45:03: Received logon
+20220406-07:46:19: Initiated logout request
+20220406-07:46:19: Received logout response
+20220406-07:46:19: Disconnecting: Received logout response
+20220406-08:16:03: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-08:16:03: Created session: FIX.4.4:CLIENT->SERVER
+20220406-08:16:03: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-08:16:03: MINA session created: local=/127.0.0.1:61254, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:16:03: Disconnecting: Received logon response before sending request
+20220406-08:16:08: MINA session created: local=/127.0.0.1:61275, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:16:09: Initiated logon request
+20220406-08:16:09: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-08:16:09: Received logon
+20220406-08:16:50: Disconnecting: Socket exception (/127.0.0.1:55555): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220406-08:16:53: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:16:58: Pending connection not established after 2001 ms.
+20220406-08:16:59: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:03: Pending connection not established after 2002 ms.
+20220406-08:17:04: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:08: Pending connection not established after 2002 ms.
+20220406-08:17:09: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:13: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:18: Pending connection not established after 2001 ms.
+20220406-08:17:19: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:23: Pending connection not established after 2001 ms.
+20220406-08:17:24: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:28: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:33: Pending connection not established after 2001 ms.
+20220406-08:17:34: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:38: Pending connection not established after 2002 ms.
+20220406-08:17:39: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:43: Pending connection not established after 2015 ms.
+20220406-08:17:44: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:48: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:53: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:17:58: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:03: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:08: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:13: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:18: Pending connection not established after 2001 ms.
+20220406-08:18:19: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:23: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:28: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:33: Pending connection not established after 2001 ms.
+20220406-08:18:34: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:38: Pending connection not established after 2001 ms.
+20220406-08:18:39: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:43: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:48: Pending connection not established after 2002 ms.
+20220406-08:18:49: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:53: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:18:58: Pending connection not established after 2001 ms.
+20220406-08:18:59: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:19:03: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:19:33: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-08:19:33: Created session: FIX.4.4:CLIENT->SERVER
+20220406-08:19:33: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-08:19:33: MINA session created: local=/127.0.0.1:61385, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:19:33: Disconnecting: Received logon response before sending request
+20220406-08:19:38: MINA session created: local=/127.0.0.1:61406, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:19:39: Initiated logon request
+20220406-08:19:39: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-08:19:39: Received logon
+20220406-08:24:47: Disconnecting: Socket exception (/127.0.0.1:55555): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220406-08:24:49: Pending connection not established after 2001 ms.
+20220406-08:24:50: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:32:17: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-08:32:17: Created session: FIX.4.4:CLIENT->SERVER
+20220406-08:32:17: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-08:32:17: MINA session created: local=/127.0.0.1:61524, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:32:17: Disconnecting: Received logon response before sending request
+20220406-08:32:22: MINA session created: local=/127.0.0.1:61545, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:32:23: Initiated logon request
+20220406-08:32:23: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-08:32:23: Received logon
+20220406-08:37:31: Received logout request
+20220406-08:37:31: Sent logout response
+20220406-08:37:31: Disconnecting: Received logout request
+20220406-08:37:34: Pending connection not established after 2002 ms.
+20220406-08:43:42: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-08:43:42: Created session: FIX.4.4:CLIENT->SERVER
+20220406-08:43:42: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-08:43:42: MINA session created: local=/127.0.0.1:61695, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:43:42: Disconnecting: Received logon response before sending request
+20220406-08:43:47: MINA session created: local=/127.0.0.1:61716, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:43:48: Initiated logon request
+20220406-08:43:48: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-08:43:48: Received logon
+20220406-08:50:02: Received logout request
+20220406-08:50:02: Sent logout response
+20220406-08:50:02: Disconnecting: Received logout request
+20220406-08:50:04: java.net.ConnectException during connection to /127.0.0.1:55555: java.net.ConnectException: Connection refused: no further information (Next retry in 5000 milliseconds)
+20220406-08:57:17: Session FIX.4.4:CLIENT->SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220406-08:57:17: Created session: FIX.4.4:CLIENT->SERVER
+20220406-08:57:17: Configured socket addresses for session: [/127.0.0.1:55555]
+20220406-08:57:17: MINA session created: local=/127.0.0.1:61876, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:57:17: Disconnecting: Received logon response before sending request
+20220406-08:57:22: MINA session created: local=/127.0.0.1:61897, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:55555
+20220406-08:57:23: Initiated logon request
+20220406-08:57:23: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220406-08:57:23: Received logon
+20220406-08:59:14: Initiated logout request
+20220406-08:59:14: Received logout response
+20220406-08:59:14: Disconnecting: Received logout response

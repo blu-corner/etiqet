@@ -1,10 +1,11 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,6 +153,8 @@ public class Acceptor implements Application {
                         replaceOrder(side, new Order(origClOrdID.getValue(), LocalDateTime.now(), ordQty.getValue(), price.getValue()));
                         reports.add(generateExecReport(ExecType.PENDING_REPLACE, clOrdID, Constants.NEW, Constants.NEW, symbol, side, ordQty, new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.REPLACED, clOrdID, orderId, execId, symbol, side, ordQty, price));
+
+
                     }
                 }
 
@@ -254,38 +257,25 @@ public class Acceptor implements Application {
         return executionReport;
     }
 
-
     private void addNewOrder(CharField side, Order order) {
         if (side.getValue() == (Side.BUY)) {
             this.mainController.addBuy(order);
         } else {
             this.mainController.addSell(order);
         }
-
-        this.mainController.orderBookBuyTableView.getItems().clear();
-        this.mainController.orderBookSellTableView.getItems().clear();
-        this.mainController.orderBookBuyTableView.getItems().addAll(getOrderedBuy());
-        this.mainController.orderBookSellTableView.getItems().addAll(getOrderedSell());
         this.mainController.setChanged(true);
     }
 
-    private List<Order> getOrderedBuy() {
-        return this.mainController.getBuy().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).collect(Collectors.toList());
-    }
-
-    private List<Order> getOrderedSell() {
-        return this.mainController.getSell().stream().sorted(Comparator.comparing(Order::getPrice)).collect(Collectors.toList());
-    }
 
 
     private ExecutionReport cancelOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol, CharField side, DoubleField size, DoubleField price) {
         if (side.getValue() == (Side.BUY)) {
             this.mainController.getBuy().removeIf(b -> b.getOrderID().equals(origClOrdID.getValue()));
-            this.mainController.orderBookBuyTableView.getItems().removeIf(b -> b.getOrderID().equals(origClOrdID.getValue()));
+            this.mainController.reorderBookBuyTableView();
 
         } else {
             this.mainController.getSell().removeIf(s -> s.getOrderID().equals(origClOrdID.getValue()));
-            this.mainController.orderBookSellTableView.getItems().removeIf(b -> b.getOrderID().equals(origClOrdID.getValue()));
+            this.mainController.reorderBookSellTableView();
         }
         this.mainController.setChanged(true);
         // StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty
@@ -301,11 +291,9 @@ public class Acceptor implements Application {
                     o.setPrice(order.getPrice());
                     o.setSize(order.getSize());
                 }
-                this.mainController.orderBookBuyTableView.getItems().clear();
-                this.mainController.orderBookBuyTableView.getItems().addAll(getOrderedBuy());
+                this.mainController.reorderBookBuyTableView();
 
             }
-
         } else {
             for (Order o : this.mainController.getSell()) {
                 String orderID = o.getOrderID();
@@ -314,8 +302,7 @@ public class Acceptor implements Application {
                     o.setSize(order.getSize());
                 }
             }
-            this.mainController.orderBookSellTableView.getItems().clear();
-            this.mainController.orderBookSellTableView.getItems().addAll(getOrderedSell());
+            this.mainController.reorderBookSellTableView();
         }
         this.mainController.setChanged(true);
     }
@@ -336,11 +323,9 @@ public class Acceptor implements Application {
 
     private ExecutionReport lookForNewTrade(StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         try {
-            Optional<Order> topBuyNullable = Optional.ofNullable(getOrderedBuy().get(0));
-            Optional<Order> topSellNullable = Optional.ofNullable(getOrderedSell().get(0));
-            if (topBuyNullable.isPresent() && topSellNullable.isPresent()) {
-                Order topBuy = topBuyNullable.get();
-                Order topSell = topSellNullable.get();
+            Order topBuy = this.mainController.getBuy().size() > 0 ? this.mainController.getOrderedBuy().get(0) : null;
+            Order topSell = this.mainController.getSell().size() > 0 ? this.mainController.getOrderedSell().get(0) : null;
+            if (topBuy != null && topSell != null) {
                 if (topBuy.getPrice().equals(topSell.getPrice())) {
                     this.mainController.setChanged(true);
                     //Fill
@@ -356,6 +341,8 @@ public class Acceptor implements Application {
                         Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), null, LocalDateTime.now(), topBuy.getSize(), topBuy.getPrice());
                         this.mainController.actionTableView.getItems().add(action);
                         this.mainController.actionTableView.getSelectionModel().clearAndSelect(0);
+                        this.mainController.reorderBookBuyTableView();
+                        this.mainController.reorderBookSellTableView();
                         return generateExecReport(ExecType.FILL, clOrdID, ordId, execId, symbol, side, ordQty, price);
                     } else {//Partial fill
                         logger.info("################################ TRADE PARTIAL FILL");
@@ -379,6 +366,8 @@ public class Acceptor implements Application {
                         mainController.actionTableView.getItems().add(action);
                         mainController.actionTableView.getSelectionModel().clearAndSelect(0);
                         printTrade(topBuy, topSell);
+                        this.mainController.reorderBookBuyTableView();
+                        this.mainController.reorderBookSellTableView();
                         return generateExecReport(ExecType.PARTIAL_FILL, clOrdID, ordId, execId, symbol, side, price, new DoubleField(leaveQty.intValue()));
                     }
                 }

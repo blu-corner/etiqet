@@ -1,9 +1,9 @@
-package com.neueda.etiqet.orderbook.etiqetorderbook;
+package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 
 import java.time.LocalDateTime;
 
 public class Action {
-    private Type type;
+    public Type type;
     private String buyID;
     private String sellID;
     private String origID;
@@ -11,7 +11,7 @@ public class Action {
     private Double size;
     private Double price;
 
-    enum Type{
+    public enum Type{
         PARTIAL_FILL,
         FILL,
         CANCELED,

@@ -1,16 +1,15 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
 
-public class OrderBookThread implements Runnable{
+public class OrderBook implements Runnable{
 
     private final MainController mainController;
 
-    public OrderBookThread(MainController mainController) {
+    public OrderBook(MainController mainController) {
         this.mainController = mainController;
     }
 

@@ -1,5 +1,7 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -33,7 +35,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MainController implements Initializable{
 
@@ -134,7 +135,7 @@ public class MainController implements Initializable{
                 Acceptor acceptor = new Acceptor(this);
                 socketAcceptor = new SocketAcceptor(acceptor, messageStoreFactory, sessionSettings, logFactory, messageFactory);
                 socketAcceptor.start();
-                OrderBookThread orderBookThread = new OrderBookThread(this);
+                OrderBook orderBookThread = new OrderBook(this);
                 orderBook = new Thread(orderBookThread);
                 orderBook.setDaemon(true);
                 orderBook.start();
@@ -324,31 +325,29 @@ public class MainController implements Initializable{
         return buy;
     }
 
-    public void addBuy(Order buy) {
-        this.buy.add(buy);
-        List<Order> tempList = new ArrayList<>(orderBookBuyTableView.getItems());
-        tempList.add(buy);
-        tempList = tempList.stream().sorted(Comparator.comparing(Order::getPrice)).collect(Collectors.toList());
-        orderBookBuyTableView.getItems().clear();
-        tempList.forEach(b -> {
-            orderBookBuyTableView.getItems().add(b);
-        });
-        orderBookBuyTableView.getSelectionModel().clearAndSelect(0);
-    }
-
     public List<Order> getSell() {
         return sell;
     }
 
+    public void addBuy(Order buy) {
+        this.buy.add(buy);
+        reorderBookBuyTableView();
+    }
+
     public void addSell(Order sell) {
         this.sell.add(sell);
-        List<Order> tempList = new ArrayList<>(orderBookSellTableView.getItems());
-        tempList.add(sell);
-        tempList = tempList.stream().sorted(Comparator.comparing(Order::getPrice).reversed()).collect(Collectors.toList());
+        reorderBookSellTableView();
+    }
+
+    public void reorderBookBuyTableView() {
+        orderBookBuyTableView.getItems().clear();
+        orderBookBuyTableView.getItems().addAll(this.getOrderedBuy());
+        orderBookBuyTableView.getSelectionModel().clearAndSelect(0);
+    }
+
+    public void reorderBookSellTableView() {
         orderBookSellTableView.getItems().clear();
-        tempList.forEach(b -> {
-            orderBookSellTableView.getItems().add(b);
-        });
+        orderBookSellTableView.getItems().addAll(this.getOrderedSell());
         orderBookSellTableView.getSelectionModel().clearAndSelect(0);
     }
 
@@ -397,6 +396,15 @@ public class MainController implements Initializable{
         stop();
         Platform.exit();
     }
+
+    public List<Order> getOrderedBuy() {
+        return this.getBuy().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).collect(Collectors.toList());
+    }
+
+    public List<Order> getOrderedSell() {
+        return this.getSell().stream().sorted(Comparator.comparing(Order::getPrice)).collect(Collectors.toList());
+    }
+
 
     public void setDefaultPort(ActionEvent actionEvent){
         TextInputDialog dialog = null;
