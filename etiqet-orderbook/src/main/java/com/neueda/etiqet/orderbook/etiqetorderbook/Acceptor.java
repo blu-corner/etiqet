@@ -103,7 +103,7 @@ public class Acceptor implements Application {
                 }
                 if (duplicatedOrderId(clOrdID)) {
                     logger.info("################################ NEW ORDER REJECTED: DUPLICATED ORDER ID");
-                    reports.add(generateExecReport(ExecType.REJECTED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
+                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED, clOrdID.getValue()));
                 } else {
                     reports.add(generateExecReport(ExecType.PENDING_NEW, clOrdID, Constants.NEW, Constants.NEW, symbol, side, price, ordQty));
                     reports.add(generateExecReport(ExecType.NEW, clOrdID, orderId, execId, symbol, side, price, ordQty));
@@ -119,14 +119,13 @@ public class Acceptor implements Application {
             case MsgType.ORDER_CANCEL_REQUEST:
                 origClOrdID = message.getField(new OrigClOrdID());
                 if (duplicatedOrderId(clOrdID)) {
-                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED));
+                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED, clOrdID.getValue()));
                 } else {
                     if (!containsOrder(side, origClOrdID.getValue())) {
-                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.UNKNOWN_ORDER));
+                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
                     } else {
                         logger.info("################################ ORDER CANCEL REQUEST");
                         //clOrdID, orderId, execId, symbol, side, price, ordQty
-
                         reports.add(generateExecReport(ExecType.PENDING_CANCEL, clOrdID, Constants.NEW, Constants.NEW, symbol, side, new DoubleField(0), new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.CANCELED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
                         ExecutionReport tradeWhenCancelling = cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, null, null);
@@ -146,10 +145,10 @@ public class Acceptor implements Application {
                     throw new IncorrectTagValue(ordType.getField());
                 }
                 if (duplicatedOrderId(clOrdID)) {
-                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED));
+                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED, clOrdID.getValue()));
                 } else {
                     if (!containsOrder(side, origClOrdID.getValue())) {
-                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER));
+                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
                     } else {
                         logger.info("################################ ORDER CANCEL REPLACE REQUEST");
                         Order order = new Order(origClOrdID.getValue(), LocalDateTime.now(), ordQty.getValue(), price.getValue());
@@ -176,7 +175,7 @@ public class Acceptor implements Application {
         });
     }
 
-    private Message rejectOrder(int rejResponseTo, int cxlRejReason) {
+    private Message rejectOrder(int rejResponseTo, int cxlRejReason, String origClOrdID) {
         String clOrdId = RandomStringUtils.randomAlphanumeric(5);
         OrderCancelReject orderCancelReject = new OrderCancelReject();
         switch (rejResponseTo) {
@@ -193,6 +192,7 @@ public class Acceptor implements Application {
         }
         orderCancelReject.setField(new OrderID(Constants.NONE));
         orderCancelReject.setField(new ClOrdID(clOrdId));
+        orderCancelReject.setField(new OrigClOrdID(origClOrdID));
         orderCancelReject.setField(new OrdStatus(OrdStatus.REJECTED));
 
         return orderCancelReject;

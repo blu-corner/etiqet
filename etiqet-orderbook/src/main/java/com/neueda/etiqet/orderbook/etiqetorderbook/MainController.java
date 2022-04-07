@@ -105,6 +105,52 @@ public class MainController implements Initializable{
     private SessionID sessionId;
     private Initator initator;
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.buy = new ArrayList<>();
+        this.sell = new ArrayList<>();
+        this.changed = true;
+
+        actionTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
+        orderBookBuyTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
+        orderBookSellTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
+
+        actionTableView.setOnMouseClicked(this::cellToClipBoard);
+        orderBookBuyTableView.setOnMouseClicked(this::cellToClipBoard);
+        orderBookSellTableView.setOnMouseClicked(this::cellToClipBoard);
+        listViewLog.setOnMouseClicked(this::cellToClipBoard);
+
+        orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
+        timeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
+        sizeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
+        priceBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
+
+        orderIDSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
+        timeSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
+        sizeSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
+        priceSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
+
+        actionTypeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Type"));
+        actionOrderIdBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuyID"));
+        actionOrderIdSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellID"));
+        actionTimeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
+        actionBuySizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuySize"));
+        actionSellSizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellSize"));
+        actionLeaveQtyTableColumn.setCellValueFactory(new PropertyValueFactory<>("LeaveQty"));
+        actionAgreedPriceTableColumn.setCellValueFactory(new PropertyValueFactory<>("AgreedPrice"));
+
+        comboOrders.getItems().addAll(Constants.COMBO_NEW_ORDER, Constants.COMBO_CANCEL, Constants.COMBO_REPLACE);
+        comboOrders.getSelectionModel().select(0);
+
+        comboSide.getItems().addAll("BUY", "SELL");
+        comboSide.getSelectionModel().select(0);
+        initator = new Initator(listViewActions, listViewLog, textFieldOrderID );
+
+        checkMenuItemRemPort.setSelected(true);
+        setUseDefaultPort(true);
+
+    }
+
     public boolean isUseDefaultPort() {
         return useDefaultPort;
     }
@@ -140,6 +186,7 @@ public class MainController implements Initializable{
                 Acceptor acceptor = new Acceptor(this);
                 socketAcceptor = new SocketAcceptor(acceptor, messageStoreFactory, sessionSettings, logFactory, messageFactory);
                 socketAcceptor.start();
+                sessionId = socketAcceptor.getSessions().get(0);
                 OrderBook orderBookThread = new OrderBook(this);
                 orderBook = new Thread(orderBookThread);
                 orderBook.setDaemon(true);
@@ -288,51 +335,6 @@ public class MainController implements Initializable{
         Logout logout = new Logout();
         boolean sent = Session.sendToTarget(logout, this.sessionId);
         logger.info("Logout message sent: {}", sent);
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        this.buy = new ArrayList<>();
-        this.sell = new ArrayList<>();
-        this.changed = true;
-
-        actionTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
-        orderBookBuyTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
-        orderBookSellTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
-
-        actionTableView.setOnMouseClicked(this::cellToClipBoard);
-        orderBookBuyTableView.setOnMouseClicked(this::cellToClipBoard);
-        orderBookSellTableView.setOnMouseClicked(this::cellToClipBoard);
-
-        orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
-        timeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
-        sizeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
-        priceBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
-
-        orderIDSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
-        timeSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
-        sizeSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
-        priceSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
-
-        actionTypeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        actionOrderIdBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuyID"));
-        actionOrderIdSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellID"));
-        actionTimeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
-        actionBuySizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuySize"));
-        actionSellSizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellSize"));
-        actionLeaveQtyTableColumn.setCellValueFactory(new PropertyValueFactory<>("LeaveQty"));
-        actionAgreedPriceTableColumn.setCellValueFactory(new PropertyValueFactory<>("AgreedPrice"));
-
-        comboOrders.getItems().addAll(Constants.COMBO_NEW_ORDER, Constants.COMBO_CANCEL, Constants.COMBO_REPLACE);
-        comboOrders.getSelectionModel().select(0);
-
-        comboSide.getItems().addAll("BUY", "SELL");
-        comboSide.getSelectionModel().select(0);
-        initator = new Initator(listViewActions, listViewLog, textFieldOrderID );
-
-        checkMenuItemRemPort.setSelected(true);
-        setUseDefaultPort(true);
-
     }
 
     private void cellToClipBoard(MouseEvent e) {
@@ -543,7 +545,7 @@ public class MainController implements Initializable{
             deleteDir("initatorStore");
             sendLogonRequest();
 
-        } catch (SessionNotFound e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
