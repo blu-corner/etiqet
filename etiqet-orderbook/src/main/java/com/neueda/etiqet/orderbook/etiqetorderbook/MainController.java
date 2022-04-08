@@ -10,6 +10,12 @@ import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -26,15 +32,18 @@ import quickfix.MessageFactory;
 import quickfix.field.*;
 import quickfix.fix44.*;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -79,6 +88,7 @@ public class MainController implements Initializable{
     @FXML public ListView listViewActions;
     @FXML public CheckMenuItem checkMenuItemRemPort;
     @FXML public Menu menuItemMessagePort;
+    @FXML public CheckMenuItem menuItemDecodeOnClick;
 
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
@@ -121,6 +131,7 @@ public class MainController implements Initializable{
         orderBookSellTableView.setOnMouseClicked(this::cellToClipBoard);
 //        listViewLog.setOnMouseClicked(this::cellToClipBoard);
         listViewLog.setOnMouseClicked(this::showFixFields);
+        menuItemDecodeOnClick.setSelected(true);
 
         orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
         timeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
@@ -153,37 +164,44 @@ public class MainController implements Initializable{
 
     }
 
+
+
     private void showFixFields(MouseEvent e) {
         try{
-            String targetString = e.getTarget().toString();
-            int firstQuote = targetString.indexOf('"');
-            int secondQuote = targetString.indexOf('"', firstQuote + 1);
-            String content = targetString.substring(firstQuote + 1, secondQuote);
-            if (content.contains(Constants.OUT)){
-                content=content.replace(Constants.OUT + StringUtils.SPACE,"");
+            if (menuItemDecodeOnClick.isSelected()){
+                String targetString = e.getTarget().toString();
+                int firstQuote = targetString.indexOf('"');
+                int secondQuote = targetString.indexOf('"', firstQuote + 1);
+                String content = targetString.substring(firstQuote + 1, secondQuote);
+                if (content.contains(Constants.OUT)){
+                    content=content.replace(Constants.OUT + StringUtils.SPACE,"");
+                }else{
+                    content=content.replace(Constants.IN + StringUtils.SPACE,"");
+                }
+
+                String[] fields = content.split("\\|");
+                List<String> fieldList = List.of(fields);
+                StringBuilder result = new StringBuilder();
+                for (String field: fieldList){
+                    String[] keyValue = field.split("=");
+                    result
+                        .append(keyValue[0])
+                        .append(StringUtils.SPACE)
+                        .append(Constants.hmTags.get(keyValue[0]))
+                        .append(StringUtils.SPACE)
+                        .append(keyValue[1])
+                        .append(getAdditinalInfo(keyValue[0], keyValue[1]))
+                        .append("\n");
+                }
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setContentText(result.toString());
+                alert.setTitle("Decoder");
+                alert.setHeaderText("FIX message decoded");
+                alert.showAndWait();
             }else{
-                content=content.replace(Constants.IN + StringUtils.SPACE,"");
+                cellToClipBoard(e);
             }
 
-            String[] fields = content.split("\\|");
-            List<String> fieldList = List.of(fields);
-            StringBuilder result = new StringBuilder();
-            for (String field: fieldList){
-                String[] keyValue = field.split("=");
-                result
-                    .append(keyValue[0])
-                    .append(StringUtils.SPACE)
-                    .append(Constants.hmTags.get(keyValue[0]))
-                    .append(StringUtils.SPACE)
-                    .append(keyValue[1])
-                    .append(getAdditinalInfo(keyValue[0], keyValue[1]))
-                    .append("\n");
-            }
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText(result.toString());
-            alert.setTitle("Decoder");
-            alert.setHeaderText("FIX message decoded");
-            alert.showAndWait();
         }catch (Exception ex){}
 
     }
@@ -592,6 +610,31 @@ public class MainController implements Initializable{
             deleteDir("initatorStore");
             sendLogonRequest();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void goToFixDoc(ActionEvent actionEvent) {
+        String url = "https://btobits.com/fixopaedia/fixdic44/fields_by_tag_.html";
+        try {
+            if(java.awt.Desktop.isDesktopSupported()){
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    desktop.browse(new URI(url));
+                } catch (IOException | URISyntaxException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }else{
+                Runtime runtime = Runtime.getRuntime();
+                try {
+                    runtime.exec("xdg-open " + url);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -11,6 +11,7 @@ module com.neueda.etiqet.orderbook.etiqetorderbook {
     requires eu.hansolo.tilesfx;
     requires org.apache.commons.lang3;
     requires slf4j.api;
+    requires java.desktop;
 
     opens com.neueda.etiqet.orderbook.etiqetorderbook to javafx.fxml;
     exports com.neueda.etiqet.orderbook.etiqetorderbook;

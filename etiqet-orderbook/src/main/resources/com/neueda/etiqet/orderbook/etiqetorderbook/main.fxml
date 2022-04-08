@@ -51,12 +51,16 @@
                                 <Circle fx:id="circleStartAcceptor" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
                             </graphic>
                         </MenuItem>
-                        <MenuItem fx:id="menuItemSetDefaultPort" mnemonicParsing="false" onAction="#setDefaultPort" text="Set default port" />
-
-
-                        <CheckMenuItem fx:id="checkMenuItemRemPort" mnemonicParsing="false" onAction="#setRememberPort" text="Use default port" />
+                  <Menu mnemonicParsing="false" text="Port configuration">
+                    <items>
+      
+      
+                              <CheckMenuItem fx:id="checkMenuItemRemPort" mnemonicParsing="false" onAction="#setRememberPort" text="Use default port" />
+                              <MenuItem fx:id="menuItemSetDefaultPort" mnemonicParsing="false" onAction="#setDefaultPort" text="Set default port" />
+                    </items>
+                  </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="menuItemReset" mnemonicParsing="false" text="Reset" onAction="#resetSequenceNumber" />
+                        <MenuItem fx:id="menuItemReset" mnemonicParsing="false" onAction="#resetSequenceNumber" text="Reset" />
                         <MenuItem mnemonicParsing="false" onAction="#stop" text="Stop" />
                     </items>
                 </Menu>
@@ -67,19 +71,25 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Options">
                     <items>
-                        <MenuItem fx:id="menuItemClearBid" mnemonicParsing="false" onAction="#cleanBid" text="Clear bid" />
-                        <MenuItem fx:id="menuItemClearOffer" mnemonicParsing="false" onAction="#cleanOffer" text="Clear offer" />
-                        <MenuItem fx:id="menuItemClearBidAndOffer" mnemonicParsing="false" onAction="#cleanBidAndOffer" text="Clear bid &amp; offer" />
-                        <MenuItem fx:id="menuItemClearTrades" mnemonicParsing="false" onAction="#cleanTrades" text="Clear trade panel" />
-                        <MenuItem fx:id="menuItemClearAll" mnemonicParsing="false" onAction="#cleanAll" text="Clear all" />
+                  <Menu mnemonicParsing="false" text="Clear">
+                    <items>
+                              <MenuItem fx:id="menuItemClearBid" mnemonicParsing="false" onAction="#cleanBid" text="Clear bid" />
+                              <MenuItem fx:id="menuItemClearOffer" mnemonicParsing="false" onAction="#cleanOffer" text="Clear offer" />
+                              <MenuItem fx:id="menuItemClearBidAndOffer" mnemonicParsing="false" onAction="#cleanBidAndOffer" text="Clear bid &amp; offer" />
+                              <MenuItem fx:id="menuItemClearTrades" mnemonicParsing="false" onAction="#cleanTrades" text="Clear trade panel" />
+                              <MenuItem fx:id="menuItemClearAll" mnemonicParsing="false" onAction="#cleanAll" text="Clear all" />
+                    </items>
+                  </Menu>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <CheckMenuItem fx:id="menuItemDecodeOnClick" mnemonicParsing="false" text="Decode on click" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="About" />
+                        <MenuItem fx:id="menuItemFixDoc" mnemonicParsing="false" text="FIX documentation" onAction="#goToFixDoc"/>
                     </items>
                 </Menu>
-                <Menu fx:id="menuItemMessagePort" mnemonicParsing="false" />
+                <Menu fx:id="menuItemMessagePort" mnemonicParsing="false"/>
 
             </menus>
         </MenuBar>
