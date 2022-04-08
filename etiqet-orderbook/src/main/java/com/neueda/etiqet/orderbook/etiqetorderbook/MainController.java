@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
+import quickfix.Dictionary;
 import quickfix.Message;
 import quickfix.MessageFactory;
 import quickfix.field.*;
@@ -48,7 +49,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class MainController implements Initializable{
-
 
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
@@ -110,11 +110,15 @@ public class MainController implements Initializable{
     public TableColumn<Action, String> actionAgreedPriceTableColumn;
 
     public Circle circle;
+    public TextArea textAreaRangeA;
+    public TextArea textAreaRangeB;
+
     private SocketAcceptor socketAcceptor;
     private Thread orderBook;
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
     private Initator initator;
+    private List<FixSession> fixSessions;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -161,6 +165,8 @@ public class MainController implements Initializable{
 
         checkMenuItemRemPort.setSelected(true);
         setUseDefaultPort(true);
+
+        fixSessions = new ArrayList<>();
 
     }
 
@@ -262,7 +268,7 @@ public class MainController implements Initializable{
                 this.startInitiator.setDisable(true);
                 this.circleStartAcceptor.setFill(Color.GREENYELLOW);
                 this.tabInitiator.setDisable(true);
-                this.mainTabPane.getSelectionModel().select(0);
+                this.mainTabPane.getSelectionModel().select(1);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -292,7 +298,7 @@ public class MainController implements Initializable{
                 this.startAcceptor.setDisable(true);
                 this.circleStartInitiator.setFill(Color.GREENYELLOW);
                 this.tabAcceptor.setDisable(true);
-                this.mainTabPane.getSelectionModel().select(1);
+                this.mainTabPane.getSelectionModel().select(2);
             }
         } catch (ConfigError | IOException | URISyntaxException | SessionNotFound e) {
             e.printStackTrace();
@@ -346,8 +352,12 @@ public class MainController implements Initializable{
         try {
             if (socketInitiator != null){
                 socketInitiator.stop();
-            }else{
+            }else if (socketAcceptor != null){
                 socketAcceptor.stop();
+            }else{
+                for (FixSession fixSession : fixSessions){
+                    fixSession.stop();
+                }
             }
             this.circle.setFill(Color.RED);
             this.startAcceptor.setDisable(false);
@@ -638,5 +648,51 @@ public class MainController implements Initializable{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void startMultipleAcceptor(ActionEvent actionEvent) {
+        this.tabInitiator.setDisable(true);
+        this.tabAcceptor.setDisable(true);
+        this.mainTabPane.getSelectionModel().select(0);
+
+    }
+
+    public void listenOnPorts(ActionEvent actionEvent) {
+        try{
+            String testRangeA = textAreaRangeA.getText();
+            String testRangeB = textAreaRangeB.getText();
+
+            if (isNumber(testRangeA) && isNumber(testRangeB)){
+                Integer iTestRangeA = Integer.parseInt(testRangeA);
+                Integer iTestRangeB = Integer.parseInt(testRangeB);
+
+                for (int port = iTestRangeA; port <= iTestRangeB; port++){
+                    FixSession fixSession = new FixSession(this, this.orderBook);
+                    fixSession.start(port);
+                    fixSessions.add(fixSession);
+                }
+            }else{
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("PORTS RANGE ERROR");
+                alert.setHeaderText("Bad ports range");
+                alert.setContentText("Ports must be integer values");
+                alert.showAndWait();
+            }
+        }catch (Exception ex){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("PORTS RANGE ERROR");
+            alert.setHeaderText("Bad ports range");
+            alert.setContentText(ex.getLocalizedMessage());
+            alert.showAndWait();
+        }
+    }
+
+    public boolean isNumber(String value){
+        try{
+            return StringUtils.isNumeric(value);
+        }catch (Exception ex){
+            return false;
+        }
+
     }
 }
