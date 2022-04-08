@@ -12,6 +12,7 @@ public class Constants {
     public static final HashMap<String,String> hmMsgType;
     public static final HashMap<String,String> hmOrdStatus;
     public static final HashMap<String,String> hmExecType;
+    public static final HashMap<String,String> hmTags;
     public static final String EXECUTION_REPORT = "8";
     public static final String NEW = "0000";
     public static final String NONE = "NONE";
@@ -31,6 +32,42 @@ public class Constants {
     public static final String COMBO_NEW_ORDER = "NEW ORDER";
     public static final String COMBO_CANCEL = "CANCEL";
     public static final String COMBO_REPLACE = "REPLACE";
+
+    public static final String MSG_TYPE = "35";
+
+    static{
+        hmTags = new HashMap<>();
+        hmTags.put("1", "Account");
+        hmTags.put("6", "AvgPx");
+        hmTags.put("8", "BeginString");
+        hmTags.put("9", "BodyLength");
+        hmTags.put("10", "CheckSum");
+        hmTags.put("11", "ClOrdID");
+        hmTags.put("14", "CumQty");
+        hmTags.put("17", "ExecID");
+        hmTags.put("31", "LastPx");
+        hmTags.put("37", "OrderID");
+        hmTags.put("34", "MsgSeqNum");
+        hmTags.put(MSG_TYPE, "MsgType");
+        hmTags.put("36", "NewSeqNo");
+        hmTags.put("38", "OrderQty");
+        hmTags.put("39", "OrdStatus");
+        hmTags.put("40", "OrdType");
+        hmTags.put("41", "OrigClOrdID");
+        hmTags.put("44", "Price");
+        hmTags.put("49", "SenderCompID");
+        hmTags.put("52", "SendingTime");
+        hmTags.put("54", "Side");
+        hmTags.put("55", "Symbol");
+        hmTags.put("56", " TargetCompID");
+        hmTags.put("58", " Text");
+        hmTags.put("60", " TransactTime");
+        hmTags.put("150", "ExecType");
+        hmTags.put("151", "LeavesQty");
+        hmTags.put("192", "OrderQty2");
+        hmTags.put("354", "EncodedTextLen");
+
+    }
 
     static {
         hmMsgType = new HashMap<>();
@@ -85,7 +122,7 @@ public class Constants {
         hmExecType.put("A", "PENDING NEW");
         hmExecType.put("B", "CALCULATED");
         hmExecType.put("C", "EXPIRED");
-        hmExecType.put("D", "RESTATED");
+        hmExecType.put("D", "RESTARTED");
         hmExecType.put("E", "PENDING REPLACE");
         hmExecType.put("F", "TRADE");
         hmExecType.put("G", "TRADE CORRECT");

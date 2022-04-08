@@ -103,7 +103,7 @@ public class Acceptor implements Application {
                 }
                 if (duplicatedOrderId(clOrdID)) {
                     logger.info("################################ NEW ORDER REJECTED: DUPLICATED ORDER ID");
-                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED, clOrdID.getValue()));
+                    reports.add(generateExecReport(ExecType.REJECTED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
                 } else {
                     reports.add(generateExecReport(ExecType.PENDING_NEW, clOrdID, Constants.NEW, Constants.NEW, symbol, side, price, ordQty));
                     reports.add(generateExecReport(ExecType.NEW, clOrdID, orderId, execId, symbol, side, price, ordQty));
@@ -160,7 +160,6 @@ public class Acceptor implements Application {
                         }
                     }
                 }
-
                 break;
             default:
                 break;
@@ -225,17 +224,21 @@ public class Acceptor implements Application {
             case ExecType.PENDING_CANCEL:
                 executionReport.setField(new ExecType(execType));
                 executionReport.setField(new OrdStatus(OrdStatus.PENDING_CANCEL));
+                executionReport.setField(new LeavesQty(0));
                 break;
             case ExecType.CANCELED:
                 executionReport.setField(new ExecType(execType));
                 executionReport.setField(new OrdStatus(OrdStatus.CANCELED));
+                executionReport.setField(new LeavesQty(0));
                 break;
             case ExecType.PENDING_REPLACE:
                 executionReport.setField(new ExecType(execType));
                 executionReport.setField(new OrdStatus(OrdStatus.PENDING_REPLACE));
+                executionReport.setField(new LeavesQty(0));
                 break;
             case ExecType.REPLACED:
                 executionReport.setField(new ExecType(execType));
+                executionReport.setField(new LeavesQty(0));
 //                executionReport.setField(new OrdStatus(OrdStatus.REPLACED));
                 break;
             case ExecType.REJECTED:
@@ -257,6 +260,7 @@ public class Acceptor implements Application {
         executionReport.setField(new LastPx(price.getValue()));
         executionReport.setField(new ClOrdID(clOrdID.getValue()));
         executionReport.setField(new OrderQty2(ordQty.getValue()));
+
         return executionReport;
     }
 

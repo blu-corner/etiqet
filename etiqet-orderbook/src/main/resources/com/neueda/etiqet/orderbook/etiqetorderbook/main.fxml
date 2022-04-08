@@ -140,7 +140,7 @@
                                             <TableColumn fx:id="actionOrderIdSellTableColumn" prefWidth="80.0" text="SellID" />
                                             <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="80.0" text="BuySize" />
                                             <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="80.0" text="SellSize" />
-                                            <TableColumn fx:id="actionLeaveQtyTableColumn" prefWidth="80.0" text="LeaveQty" />
+                                            <TableColumn fx:id="actionLeaveQtyTableColumn" prefWidth="80.0" text="LeavesQty" />
                                             <TableColumn fx:id="actionAgreedPriceTableColumn" prefWidth="100.0" text="AgreedPrice" />
                                         </columns>
                                     </TableView>

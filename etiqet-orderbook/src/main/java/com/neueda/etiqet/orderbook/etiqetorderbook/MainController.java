@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class MainController implements Initializable{
@@ -118,7 +119,8 @@ public class MainController implements Initializable{
         actionTableView.setOnMouseClicked(this::cellToClipBoard);
         orderBookBuyTableView.setOnMouseClicked(this::cellToClipBoard);
         orderBookSellTableView.setOnMouseClicked(this::cellToClipBoard);
-        listViewLog.setOnMouseClicked(this::cellToClipBoard);
+//        listViewLog.setOnMouseClicked(this::cellToClipBoard);
+        listViewLog.setOnMouseClicked(this::showFixFields);
 
         orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
         timeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
@@ -149,6 +151,51 @@ public class MainController implements Initializable{
         checkMenuItemRemPort.setSelected(true);
         setUseDefaultPort(true);
 
+    }
+
+    private void showFixFields(MouseEvent e) {
+        try{
+            String targetString = e.getTarget().toString();
+            int firstQuote = targetString.indexOf('"');
+            int secondQuote = targetString.indexOf('"', firstQuote + 1);
+            String content = targetString.substring(firstQuote + 1, secondQuote);
+            if (content.contains(Constants.OUT)){
+                content=content.replace(Constants.OUT + StringUtils.SPACE,"");
+            }else{
+                content=content.replace(Constants.IN + StringUtils.SPACE,"");
+            }
+
+            String[] fields = content.split("\\|");
+            List<String> fieldList = List.of(fields);
+            StringBuilder result = new StringBuilder();
+            for (String field: fieldList){
+                String[] keyValue = field.split("=");
+                result
+                    .append(keyValue[0])
+                    .append(StringUtils.SPACE)
+                    .append(Constants.hmTags.get(keyValue[0]))
+                    .append(StringUtils.SPACE)
+                    .append(keyValue[1])
+                    .append(getAdditinalInfo(keyValue[0], keyValue[1]))
+                    .append("\n");
+            }
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText(result.toString());
+            alert.setTitle("Decoder");
+            alert.setHeaderText("FIX message decoded");
+            alert.showAndWait();
+        }catch (Exception ex){}
+
+    }
+
+    private String getAdditinalInfo(String tag, String value) {
+        String additionalInfo = "";
+        switch (tag){
+            case Constants.MSG_TYPE:
+                additionalInfo = StringUtils.SPACE + Constants.hmMsgType.get(value);
+                break;
+        }
+        return additionalInfo != null ? additionalInfo : "";
     }
 
     public boolean isUseDefaultPort() {
