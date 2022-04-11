@@ -57,8 +57,6 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Port configuration">
                     <items>
-      
-      
                               <CheckMenuItem fx:id="checkMenuItemRemPort" mnemonicParsing="false" onAction="#setRememberPort" text="Use default port" />
                               <MenuItem fx:id="menuItemSetDefaultPort" mnemonicParsing="false" onAction="#setDefaultPort" text="Set default port" />
                     </items>
@@ -93,8 +91,7 @@
                         <MenuItem fx:id="menuItemFixDoc" mnemonicParsing="false" onAction="#goToFixDoc" text="FIX documentation" />
                     </items>
                 </Menu>
-                <Menu fx:id="menuItemMessagePort" mnemonicParsing="false" />
-
+                <Menu fx:id="menuItemMessagePort" mnemonicParsing="false"/>
             </menus>
         </MenuBar>
         <TabPane fx:id="mainTabPane" prefHeight="752.0" prefWidth="810.0" tabClosingPolicy="UNAVAILABLE">

@@ -3,6 +3,7 @@ package com.neueda.etiqet.orderbook.etiqetorderbook;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
+import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
@@ -197,7 +198,6 @@ public class MainController implements Initializable {
         fixSessions = new ArrayList<>();
     }
 
-
     private void showFixFields(MouseEvent e) {
         try {
             if (menuItemDecodeOnClick.isSelected()) {
@@ -270,54 +270,19 @@ public class MainController implements Initializable {
 
     public void startAcceptor(String portsA, String portsB, Stage stage) {
         stage.close();
-        listenOnPorts(portsA, portsB);
-        menuItemMessagePort.setText(String.format("Listening on ports: %s to %s", portsA, portsB));
-        OrderBook orderBookThread = new OrderBook(this);
-        orderBook = new Thread(orderBookThread);
-        orderBook.setDaemon(true);
-        orderBook.start();
+        if (listenOnPorts(portsA, portsB)){
+            OrderBook orderBookThread = new OrderBook(this);
+            orderBook = new Thread(orderBookThread);
+            orderBook.setDaemon(true);
+            orderBook.start();
 
-        //javafx
-        circle.setFill(Color.GREENYELLOW);
-        this.startAcceptor.setDisable(true);
-        this.startInitiator.setDisable(true);
-        this.circleStartAcceptor.setFill(Color.GREENYELLOW);
-        this.tabInitiator.setDisable(true);
-        this.mainTabPane.getSelectionModel().select(0);
-    }
-
-    public void startAcceptor() {
-
-        URL resource = getClass().getClassLoader().getResource(Constants.SERVER_CFG);
-        try {
-            SessionSettings sessionSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
-            if (setPort(sessionSettings, Constants.SOCKET_ACCEPTOR_PORT)) {
-//                if (!checkPort(sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT))){
-//                    return;
-//                }
-//                deleteDir("store"); //Just in case it fails deleting when restarting seq number
-                menuItemMessagePort.setText("Listening on port: " + sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT));
-                MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
-                LogFactory logFactory = new FileLogFactory(sessionSettings);
-                MessageFactory messageFactory = new DefaultMessageFactory();
-                Acceptor acceptor = new Acceptor(this);
-                socketAcceptor = new SocketAcceptor(acceptor, messageStoreFactory, sessionSettings, logFactory, messageFactory);
-                socketAcceptor.start();
-                sessionId = socketAcceptor.getSessions().get(0);
-                OrderBook orderBookThread = new OrderBook(this);
-                orderBook = new Thread(orderBookThread);
-                orderBook.setDaemon(true);
-                orderBook.start();
-
-                circle.setFill(Color.GREENYELLOW);
-                this.startAcceptor.setDisable(true);
-                this.startInitiator.setDisable(true);
-                this.circleStartAcceptor.setFill(Color.GREENYELLOW);
-                this.tabInitiator.setDisable(true);
-                this.mainTabPane.getSelectionModel().select(0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            //javafx
+            circle.setFill(Color.GREENYELLOW);
+            this.startAcceptor.setDisable(true);
+            this.startInitiator.setDisable(true);
+            this.circleStartAcceptor.setFill(Color.GREENYELLOW);
+            this.tabInitiator.setDisable(true);
+            this.mainTabPane.getSelectionModel().select(0);
         }
     }
 
@@ -325,39 +290,39 @@ public class MainController implements Initializable {
         try {
             SessionSettings initiatorSettings = new SessionSettings();
             String port = getPort();
-            sessionId = new SessionID(
-                new BeginString("FIX.4.4"),
-                new SenderCompID("CLIENT"+ port),
-                new TargetCompID("SERVER"));
-            Dictionary dictionary = new Dictionary();
+            if (port != null){
+                sessionId = new SessionID(
+                    new BeginString("FIX.4.4"),
+                    new SenderCompID("CLIENT"+ port),
+                    new TargetCompID("SERVER"));
+                Dictionary dictionary = new Dictionary();
+                dictionary.setString("ConnectionType", "initiator");
+                dictionary.setString("SocketConnectPort",  port);
+                dictionary.setString("SocketConnectHost",  "127.0.0.1");
+                dictionary.setString("FileStorePath", "initiatorStores/store" + port);
+                dictionary.setString("FileLogPath", "initiatorLogs/log" + port);
+                dictionary.setString("DataDictionary", "spec/FIX44.xml");
+                dictionary.setString("StartTime", "00:00:00");
+                dictionary.setString("EndTime", "00:00:00");
+                dictionary.setString("UseDataDictionary", "Y");
+                dictionary.setString("ResetOnLogon", "Y");
+                dictionary.setString("HeartBtInt", "30");
+                initiatorSettings.set(sessionId, dictionary);
+                menuItemMessagePort.setText("Connected to port: " + port);
+                FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
+                FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
+                MessageFactory messageFactory = new DefaultMessageFactory();
+                socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
+                socketInitiator.start();
+                sendLogonRequest();
 
-            dictionary.setString("ConnectionType", "initiator");
-            dictionary.setString("SocketConnectPort",  port);
-            dictionary.setString("SocketConnectHost",  "127.0.0.1");
-            dictionary.setString("FileStorePath", "initiatorStores/store" + port);
-            dictionary.setString("FileLogPath", "initiatorLogs/log" + port);
-            dictionary.setString("DataDictionary", "spec/FIX44.xml");
-            dictionary.setString("StartTime", "00:00:00");
-            dictionary.setString("EndTime", "00:00:00");
-            dictionary.setString("UseDataDictionary", "Y");
-            dictionary.setString("ResetOnLogon", "Y");
-            dictionary.setString("HeartBtInt", "30");
-            initiatorSettings.set(sessionId, dictionary);
-            menuItemMessagePort.setText("Connected to port: " + port);
-            FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
-            FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
-            MessageFactory messageFactory = new DefaultMessageFactory();
-            socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
-            socketInitiator.start();
-            sendLogonRequest();
-
-            circle.setFill(Color.GREENYELLOW);
-            this.startInitiator.setDisable(true);
-            this.startAcceptor.setDisable(true);
-            this.circleStartInitiator.setFill(Color.GREENYELLOW);
-            this.tabAcceptor.setDisable(true);
-            this.mainTabPane.getSelectionModel().select(1);
-
+                circle.setFill(Color.GREENYELLOW);
+                this.startInitiator.setDisable(true);
+                this.startAcceptor.setDisable(true);
+                this.circleStartInitiator.setFill(Color.GREENYELLOW);
+                this.tabAcceptor.setDisable(true);
+                this.mainTabPane.getSelectionModel().select(1);
+            }
         } catch (ConfigError | SessionNotFound e) {
             e.printStackTrace();
         }
@@ -378,36 +343,10 @@ public class MainController implements Initializable {
             if (result.isPresent()) {
                 return result.get();
             }
-        } catch (ConfigError e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
+        } catch (ConfigError | FileNotFoundException | URISyntaxException e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private boolean setPort(SessionSettings sessionSettings, String role) {
-        if (!StringUtils.isEmpty(this.changedDefaultPort)) {
-            sessionSettings.getDefaultProperties().setProperty(role, this.changedDefaultPort);
-            this.changedDefaultPort = "";
-            return true;
-        }
-        if (this.isUseDefaultPort()) return true;
-        TextInputDialog dialog = null;
-        String port = sessionSettings.getDefaultProperties().getProperty(role);
-        dialog = new TextInputDialog(port);
-        dialog.setTitle(Constants.INITIATOR_PORT_DIALOG_TITLE);
-        dialog.setHeaderText(Constants.INITIATOR_PORT_DIALOG_HEADER);
-        dialog.setContentText(Constants.INITIATOR_PORT_DIALOG_TEXT);
-
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            sessionSettings.getDefaultProperties().setProperty(role, result.get());
-            return true;
-        }
-        return false;
     }
 
     @FXML
@@ -423,25 +362,10 @@ public class MainController implements Initializable {
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.show();
-            // Hide this current window (if this is what you want)
-            //((Node)(actionEvent.getSource())).getScene().getWindow().hide();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
-//    public boolean checkPort(String port){
-//        if (!Utils.availablePort(Integer.parseInt(port))){
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.setTitle("ERROR");
-//            alert.setHeaderText("The port is not available");
-//            alert.setContentText("Choose another port");
-//            alert.showAndWait();
-//            return false;
-//        }
-//        return true;
-//    }
 
     public void stop() {
         try {
@@ -748,23 +672,47 @@ public class MainController implements Initializable {
 
     }
 
-    public void listenOnPorts(String testRangeA, String testRangeB) {
+    public boolean listenOnPorts(String testRangeA, String testRangeB) {
         try {
             Integer iTestRangeA = Integer.parseInt(testRangeA);
             Integer iTestRangeB = Integer.parseInt(testRangeB);
+            StringBuilder invalidPorts = new StringBuilder();
+            StringBuilder validPorts = new StringBuilder();
+            invalidPorts.append("Invalid ports: ").append("\n");
 
+            boolean existInvalidPorts = false;
             for (int port = iTestRangeA; port <= iTestRangeB; port++) {
-                FixSession fixSession = new FixSession(this, orderBook);
-                fixSession.start(port);
-                fixSessions.add(fixSession);
+                if (Utils.availablePort(port)){
+                    FixSession fixSession = new FixSession(this, orderBook);
+                    fixSession.start(port);
+                    fixSessions.add(fixSession);
+                    validPorts.append(port).append(",");
+                }else{
+                    existInvalidPorts = true;
+                    invalidPorts.append(port).append("\n");
+                }
+            }
+            if (existInvalidPorts){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("PORTS RANGE ERROR");
+                alert.setHeaderText("Ports in use");
+                alert.setContentText(invalidPorts.toString());
+                alert.showAndWait();
+            }
+            if (validPorts.length() > 0){
+                validPorts.deleteCharAt(validPorts.length() - 1);
+                menuItemMessagePort.setText(String.format("Listening on ports: %s", validPorts));
             }
 
+            return !StringUtils.isEmpty(validPorts);
         } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("PORTS RANGE ERROR");
             alert.setHeaderText("Bad ports range");
             alert.setContentText(ex.getLocalizedMessage());
             alert.showAndWait();
+            return false;
         }
+
     }
 }

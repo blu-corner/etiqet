@@ -13,3 +13,31 @@
 20220411-13:01:38: Received logout request
 20220411-13:01:38: Sent logout response
 20220411-13:01:38: Disconnecting: Received logout request
+20220411-13:20:15: Session FIX.4.4:SERVER->CLIENT55556 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-13:20:15: Created session: FIX.4.4:SERVER->CLIENT55556
+20220411-13:23:32: Accepting session FIX.4.4:SERVER->CLIENT55556 from /127.0.0.1:52536
+20220411-13:23:32: Acceptor heartbeat set to 30 seconds
+20220411-13:23:32: Received logon
+20220411-13:23:32: Responding to Logon request
+20220411-13:23:32: Disconnecting: Encountered END_OF_STREAM
+20220411-13:24:03: Accepting session FIX.4.4:SERVER->CLIENT55556 from /127.0.0.1:52559
+20220411-13:24:03: Acceptor heartbeat set to 30 seconds
+20220411-13:24:03: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220411-13:24:03: Received logon
+20220411-13:24:03: Responding to Logon request
+20220411-13:24:45: Received logout request
+20220411-13:24:45: Sent logout response
+20220411-13:24:45: Disconnecting: Received logout request
+20220411-13:44:27: Session FIX.4.4:SERVER->CLIENT55556 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-13:44:27: Created session: FIX.4.4:SERVER->CLIENT55556
+20220411-13:55:13: Session FIX.4.4:SERVER->CLIENT55556 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-13:55:13: Created session: FIX.4.4:SERVER->CLIENT55556
+20220411-14:00:27: Session FIX.4.4:SERVER->CLIENT55556 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-14:00:27: Created session: FIX.4.4:SERVER->CLIENT55556
+20220411-14:00:45: Accepting session FIX.4.4:SERVER->CLIENT55556 from /127.0.0.1:52599
+20220411-14:00:45: Acceptor heartbeat set to 30 seconds
+20220411-14:00:45: Received logon
+20220411-14:00:45: Responding to Logon request
+20220411-14:00:45: Disconnecting: Encountered END_OF_STREAM
+20220411-14:02:43: Session FIX.4.4:SERVER->CLIENT55556 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-14:02:43: Created session: FIX.4.4:SERVER->CLIENT55556
