@@ -1,0 +1,70 @@
+20220411-11:06:45: Session FIX.4.4:SERVER->CLIENT schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-11:06:45: Created session: FIX.4.4:SERVER->CLIENT
+20220411-11:07:39: Accepting session FIX.4.4:SERVER->CLIENT from /127.0.0.1:62755
+20220411-11:07:39: Acceptor heartbeat set to 30 seconds
+20220411-11:07:39: Received logon
+20220411-11:07:39: Responding to Logon request
+20220411-11:07:39: Disconnecting: Encountered END_OF_STREAM
+20220411-11:07:45: Accepting session FIX.4.4:SERVER->CLIENT from /127.0.0.1:62776
+20220411-11:07:45: Acceptor heartbeat set to 30 seconds
+20220411-11:07:45: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220411-11:07:45: Received logon
+20220411-11:07:45: Responding to Logon request
+20220411-11:27:10: Session FIX.4.4:SERVER->CLIENT schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-11:27:10: Created session: FIX.4.4:SERVER->CLIENT
+20220411-11:33:43: Session FIX.4.4:SERVER->CLIENT schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-11:33:43: Created session: FIX.4.4:SERVER->CLIENT
+20220411-12:26:25: Session FIX.4.4:SERVER->CLIENT schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-12:26:25: Created session: FIX.4.4:SERVER->CLIENT
+20220411-12:29:30: Session FIX.4.4:SERVER->CLIENT schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-12:29:30: Created session: FIX.4.4:SERVER->CLIENT
+20220411-12:32:00: Session FIX.4.4:SERVER->CLIENT schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-12:32:00: Created session: FIX.4.4:SERVER->CLIENT
+20220411-12:42:27: Accepting session FIX.4.4:SERVER->CLIENT from /127.0.0.1:64081
+20220411-12:42:27: Acceptor heartbeat set to 30 seconds
+20220411-12:42:27: Received logon
+20220411-12:42:27: Responding to Logon request
+20220411-12:42:27: Disconnecting: Encountered END_OF_STREAM
+20220411-12:42:57: Accepting session FIX.4.4:SERVER->CLIENT from /127.0.0.1:64103
+20220411-12:42:57: Acceptor heartbeat set to 30 seconds
+20220411-12:42:57: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220411-12:42:57: Received logon
+20220411-12:42:57: Responding to Logon request
+20220411-12:47:15: Received logout request
+20220411-12:47:15: Sent logout response
+20220411-12:47:15: Disconnecting: Received logout request
+20220411-12:50:59: Session FIX.4.4:SERVER->CLIENT schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-12:50:59: Created session: FIX.4.4:SERVER->CLIENT
+20220411-12:51:40: Accepting session FIX.4.4:SERVER->CLIENT from /127.0.0.1:64289
+20220411-12:51:40: Acceptor heartbeat set to 30 seconds
+20220411-12:51:40: Received logon
+20220411-12:51:40: Responding to Logon request
+20220411-12:51:40: Disconnecting: Encountered END_OF_STREAM
+20220411-12:52:11: Accepting session FIX.4.4:SERVER->CLIENT from /127.0.0.1:64313
+20220411-12:52:11: Acceptor heartbeat set to 30 seconds
+20220411-12:52:11: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220411-12:52:11: Received logon
+20220411-12:52:11: Responding to Logon request
+20220411-12:53:56: Disconnecting: Timed out waiting for heartbeat
+20220411-12:53:56: Accepting session FIX.4.4:SERVER->CLIENT from /127.0.0.1:64356
+20220411-12:53:56: Acceptor heartbeat set to 30 seconds
+20220411-12:53:56: quickfix.SessionException Logon state is not valid for message (MsgType=1)
+20220411-12:53:56: Disconnecting: Verifying message failed: quickfix.SessionException: Logon state is not valid for message (MsgType=1)
+20220411-12:53:56: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220411-12:53:56: Accepting session FIX.4.4:SERVER->CLIENT from /127.0.0.1:64400
+20220411-12:53:56: Acceptor heartbeat set to 30 seconds
+20220411-12:53:56: Received logon
+20220411-12:53:56: Responding to Logon request
+20220411-12:53:56: Disconnecting: Encountered END_OF_STREAM
+20220411-12:53:56: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220411-12:53:56: Received logon
+20220411-12:53:56: Responding to Logon request
+20220411-12:53:56: No responder, not sending message: 8=FIX.4.49=7335=A34=149=SERVER52=20220411-12:53:56.31556=CLIENT98=0108=30141=Y10=190
+20220411-12:54:25: Accepting session FIX.4.4:SERVER->CLIENT from /127.0.0.1:64442
+20220411-12:54:25: Acceptor heartbeat set to 30 seconds
+20220411-12:54:25: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220411-12:54:25: Received logon
+20220411-12:54:25: Responding to Logon request
+20220411-12:54:50: Received logout request
+20220411-12:54:50: Sent logout response
+20220411-12:54:50: Disconnecting: Received logout request

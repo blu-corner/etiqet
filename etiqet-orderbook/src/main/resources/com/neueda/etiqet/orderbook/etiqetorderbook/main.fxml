@@ -15,14 +15,12 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -45,16 +43,11 @@
                     <items>
                   <Menu mnemonicParsing="false" text="Role">
                     <items>
-                              <MenuItem fx:id="startAcceptor" mnemonicParsing="false" onAction="#startAcceptor" text="Start 1:1 acceptor">
+                              <MenuItem fx:id="startAcceptor" mnemonicParsing="false" onAction="#createNewWindow" text="Start acceptor">
                                   <graphic>
                                       <Circle fx:id="circleStartAcceptor" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
                                   </graphic>
                               </MenuItem>
-                        <MenuItem fx:id="startMultipleAcceptor" mnemonicParsing="false" onAction="#startMultipleAcceptor" text="Start multiple acceptor">
-                           <graphic>
-                              <Circle fx:id="circleStartAcceptor1" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
-                           </graphic>
-                        </MenuItem>
                               <MenuItem fx:id="startInitiator" mnemonicParsing="false" onAction="#startInitiator" text="Start initiator">
                                   <graphic>
                                       <Circle fx:id="circleStartInitiator" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
@@ -106,95 +99,6 @@
         </MenuBar>
         <TabPane fx:id="mainTabPane" prefHeight="752.0" prefWidth="810.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
-            <Tab text="Multiple Acceptor">
-                <content>
-                    <VBox minHeight="0.0" minWidth="0.0" prefHeight="902.0" prefWidth="802.0">
-                     <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="200.0">
-                        <children>
-                           <Label alignment="TOP_LEFT" contentDisplay="TOP" maxHeight="-Infinity" minHeight="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Range of ports:" />
-                           <TextArea fx:id="textAreaRangeA" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="77.0">
-                              <HBox.margin>
-                                 <Insets left="10.0" />
-                              </HBox.margin>
-                           </TextArea>
-                           <Label text="to">
-                              <HBox.margin>
-                                 <Insets left="5.0" />
-                              </HBox.margin>
-                           </Label>
-                           <TextArea fx:id="textAreaRangeB" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="77.0">
-                              <HBox.margin>
-                                 <Insets left="5.0" />
-                              </HBox.margin>
-                           </TextArea>
-                           <Button fx:id="buttonListenPorts" mnemonicParsing="false" onAction="#listenOnPorts" prefHeight="25.0" prefWidth="89.0" text="LISTEN">
-                              <HBox.margin>
-                                 <Insets left="10.0" />
-                              </HBox.margin>
-                           </Button>
-                        </children>
-                     </HBox>
-                        <FlowPane fx:id="orderBookTableViewLabelsM" prefHeight="37.0" prefWidth="801.0">
-                            <children>
-                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="397.0" text="BID">
-                                    <font>
-                                        <Font name="System Bold" size="18.0" />
-                                    </font>
-                                </Label>
-                                <Label alignment="CENTER" prefHeight="27.0" prefWidth="401.0" text="OFFER">
-                                    <font>
-                                        <Font name="System Bold" size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                        </FlowPane>
-                        <FlowPane fx:id="orderBookTableViewsM" prefHeight="300.0" prefWidth="882.0">
-                            <children>
-                                <StackPane prefHeight="300.0" prefWidth="400.0">
-                                    <children>
-                                        <TableView fx:id="orderBookBuyTableViewM">
-                                            <columns>
-                                                <TableColumn fx:id="timeBuyTableColumnM" prefWidth="200.0" text="Time" />
-                                                <TableColumn fx:id="orderIDBuyTableColumnM" prefWidth="100.0" text="OrderID" />
-                                                <TableColumn fx:id="sizeBuyTableColumnM" prefWidth="50.0" text="Size" />
-                                                <TableColumn fx:id="priceBuyTableColumnM" prefWidth="50.0" text="Price" />
-                                            </columns>
-                                        </TableView>
-                                    </children>
-                                </StackPane>
-                                <StackPane prefHeight="300.0" prefWidth="400.0">
-                                    <children>
-                                        <TableView fx:id="orderBookSellTableViewM">
-                                            <columns>
-                                                <TableColumn fx:id="timeSellTableColumnM" prefWidth="200.0" text="Time" />
-                                                <TableColumn fx:id="orderIDSellTableColumnM" prefWidth="100.0" text="OrderID" />
-                                                <TableColumn fx:id="sizeSellTableColumnM" prefWidth="50.0" text="Size" />
-                                                <TableColumn fx:id="priceSellTableColumnM" prefWidth="50.0" text="Price" />
-                                            </columns>
-                                        </TableView>
-                                    </children>
-                                </StackPane>
-                            </children>
-                        </FlowPane>
-                        <StackPane prefHeight="386.0" prefWidth="801.0">
-                            <children>
-                                <TableView fx:id="actionTableViewM" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="331.0" prefWidth="800.0">
-                                    <columns>
-                                        <TableColumn fx:id="actionTimeTableColumnM" prefWidth="200.0" text="Time" />
-                                        <TableColumn fx:id="actionTypeTableColumnM" prefWidth="100.0" text="Type" />
-                                        <TableColumn fx:id="actionOrderIdBuyTableColumnM" prefWidth="80.0" text="BuyID" />
-                                        <TableColumn fx:id="actionOrderIdSellTableColumnM" prefWidth="80.0" text="SellID" />
-                                        <TableColumn fx:id="actionBuySizeTableColumnM" prefWidth="80.0" text="BuySize" />
-                                        <TableColumn fx:id="actionSellSizeTableColumnM" prefWidth="80.0" text="SellSize" />
-                                        <TableColumn fx:id="actionLeaveQtyTableColumnM" prefWidth="80.0" text="LeavesQty" />
-                                        <TableColumn fx:id="actionAgreedPriceTableColumnM" prefWidth="100.0" text="AgreedPrice" />
-                                    </columns>
-                                </TableView>
-                            </children>
-                        </StackPane>
-                    </VBox>
-                </content>
-            </Tab>
                 <Tab fx:id="tabAcceptor" text="Acceptor">
                     <content>
                         <VBox minHeight="0.0" minWidth="0.0" prefHeight="902.0" prefWidth="802.0">

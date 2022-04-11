@@ -24,8 +24,6 @@ public class Main extends Application {
         stage.show();
     }
 
-
-
     public static void main(String[] args) {
 //        System.setProperty("prism.allowhidpi", "false");
         launch();

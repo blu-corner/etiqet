@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<AnchorPane fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.PortsController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="66.0" prefWidth="413.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+       <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="72.0" prefWidth="562.0">
+           <children>
+               <Label alignment="TOP_LEFT" contentDisplay="TOP" maxHeight="-Infinity" minHeight="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="18.0" prefWidth="103.0" text="Range of ports:">
+               <padding>
+                  <Insets left="20.0" />
+               </padding></Label>
+               <TextArea fx:id="textAreaRangeA" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="77.0">
+                   <HBox.margin>
+                       <Insets left="10.0" />
+                   </HBox.margin>
+               </TextArea>
+               <Label text="to">
+                   <HBox.margin>
+                       <Insets left="5.0" />
+                   </HBox.margin>
+               </Label>
+               <TextArea fx:id="textAreaRangeB" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="77.0">
+                   <HBox.margin>
+                       <Insets left="5.0" />
+                   </HBox.margin>
+               </TextArea>
+               <Button fx:id="buttonListenPorts" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="LISTEN" onAction="#listenOnPorts">
+                   <HBox.margin>
+                       <Insets left="10.0" />
+                   </HBox.margin>
+               </Button>
+           </children>
+       </HBox>
+   </children>
+
+</AnchorPane>

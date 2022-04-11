@@ -70,12 +70,12 @@ public class FixSession {
         sessionID = new SessionID(
             new BeginString("FIX.4.4"),
             new SenderCompID("SERVER"),
-            new TargetCompID("CLIENT"));
+            new TargetCompID("CLIENT"+port));
         Dictionary dictionary = new Dictionary();
         dictionary.setString("ConnectionType", "acceptor");
         dictionary.setString("SocketAcceptPort", String.valueOf(port));
-        dictionary.setString("FileStorePath", "store");
-        dictionary.setString("FileLogPath", "log");
+        dictionary.setString("FileStorePath", "stores/store" + port);
+        dictionary.setString("FileLogPath", "logs/log" + port);
         dictionary.setString("DataDictionary", "spec/FIX44.xml");
         dictionary.setString("StartTime", "00:00:00");
         dictionary.setString("EndTime", "00:00:00");

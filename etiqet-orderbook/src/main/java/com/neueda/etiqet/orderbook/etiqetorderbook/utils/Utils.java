@@ -1,5 +1,6 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import quickfix.Message;
 
 import java.io.IOException;
@@ -19,6 +20,15 @@ public class Utils {
     public static String replaceSOH(Message message) {
         String content = message.toString();
         return content.replace(SOH, VERTICAL_BAR);
+    }
+
+
+    public static boolean isNumber(String value){
+        try{
+            return StringUtils.isNumeric(value);
+        }catch (Exception ex){
+            return false;
+        }
     }
 
 

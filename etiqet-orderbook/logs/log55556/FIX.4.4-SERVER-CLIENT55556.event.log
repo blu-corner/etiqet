@@ -1,0 +1,15 @@
+20220411-12:57:38: Session FIX.4.4:SERVER->CLIENT55556 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220411-12:57:38: Created session: FIX.4.4:SERVER->CLIENT55556
+20220411-12:58:38: Accepting session FIX.4.4:SERVER->CLIENT55556 from /127.0.0.1:64559
+20220411-12:58:38: Acceptor heartbeat set to 30 seconds
+20220411-12:58:38: Received logon
+20220411-12:58:38: Responding to Logon request
+20220411-12:58:38: Disconnecting: Encountered END_OF_STREAM
+20220411-12:59:09: Accepting session FIX.4.4:SERVER->CLIENT55556 from /127.0.0.1:64581
+20220411-12:59:09: Acceptor heartbeat set to 30 seconds
+20220411-12:59:09: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220411-12:59:09: Received logon
+20220411-12:59:09: Responding to Logon request
+20220411-13:01:38: Received logout request
+20220411-13:01:38: Sent logout response
+20220411-13:01:38: Disconnecting: Received logout request

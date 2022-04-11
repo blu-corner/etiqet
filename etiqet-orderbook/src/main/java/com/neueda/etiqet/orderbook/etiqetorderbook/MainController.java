@@ -3,12 +3,14 @@ package com.neueda.etiqet.orderbook.etiqetorderbook;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
-import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
@@ -22,6 +24,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -36,6 +39,7 @@ import quickfix.fix44.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,10 +49,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-public class MainController implements Initializable{
+public class MainController implements Initializable {
 
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
@@ -56,6 +59,7 @@ public class MainController implements Initializable{
     private boolean changed;
     private boolean useDefaultPort;
     private String changedDefaultPort = "";
+
     public boolean isChanged() {
         return changed;
     }
@@ -64,31 +68,56 @@ public class MainController implements Initializable{
         this.changed = changed;
     }
 
-    @FXML public TableView<Order> orderBookBuyTableView;
-    @FXML public TableView<Order> orderBookSellTableView;
-    @FXML public TableView<Action> actionTableView;
-    @FXML public Circle circleStartAcceptor;
-    @FXML private Circle circleStartInitiator;
-    @FXML private MenuItem startAcceptor;
-    @FXML private MenuItem startInitiator;
-    @FXML private MenuBar menuBarGeneral;
-    @FXML private Tab tabAcceptor;
-    @FXML private Tab tabInitiator;
-    @FXML private ComboBox comboOrders;
-    @FXML private ComboBox comboSide;
-    @FXML private TextArea logTextArea;
-    @FXML private TabPane mainTabPane;
-    @FXML public TextField textFieldSize;
-    @FXML public TextField textFieldPrice;
-    @FXML public TextField textFieldOrderID;
-    @FXML public TextField textFieldOrigOrderID;
-    @FXML public CheckBox checkBoxAutoGen;
-    @FXML public Button buttonSendOrder;
-    @FXML public ListView listViewLog;
-    @FXML public ListView listViewActions;
-    @FXML public CheckMenuItem checkMenuItemRemPort;
-    @FXML public Menu menuItemMessagePort;
-    @FXML public CheckMenuItem menuItemDecodeOnClick;
+    @FXML
+    public TableView<Order> orderBookBuyTableView;
+    @FXML
+    public TableView<Order> orderBookSellTableView;
+    @FXML
+    public TableView<Action> actionTableView;
+    @FXML
+    public Circle circleStartAcceptor;
+    @FXML
+    private Circle circleStartInitiator;
+    @FXML
+    private MenuItem startAcceptor;
+    @FXML
+    private MenuItem startInitiator;
+    @FXML
+    private MenuBar menuBarGeneral;
+    @FXML
+    private Tab tabAcceptor;
+    @FXML
+    private Tab tabInitiator;
+    @FXML
+    private ComboBox comboOrders;
+    @FXML
+    private ComboBox comboSide;
+    @FXML
+    private TextArea logTextArea;
+    @FXML
+    private TabPane mainTabPane;
+    @FXML
+    public TextField textFieldSize;
+    @FXML
+    public TextField textFieldPrice;
+    @FXML
+    public TextField textFieldOrderID;
+    @FXML
+    public TextField textFieldOrigOrderID;
+    @FXML
+    public CheckBox checkBoxAutoGen;
+    @FXML
+    public Button buttonSendOrder;
+    @FXML
+    public ListView listViewLog;
+    @FXML
+    public ListView listViewActions;
+    @FXML
+    public CheckMenuItem checkMenuItemRemPort;
+    @FXML
+    public Menu menuItemMessagePort;
+    @FXML
+    public CheckMenuItem menuItemDecodeOnClick;
 
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
@@ -114,7 +143,7 @@ public class MainController implements Initializable{
     public TextArea textAreaRangeB;
 
     private SocketAcceptor socketAcceptor;
-    private Thread orderBook;
+    private static Thread orderBook;
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
     private Initator initator;
@@ -125,7 +154,6 @@ public class MainController implements Initializable{
         this.buy = new ArrayList<>();
         this.sell = new ArrayList<>();
         this.changed = true;
-
         actionTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
         orderBookBuyTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
         orderBookSellTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
@@ -161,34 +189,32 @@ public class MainController implements Initializable{
 
         comboSide.getItems().addAll("BUY", "SELL");
         comboSide.getSelectionModel().select(0);
-        initator = new Initator(listViewActions, listViewLog, textFieldOrderID );
+        initator = new Initator(listViewActions, listViewLog, textFieldOrderID);
 
         checkMenuItemRemPort.setSelected(true);
         setUseDefaultPort(true);
 
         fixSessions = new ArrayList<>();
-
     }
 
 
-
     private void showFixFields(MouseEvent e) {
-        try{
-            if (menuItemDecodeOnClick.isSelected()){
+        try {
+            if (menuItemDecodeOnClick.isSelected()) {
                 String targetString = e.getTarget().toString();
                 int firstQuote = targetString.indexOf('"');
                 int secondQuote = targetString.indexOf('"', firstQuote + 1);
                 String content = targetString.substring(firstQuote + 1, secondQuote);
-                if (content.contains(Constants.OUT)){
-                    content=content.replace(Constants.OUT + StringUtils.SPACE,"");
-                }else{
-                    content=content.replace(Constants.IN + StringUtils.SPACE,"");
+                if (content.contains(Constants.OUT)) {
+                    content = content.replace(Constants.OUT + StringUtils.SPACE, "");
+                } else {
+                    content = content.replace(Constants.IN + StringUtils.SPACE, "");
                 }
 
                 String[] fields = content.split("\\|");
                 List<String> fieldList = List.of(fields);
                 StringBuilder result = new StringBuilder();
-                for (String field: fieldList){
+                for (String field : fieldList) {
                     String[] keyValue = field.split("=");
                     result
                         .append(keyValue[0])
@@ -204,17 +230,18 @@ public class MainController implements Initializable{
                 alert.setTitle("Decoder");
                 alert.setHeaderText("FIX message decoded");
                 alert.showAndWait();
-            }else{
+            } else {
                 cellToClipBoard(e);
             }
 
-        }catch (Exception ex){}
+        } catch (Exception ex) {
+        }
 
     }
 
     private String getAdditinalInfo(String tag, String value) {
         String additionalInfo = "";
-        switch (tag){
+        switch (tag) {
             case Constants.MSG_TYPE:
                 additionalInfo = StringUtils.SPACE + Constants.hmMsgType.get(value);
                 break;
@@ -230,27 +257,46 @@ public class MainController implements Initializable{
         this.useDefaultPort = useDefaultPort;
     }
 
-    private void deleteDir(String directory){
-        try{
+    private void deleteDir(String directory) {
+        try {
             Files.walk(Path.of(directory))
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
                 .forEach(File::delete);
-        }catch (Exception e){
+        } catch (Exception e) {
             this.logger.error(e.getLocalizedMessage());
         }
     }
 
-    public void startAcceptor(ActionEvent actionEvent) {
+    public void startAcceptor(String portsA, String portsB, Stage stage) {
+        stage.close();
+        listenOnPorts(portsA, portsB);
+        menuItemMessagePort.setText(String.format("Listening on ports: %s to %s", portsA, portsB));
+        OrderBook orderBookThread = new OrderBook(this);
+        orderBook = new Thread(orderBookThread);
+        orderBook.setDaemon(true);
+        orderBook.start();
+
+        //javafx
+        circle.setFill(Color.GREENYELLOW);
+        this.startAcceptor.setDisable(true);
+        this.startInitiator.setDisable(true);
+        this.circleStartAcceptor.setFill(Color.GREENYELLOW);
+        this.tabInitiator.setDisable(true);
+        this.mainTabPane.getSelectionModel().select(0);
+    }
+
+    public void startAcceptor() {
+
         URL resource = getClass().getClassLoader().getResource(Constants.SERVER_CFG);
         try {
             SessionSettings sessionSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
-            if (setPort(sessionSettings, Constants.SOCKET_ACCEPTOR_PORT)){
+            if (setPort(sessionSettings, Constants.SOCKET_ACCEPTOR_PORT)) {
 //                if (!checkPort(sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT))){
 //                    return;
 //                }
 //                deleteDir("store"); //Just in case it fails deleting when restarting seq number
-                menuItemMessagePort.setText("Listening on port: "+ sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT));
+                menuItemMessagePort.setText("Listening on port: " + sessionSettings.getDefaultProperties().getProperty(Constants.SOCKET_ACCEPTOR_PORT));
                 MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
                 LogFactory logFactory = new FileLogFactory(sessionSettings);
                 MessageFactory messageFactory = new DefaultMessageFactory();
@@ -268,7 +314,7 @@ public class MainController implements Initializable{
                 this.startInitiator.setDisable(true);
                 this.circleStartAcceptor.setFill(Color.GREENYELLOW);
                 this.tabInitiator.setDisable(true);
-                this.mainTabPane.getSelectionModel().select(1);
+                this.mainTabPane.getSelectionModel().select(0);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -277,56 +323,84 @@ public class MainController implements Initializable{
 
     public void startInitiator(ActionEvent actionEvent) {
         try {
-            URL resource = getClass().getClassLoader().getResource(Constants.CLIENT_CFG);
-            SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
-            if (setPort(initiatorSettings, Constants.SOCKET_INITIATOR_PORT)){
-//                deleteDir("initiatorStore"); // Just in case it fails when restarting seq number
-//                if (!checkPort(initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT))){
-//                    return;
-//                }
-                menuItemMessagePort.setText("Connected to port: " + initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT));
-                FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
-                FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
-                MessageFactory messageFactory = new DefaultMessageFactory();
-                socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
-                socketInitiator.start();
-                sessionId = socketInitiator.getSessions().get(0);
-                sendLogonRequest();
+            SessionSettings initiatorSettings = new SessionSettings();
+            String port = getPort();
+            sessionId = new SessionID(
+                new BeginString("FIX.4.4"),
+                new SenderCompID("CLIENT"+ port),
+                new TargetCompID("SERVER"));
+            Dictionary dictionary = new Dictionary();
 
-                circle.setFill(Color.GREENYELLOW);
-                this.startInitiator.setDisable(true);
-                this.startAcceptor.setDisable(true);
-                this.circleStartInitiator.setFill(Color.GREENYELLOW);
-                this.tabAcceptor.setDisable(true);
-                this.mainTabPane.getSelectionModel().select(2);
-            }
-        } catch (ConfigError | IOException | URISyntaxException | SessionNotFound e) {
+            dictionary.setString("ConnectionType", "initiator");
+            dictionary.setString("SocketConnectPort",  port);
+            dictionary.setString("SocketConnectHost",  "127.0.0.1");
+            dictionary.setString("FileStorePath", "initiatorStores/store" + port);
+            dictionary.setString("FileLogPath", "initiatorLogs/log" + port);
+            dictionary.setString("DataDictionary", "spec/FIX44.xml");
+            dictionary.setString("StartTime", "00:00:00");
+            dictionary.setString("EndTime", "00:00:00");
+            dictionary.setString("UseDataDictionary", "Y");
+            dictionary.setString("ResetOnLogon", "Y");
+            dictionary.setString("HeartBtInt", "30");
+            initiatorSettings.set(sessionId, dictionary);
+            menuItemMessagePort.setText("Connected to port: " + port);
+            FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
+            FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
+            MessageFactory messageFactory = new DefaultMessageFactory();
+            socketInitiator = new SocketInitiator(initator, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
+            socketInitiator.start();
+            sendLogonRequest();
+
+            circle.setFill(Color.GREENYELLOW);
+            this.startInitiator.setDisable(true);
+            this.startAcceptor.setDisable(true);
+            this.circleStartInitiator.setFill(Color.GREENYELLOW);
+            this.tabAcceptor.setDisable(true);
+            this.mainTabPane.getSelectionModel().select(1);
+
+        } catch (ConfigError | SessionNotFound e) {
             e.printStackTrace();
         }
     }
 
+    private String getPort() {
+        URL resource = getClass().getClassLoader().getResource(Constants.CLIENT_CFG);
+        try {
+            SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
+            TextInputDialog dialog = null;
+            String port = initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT);
+            dialog = new TextInputDialog(port);
+            dialog.setTitle(Constants.INITIATOR_PORT_DIALOG_TITLE);
+            dialog.setHeaderText(Constants.INITIATOR_PORT_DIALOG_HEADER);
+            dialog.setContentText(Constants.INITIATOR_PORT_DIALOG_TEXT);
+
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                return result.get();
+            }
+        } catch (ConfigError e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private boolean setPort(SessionSettings sessionSettings, String role) {
-        if (!StringUtils.isEmpty(this.changedDefaultPort)){
+        if (!StringUtils.isEmpty(this.changedDefaultPort)) {
             sessionSettings.getDefaultProperties().setProperty(role, this.changedDefaultPort);
             this.changedDefaultPort = "";
             return true;
         }
         if (this.isUseDefaultPort()) return true;
         TextInputDialog dialog = null;
-        if (role.equals(Constants.SOCKET_ACCEPTOR_PORT)){
-            String port = sessionSettings.getDefaultProperties().getProperty(role);
-            dialog = new TextInputDialog(port);
-            dialog.setTitle(Constants.ACCEPTOR_PORT_DIALOG_TITLE);
-//            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setHeaderText(Constants.ACCEPTOR_PORT_DIALOG_HEADER);
-            dialog.setContentText(Constants.ACCEPTOR_PORT_DIALOG_TEXT);
-        }else{
-            String port = sessionSettings.getDefaultProperties().getProperty(role);
-            dialog = new TextInputDialog(port);
-            dialog.setTitle(Constants.INITIATOR_PORT_DIALOG_TITLE);
-            dialog.setHeaderText(Constants.INITIATOR_PORT_DIALOG_HEADER);
-            dialog.setContentText(Constants.INITIATOR_PORT_DIALOG_TEXT);
-        }
+        String port = sessionSettings.getDefaultProperties().getProperty(role);
+        dialog = new TextInputDialog(port);
+        dialog.setTitle(Constants.INITIATOR_PORT_DIALOG_TITLE);
+        dialog.setHeaderText(Constants.INITIATOR_PORT_DIALOG_HEADER);
+        dialog.setContentText(Constants.INITIATOR_PORT_DIALOG_TEXT);
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
@@ -335,6 +409,27 @@ public class MainController implements Initializable{
         }
         return false;
     }
+
+    @FXML
+    private void createNewWindow(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("portsWindow.fxml"));
+            Parent root = fxmlLoader.load();
+            PortsController portsController = fxmlLoader.getController();
+            portsController.injectMainController(this);
+            Stage stage = new Stage();
+            stage.setTitle("PORT");
+            stage.setScene(new Scene(root));
+            stage.setAlwaysOnTop(true);
+            stage.show();
+            // Hide this current window (if this is what you want)
+            //((Node)(actionEvent.getSource())).getScene().getWindow().hide();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 //    public boolean checkPort(String port){
 //        if (!Utils.availablePort(Integer.parseInt(port))){
@@ -350,12 +445,10 @@ public class MainController implements Initializable{
 
     public void stop() {
         try {
-            if (socketInitiator != null){
+            if (socketInitiator != null) {
                 socketInitiator.stop();
-            }else if (socketAcceptor != null){
-                socketAcceptor.stop();
-            }else{
-                for (FixSession fixSession : fixSessions){
+            } else {
+                for (FixSession fixSession : fixSessions) {
                     fixSession.stop();
                 }
             }
@@ -368,14 +461,12 @@ public class MainController implements Initializable{
             this.tabInitiator.setDisable(false);
             this.orderBook.stop();
             menuItemMessagePort.setText("");
-
-
         } catch (Exception ex) {
             this.logger.error(ex.getLocalizedMessage());
         }
     }
 
-    private void sendLogonRequest()throws SessionNotFound{
+    private void sendLogonRequest() throws SessionNotFound {
         Logon logon = new Logon();
         Message.Header header = logon.getHeader();
         header.setField(new BeginString("FIX.4.4"));
@@ -385,7 +476,7 @@ public class MainController implements Initializable{
         logger.info("Logon message sent: {}", sent);
     }
 
-    private void sendSeqReset()throws SessionNotFound{
+    private void sendSeqReset() throws SessionNotFound {
         SequenceReset sequenceReset = new SequenceReset();
 //        GapFillFlag gapFillFlag = new GapFillFlag();
         NewSeqNo newSeqNo = new NewSeqNo(100);
@@ -406,7 +497,7 @@ public class MainController implements Initializable{
         logger.info("Sequence reset message sent: {}", sent);
     }
 
-    private void sendLogoutRequest()throws SessionNotFound{
+    private void sendLogoutRequest() throws SessionNotFound {
         Logout logout = new Logout();
         boolean sent = Session.sendToTarget(logout, this.sessionId);
         logger.info("Logout message sent: {}", sent);
@@ -468,7 +559,7 @@ public class MainController implements Initializable{
         orderBookSellTableView.getSelectionModel().clearAndSelect(0);
     }
 
-    public void reorderActionTableView(){
+    public void reorderActionTableView() {
         List<Action> orderedTrades = getOrderedTrades();
         actionTableView.getItems().clear();
         actionTableView.getItems().addAll(orderedTrades);
@@ -479,7 +570,7 @@ public class MainController implements Initializable{
         String textFieldSizeText = this.textFieldSize.getText();
         String textFieldPrice = this.textFieldPrice.getText();
         String textFieldOrderID = this.textFieldOrderID.getText();
-        if (StringUtils.isEmpty(textFieldOrderID)){
+        if (StringUtils.isEmpty(textFieldOrderID)) {
             return;
         }
         String textFieldOrigOrderID = this.textFieldOrigOrderID.getText();
@@ -487,25 +578,25 @@ public class MainController implements Initializable{
         String comboOrdersValue = this.comboOrders.getValue().toString();
         char comboSideValue = this.comboSide.getValue().toString().equals("SELL") ? '2' : '1';
 
-        switch (comboOrdersValue){
+        switch (comboOrdersValue) {
             case Constants.COMBO_NEW_ORDER:
-                initator.sendNewOrderSingle(textFieldSizeText,textFieldPrice,textFieldOrderID,
+                initator.sendNewOrderSingle(textFieldSizeText, textFieldPrice, textFieldOrderID,
                     checkBoxAutoGenSelected, comboSideValue);
                 break;
             case Constants.COMBO_CANCEL:
-                initator.sendOrderCancelRequest(textFieldOrderID,textFieldOrigOrderID,checkBoxAutoGenSelected, comboSideValue);
+                initator.sendOrderCancelRequest(textFieldOrderID, textFieldOrigOrderID, checkBoxAutoGenSelected, comboSideValue);
                 break;
             case Constants.COMBO_REPLACE:
-                initator.sendOrderCancelReplaceRequest(textFieldSizeText, textFieldPrice,textFieldOrderID, textFieldOrigOrderID, checkBoxAutoGenSelected,comboSideValue);
+                initator.sendOrderCancelReplaceRequest(textFieldSizeText, textFieldPrice, textFieldOrderID, textFieldOrigOrderID, checkBoxAutoGenSelected, comboSideValue);
                 break;
         }
     }
 
-    public void clearMainLog(ActionEvent event){
+    public void clearMainLog(ActionEvent event) {
         this.listViewActions.getItems().clear();
     }
 
-    public void clearGlobalLog(ActionEvent event){
+    public void clearGlobalLog(ActionEvent event) {
         this.listViewLog.getItems().clear();
     }
 
@@ -515,22 +606,22 @@ public class MainController implements Initializable{
         setUseDefaultPort(targetString.contains("selected"));
     }
 
-    public void closeApplication(ActionEvent actionEvent){
+    public void closeApplication(ActionEvent actionEvent) {
         stop();
         Platform.exit();
     }
 
-    public void setDefaultPort(ActionEvent actionEvent){
+    public void setDefaultPort(ActionEvent actionEvent) {
         TextInputDialog dialog = null;
         List<String> writtenLines = new ArrayList<>();
         int index = 0, portIndex = 0;
         try {
-            if (tabAcceptor.isSelected()){
+            if (tabAcceptor.isSelected()) {
                 Path path = Paths.get("src/main/resources/server.cfg");
                 List<String> lines = Files.readAllLines(path);
                 String port = "";
-                for (String line : lines){
-                    if (!line.contains("#") && line.contains(Constants.SOCKET_ACCEPTOR_PORT)){
+                for (String line : lines) {
+                    if (!line.contains("#") && line.contains(Constants.SOCKET_ACCEPTOR_PORT)) {
                         port = line.substring(line.indexOf('=') + 1);
                         line = line.replace(port, "");
                         portIndex = index;
@@ -550,12 +641,12 @@ public class MainController implements Initializable{
                     this.changedDefaultPort = result.get();
                 }
 
-            }else if (tabInitiator.isSelected()){
+            } else if (tabInitiator.isSelected()) {
                 Path path = Paths.get("src/main/resources/client.cfg");
                 List<String> lines = Files.readAllLines(path);
                 String port = "";
-                for (String line : lines){
-                    if (!line.contains("#") && line.contains(Constants.SOCKET_INITIATOR_PORT)){
+                for (String line : lines) {
+                    if (!line.contains("#") && line.contains(Constants.SOCKET_INITIATOR_PORT)) {
                         port = line.substring(line.indexOf('=') + 1);
                         line = line.replace(port, "");
                         portIndex = index;
@@ -576,39 +667,39 @@ public class MainController implements Initializable{
                 }
             }
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    public void cleanBid(ActionEvent actionEvent){
+    public void cleanBid(ActionEvent actionEvent) {
         this.getBuy().clear();
         orderBookBuyTableView.getItems().clear();
     }
 
-    public void cleanOffer(ActionEvent actionEvent){
+    public void cleanOffer(ActionEvent actionEvent) {
         this.getSell().clear();
         orderBookSellTableView.getItems().clear();
     }
 
-    public void cleanBidAndOffer(ActionEvent actionEvent){
+    public void cleanBidAndOffer(ActionEvent actionEvent) {
         cleanBid(actionEvent);
         cleanOffer(actionEvent);
     }
 
-    public void cleanTrades(ActionEvent actionEvent){
+    public void cleanTrades(ActionEvent actionEvent) {
         this.actionTableView.getItems().clear();
     }
 
-    public void cleanAll(ActionEvent actionEvent){
+    public void cleanAll(ActionEvent actionEvent) {
         cleanBidAndOffer(actionEvent);
         cleanTrades(actionEvent);
     }
 
-    public void setAutoGenValue(ActionEvent actionEvent){
+    public void setAutoGenValue(ActionEvent actionEvent) {
         this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(8));
-        if (!this.checkBoxAutoGen.isSelected()){
+        if (!this.checkBoxAutoGen.isSelected()) {
             this.textFieldOrderID.setText("");
         }
     }
@@ -628,7 +719,7 @@ public class MainController implements Initializable{
     public void goToFixDoc(ActionEvent actionEvent) {
         String url = "https://btobits.com/fixopaedia/fixdic44/fields_by_tag_.html";
         try {
-            if(java.awt.Desktop.isDesktopSupported()){
+            if (java.awt.Desktop.isDesktopSupported()) {
                 Desktop desktop = Desktop.getDesktop();
                 try {
                     desktop.browse(new URI(url));
@@ -636,7 +727,7 @@ public class MainController implements Initializable{
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-            }else{
+            } else {
                 Runtime runtime = Runtime.getRuntime();
                 try {
                     runtime.exec("xdg-open " + url);
@@ -657,42 +748,23 @@ public class MainController implements Initializable{
 
     }
 
-    public void listenOnPorts(ActionEvent actionEvent) {
-        try{
-            String testRangeA = textAreaRangeA.getText();
-            String testRangeB = textAreaRangeB.getText();
+    public void listenOnPorts(String testRangeA, String testRangeB) {
+        try {
+            Integer iTestRangeA = Integer.parseInt(testRangeA);
+            Integer iTestRangeB = Integer.parseInt(testRangeB);
 
-            if (isNumber(testRangeA) && isNumber(testRangeB)){
-                Integer iTestRangeA = Integer.parseInt(testRangeA);
-                Integer iTestRangeB = Integer.parseInt(testRangeB);
-
-                for (int port = iTestRangeA; port <= iTestRangeB; port++){
-                    FixSession fixSession = new FixSession(this, this.orderBook);
-                    fixSession.start(port);
-                    fixSessions.add(fixSession);
-                }
-            }else{
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("PORTS RANGE ERROR");
-                alert.setHeaderText("Bad ports range");
-                alert.setContentText("Ports must be integer values");
-                alert.showAndWait();
+            for (int port = iTestRangeA; port <= iTestRangeB; port++) {
+                FixSession fixSession = new FixSession(this, orderBook);
+                fixSession.start(port);
+                fixSessions.add(fixSession);
             }
-        }catch (Exception ex){
+
+        } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("PORTS RANGE ERROR");
             alert.setHeaderText("Bad ports range");
             alert.setContentText(ex.getLocalizedMessage());
             alert.showAndWait();
         }
-    }
-
-    public boolean isNumber(String value){
-        try{
-            return StringUtils.isNumeric(value);
-        }catch (Exception ex){
-            return false;
-        }
-
     }
 }
