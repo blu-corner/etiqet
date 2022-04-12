@@ -3,7 +3,9 @@ package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class Constants {
     public static final Logger orderBookLooger = LoggerFactory.getLogger("ORDER BOOK");
@@ -16,7 +18,25 @@ public class Constants {
     public static final String EXECUTION_REPORT = "8";
     public static final String NEW = "0000";
     public static final String NONE = "NONE";
-    public static final String SOCKET_ACCEPTOR_PORT = "SocketAcceptPort";
+
+    public static final String CONF_BEGIN_STRING = "BeginString";
+    public static final String CONF_SENDER = "SenderCompID";
+    public static final String CONF_TARGET = "TargetCompID";
+    public static final String CONF_CONNECTION_TYPE = "ConnectionType";
+    public static final String CONF_RECONNECT_INTERVAL = "ReconnectInterval";
+    public static final String CONF_FILE_STORE_PATH = "FileStorePath";
+    public static final String CONF_FILE_LOG_PATH= "FileLogPath";
+    public static final String CONF_START_TIME = "StartTime";
+    public static final String CONF_END_TIME = "EndTime";
+    public static final String CONF_USE_DATA_DIC = "UseDataDictionary";
+    public static final String CONF_RESET_ON_LOGON = "ResetOnLogon";
+    public static final String CONF_RESET_ON_LOGOUT = "ResetOnLogout";
+    public static final String CONF_RESET_ON_DISCONNECT = "ResetOnDisconnect";
+    public static final String CONF_HEART_BT_INT= "HeartBtInt";
+    public static final String INI_CONNECT_HOST = "SocketConnectHost";
+    public static final String INI_CONNECT_PORT= "SocketConnectPort";
+    public static final String ACC_ACCEPT_PORT = "SocketAcceptPort";
+
     public static final String ACCEPTOR_PORT_DIALOG_TITLE = "ACCEPTOR PORT";
     public static final String ACCEPTOR_PORT_DIALOG_HEADER = "Introduce port to listen on";
     public static final String ACCEPTOR_PORT_DIALOG_TEXT = "Port:";
@@ -24,7 +44,6 @@ public class Constants {
     public static final String INITIATOR_ROLE = "INITIATOR";
     public static final String CLIENT_CFG = "client.cfg";
     public static final String SERVER_CFG = "server.cfg";
-    public static final String SOCKET_INITIATOR_PORT = "SocketConnectPort";
     public static final String INITIATOR_PORT_DIALOG_TITLE = "INITIATOR PORT";
     public static final String INITIATOR_PORT_DIALOG_HEADER = "Introduce port to connect";
     public static final String INITIATOR_PORT_DIALOG_TEXT = "Port:";
@@ -34,6 +53,14 @@ public class Constants {
     public static final String COMBO_REPLACE = "REPLACE";
 
     public static final String MSG_TYPE = "35";
+    public static final String PORTS_RANGE_ERROR = "PORTS RANGE ERROR";
+    public static final String BAD_PORTS_RANGE = "Bad ports range";
+    public static final String PORTS_IN_USE = "Ports in use";
+    public static final String LISTENING_ON_PORTS = "Listening on ports: %s";
+    public static final String INVALID_PORTS = "Invalid ports: ";
+    public static final String HELP_SITE = "https://btobits.com/fixopaedia/fixdic44/fields_by_tag_.html";
+    public static final List<String> Y_N = Arrays.asList("Y", "N");
+    public static final List<String> FIX_VERSIONS = Arrays.asList("FIX.4.0", "FIX.4.1", "FIX.4.2", "FIX.4.3", "FIX.4.4","FIX.5.0");
 
     static{
         hmTags = new HashMap<>();
@@ -129,8 +156,4 @@ public class Constants {
         hmExecType.put("H", "TRADE CANCEL");
         hmExecType.put("I", "ORDER STATUS");
     }
-
-
-
-
 }

@@ -43,7 +43,7 @@
                     <items>
                   <Menu mnemonicParsing="false" text="Role">
                     <items>
-                              <MenuItem fx:id="startAcceptor" mnemonicParsing="false" onAction="#createNewWindow" text="Start acceptor">
+                              <MenuItem fx:id="startAcceptor" mnemonicParsing="false" onAction="#launchPortWindow" text="Start acceptor">
                                   <graphic>
                                       <Circle fx:id="circleStartAcceptor" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
                                   </graphic>
@@ -53,6 +53,12 @@
                                       <Circle fx:id="circleStartInitiator" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
                                   </graphic>
                               </MenuItem>
+                    </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Configuration">
+                    <items>
+                      <MenuItem fx:id="menuItemInitiatorConfiguration" mnemonicParsing="false" onAction="#launchInitiatorConfigWindow" text="Initiator configuration" />
+                        <MenuItem fx:id="menuItemAcceptorConfiguration" mnemonicParsing="false" onAction="#launchAcceptorConfigWindow" text="Acceptor configuration" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Port configuration">
@@ -91,7 +97,7 @@
                         <MenuItem fx:id="menuItemFixDoc" mnemonicParsing="false" onAction="#goToFixDoc" text="FIX documentation" />
                     </items>
                 </Menu>
-                <Menu fx:id="menuItemMessagePort" mnemonicParsing="false"/>
+                <Menu fx:id="menuItemMessagePort" mnemonicParsing="false" />
             </menus>
         </MenuBar>
         <TabPane fx:id="mainTabPane" prefHeight="752.0" prefWidth="810.0" tabClosingPolicy="UNAVAILABLE">

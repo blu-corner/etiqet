@@ -333,7 +333,7 @@ public class MainController implements Initializable {
         try {
             SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
             TextInputDialog dialog = null;
-            String port = initiatorSettings.getDefaultProperties().getProperty(Constants.SOCKET_INITIATOR_PORT);
+            String port = initiatorSettings.getDefaultProperties().getProperty(Constants.INI_CONNECT_HOST);
             dialog = new TextInputDialog(port);
             dialog.setTitle(Constants.INITIATOR_PORT_DIALOG_TITLE);
             dialog.setHeaderText(Constants.INITIATOR_PORT_DIALOG_HEADER);
@@ -350,7 +350,7 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void createNewWindow(ActionEvent actionEvent) {
+    private void launchPortWindow(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("portsWindow.fxml"));
@@ -361,6 +361,7 @@ public class MainController implements Initializable {
             stage.setTitle("PORT");
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -545,7 +546,7 @@ public class MainController implements Initializable {
                 List<String> lines = Files.readAllLines(path);
                 String port = "";
                 for (String line : lines) {
-                    if (!line.contains("#") && line.contains(Constants.SOCKET_ACCEPTOR_PORT)) {
+                    if (!line.contains("#") && line.contains(Constants.ACC_ACCEPT_PORT)) {
                         port = line.substring(line.indexOf('=') + 1);
                         line = line.replace(port, "");
                         portIndex = index;
@@ -570,7 +571,7 @@ public class MainController implements Initializable {
                 List<String> lines = Files.readAllLines(path);
                 String port = "";
                 for (String line : lines) {
-                    if (!line.contains("#") && line.contains(Constants.SOCKET_INITIATOR_PORT)) {
+                    if (!line.contains("#") && line.contains(Constants.INI_CONNECT_HOST)) {
                         port = line.substring(line.indexOf('=') + 1);
                         line = line.replace(port, "");
                         portIndex = index;
@@ -631,8 +632,8 @@ public class MainController implements Initializable {
     public void resetSequenceNumber(ActionEvent actionEvent) {
         try {
             sendLogoutRequest();
-            deleteDir("store");
-            deleteDir("initatorStore");
+//            deleteDir("store");
+//            deleteDir("initatorStore");
             sendLogonRequest();
 
         } catch (Exception e) {
@@ -641,14 +642,13 @@ public class MainController implements Initializable {
     }
 
     public void goToFixDoc(ActionEvent actionEvent) {
-        String url = "https://btobits.com/fixopaedia/fixdic44/fields_by_tag_.html";
+        String url = Constants.HELP_SITE;
         try {
             if (java.awt.Desktop.isDesktopSupported()) {
                 Desktop desktop = Desktop.getDesktop();
                 try {
                     desktop.browse(new URI(url));
                 } catch (IOException | URISyntaxException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             } else {
@@ -656,7 +656,6 @@ public class MainController implements Initializable {
                 try {
                     runtime.exec("xdg-open " + url);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -678,7 +677,7 @@ public class MainController implements Initializable {
             Integer iTestRangeB = Integer.parseInt(testRangeB);
             StringBuilder invalidPorts = new StringBuilder();
             StringBuilder validPorts = new StringBuilder();
-            invalidPorts.append("Invalid ports: ").append("\n");
+            invalidPorts.append(Constants.INVALID_PORTS).append("\n");
 
             boolean existInvalidPorts = false;
             for (int port = iTestRangeA; port <= iTestRangeB; port++) {
@@ -694,25 +693,63 @@ public class MainController implements Initializable {
             }
             if (existInvalidPorts){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("PORTS RANGE ERROR");
-                alert.setHeaderText("Ports in use");
+                alert.setTitle(Constants.PORTS_RANGE_ERROR);
+                alert.setHeaderText(Constants.PORTS_IN_USE);
                 alert.setContentText(invalidPorts.toString());
                 alert.showAndWait();
             }
             if (validPorts.length() > 0){
                 validPorts.deleteCharAt(validPorts.length() - 1);
-                menuItemMessagePort.setText(String.format("Listening on ports: %s", validPorts));
+                menuItemMessagePort.setText(String.format(Constants.LISTENING_ON_PORTS, validPorts));
             }
 
             return !StringUtils.isEmpty(validPorts);
         } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("PORTS RANGE ERROR");
-            alert.setHeaderText("Bad ports range");
+            alert.setTitle(Constants.PORTS_RANGE_ERROR);
+            alert.setHeaderText(Constants.BAD_PORTS_RANGE);
             alert.setContentText(ex.getLocalizedMessage());
             alert.showAndWait();
             return false;
         }
 
+    }
+
+    public void launchInitiatorConfigWindow(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("initiatorConfigWindow.fxml"));
+            Parent root = fxmlLoader.load();
+            ConfigController configController = fxmlLoader.getController();
+            configController.injectMainController(this);
+            configController.injectRole(Constants.INITIATOR_ROLE);
+            Stage stage = new Stage();
+            stage.setTitle("INITIATOR CONFIGURATION");
+            stage.setScene(new Scene(root));
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void launchAcceptorConfigWindow(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("acceptorConfigWindow.fxml"));
+            Parent root = fxmlLoader.load();
+            ConfigController configController = fxmlLoader.getController();
+            configController.injectMainController(this);
+            configController.injectRole(Constants.ACCEPTOR_ROLE);
+            Stage stage = new Stage();
+            stage.setTitle("ACCEPTOR CONFIGURATION");
+            stage.setScene(new Scene(root));
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

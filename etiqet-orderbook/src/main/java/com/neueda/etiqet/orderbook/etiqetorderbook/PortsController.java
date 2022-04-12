@@ -38,8 +38,7 @@ public class PortsController implements Initializable {
         if (!StringUtils.isEmpty(portsA) && StringUtils.isEmpty(portsB)){
             portsB = portsA;
         }
-        final Node source = (Node) actionEvent.getSource();
-        final Stage stage = (Stage) source.getScene().getWindow();
+        final Stage stage = Utils.getStage(actionEvent);
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("PORTS RANGE ERROR");
         alert.setHeaderText("Bad ports range");
@@ -56,4 +55,6 @@ public class PortsController implements Initializable {
         }
 
     }
+
+
 }

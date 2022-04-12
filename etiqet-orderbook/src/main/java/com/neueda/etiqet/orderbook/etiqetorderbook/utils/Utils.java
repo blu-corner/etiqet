@@ -1,5 +1,8 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import quickfix.Message;
 
@@ -77,5 +80,12 @@ public class Utils {
             }
         }
         return false;
+    }
+
+
+    public static Stage getStage(ActionEvent actionEvent) {
+        final Node source = (Node) actionEvent.getSource();
+        final Stage stage = (Stage) source.getScene().getWindow();
+        return stage;
     }
 }
