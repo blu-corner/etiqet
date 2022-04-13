@@ -66,9 +66,9 @@
                   <TextField fx:id="initiatorEndTime" text="00:00:00" />
                   <ComboBox fx:id="initiatorUseDataDic" prefWidth="150.0" />
                   <TextField fx:id="initiatorHeartBeat" text="30" />
-                  <ComboBox fx:id="initiatorResentOnLogon" prefWidth="150.0" />
-                  <ComboBox fx:id="initiatorResentOnLogout" prefWidth="150.0" />
-                  <ComboBox fx:id="initiatorResentOnDisconnect" prefWidth="134.0" />
+                  <ComboBox fx:id="initiatorResetOnLogon" prefWidth="150.0" />
+                  <ComboBox fx:id="initiatorResetOnLogout" prefWidth="150.0" />
+                  <ComboBox fx:id="initiatorResetOnDisconnect" prefWidth="134.0" />
                   <HBox prefHeight="41.0" prefWidth="134.0" spacing="10.0">
                      <children>
                         <Button contentDisplay="RIGHT" mnemonicParsing="false" onAction="#closeInitiatorConfig" prefHeight="25.0" prefWidth="75.0" text="CANCEL" />

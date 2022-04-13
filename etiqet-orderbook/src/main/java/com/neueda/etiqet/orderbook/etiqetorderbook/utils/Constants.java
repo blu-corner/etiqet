@@ -15,6 +15,7 @@ public class Constants {
     public static final HashMap<String,String> hmOrdStatus;
     public static final HashMap<String,String> hmExecType;
     public static final HashMap<String,String> hmTags;
+    public static final HashMap<String,String> hmFixVersions;
     public static final String EXECUTION_REPORT = "8";
     public static final String NEW = "0000";
     public static final String NONE = "NONE";
@@ -29,6 +30,7 @@ public class Constants {
     public static final String CONF_START_TIME = "StartTime";
     public static final String CONF_END_TIME = "EndTime";
     public static final String CONF_USE_DATA_DIC = "UseDataDictionary";
+    public static final String CONF_DATA_DIC = "DataDictionary";
     public static final String CONF_RESET_ON_LOGON = "ResetOnLogon";
     public static final String CONF_RESET_ON_LOGOUT = "ResetOnLogout";
     public static final String CONF_RESET_ON_DISCONNECT = "ResetOnDisconnect";
@@ -60,7 +62,35 @@ public class Constants {
     public static final String INVALID_PORTS = "Invalid ports: ";
     public static final String HELP_SITE = "https://btobits.com/fixopaedia/fixdic44/fields_by_tag_.html";
     public static final List<String> Y_N = Arrays.asList("Y", "N");
-    public static final List<String> FIX_VERSIONS = Arrays.asList("FIX.4.0", "FIX.4.1", "FIX.4.2", "FIX.4.3", "FIX.4.4","FIX.5.0");
+    public static final String FIX_4_0 = "FIX.4.0";
+    public static final String FIX_4_1 = "FIX.4.1";
+    public static final String FIX_4_2 = "FIX.4.2";
+    public static final String FIX_4_3 = "FIX.4.3";
+    public static final String FIX_4_4 = "FIX.4.4";
+    public static final String FIX_5_0 = "FIX.5.0";
+    public static final String FIX40 = "40";
+    public static final String FIX41 = "41";
+    public static final String FIX42 = "42";
+    public static final String FIX43 = "43";
+    public static final String FIX44 = "44";
+    public static final String FIX50 = "50";
+    public static final List<String> FIX_VERSIONS = Arrays.asList(FIX_4_0, FIX_4_1, FIX_4_2, FIX_4_3, FIX_4_4, FIX_5_0);
+    public static final List<String> FIX_VERSIONS_COMBO = Arrays.asList(FIX40, FIX41, FIX42, FIX43, FIX44, FIX50);
+    public static final String Y = "Y";
+    public static final String SRC_MAIN_RESOURCES_SERVER_CFG = "src/main/resources/server.cfg";
+    public static final String SRC_MAIN_RESOURCES_CLIENT_CFG = "src/main/resources/client.cfg";
+    public static final String ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT = "PortRangeLimit=";
+
+
+    static {
+        hmFixVersions = new HashMap<>();
+        hmFixVersions.put(FIX_4_0, "FIX40.xml");
+        hmFixVersions.put(FIX_4_1, "FIX41.xml");
+        hmFixVersions.put(FIX_4_2, "FIX42.xml");
+        hmFixVersions.put(FIX_4_3, "FIX43.xml");
+        hmFixVersions.put(FIX_4_4, "FIX44.xml");
+        hmFixVersions.put(FIX_5_0, "FIX50.xml");
+    }
 
     static{
         hmTags = new HashMap<>();
