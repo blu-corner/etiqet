@@ -724,7 +724,7 @@ public class MainController implements Initializable {
             configController.injectMainController(this);
             configController.injectRole(Constants.INITIATOR_ROLE);
             Stage stage = new Stage();
-            stage.setTitle("INITIATOR CONFIGURATION");
+            stage.setTitle(Constants.INITIATOR_TITLE);
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
@@ -743,7 +743,7 @@ public class MainController implements Initializable {
             configController.injectMainController(this);
             configController.injectRole(Constants.ACCEPTOR_ROLE);
             Stage stage = new Stage();
-            stage.setTitle("ACCEPTOR CONFIGURATION");
+            stage.setTitle(Constants.ACCEPTOR_TITLE);
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);

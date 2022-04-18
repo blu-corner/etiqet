@@ -7,19 +7,20 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ConfigController implements Initializable {
 
+    private Logger logger = LoggerFactory.getLogger(ConfigController.class);
 
     public TextField initiatorBeginString;
     public TextField initiatorSender;
@@ -155,61 +156,6 @@ public class ConfigController implements Initializable {
         return value;
     }
 
-
-    private void setValueInConfig(String field, String value, String role) {
-        List<String> writtenLines = new ArrayList<>();
-        int index = 0, valueIndex = 0;
-        boolean found = false;
-        String v = "";
-
-        Path path = role.equals(Constants.ACCEPTOR_ROLE)
-            ? Paths.get(Constants.SRC_MAIN_RESOURCES_SERVER_CFG)
-            : Paths.get(Constants.SRC_MAIN_RESOURCES_CLIENT_CFG);
-
-        List<String> lines;
-        try {
-            lines = Files.readAllLines(path);
-            if (lines != null){
-                if (field.equals(Constants.CONF_DATA_DIC)){
-                    for (String line : lines) {
-                        if (line.contains(field) && !line.contains(Constants.CONF_USE_DATA_DIC)){
-                            v = line.substring(line.indexOf('=') + 1);
-                            line = line.replace(v, "");
-                            valueIndex = index;
-                            found = true;
-                        }
-                        writtenLines.add(line);
-                        index++;
-                    }
-                }else{
-                    for (String line : lines) {
-                        if (line.contains(field)){
-                            v = line.substring(line.indexOf('=') + 1);
-                            line = line.replace(v, "");
-                            valueIndex = index;
-                            found = true;
-                        }
-                        writtenLines.add(line);
-                        index++;
-                    }
-                }
-            }
-            if (found){
-                String current = writtenLines.get(valueIndex);
-                if (field.equals(Constants.CONF_DATA_DIC)){
-                    writtenLines.set(valueIndex, current + "spec/" + value);
-                }else{
-                    writtenLines.set(valueIndex, current + value);
-                }
-
-                Files.write(path, writtenLines);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     private void setConfigComboBox(ComboBox<String> comboBox, List<String> data, int selected) {
         comboBox.getItems().addAll(data);
         comboBox.getSelectionModel().select(selected);
@@ -221,33 +167,23 @@ public class ConfigController implements Initializable {
 
     public void saveAcceptorConfig(ActionEvent actionEvent) {
         Utils.getStage(actionEvent).close();
-        setValueInConfig(Constants.CONF_BEGIN_STRING, acceptorBeginString.getText(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_SENDER, acceptorSender.getText(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_TARGET, acceptorTarget.getText(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_DATA_DIC, Constants.hmFixVersions.get(acceptorDataDictionary.getSelectionModel().getSelectedItem()), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.ACC_ACCEPT_PORT, acceptorFromPort.getText(), Constants.ACCEPTOR_ROLE);
-        saveToPort(acceptorToPort.getText());
-        setValueInConfig(Constants.CONF_FILE_STORE_PATH, acceptorStorePath.getText(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_FILE_LOG_PATH, acceptorLogPath.getText(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_START_TIME, acceptorStartTime.getText(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_END_TIME, acceptorEndTime.getText(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_USE_DATA_DIC, acceptorUseDataDic.getSelectionModel().getSelectedItem(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_HEART_BT_INT, acceptorHeartBeat.getText(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_RESET_ON_LOGON, acceptorResetOnLogon.getSelectionModel().getSelectedItem(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_RESET_ON_LOGOUT, acceptorResetOnLogout.getSelectionModel().getSelectedItem(), Constants.ACCEPTOR_ROLE);
-        setValueInConfig(Constants.CONF_RESET_ON_DISCONNECT, acceptorResetOnDisconnect.getSelectionModel().getSelectedItem(), Constants.ACCEPTOR_ROLE);
-    }
-
-    private void saveToPort(String port) {
-        Path path = Paths.get(Constants.SRC_MAIN_RESOURCES_SERVER_CFG);
-        try {
-            List<String> lines = Files.readAllLines(path);
-            lines.add(Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT + port);
-            Files.write(path, lines);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        List<Tag> tagList = new ArrayList<>();
+        tagList.add(new Tag(Constants.CONF_BEGIN_STRING, acceptorBeginString.getText()));
+        tagList.add(new Tag(Constants.CONF_SENDER, acceptorSender.getText()));
+        tagList.add(new Tag(Constants.CONF_TARGET, acceptorTarget.getText()));
+        tagList.add(new Tag(Constants.CONF_DATA_DIC, Constants.hmFixVersions.get(acceptorDataDictionary.getSelectionModel().getSelectedItem())));
+        tagList.add(new Tag(Constants.ACC_ACCEPT_PORT, acceptorFromPort.getText()));
+        tagList.add(new Tag(Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT, acceptorToPort.getText()));
+        tagList.add(new Tag(Constants.CONF_FILE_STORE_PATH, acceptorStorePath.getText()));
+        tagList.add(new Tag(Constants.CONF_FILE_LOG_PATH, acceptorLogPath.getText()));
+        tagList.add(new Tag(Constants.CONF_START_TIME, acceptorStartTime.getText()));
+        tagList.add(new Tag(Constants.CONF_END_TIME, acceptorEndTime.getText()));
+        tagList.add(new Tag(Constants.CONF_USE_DATA_DIC, acceptorUseDataDic.getSelectionModel().getSelectedItem()));
+        tagList.add(new Tag(Constants.CONF_HEART_BT_INT, acceptorHeartBeat.getText()));
+        tagList.add(new Tag(Constants.CONF_RESET_ON_LOGON, acceptorResetOnLogon.getSelectionModel().getSelectedItem()));
+        tagList.add(new Tag(Constants.CONF_RESET_ON_LOGOUT, acceptorResetOnLogout.getSelectionModel().getSelectedItem()));
+        tagList.add(new Tag(Constants.CONF_RESET_ON_DISCONNECT, acceptorResetOnDisconnect.getSelectionModel().getSelectedItem()));
+        propertiesWriter(tagList, Constants.ACCEPTOR_ROLE);
     }
 
     public void closeInitiatorConfig(ActionEvent actionEvent) {
@@ -256,20 +192,97 @@ public class ConfigController implements Initializable {
 
     public void saveInitiatorConfig(ActionEvent actionEvent) {
         Utils.getStage(actionEvent).close();
-        setValueInConfig(Constants.CONF_BEGIN_STRING, initiatorBeginString.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_SENDER, initiatorSender.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_TARGET, initiatorTarget.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_DATA_DIC, Constants.hmFixVersions.get(initiatorDataDictionary.getSelectionModel().getSelectedItem()), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.INI_CONNECT_HOST, initiatorConnectHost.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.INI_CONNECT_PORT, initiatorConnectPort.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_FILE_STORE_PATH, initiatorStorePath.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_FILE_LOG_PATH, initiatorLogPath.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_START_TIME, initiatorStartTime.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_END_TIME, initiatorEndTime.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_USE_DATA_DIC, initiatorUseDataDic.getSelectionModel().getSelectedItem(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_HEART_BT_INT, initiatorHeartBeat.getText(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_RESET_ON_LOGON, initiatorResetOnLogon.getSelectionModel().getSelectedItem(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_RESET_ON_LOGOUT, initiatorResetOnLogout.getSelectionModel().getSelectedItem(), Constants.INITIATOR_ROLE);
-        setValueInConfig(Constants.CONF_RESET_ON_DISCONNECT, initiatorResetOnDisconnect.getSelectionModel().getSelectedItem(), Constants.INITIATOR_ROLE);
+        List<Tag> tagList = new ArrayList<>();
+        tagList.add(new Tag(Constants.CONF_BEGIN_STRING, initiatorBeginString.getText()));
+        tagList.add(new Tag(Constants.CONF_SENDER, initiatorSender.getText()));
+        tagList.add(new Tag(Constants.CONF_TARGET, initiatorTarget.getText()));
+        tagList.add(new Tag(Constants.CONF_DATA_DIC, Constants.hmFixVersions.get(initiatorDataDictionary.getSelectionModel().getSelectedItem())));
+        tagList.add(new Tag(Constants.INI_CONNECT_HOST, initiatorConnectHost.getText()));
+        tagList.add(new Tag(Constants.INI_CONNECT_PORT, initiatorConnectPort.getText()));
+        tagList.add(new Tag(Constants.CONF_FILE_STORE_PATH, initiatorStorePath.getText()));
+        tagList.add(new Tag(Constants.CONF_FILE_LOG_PATH, initiatorLogPath.getText()));
+        tagList.add(new Tag(Constants.CONF_START_TIME, initiatorStartTime.getText()));
+        tagList.add(new Tag(Constants.CONF_END_TIME, initiatorEndTime.getText()));
+        tagList.add(new Tag(Constants.CONF_USE_DATA_DIC, initiatorUseDataDic.getSelectionModel().getSelectedItem()));
+        tagList.add(new Tag(Constants.CONF_HEART_BT_INT, initiatorHeartBeat.getText()));
+        tagList.add(new Tag(Constants.CONF_RESET_ON_LOGON, initiatorResetOnLogon.getSelectionModel().getSelectedItem()));
+        tagList.add(new Tag(Constants.CONF_RESET_ON_LOGOUT, initiatorResetOnLogout.getSelectionModel().getSelectedItem()));
+        tagList.add(new Tag(Constants.CONF_RESET_ON_DISCONNECT, initiatorResetOnDisconnect.getSelectionModel().getSelectedItem()));
+        propertiesWriter(tagList, Constants.INITIATOR_ROLE);
+    }
+
+
+    private void propertiesWriter(List<Tag> fields, String role){
+        try{
+            Path path = role.equals(Constants.ACCEPTOR_ROLE)
+                ? Paths.get(Constants.SRC_MAIN_RESOURCES_SERVER_CFG)
+                : Paths.get(Constants.SRC_MAIN_RESOURCES_CLIENT_CFG);
+            List<String> lines = Files.readAllLines(path);
+            List<String> newLines = new ArrayList<>();
+            for(String line : lines){
+                // Avoid overwritting DataDictionary (UseDataDictionary contains DataDictionary)
+                if (line.contains(Constants.CONF_DATA_DIC) && !line.contains(Constants.CONF_USE_DATA_DIC)){
+                    propertyHandler(fields, newLines, line);
+                }else{
+                    propertyHandler(fields, newLines, line);
+                }
+            }
+            newPropertiesHandler(fields, newLines);
+            Files.write(path, newLines);
+
+        }catch (Exception e){
+            this.logger.warn("Exception in propertiesWriter: {}" , e.getLocalizedMessage());
+        }
+    }
+
+    private String extractTag(String property){
+        try{
+            if (!StringUtils.isEmpty(property)){
+                return property.substring(0, property.indexOf('='));
+            }
+        }catch (Exception e){
+            this.logger.warn("Exception in extractTag, property -> {} :: exception: {}" , property, e.getLocalizedMessage());
+        }
+        return "";
+    }
+
+    private void propertyHandler(List<Tag> fields, List<String> newLines, String line) {
+        List<String> tags = fields.stream().map(Tag::getKey).collect(Collectors.toList());
+        String tag = extractTag(line);
+        String newProperty;
+        if (!tags.contains(tag)){
+            newLines.add(line);
+        }else if (line.startsWith("#")){
+            newLines.add(line);
+        }else{
+            Optional<Tag> property = fields.stream().filter(t -> t.getKey().equals(tag)).findFirst();
+            if (property.isPresent()){
+                Tag newTag = property.get();
+                newTag.setUsed();
+                String newValue = newTag.getValue();
+                if (tag.equals(Constants.CONF_DATA_DIC)){
+                    newProperty = tag + "=spec/" + newValue;
+                }else{
+                    newProperty = tag + "=" + newValue;
+                }
+                newLines.add(newProperty);
+            }
+
+        }
+    }
+
+    private void newPropertiesHandler(List<Tag> fields, List<String> newLines) {
+        List<Tag> nonUsed = fields.stream().filter(t -> !t.isUsed()).collect(Collectors.toList());
+        for (Tag tag : nonUsed){
+            String newProperty;
+            if (!StringUtils.isEmpty(tag.getValue())){
+                if (tag.getKey().equals(Constants.CONF_DATA_DIC)){
+                    newProperty = tag.getKey() + "=spec/" + tag.getValue();
+                }else{
+                    newProperty = tag.getKey() + "=" + tag.getValue();
+                }
+                newLines.add(newProperty);
+            }
+        }
     }
 }

@@ -38,6 +38,7 @@ public class Constants {
     public static final String INI_CONNECT_HOST = "SocketConnectHost";
     public static final String INI_CONNECT_PORT= "SocketConnectPort";
     public static final String ACC_ACCEPT_PORT = "SocketAcceptPort";
+    public static final String ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT = "PortRangeLimit";
 
     public static final String ACCEPTOR_PORT_DIALOG_TITLE = "ACCEPTOR PORT";
     public static final String ACCEPTOR_PORT_DIALOG_HEADER = "Introduce port to listen on";
@@ -79,7 +80,8 @@ public class Constants {
     public static final String Y = "Y";
     public static final String SRC_MAIN_RESOURCES_SERVER_CFG = "src/main/resources/server.cfg";
     public static final String SRC_MAIN_RESOURCES_CLIENT_CFG = "src/main/resources/client.cfg";
-    public static final String ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT = "PortRangeLimit=";
+    public static final String INITIATOR_TITLE = "Initiator configuration";
+    public static final String ACCEPTOR_TITLE = "Acceptor configuration";
 
 
     static {
