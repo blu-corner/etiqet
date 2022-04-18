@@ -52,6 +52,8 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
+
 public class MainController implements Initializable {
 
     Logger logger = LoggerFactory.getLogger(MainController.class);
@@ -192,7 +194,6 @@ public class MainController implements Initializable {
         comboSide.getSelectionModel().select(0);
         initator = new Initator(listViewActions, listViewLog, textFieldOrderID);
 
-        checkMenuItemRemPort.setSelected(true);
         setUseDefaultPort(true);
 
         fixSessions = new ArrayList<>();
@@ -268,8 +269,9 @@ public class MainController implements Initializable {
         }
     }
 
-    public void startAcceptor(String portsA, String portsB, Stage stage) {
-        stage.close();
+    public void startAcceptor(ActionEvent actionEvent) {
+        String portsA = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT);
+        String portsB = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT);
         if (listenOnPorts(portsA, portsB)){
             OrderBook orderBookThread = new OrderBook(this);
             orderBook = new Thread(orderBookThread);
@@ -289,24 +291,25 @@ public class MainController implements Initializable {
     public void startInitiator(ActionEvent actionEvent) {
         try {
             SessionSettings initiatorSettings = new SessionSettings();
-            String port = getPort();
-            if (port != null){
+            String port = getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_PORT);
+            if (!StringUtils.isEmpty(port)){
                 sessionId = new SessionID(
-                    new BeginString("FIX.4.4"),
-                    new SenderCompID("CLIENT"+ port),
-                    new TargetCompID("SERVER"));
+                    new BeginString(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_BEGIN_STRING)),
+                    new SenderCompID(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_SENDER) + port),
+                    new TargetCompID(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_TARGET)));
                 Dictionary dictionary = new Dictionary();
-                dictionary.setString("ConnectionType", "initiator");
-                dictionary.setString("SocketConnectPort",  port);
-                dictionary.setString("SocketConnectHost",  "127.0.0.1");
-                dictionary.setString("FileStorePath", "initiatorStores/store" + port);
-                dictionary.setString("FileLogPath", "initiatorLogs/log" + port);
-                dictionary.setString("DataDictionary", "spec/FIX44.xml");
-                dictionary.setString("StartTime", "00:00:00");
-                dictionary.setString("EndTime", "00:00:00");
-                dictionary.setString("UseDataDictionary", "Y");
-                dictionary.setString("ResetOnLogon", "Y");
-                dictionary.setString("HeartBtInt", "30");
+                dictionary.setString(Constants.CONF_CONNECTION_TYPE, StringUtils.lowerCase(Constants.INITIATOR_ROLE));
+                dictionary.setString(Constants.INI_CONNECT_PORT,  port);
+                dictionary.setString(Constants.INI_CONNECT_HOST,  getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_HOST));
+                dictionary.setString(Constants.CONF_FILE_STORE_PATH,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_STORE_PATH) + port);
+                dictionary.setString(Constants.CONF_FILE_LOG_PATH,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_LOG_PATH) + port);
+                dictionary.setString(Constants.CONF_DATA_DIC,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_DATA_DIC));
+                dictionary.setString(Constants.CONF_START_TIME,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_START_TIME) );
+                dictionary.setString(Constants.CONF_END_TIME, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_END_TIME) );
+                dictionary.setString(Constants.CONF_USE_DATA_DIC,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_USE_DATA_DIC) );
+                dictionary.setString(Constants.CONF_RESET_ON_LOGON,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGON) );
+//                dictionary.setString(Constants.CONF_RESET_ON_DISCONNECT,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_DISCONNECT) );
+                dictionary.setString(Constants.CONF_HEART_BT_INT,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_HEART_BT_INT) );
                 initiatorSettings.set(sessionId, dictionary);
                 menuItemMessagePort.setText("Connected to port: " + port);
                 FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
@@ -323,7 +326,7 @@ public class MainController implements Initializable {
                 this.tabAcceptor.setDisable(true);
                 this.mainTabPane.getSelectionModel().select(1);
             }
-        } catch (ConfigError | SessionNotFound e) {
+        } catch (ConfigError | SessionNotFound   e) {
             e.printStackTrace();
         }
     }
@@ -333,7 +336,7 @@ public class MainController implements Initializable {
         try {
             SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
             TextInputDialog dialog = null;
-            String port = initiatorSettings.getDefaultProperties().getProperty(Constants.INI_CONNECT_HOST);
+            String port = initiatorSettings.getDefaultProperties().getProperty(Constants.INI_CONNECT_PORT);
             dialog = new TextInputDialog(port);
             dialog.setTitle(Constants.INITIATOR_PORT_DIALOG_TITLE);
             dialog.setHeaderText(Constants.INITIATOR_PORT_DIALOG_HEADER);
@@ -377,6 +380,15 @@ public class MainController implements Initializable {
                     fixSession.stop();
                 }
             }
+        } catch (Exception ex) {
+            this.logger.error(ex.getLocalizedMessage());
+        }finally {
+            stopConfiguration();
+        }
+    }
+
+    private void stopConfiguration() {
+        try{
             this.circle.setFill(Color.RED);
             this.startAcceptor.setDisable(false);
             this.startInitiator.setDisable(false);
@@ -384,11 +396,14 @@ public class MainController implements Initializable {
             this.circleStartInitiator.setFill(Color.RED);
             this.tabAcceptor.setDisable(false);
             this.tabInitiator.setDisable(false);
-            this.orderBook.stop();
+            if (orderBook != null){
+                orderBook.stop();
+            }
             menuItemMessagePort.setText("");
-        } catch (Exception ex) {
-            this.logger.error(ex.getLocalizedMessage());
+        }catch (Exception e){
+            this.logger.warn("StopConfiguration exception: {}", e.getMessage());
         }
+
     }
 
     private void sendLogonRequest() throws SessionNotFound {

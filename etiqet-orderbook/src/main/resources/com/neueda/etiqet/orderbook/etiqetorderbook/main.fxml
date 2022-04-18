@@ -43,7 +43,7 @@
                     <items>
                   <Menu mnemonicParsing="false" text="Role">
                     <items>
-                              <MenuItem fx:id="startAcceptor" mnemonicParsing="false" onAction="#launchPortWindow" text="Start acceptor">
+                              <MenuItem fx:id="startAcceptor" mnemonicParsing="false" onAction="#startAcceptor" text="Start acceptor">
                                   <graphic>
                                       <Circle fx:id="circleStartAcceptor" fill="RED" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
                                   </graphic>
@@ -57,14 +57,8 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Configuration">
                     <items>
-                      <MenuItem fx:id="menuItemInitiatorConfiguration" mnemonicParsing="false" onAction="#launchInitiatorConfigWindow" text="Initiator configuration" />
                         <MenuItem fx:id="menuItemAcceptorConfiguration" mnemonicParsing="false" onAction="#launchAcceptorConfigWindow" text="Acceptor configuration" />
-                    </items>
-                  </Menu>
-                  <Menu mnemonicParsing="false" text="Port configuration">
-                    <items>
-                              <CheckMenuItem fx:id="checkMenuItemRemPort" mnemonicParsing="false" onAction="#setRememberPort" text="Use default port" />
-                              <MenuItem fx:id="menuItemSetDefaultPort" mnemonicParsing="false" onAction="#setDefaultPort" text="Set default port" />
+                      <MenuItem fx:id="menuItemInitiatorConfiguration" mnemonicParsing="false" onAction="#launchInitiatorConfigWindow" text="Initiator configuration" />
                     </items>
                   </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />

@@ -1,2 +1,27 @@
 20220411-14:02:43: Session FIX.4.4:SERVER->CLIENT55558 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
 20220411-14:02:43: Created session: FIX.4.4:SERVER->CLIENT55558
+20220418-12:53:02: Session FIX.4.4:SERVER->CLIENT55558 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220418-12:53:02: Created session: FIX.4.4:SERVER->CLIENT55558
+20220418-12:54:01: Session FIX.4.4:SERVER->CLIENT55558 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220418-12:54:01: Created session: FIX.4.4:SERVER->CLIENT55558
+20220418-13:37:16: Session FIX.4.4:SERVER->CLIENT55558 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220418-13:37:16: Created session: FIX.4.4:SERVER->CLIENT55558
+20220418-13:39:20: Session FIX.4.4:SERVER->CLIENT55558 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220418-13:39:20: Created session: FIX.4.4:SERVER->CLIENT55558
+20220418-13:43:55: Accepting session FIX.4.4:SERVER->CLIENT55558 from /127.0.0.1:65484
+20220418-13:43:55: Acceptor heartbeat set to 30 seconds
+20220418-13:43:55: Received logon
+20220418-13:43:55: Responding to Logon request
+20220418-13:43:57: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220418-13:43:57: Received logon
+20220418-13:43:57: Responding to Logon request
+20220418-13:44:09: quickfix.SessionException MsgSeqNum too low, expecting 2 but received 1
+20220418-13:44:09: Disconnecting: Verifying message failed: quickfix.SessionException: MsgSeqNum too low, expecting 2 but received 1
+20220418-13:44:25: Accepting session FIX.4.4:SERVER->CLIENT55558 from /127.0.0.1:65506
+20220418-13:44:25: Acceptor heartbeat set to 30 seconds
+20220418-13:44:25: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220418-13:44:25: Received logon
+20220418-13:44:25: Responding to Logon request
+20220418-13:46:11: Received logout request
+20220418-13:46:11: Sent logout response
+20220418-13:46:11: Disconnecting: Received logout request

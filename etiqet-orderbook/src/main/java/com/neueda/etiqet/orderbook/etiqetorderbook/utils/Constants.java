@@ -9,6 +9,9 @@ import java.util.List;
 
 public class Constants {
     public static final Logger orderBookLooger = LoggerFactory.getLogger("ORDER BOOK");
+
+    public static final char SOH = '\u0001';
+    public static final char VERTICAL_BAR = '\u007C';
     public static final String OUT = "[>>OUT>>]";
     public static final String IN = "[<<<.IN<<]";
     public static final HashMap<String,String> hmMsgType;

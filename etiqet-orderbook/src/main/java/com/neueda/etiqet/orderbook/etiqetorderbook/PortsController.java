@@ -51,7 +51,7 @@ public class PortsController implements Initializable {
             alert.setContentText("First set of port has to be equal or lower then second (e.g) [55555 to 55560]");
             alert.showAndWait();
         }else{
-            this.mainController.startAcceptor(portsA, portsB,  stage);
+//            this.mainController.startAcceptor(portsA, portsB,  stage);
         }
 
     }

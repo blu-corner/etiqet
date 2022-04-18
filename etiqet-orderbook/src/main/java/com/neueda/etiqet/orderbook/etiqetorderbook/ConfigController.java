@@ -18,6 +18,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
+
 public class ConfigController implements Initializable {
 
     private Logger logger = LoggerFactory.getLogger(ConfigController.class);
@@ -122,39 +124,7 @@ public class ConfigController implements Initializable {
         }
     }
 
-    public String getConfig(String role, String field) {
-        try {
-            Path path = role.equals(Constants.ACCEPTOR_ROLE)
-                ? Paths.get(Constants.SRC_MAIN_RESOURCES_SERVER_CFG)
-                : Paths.get(Constants.SRC_MAIN_RESOURCES_CLIENT_CFG);
 
-            List<String> lines = Files.readAllLines(path).stream()
-                .filter(l -> !l.trim().startsWith("#"))
-                .collect(Collectors.toList());
-            return getValueFromConfig(lines, field);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return StringUtils.EMPTY;
-    }
-
-    private String getValueFromConfig(List<String> lines, String field) {
-        String value = StringUtils.EMPTY;
-        if (field.equals(Constants.CONF_DATA_DIC)){
-            for (String line : lines) {
-                if (line.contains(field) && !line.contains(Constants.CONF_USE_DATA_DIC)){
-                    value = line.substring(line.indexOf('=') + 1);
-                }
-            }
-        }else{
-            for (String line : lines) {
-                if (line.contains(field)){
-                    value = line.substring(line.indexOf('=') + 1);
-                }
-            }
-        }
-        return value;
-    }
 
     private void setConfigComboBox(ComboBox<String> comboBox, List<String> data, int selected) {
         comboBox.getItems().addAll(data);

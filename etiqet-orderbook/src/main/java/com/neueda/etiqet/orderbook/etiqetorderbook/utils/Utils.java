@@ -9,6 +9,9 @@ import quickfix.Message;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,43 +20,16 @@ import java.util.stream.Stream;
 
 public class Utils {
 
-    public static final char SOH = '\u0001';
-    public static final char VERTICAL_BAR = '\u007C';
-
     public static String replaceSOH(Message message) {
         String content = message.toString();
-        return content.replace(SOH, VERTICAL_BAR);
+        return content.replace(Constants.SOH, Constants.VERTICAL_BAR);
     }
-
 
     public static boolean isNumber(String value){
         try{
             return StringUtils.isNumeric(value);
         }catch (Exception ex){
             return false;
-        }
-    }
-
-
-    private void killProcessByPort(int port) {
-        try {
-            ArrayList<Long> pids = new ArrayList<Long>();
-            Stream<ProcessHandle> processStream = ProcessHandle.allProcesses();
-
-            List<ProcessHandle> processHandleList = processStream.collect(Collectors.toList());
-
-            for (ProcessHandle p: processHandleList) {
-                if (p.isAlive()){
-                    ProcessHandle.Info info = p.info();
-                    Optional<String> command = p.info().command();
-                    if (command.get().contains("java")){
-                        String doso = "";
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -87,5 +63,40 @@ public class Utils {
         final Node source = (Node) actionEvent.getSource();
         final Stage stage = (Stage) source.getScene().getWindow();
         return stage;
+    }
+
+
+    public static String getConfig(String role, String field) {
+        try {
+            Path path = role.equals(Constants.ACCEPTOR_ROLE)
+                ? Paths.get(Constants.SRC_MAIN_RESOURCES_SERVER_CFG)
+                : Paths.get(Constants.SRC_MAIN_RESOURCES_CLIENT_CFG);
+
+            List<String> lines = Files.readAllLines(path).stream()
+                .filter(l -> !l.trim().startsWith("#"))
+                .collect(Collectors.toList());
+            return getValueFromConfig(lines, field);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private static String getValueFromConfig(List<String> lines, String field) {
+        String value = StringUtils.EMPTY;
+        if (field.equals(Constants.CONF_DATA_DIC)){
+            for (String line : lines) {
+                if (line.contains(field) && !line.contains(Constants.CONF_USE_DATA_DIC)){
+                    value = line.substring(line.indexOf('=') + 1);
+                }
+            }
+        }else{
+            for (String line : lines) {
+                if (line.contains(field)){
+                    value = line.substring(line.indexOf('=') + 1);
+                }
+            }
+        }
+        return value;
     }
 }
