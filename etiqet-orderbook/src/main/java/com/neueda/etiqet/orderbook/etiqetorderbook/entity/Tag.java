@@ -13,6 +13,13 @@ public class Tag {
         this.used = false;
     }
 
+    public Tag(String key, String field, String value) {
+        this.key = key;
+        this.field = field;
+        this.value = value;
+        this.used = false;
+    }
+
     public Tag(){
         this.used = false;
         this.key = "0";

@@ -1,20 +1,21 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import quickfix.Message;
 
+import javax.sound.sampled.AudioFormat;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -110,5 +111,64 @@ public class Utils {
         } else {
             return Constants.Y_N.indexOf(value);
         }
+    }
+
+    public static String getKeyFromValue(String value){
+        Optional<Integer> key = Constants.hmTagValue.entrySet()
+            .stream()
+            .filter(entry -> Objects.equals(entry.getValue(), value))
+            .map(Map.Entry::getKey)
+            .findFirst();
+
+        if (key.isPresent()){
+            return String.valueOf(key.get());
+        }else{
+            return "-1";
+        }
+    }
+
+    public static String fixEncoder(List<Tag>tags){
+        StringBuilder encodedFix = new StringBuilder();
+        String beginStringTag = tags.stream().filter(t -> t.getKey().equals("8")).findFirst().get().getValue();
+        encodedFix.append("8=").append(beginStringTag).append(Constants.VERTICAL_BAR);
+        int bodyLengthTag = bodyLenghtCalculator(tags);
+        encodedFix.append("9=").append(bodyLengthTag).append(Constants.VERTICAL_BAR);
+        String msgTypeag = tags.stream().filter(t -> t.getKey().equals("35")).findFirst().get().getValue();
+        encodedFix.append("35=").append(msgTypeag).append(Constants.VERTICAL_BAR);
+
+        for (Tag tag: tags){
+            if (!tag.getKey().equals("8") && !tag.getKey().equals("9") && !tag.getKey().equals("35")){
+                String keyValue = tag.getKey() + "=" + tag.getValue() + Constants.VERTICAL_BAR;
+                encodedFix.append(keyValue);
+            }
+
+        }
+        String checksum = checksumCalculator(encodedFix.toString());
+        encodedFix.append("10=").append(checksum);
+        return encodedFix.toString();
+    }
+
+    public static int bodyLenghtCalculator(List<Tag>tags){
+        int acum = 0;
+        for(Tag tag: tags){
+            if (!tag.getKey().equals("8") && !tag.getKey().equals("9")){
+                String keyValue = tag.getKey() + "=" + tag.getValue() + Constants.VERTICAL_BAR;
+                acum += keyValue.length();
+            }
+        }
+        return acum;
+    }
+
+
+    public static String checksumCalculator(String fixMessage){
+        int acum = 0, checksum = 0;
+        String replaced = fixMessage.replace(Constants.VERTICAL_BAR, Constants.SOH);
+        byte[] bytes = replaced.getBytes(StandardCharsets.UTF_8);
+        for (int i = 0 ; i < bytes.length; i++){
+            acum += bytes[i];
+        }
+        checksum = acum % 256;
+        return StringUtils.leftPad(String.valueOf(checksum), 3, '0');
+
     }
 }

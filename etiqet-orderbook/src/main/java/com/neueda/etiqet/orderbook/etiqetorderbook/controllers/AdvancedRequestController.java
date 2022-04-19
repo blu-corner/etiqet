@@ -3,10 +3,12 @@ package com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.AutoCompleteComboBoxListener;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
+import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,7 @@ public class AdvancedRequestController implements Initializable {
     public TableColumn<Tag, String>  tableColumnValue;
 
     private final Logger logger = LoggerFactory.getLogger(AdvancedRequestController.class);
+    public TextArea textAreaFix;
 
     private MainController mainController;
 
@@ -46,8 +49,10 @@ public class AdvancedRequestController implements Initializable {
         tableColumnField.setCellValueFactory(new PropertyValueFactory<>("Field"));
         tableColumnValue.setCellValueFactory(new PropertyValueFactory<>("Value"));
         tableViewTags.getItems().addAll(Constants.defaultTags);
+        textAreaFix.appendText(Utils.fixEncoder(Constants.defaultTags));
         tags = new HashSet<>();
         xmlReader("./spec/FIX44.xml");
+
 
     }
 
@@ -72,6 +77,7 @@ public class AdvancedRequestController implements Initializable {
             comboTags.getItems().addAll(sortedTags);
             comboTags.getSelectionModel().select(0);
             new AutoCompleteComboBoxListener<>(comboTags);
+
 
 
         }catch (Exception ex){

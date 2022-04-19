@@ -223,7 +223,7 @@ public class MainController implements Initializable {
                     result
                         .append(keyValue[0])
                         .append(StringUtils.SPACE)
-                        .append(Constants.hmTags.get(keyValue[0]))
+                        .append(Constants.hmTagValue.get(Integer.valueOf(keyValue[0])))
                         .append(StringUtils.SPACE)
                         .append(keyValue[1])
                         .append(getAdditinalInfo(keyValue[0], keyValue[1]))
