@@ -1,5 +1,6 @@
-package com.neueda.etiqet.orderbook.etiqetorderbook;
+package com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.*;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
@@ -356,7 +357,7 @@ public class MainController implements Initializable {
     private void launchPortWindow(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("portsWindow.fxml"));
+            fxmlLoader.setLocation(getClass().getResource("/fxml/portsWindow.fxml"));
             Parent root = fxmlLoader.load();
             PortsController portsController = fxmlLoader.getController();
             portsController.injectMainController(this);
@@ -733,7 +734,7 @@ public class MainController implements Initializable {
     public void launchInitiatorConfigWindow(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("initiatorConfigWindow.fxml"));
+            fxmlLoader.setLocation(getClass().getResource("/fxml/initiatorConfigWindow.fxml"));
             Parent root = fxmlLoader.load();
             ConfigController configController = fxmlLoader.getController();
             configController.injectMainController(this);
@@ -752,13 +753,32 @@ public class MainController implements Initializable {
     public void launchAcceptorConfigWindow(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("acceptorConfigWindow.fxml"));
+            fxmlLoader.setLocation(getClass().getResource("/fxml/acceptorConfigWindow.fxml"));
             Parent root = fxmlLoader.load();
             ConfigController configController = fxmlLoader.getController();
             configController.injectMainController(this);
             configController.injectRole(Constants.ACCEPTOR_ROLE);
             Stage stage = new Stage();
             stage.setTitle(Constants.ACCEPTOR_TITLE);
+            stage.setScene(new Scene(root));
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void launchAdvancedRequest(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/fxml/advancedRequest.fxml"));
+            Parent root = fxmlLoader.load();
+            AdvancedRequestController advancedRequestController = fxmlLoader.getController();
+            advancedRequestController.injectMainController(this);
+            Stage stage = new Stage();
+            stage.setTitle(Constants.ADVANCED_REQUEST_TITLE);
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);

@@ -1,5 +1,6 @@
-package com.neueda.etiqet.orderbook.etiqetorderbook;
+package com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.Tag;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.event.ActionEvent;
@@ -10,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;

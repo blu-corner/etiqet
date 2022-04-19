@@ -25,3 +25,8 @@
 20220418-13:46:11: Received logout request
 20220418-13:46:11: Sent logout response
 20220418-13:46:11: Disconnecting: Received logout request
+20220419-08:36:08: Session FIX.4.4:SERVER->CLIENT55558 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220419-08:36:08: Session state is not current; resetting FIX.4.4:SERVER->CLIENT55558
+20220419-08:36:08: Created session: FIX.4.4:SERVER->CLIENT55558
+20220419-09:15:01: Session FIX.4.4:SERVER->CLIENT55558 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220419-09:15:01: Created session: FIX.4.4:SERVER->CLIENT55558

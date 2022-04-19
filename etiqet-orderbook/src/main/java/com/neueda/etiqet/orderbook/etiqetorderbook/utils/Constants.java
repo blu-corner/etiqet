@@ -85,6 +85,7 @@ public class Constants {
     public static final String SRC_MAIN_RESOURCES_CLIENT_CFG = "src/main/resources/client.cfg";
     public static final String INITIATOR_TITLE = "Initiator configuration";
     public static final String ACCEPTOR_TITLE = "Acceptor configuration";
+    public static final String ADVANCED_REQUEST_TITLE = "Advanced request";
 
 
     static {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<?import javafx.scene.control.TextField?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="388.0" prefWidth="540.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.AdvancedRequestController">
+   <children>
+      <ComboBox layoutX="62.0" layoutY="33.0" prefHeight="25.0" prefWidth="287.0" />
+      <Label layoutX="27.0" layoutY="37.0" text="Tag" />
+      <TableView layoutX="27.0" layoutY="127.0" prefHeight="209.0" prefWidth="484.0">
+        <columns>
+          <TableColumn prefWidth="60.0" text="Tag" />
+            <TableColumn prefWidth="259.0" text="Value" />
+          <TableColumn minWidth="0.0" prefWidth="242.0" text="Field" />
+        </columns>
+      </TableView>
+      <Button layoutX="367.0" layoutY="78.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="144.0" text="ADD" />
+      <Button layoutX="447.0" layoutY="33.0" mnemonicParsing="false" text="REMOVE" />
+      <Button layoutX="367.0" layoutY="33.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="63.0" text="EDIT" />
+      <Button layoutX="25.0" layoutY="351.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="63.0" text="CANCEL" />
+      <Button layoutX="447.0" layoutY="351.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="63.0" text="SEND" />
+      <Label layoutX="23.0" layoutY="82.0" text="Value" />
+      <TextField layoutX="62.0" layoutY="78.0" prefHeight="25.0" prefWidth="287.0" />
+   </children>
+</AnchorPane>

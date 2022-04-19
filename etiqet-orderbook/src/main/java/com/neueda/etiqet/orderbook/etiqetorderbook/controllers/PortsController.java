@@ -1,11 +1,9 @@
-package com.neueda.etiqet.orderbook.etiqetorderbook;
+package com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
 
-import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
+import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;

@@ -17,5 +17,7 @@ module com.neueda.etiqet.orderbook.etiqetorderbook {
     exports com.neueda.etiqet.orderbook.etiqetorderbook;
     exports com.neueda.etiqet.orderbook.etiqetorderbook.entity;
     opens com.neueda.etiqet.orderbook.etiqetorderbook.entity to javafx.fxml;
+    exports com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
+    opens com.neueda.etiqet.orderbook.etiqetorderbook.controllers to javafx.fxml;
 }
 
