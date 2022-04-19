@@ -6,11 +6,11 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 
 import java.util.Comparator;
 
-public class OrderBook implements Runnable{
+public class OrderBookLogger implements Runnable{
 
     private final MainController mainController;
 
-    public OrderBook(MainController mainController) {
+    public OrderBookLogger(MainController mainController) {
         this.mainController = mainController;
     }
 
@@ -21,12 +21,12 @@ public class OrderBook implements Runnable{
                 Thread.sleep(1000);
                 if (this.mainController.isChanged()) {
                     System.out.print("\n\n");
-                    Constants.orderBookLooger.info("=================================================================================");
-                    Constants.orderBookLooger.info(".....................................BID.........................................");
+                    Constants.orderBookLogger.info("=================================================================================");
+                    Constants.orderBookLogger.info(".....................................BID.........................................");
                     this.mainController.getBuy().stream().sorted(Comparator.comparing(Order::getPrice)).forEach(System.out::println);
-                    Constants.orderBookLooger.info(".....................................OFFER.......................................");
+                    Constants.orderBookLogger.info(".....................................OFFER.......................................");
                     this.mainController.getSell().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).forEach(System.out::println);
-                    Constants.orderBookLooger.info("=================================================================================\n\n");
+                    Constants.orderBookLogger.info("=================================================================================\n\n");
                     this.mainController.setChanged(false);
                 }
 

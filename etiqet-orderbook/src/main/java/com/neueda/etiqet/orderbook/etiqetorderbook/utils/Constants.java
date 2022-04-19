@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Constants {
-    public static final Logger orderBookLooger = LoggerFactory.getLogger("ORDER BOOK");
+    public static final Logger orderBookLogger = LoggerFactory.getLogger("ORDER BOOK");
 
     public static final char SOH = '\u0001';
     public static final char VERTICAL_BAR = '\u007C';

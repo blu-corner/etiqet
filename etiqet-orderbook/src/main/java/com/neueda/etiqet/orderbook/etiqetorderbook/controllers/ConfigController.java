@@ -1,6 +1,6 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
 
-import com.neueda.etiqet.orderbook.etiqetorderbook.Tag;
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.event.ActionEvent;

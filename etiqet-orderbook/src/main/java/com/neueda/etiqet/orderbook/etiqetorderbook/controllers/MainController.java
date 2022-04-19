@@ -3,6 +3,8 @@ package com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
 import com.neueda.etiqet.orderbook.etiqetorderbook.*;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
+import com.neueda.etiqet.orderbook.etiqetorderbook.fix.FixSession;
+import com.neueda.etiqet.orderbook.etiqetorderbook.fix.Initator;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
@@ -274,8 +276,8 @@ public class MainController implements Initializable {
         String portsA = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT);
         String portsB = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT);
         if (listenOnPorts(portsA, portsB)){
-            OrderBook orderBookThread = new OrderBook(this);
-            orderBook = new Thread(orderBookThread);
+            OrderBookLogger orderBookLoggerThread = new OrderBookLogger(this);
+            orderBook = new Thread(orderBookLoggerThread);
             orderBook.setDaemon(true);
             orderBook.start();
 

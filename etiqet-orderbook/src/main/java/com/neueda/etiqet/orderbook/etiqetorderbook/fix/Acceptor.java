@@ -1,4 +1,4 @@
-package com.neueda.etiqet.orderbook.etiqetorderbook;
+package com.neueda.etiqet.orderbook.etiqetorderbook.fix;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
@@ -396,12 +396,12 @@ public class Acceptor implements Application {
 
     private void printTrade(Order buy, Order sell) {
         System.out.print("\n\n");
-        Constants.orderBookLooger.info("=================================================================================");
-        Constants.orderBookLooger.info(".....................................BID.........................................");
-        Constants.orderBookLooger.info(buy.toString());
-        Constants.orderBookLooger.info(".....................................ASK.........................................");
-        Constants.orderBookLooger.info(sell.toString());
-        Constants.orderBookLooger.info("=================================================================================\n\n");
+        Constants.orderBookLogger.info("=================================================================================");
+        Constants.orderBookLogger.info(".....................................BID.........................................");
+        Constants.orderBookLogger.info(buy.toString());
+        Constants.orderBookLogger.info(".....................................ASK.........................................");
+        Constants.orderBookLogger.info(sell.toString());
+        Constants.orderBookLogger.info("=================================================================================\n\n");
     }
 
     public void messageAnalizer(Message message, String direction) {

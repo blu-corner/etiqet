@@ -1,4 +1,4 @@
-package com.neueda.etiqet.orderbook.etiqetorderbook;
+package com.neueda.etiqet.orderbook.etiqetorderbook.fix;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController;
 import org.slf4j.Logger;
@@ -87,7 +87,7 @@ public class FixSession {
             MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
             LogFactory logFactory = new FileLogFactory(sessionSettings);
             MessageFactory messageFactory = new DefaultMessageFactory();
-            Acceptor acceptor = new Acceptor(this.mainController);
+            com.neueda.etiqet.orderbook.etiqetorderbook.fix.Acceptor acceptor = new Acceptor(this.mainController);
             socketAcceptor = new SocketAcceptor(acceptor, messageStoreFactory, sessionSettings, logFactory, messageFactory);
             socketAcceptor.start();
             this.logger.info("============New acceptor listening on {}", this.port);
