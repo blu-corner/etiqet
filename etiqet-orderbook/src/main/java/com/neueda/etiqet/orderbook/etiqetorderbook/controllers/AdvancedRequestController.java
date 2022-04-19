@@ -4,12 +4,11 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.AutoCompleteComboBoxListener;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -34,6 +33,7 @@ public class AdvancedRequestController implements Initializable {
 
     private final Logger logger = LoggerFactory.getLogger(AdvancedRequestController.class);
     public TextArea textAreaFix;
+    public TextField arTextFieldValue;
 
     private MainController mainController;
 
@@ -83,5 +83,20 @@ public class AdvancedRequestController implements Initializable {
         }catch (Exception ex){
             this.logger.error("Exception in xmlReader: {}", ex.getMessage());
         }
+    }
+
+    public void arButtonAdd(ActionEvent actionEvent) {
+        String text = arTextFieldValue.getText();
+        String selectedItem = comboTags.getSelectionModel().getSelectedItem();
+        Optional<Tag> any = tableViewTags.getItems().stream().filter(t -> t.getField().equals(selectedItem)).findAny();
+        if (any.isEmpty()){
+            if (!StringUtils.isEmpty(text.trim())){
+                Tag tag = new Tag(Utils.getKeyFromValue(selectedItem), selectedItem, text);
+                tableViewTags.getItems().add(tag);
+                textAreaFix.setText(Utils.fixEncoder(tableViewTags.getItems()));
+            }
+        }
+
+
     }
 }
