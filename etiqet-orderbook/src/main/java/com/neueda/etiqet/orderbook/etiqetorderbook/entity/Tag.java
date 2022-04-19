@@ -3,27 +3,29 @@ package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 
 public class Tag {
     private String key;
+    private String field;
     private String value;
     private Boolean used;
 
-    public Tag(String key, String value) {
-        this.key = key;
+    public Tag(String field, String value) {
+        this.field = field;
         this.value = value;
         this.used = false;
     }
 
     public Tag(){
         this.used = false;
+        this.key = "0";
     }
 
-    public void put(String key, String value, Boolean used){
-        this.key = key;
+    public void put(String field, String value, Boolean used){
+        this.field = field;
         this.value = value;
         this.used = used;
     }
 
-    public String getKey(){
-        return this.key;
+    public String getField(){
+        return this.field;
     }
 
     public String getValue(){
@@ -38,4 +40,11 @@ public class Tag {
         this.used = true;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

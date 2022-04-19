@@ -5,26 +5,29 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<?import javafx.scene.control.TextField?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="388.0" prefWidth="540.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.AdvancedRequestController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.AdvancedRequestController">
    <children>
-      <ComboBox layoutX="62.0" layoutY="33.0" prefHeight="25.0" prefWidth="287.0" />
-      <Label layoutX="27.0" layoutY="37.0" text="Tag" />
-      <TableView layoutX="27.0" layoutY="127.0" prefHeight="209.0" prefWidth="484.0">
+      <ComboBox fx:id="comboTags" layoutX="579.0" layoutY="14.0" prefHeight="25.0" prefWidth="276.0" />
+      <Label layoutX="537.0" layoutY="18.0" prefHeight="17.0" prefWidth="27.0" text="Tag" />
+      <TableView fx:id="tableViewTags" layoutX="27.0" layoutY="16.0" prefHeight="485.0" prefWidth="484.0">
         <columns>
-          <TableColumn prefWidth="60.0" text="Tag" />
-            <TableColumn prefWidth="259.0" text="Value" />
-          <TableColumn minWidth="0.0" prefWidth="242.0" text="Field" />
+          <TableColumn fx:id="tableColumnKey" prefWidth="60.0" text="Tag" />
+            <TableColumn fx:id="tableColumnField" prefWidth="197.0" text="Field" />
+          <TableColumn fx:id="tableColumnValue" minWidth="0.0" prefWidth="226.0" text="Value" />
         </columns>
       </TableView>
-      <Button layoutX="367.0" layoutY="78.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="144.0" text="ADD" />
-      <Button layoutX="447.0" layoutY="33.0" mnemonicParsing="false" text="REMOVE" />
-      <Button layoutX="367.0" layoutY="33.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="63.0" text="EDIT" />
-      <Button layoutX="25.0" layoutY="351.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="63.0" text="CANCEL" />
-      <Button layoutX="447.0" layoutY="351.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="63.0" text="SEND" />
-      <Label layoutX="23.0" layoutY="82.0" text="Value" />
-      <TextField layoutX="62.0" layoutY="78.0" prefHeight="25.0" prefWidth="287.0" />
+      <Button layoutX="539.0" layoutY="112.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="ADD" />
+      <Button layoutX="754.0" layoutY="112.0" mnemonicParsing="false" prefWidth="100.0" text="REMOVE" />
+      <Button layoutX="647.0" layoutY="112.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="EDIT" />
+      <Button layoutX="647.0" layoutY="476.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="CANCEL" />
+      <Button layoutX="754.0" layoutY="476.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="SEND" />
+      <Label layoutX="538.0" layoutY="65.0" prefHeight="17.0" prefWidth="36.0" text="Value" />
+      <TextField layoutX="578.0" layoutY="61.0" prefHeight="25.0" prefWidth="276.0" />
+      <TextArea layoutX="25.0" layoutY="533.0" prefHeight="68.0" prefWidth="839.0" />
+      <Button layoutX="541.0" layoutY="476.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="CLEAR" />
    </children>
 </AnchorPane>

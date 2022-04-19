@@ -99,4 +99,16 @@ public class Utils {
         }
         return value;
     }
+
+
+    public static int getComboConfigValue(String role, String field) {
+        String value = getConfig(role, field);
+        if (StringUtils.isEmpty(value)) return -1;
+        if (field.equals(Constants.CONF_DATA_DIC)) {
+            value = value.substring(value.length() - 6, value.length() - 4);
+            return Constants.FIX_VERSIONS_COMBO.indexOf(value);
+        } else {
+            return Constants.Y_N.indexOf(value);
+        }
+    }
 }

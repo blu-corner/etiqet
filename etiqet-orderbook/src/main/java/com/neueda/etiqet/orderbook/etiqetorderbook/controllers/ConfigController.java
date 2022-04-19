@@ -87,11 +87,11 @@ public class ConfigController implements Initializable {
                 acceptorToPort.setText(accSocketAcceptorPortRangeLimit);
             }
 
-            setConfigComboBox(acceptorDataDictionary, Constants.FIX_VERSIONS, getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_DATA_DIC));
-            setConfigComboBox(acceptorUseDataDic, Constants.Y_N, getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_USE_DATA_DIC));
-            setConfigComboBox(acceptorResetOnLogon, Constants.Y_N, getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_RESET_ON_LOGON));
-            setConfigComboBox(acceptorResetOnLogout, Constants.Y_N, getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_RESET_ON_LOGOUT));
-            setConfigComboBox(acceptorResetOnDisconnect, Constants.Y_N, getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_RESET_ON_DISCONNECT));
+            setConfigComboBox(acceptorDataDictionary, Constants.FIX_VERSIONS, Utils.getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_DATA_DIC));
+            setConfigComboBox(acceptorUseDataDic, Constants.Y_N, Utils.getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_USE_DATA_DIC));
+            setConfigComboBox(acceptorResetOnLogon, Constants.Y_N, Utils.getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_RESET_ON_LOGON));
+            setConfigComboBox(acceptorResetOnLogout, Constants.Y_N, Utils.getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_RESET_ON_LOGOUT));
+            setConfigComboBox(acceptorResetOnDisconnect, Constants.Y_N, Utils.getComboConfigValue(Constants.ACCEPTOR_ROLE, Constants.CONF_RESET_ON_DISCONNECT));
         } else {
             initiatorBeginString.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_BEGIN_STRING));
             initiatorSender.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_SENDER));
@@ -105,24 +105,15 @@ public class ConfigController implements Initializable {
             initiatorConnectPort.setText(getConfig(Constants.INITIATOR_ROLE,Constants.INI_CONNECT_PORT));
 
 
-            setConfigComboBox(initiatorDataDictionary, Constants.FIX_VERSIONS, getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_DATA_DIC));
-            setConfigComboBox(initiatorUseDataDic, Constants.Y_N, getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_USE_DATA_DIC));
-            setConfigComboBox(initiatorResetOnLogon, Constants.Y_N, getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGON));
-            setConfigComboBox(initiatorResetOnLogout, Constants.Y_N, getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGOUT));
-            setConfigComboBox(initiatorResetOnDisconnect, Constants.Y_N, getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_DISCONNECT));
+            setConfigComboBox(initiatorDataDictionary, Constants.FIX_VERSIONS, Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_DATA_DIC));
+            setConfigComboBox(initiatorUseDataDic, Constants.Y_N, Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_USE_DATA_DIC));
+            setConfigComboBox(initiatorResetOnLogon, Constants.Y_N, Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGON));
+            setConfigComboBox(initiatorResetOnLogout, Constants.Y_N, Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGOUT));
+            setConfigComboBox(initiatorResetOnDisconnect, Constants.Y_N, Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_DISCONNECT));
         }
     }
 
-    public int getComboConfigValue(String role, String field) {
-        String value = getConfig(role, field);
-        if (StringUtils.isEmpty(value)) return -1;
-        if (field.equals(Constants.CONF_DATA_DIC)) {
-            value = value.substring(value.length() - 6, value.length() - 4);
-            return Constants.FIX_VERSIONS_COMBO.indexOf(value);
-        } else {
-            return Constants.Y_N.indexOf(value);
-        }
-    }
+
 
 
 
@@ -217,7 +208,7 @@ public class ConfigController implements Initializable {
     }
 
     private void propertyHandler(List<Tag> fields, List<String> newLines, String line) {
-        List<String> tags = fields.stream().map(Tag::getKey).collect(Collectors.toList());
+        List<String> tags = fields.stream().map(Tag::getField).collect(Collectors.toList());
         String tag = extractTag(line);
         String newProperty;
         if (!tags.contains(tag)){
@@ -225,7 +216,7 @@ public class ConfigController implements Initializable {
         }else if (line.startsWith("#")){
             newLines.add(line);
         }else{
-            Optional<Tag> property = fields.stream().filter(t -> t.getKey().equals(tag)).findFirst();
+            Optional<Tag> property = fields.stream().filter(t -> t.getField().equals(tag)).findFirst();
             if (property.isPresent()){
                 Tag newTag = property.get();
                 newTag.setUsed();
@@ -246,10 +237,10 @@ public class ConfigController implements Initializable {
         for (Tag tag : nonUsed){
             String newProperty;
             if (!StringUtils.isEmpty(tag.getValue())){
-                if (tag.getKey().equals(Constants.CONF_DATA_DIC)){
-                    newProperty = tag.getKey() + "=spec/" + tag.getValue();
+                if (tag.getField().equals(Constants.CONF_DATA_DIC)){
+                    newProperty = tag.getField() + "=spec/" + tag.getValue();
                 }else{
-                    newProperty = tag.getKey() + "=" + tag.getValue();
+                    newProperty = tag.getField() + "=" + tag.getValue();
                 }
                 newLines.add(newProperty);
             }

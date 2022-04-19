@@ -1,11 +1,15 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class Constants {
     public static final Logger orderBookLogger = LoggerFactory.getLogger("ORDER BOOK");
@@ -81,11 +85,13 @@ public class Constants {
     public static final List<String> FIX_VERSIONS = Arrays.asList(FIX_4_0, FIX_4_1, FIX_4_2, FIX_4_3, FIX_4_4, FIX_5_0);
     public static final List<String> FIX_VERSIONS_COMBO = Arrays.asList(FIX40, FIX41, FIX42, FIX43, FIX44, FIX50);
     public static final String Y = "Y";
+    public static final String N = "N";
     public static final String SRC_MAIN_RESOURCES_SERVER_CFG = "src/main/resources/server.cfg";
     public static final String SRC_MAIN_RESOURCES_CLIENT_CFG = "src/main/resources/client.cfg";
     public static final String INITIATOR_TITLE = "Initiator configuration";
     public static final String ACCEPTOR_TITLE = "Acceptor configuration";
     public static final String ADVANCED_REQUEST_TITLE = "Advanced request";
+    public static final List<Tag> defaultTags;
 
 
     static {
@@ -191,5 +197,27 @@ public class Constants {
         hmExecType.put("G", "TRADE CORRECT");
         hmExecType.put("H", "TRADE CANCEL");
         hmExecType.put("I", "ORDER STATUS");
+    }
+
+    static{
+        defaultTags = new ArrayList<>();
+        int dataDic = Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_DATA_DIC);
+        int resetOnLogon = Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGON);
+        int resetOnLogout = Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGOUT);
+        int resetOnDisconnect = Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_DISCONNECT);
+        defaultTags.add(new Tag(Constants.CONF_BEGIN_STRING, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_BEGIN_STRING)));
+        defaultTags.add(new Tag(Constants.CONF_SENDER, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_SENDER)));
+        defaultTags.add(new Tag(Constants.CONF_TARGET, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_TARGET)));
+        defaultTags.add(new Tag(Constants.INI_CONNECT_HOST, getConfig(Constants.INITIATOR_ROLE,Constants.INI_CONNECT_HOST)));
+        defaultTags.add(new Tag(Constants.INI_CONNECT_PORT, getConfig(Constants.INITIATOR_ROLE,Constants.INI_CONNECT_PORT)));
+        defaultTags.add(new Tag(Constants.CONF_FILE_STORE_PATH, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_STORE_PATH)));
+        defaultTags.add(new Tag(Constants.CONF_FILE_LOG_PATH, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_LOG_PATH)));
+        defaultTags.add(new Tag(Constants.CONF_START_TIME, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_START_TIME)));
+        defaultTags.add(new Tag(Constants.CONF_END_TIME, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_END_TIME)));
+        defaultTags.add(new Tag(Constants.CONF_USE_DATA_DIC, dataDic == 0 ? Y: N));
+        defaultTags.add(new Tag(Constants.CONF_HEART_BT_INT, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_HEART_BT_INT)));
+        defaultTags.add(new Tag(Constants.CONF_RESET_ON_LOGON, resetOnLogon == 0 ? Y: N));
+        defaultTags.add(new Tag(Constants.CONF_RESET_ON_LOGOUT, resetOnLogout == 0 ? Y: N));
+        defaultTags.add(new Tag(Constants.CONF_RESET_ON_DISCONNECT, resetOnDisconnect == 0 ? Y: N));
     }
 }
