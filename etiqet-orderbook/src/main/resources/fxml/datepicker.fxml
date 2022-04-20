@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.DatepickerController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="47.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <DatePicker layoutX="14.0" layoutY="14.0" />
+   </children>
+</AnchorPane>

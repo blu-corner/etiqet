@@ -20,14 +20,14 @@
           <TableColumn fx:id="tableColumnValue" minWidth="0.0" prefWidth="226.0" text="Value" />
         </columns>
       </TableView>
-      <Button fx:id="arButtonAdd" layoutX="539.0" layoutY="112.0" mnemonicParsing="false" onAction="#arButtonAdd" prefHeight="25.0" prefWidth="100.0" text="ADD" />
-      <Button layoutX="754.0" layoutY="112.0" mnemonicParsing="false" prefWidth="100.0" text="REMOVE" />
-      <Button layoutX="647.0" layoutY="112.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="EDIT" />
-      <Button layoutX="647.0" layoutY="476.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="CANCEL" />
-      <Button layoutX="754.0" layoutY="476.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="SEND" />
+      <Button fx:id="arButtonAdd" layoutX="578.0" layoutY="112.0" mnemonicParsing="false" onAction="#arButtonAdd" prefHeight="25.0" prefWidth="70.0" text="ADD" />
+      <Button fx:id="arButtonRemove" layoutX="784.0" layoutY="112.0" mnemonicParsing="false" onAction="#arButtonRemove" prefWidth="70.0" text="REMOVE" />
+      <Button fx:id="arButtonCancel" layoutX="682.0" layoutY="476.0" mnemonicParsing="false" onAction="#arButtonCancel" prefHeight="25.0" prefWidth="70.0" text="CANCEL" />
+      <Button fx:id="arButtonSend" layoutX="784.0" layoutY="476.0" mnemonicParsing="false" onAction="#arButtonSend" prefHeight="25.0" prefWidth="70.0" text="SEND" />
       <Label layoutX="538.0" layoutY="65.0" prefHeight="17.0" prefWidth="36.0" text="Value" />
-      <TextField fx:id="arTextFieldValue" layoutX="578.0" layoutY="61.0" prefHeight="25.0" prefWidth="276.0"/>
-      <TextArea fx:id="textAreaFix" layoutX="25.0" layoutY="533.0" prefHeight="68.0" prefWidth="839.0" />
-      <Button layoutX="541.0" layoutY="476.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="CLEAR" />
+      <TextField fx:id="arTextFieldValue" layoutX="578.0" layoutY="61.0" prefHeight="25.0" prefWidth="276.0" />
+      <TextArea fx:id="textAreaFix" layoutX="25.0" layoutY="533.0" prefHeight="68.0" prefWidth="729.0" />
+      <Button fx:id="arButtonClear" layoutX="682.0" layoutY="112.0" mnemonicParsing="false" onAction="#arButtonClear" prefHeight="25.0" prefWidth="70.0" text="CLEAR" />
+      <Button fx:id="arButtonUpdate" layoutX="784.0" layoutY="576.0" mnemonicParsing="false" onAction="#arButtonUpdate" prefHeight="25.0" prefWidth="70.0" text="UPDATE" />
    </children>
 </AnchorPane>

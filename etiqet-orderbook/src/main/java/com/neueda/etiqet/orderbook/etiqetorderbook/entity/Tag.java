@@ -39,6 +39,10 @@ public class Tag {
         return this.value;
     }
 
+    public void setValue(String value){
+        this.value = value;
+    }
+
     public boolean isUsed(){
         return this.used;
     }
@@ -53,5 +57,19 @@ public class Tag {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+            "key='" + key + '\'' +
+            ", field='" + field + '\'' +
+            ", value='" + value + '\'' +
+            ", used=" + used +
+            '}';
     }
 }

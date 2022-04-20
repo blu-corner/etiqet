@@ -206,29 +206,7 @@ public class MainController implements Initializable {
         try {
             if (menuItemDecodeOnClick.isSelected()) {
                 String targetString = e.getTarget().toString();
-                int firstQuote = targetString.indexOf('"');
-                int secondQuote = targetString.indexOf('"', firstQuote + 1);
-                String content = targetString.substring(firstQuote + 1, secondQuote);
-                if (content.contains(Constants.OUT)) {
-                    content = content.replace(Constants.OUT + StringUtils.SPACE, "");
-                } else {
-                    content = content.replace(Constants.IN + StringUtils.SPACE, "");
-                }
-
-                String[] fields = content.split("\\|");
-                List<String> fieldList = List.of(fields);
-                StringBuilder result = new StringBuilder();
-                for (String field : fieldList) {
-                    String[] keyValue = field.split("=");
-                    result
-                        .append(keyValue[0])
-                        .append(StringUtils.SPACE)
-                        .append(Constants.hmTagValue.get(Integer.valueOf(keyValue[0])))
-                        .append(StringUtils.SPACE)
-                        .append(keyValue[1])
-                        .append(getAdditinalInfo(keyValue[0], keyValue[1]))
-                        .append("\n");
-                }
+                StringBuilder result = fixDecoder(targetString);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setContentText(result.toString());
                 alert.setTitle("Decoder");
@@ -241,6 +219,33 @@ public class MainController implements Initializable {
         } catch (Exception ex) {
         }
 
+    }
+
+    private StringBuilder fixDecoder(String targetString) {
+        int firstQuote = targetString.indexOf('"');
+        int secondQuote = targetString.indexOf('"', firstQuote + 1);
+        String content = targetString.substring(firstQuote + 1, secondQuote);
+        if (content.contains(Constants.OUT)) {
+            content = content.replace(Constants.OUT + StringUtils.SPACE, "");
+        } else {
+            content = content.replace(Constants.IN + StringUtils.SPACE, "");
+        }
+
+        String[] fields = content.split("\\|");
+        List<String> fieldList = List.of(fields);
+        StringBuilder result = new StringBuilder();
+        for (String field : fieldList) {
+            String[] keyValue = field.split("=");
+            result
+                .append(keyValue[0])
+                .append(StringUtils.SPACE)
+                .append(Constants.hmTagValue.get(Integer.valueOf(keyValue[0])))
+                .append(StringUtils.SPACE)
+                .append(keyValue[1])
+                .append(getAdditinalInfo(keyValue[0], keyValue[1]))
+                .append("\n");
+        }
+        return result;
     }
 
     private String getAdditinalInfo(String tag, String value) {

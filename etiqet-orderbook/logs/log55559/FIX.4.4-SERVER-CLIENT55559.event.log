@@ -59,3 +59,59 @@
 20220419-15:40:28: Received logout request
 20220419-15:40:28: Sent logout response
 20220419-15:40:28: Disconnecting: Received logout request
+20220419-16:33:21: Session FIX.4.4:SERVER->CLIENT55559 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220419-16:33:21: Created session: FIX.4.4:SERVER->CLIENT55559
+20220419-16:33:39: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59966
+20220419-16:33:39: Acceptor heartbeat set to 30 seconds
+20220419-16:33:39: Received logon
+20220419-16:33:39: Responding to Logon request
+20220419-16:33:40: Disconnecting: Encountered END_OF_STREAM
+20220419-16:34:10: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59987
+20220419-16:34:10: Acceptor heartbeat set to 30 seconds
+20220419-16:34:10: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220419-16:34:10: Received logon
+20220419-16:34:10: Responding to Logon request
+20220419-16:34:59: Received logout request
+20220419-16:34:59: Sent logout response
+20220419-16:34:59: Disconnecting: Received logout request
+20220419-16:36:34: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60028
+20220419-16:36:34: Acceptor heartbeat set to 30 seconds
+20220419-16:36:34: Received logon
+20220419-16:36:34: Responding to Logon request
+20220419-16:36:34: Disconnecting: Encountered END_OF_STREAM
+20220419-16:37:05: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60052
+20220419-16:37:05: Acceptor heartbeat set to 10 seconds
+20220419-16:37:05: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220419-16:37:05: Received logon
+20220419-16:37:05: Responding to Logon request
+20220419-16:38:01: Disconnecting: Socket exception (/127.0.0.1:60052): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220419-16:38:33: Session FIX.4.4:SERVER->CLIENT55559 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220419-16:38:33: Created session: FIX.4.4:SERVER->CLIENT55559
+20220419-16:38:44: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60121
+20220419-16:38:44: Acceptor heartbeat set to 30 seconds
+20220419-16:38:44: Received logon
+20220419-16:38:44: Responding to Logon request
+20220419-16:38:44: Disconnecting: Encountered END_OF_STREAM
+20220419-16:39:15: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60166
+20220419-16:39:15: Acceptor heartbeat set to 10 seconds
+20220419-16:39:15: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220419-16:39:15: Received logon
+20220419-16:39:15: Responding to Logon request
+20220419-16:39:52: Sent test request TEST
+20220419-16:40:13: Sent test request TEST
+20220419-16:40:22: Disconnecting: Timed out waiting for heartbeat
+20220419-16:40:55: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60193
+20220419-16:40:55: Acceptor heartbeat set to 10 seconds
+20220419-16:40:55: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220419-16:40:55: Received logon
+20220419-16:40:55: Responding to Logon request
+20220419-16:41:10: Sent test request TEST
+20220419-16:41:19: Disconnecting: Timed out waiting for heartbeat
+20220419-16:41:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60229
+20220419-16:41:27: Acceptor heartbeat set to 10 seconds
+20220419-16:41:27: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220419-16:41:27: Received logon
+20220419-16:41:27: Responding to Logon request
+20220419-16:41:32: Received logout request
+20220419-16:41:32: Sent logout response
+20220419-16:41:32: Disconnecting: Received logout request

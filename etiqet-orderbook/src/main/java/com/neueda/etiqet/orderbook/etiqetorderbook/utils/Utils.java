@@ -1,8 +1,12 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 
+import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.DatepickerController;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import quickfix.Message;
@@ -129,7 +133,7 @@ public class Utils {
 
     public static String fixEncoder(List<Tag>tags){
         StringBuilder encodedFix = new StringBuilder();
-        String beginStringTag = tags.stream().filter(t -> t.getKey().equals("8")).findFirst().get().getValue();
+        String beginStringTag = tags.stream().filter(t -> t.getKey().equals(Constants.KEY_BEGIN_STRING)).findFirst().get().getValue();
         encodedFix.append("8=").append(beginStringTag).append(Constants.VERTICAL_BAR);
         int bodyLengthTag = bodyLenghtCalculator(tags);
         encodedFix.append("9=").append(bodyLengthTag).append(Constants.VERTICAL_BAR);
@@ -137,7 +141,7 @@ public class Utils {
         encodedFix.append("35=").append(msgTypeag).append(Constants.VERTICAL_BAR);
 
         for (Tag tag: tags){
-            if (!tag.getKey().equals("8") && !tag.getKey().equals("9") && !tag.getKey().equals("35")){
+            if (!tag.getKey().equals(Constants.KEY_BEGIN_STRING) && !tag.getKey().equals(Constants.KEY_BODY_LENGTH) && !tag.getKey().equals(Constants.KEY_MSG_TYPE)){
                 String keyValue = tag.getKey() + "=" + tag.getValue() + Constants.VERTICAL_BAR;
                 encodedFix.append(keyValue);
             }
@@ -151,7 +155,7 @@ public class Utils {
     public static int bodyLenghtCalculator(List<Tag>tags){
         int acum = 0;
         for(Tag tag: tags){
-            if (!tag.getKey().equals("8") && !tag.getKey().equals("9")){
+            if (!tag.getKey().equals(Constants.KEY_BEGIN_STRING) && !tag.getKey().equals(Constants.KEY_BODY_LENGTH)){
                 String keyValue = tag.getKey() + "=" + tag.getValue() + Constants.VERTICAL_BAR;
                 acum += keyValue.length();
             }
@@ -170,5 +174,22 @@ public class Utils {
         checksum = acum % 256;
         return StringUtils.leftPad(String.valueOf(checksum), 3, '0');
 
+    }
+
+    public void launchDatepicker() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/fxml/datepicker.fxml"));
+            Parent root = fxmlLoader.load();
+//            DatepickerController advancedRequestController = fxmlLoader.getController();
+//            advancedRequestController.injectMainController(this);
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

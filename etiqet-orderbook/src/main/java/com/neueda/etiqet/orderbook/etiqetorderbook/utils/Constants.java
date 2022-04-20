@@ -92,6 +92,12 @@ public class Constants {
     public static final String ACCEPTOR_TITLE = "Acceptor configuration";
     public static final String ADVANCED_REQUEST_TITLE = "Advanced request";
     public static final List<Tag> defaultTags;
+    public static final String KEY_BEGIN_STRING = "8";
+    public static final String KEY_BODY_LENGTH = "9";
+    public static final String KEY_MSG_TYPE = "35";
+    public static final String KEY_CHECKSUM = "10";
+    public static final String TAGS_MUST_BE_NUMERIC_AND_VALID_FIX_PROTOCOL_KEYS = "Tags must be numeric and valid FIX protocol keys";
+
     //hmTagValue
     static{
         hmTagValue = new HashMap<>();
@@ -1161,7 +1167,7 @@ public class Constants {
         defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_SENDER), Constants.CONF_SENDER, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_SENDER)));
         defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_TARGET), Constants.CONF_TARGET, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_TARGET)));
         defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_HEART_BT_INT), Constants.CONF_HEART_BT_INT, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_HEART_BT_INT)));
-        defaultTags.add(new Tag(Utils.getKeyFromValue("MsgType"), "MsgType", "A"));
+        defaultTags.add(new Tag(Utils.getKeyFromValue("MsgType"), "MsgType", "D"));
         defaultTags.add(new Tag(Utils.getKeyFromValue("MsgSeqNum"), "MsgSeqNum", "0"));
         defaultTags.add(new Tag(Utils.getKeyFromValue("SendingTime"), "SendingTime", LocalDateTime.now().toString()));
         defaultTags.add(new Tag(Utils.getKeyFromValue("EncryptMethod"), "EncryptMethod", "0"));
