@@ -1,10 +1,12 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -12,7 +14,6 @@ import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class Constants {
     public static final Logger orderBookLogger = LoggerFactory.getLogger("ORDER BOOK");
-
     public static final char SOH = '\u0001';
     public static final char VERTICAL_BAR = '\u007C';
     public static final String OUT = "[>>OUT>>]";
@@ -97,6 +98,15 @@ public class Constants {
     public static final String KEY_MSG_TYPE = "35";
     public static final String KEY_CHECKSUM = "10";
     public static final String TAGS_MUST_BE_NUMERIC_AND_VALID_FIX_PROTOCOL_KEYS = "Tags must be numeric and valid FIX protocol keys";
+    public static final String KEY_TARGET = "56";
+    public static final String KEY_SENDER = "49";
+    public static final String KEY_MSQ_SEQ_NUM = "34";
+    public static final String KEY_SENDING_TIME = "52";
+    public static final String KEY_TRANS_TIME = "60";
+    public static final String KEY_ORDER_QTY = "38";
+    public static final String KEY_PRICE = "44";
+    public static final String KEY_CL_ORD_ID = "11";
+    public static final String KEY_SIDE = "54";
 
     //hmTagValue
     static{
@@ -1163,29 +1173,21 @@ public class Constants {
 
     static{
         defaultTags = new ArrayList<>();
-        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_BEGIN_STRING), Constants.CONF_BEGIN_STRING, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_BEGIN_STRING)));
-        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_SENDER), Constants.CONF_SENDER, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_SENDER)));
-        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_TARGET), Constants.CONF_TARGET, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_TARGET)));
-        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_HEART_BT_INT), Constants.CONF_HEART_BT_INT, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_HEART_BT_INT)));
+        defaultTags.add(new Tag(Utils.getKeyFromValue(CONF_BEGIN_STRING), CONF_BEGIN_STRING, getConfig(INITIATOR_ROLE, CONF_BEGIN_STRING)));
+        defaultTags.add(new Tag(Utils.getKeyFromValue(CONF_SENDER), CONF_SENDER, getConfig(INITIATOR_ROLE, CONF_SENDER )));
+        defaultTags.add(new Tag(Utils.getKeyFromValue(CONF_TARGET), CONF_TARGET, getConfig(INITIATOR_ROLE, CONF_TARGET)));
         defaultTags.add(new Tag(Utils.getKeyFromValue("MsgType"), "MsgType", "D"));
-        defaultTags.add(new Tag(Utils.getKeyFromValue("MsgSeqNum"), "MsgSeqNum", "0"));
-        defaultTags.add(new Tag(Utils.getKeyFromValue("SendingTime"), "SendingTime", LocalDateTime.now().toString()));
-        defaultTags.add(new Tag(Utils.getKeyFromValue("EncryptMethod"), "EncryptMethod", "0"));
-
-
-//        int dataDic = Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_DATA_DIC);
-//        int resetOnLogon = Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGON);
-//        int resetOnLogout = Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGOUT);
-//        int resetOnDisconnect = Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_DISCONNECT);
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.INI_CONNECT_HOST), Constants.INI_CONNECT_HOST, getConfig(Constants.INITIATOR_ROLE,Constants.INI_CONNECT_HOST)));
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.INI_CONNECT_PORT), Constants.INI_CONNECT_PORT, getConfig(Constants.INITIATOR_ROLE,Constants.INI_CONNECT_PORT)));
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_FILE_STORE_PATH), Constants.CONF_FILE_STORE_PATH, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_STORE_PATH)));
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_FILE_LOG_PATH), Constants.CONF_FILE_LOG_PATH, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_LOG_PATH)));
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_START_TIME), Constants.CONF_START_TIME, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_START_TIME)));
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_END_TIME), Constants.CONF_END_TIME, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_END_TIME)));
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_USE_DATA_DIC), Constants.CONF_USE_DATA_DIC, dataDic == 0 ? Y: N));
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_RESET_ON_LOGON), Constants.CONF_RESET_ON_LOGON, resetOnLogon == 0 ? Y: N));
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_RESET_ON_LOGOUT), Constants.CONF_RESET_ON_LOGOUT, resetOnLogout == 0 ? Y: N));
-//        defaultTags.add(new Tag(Utils.getKeyFromValue(Constants.CONF_RESET_ON_DISCONNECT), Constants.CONF_RESET_ON_DISCONNECT, resetOnDisconnect == 0 ? Y: N));
+        defaultTags.add(new Tag(Utils.getKeyFromValue("ClOrdID"), "ClOrdID", RandomStringUtils.randomAlphanumeric(8)));
+        defaultTags.add(new Tag(Utils.getKeyFromValue("OrigClOrdID"), "OrigClOrdID", ""));
+        String pattern = "yyyyMMdd-HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date());
+        defaultTags.add(new Tag(Utils.getKeyFromValue("SendingTime"), "SendingTime", date));
+        defaultTags.add(new Tag(Utils.getKeyFromValue("TransactTime"), "TransactTime", date));
+        defaultTags.add(new Tag(Utils.getKeyFromValue("Symbol"), "Symbol", "N/A"));
+        defaultTags.add(new Tag(Utils.getKeyFromValue("OrderQty"), "OrderQty", "100"));
+        defaultTags.add(new Tag(Utils.getKeyFromValue("OrdType"), "OrdType", "2"));
+        defaultTags.add(new Tag(Utils.getKeyFromValue("Side"), "Side", "1"));
+        defaultTags.add(new Tag(Utils.getKeyFromValue("Price"), "Price", "50"));
     }
 }

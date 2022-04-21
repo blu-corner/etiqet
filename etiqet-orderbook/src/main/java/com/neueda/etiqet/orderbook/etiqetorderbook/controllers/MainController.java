@@ -65,6 +65,11 @@ public class MainController implements Initializable {
     private boolean changed;
     private boolean useDefaultPort;
     private String changedDefaultPort = "";
+    private static String port;
+
+    public String getConnectedPort(){
+        return port;
+    }
 
     public boolean isChanged() {
         return changed;
@@ -154,6 +159,10 @@ public class MainController implements Initializable {
     private SessionID sessionId;
     private Initator initator;
     private List<FixSession> fixSessions;
+
+    public SessionID getSessionId(){
+        return this.sessionId;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -299,7 +308,7 @@ public class MainController implements Initializable {
     public void startInitiator(ActionEvent actionEvent) {
         try {
             SessionSettings initiatorSettings = new SessionSettings();
-            String port = getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_PORT);
+            port = getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_PORT);
             if (!StringUtils.isEmpty(port)){
                 sessionId = new SessionID(
                     new BeginString(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_BEGIN_STRING)),
@@ -320,6 +329,7 @@ public class MainController implements Initializable {
                 dictionary.setString(Constants.CONF_HEART_BT_INT,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_HEART_BT_INT) );
                 initiatorSettings.set(sessionId, dictionary);
                 menuItemMessagePort.setText("Connected to port: " + port);
+
                 FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
                 FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
                 MessageFactory messageFactory = new DefaultMessageFactory();

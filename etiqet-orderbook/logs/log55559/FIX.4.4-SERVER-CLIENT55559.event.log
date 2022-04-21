@@ -115,3 +115,459 @@
 20220419-16:41:32: Received logout request
 20220419-16:41:32: Sent logout response
 20220419-16:41:32: Disconnecting: Received logout request
+20220421-09:39:20: Session FIX.4.4:SERVER->CLIENT55559 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220421-09:39:20: Session state is not current; resetting FIX.4.4:SERVER->CLIENT55559
+20220421-09:39:20: Created session: FIX.4.4:SERVER->CLIENT55559
+20220421-09:39:35: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:57593
+20220421-09:39:35: Acceptor heartbeat set to 10 seconds
+20220421-09:39:35: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-09:39:35: Received logon
+20220421-09:39:35: Responding to Logon request
+20220421-09:41:26: Sent test request TEST
+20220421-09:41:35: Disconnecting: Timed out waiting for heartbeat
+20220421-09:41:35: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:57601
+20220421-09:41:35: Acceptor heartbeat set to 10 seconds
+20220421-09:41:35: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-09:41:35: Received logon
+20220421-09:41:35: Responding to Logon request
+20220421-09:41:51: Sent test request TEST
+20220421-09:42:00: Disconnecting: Timed out waiting for heartbeat
+20220421-09:43:14: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:57679
+20220421-09:43:14: Acceptor heartbeat set to 10 seconds
+20220421-09:43:14: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-09:43:14: Received logon
+20220421-09:43:14: Responding to Logon request
+20220421-09:43:54: Received logout request
+20220421-09:43:54: Sent logout response
+20220421-09:43:54: Disconnecting: Received logout request
+20220421-09:45:30: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:57714
+20220421-09:45:30: Acceptor heartbeat set to 30 seconds
+20220421-09:45:30: Received logon
+20220421-09:45:30: Responding to Logon request
+20220421-09:45:31: Disconnecting: Encountered END_OF_STREAM
+20220421-09:46:01: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:57736
+20220421-09:46:01: Acceptor heartbeat set to 10 seconds
+20220421-09:46:01: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-09:46:01: Received logon
+20220421-09:46:01: Responding to Logon request
+20220421-09:46:28: Sent test request TEST
+20220421-09:46:37: Disconnecting: Timed out waiting for heartbeat
+20220421-09:48:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:57780
+20220421-09:48:27: Acceptor heartbeat set to 10 seconds
+20220421-09:48:27: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-09:48:27: Received logon
+20220421-09:48:27: Responding to Logon request
+20220421-09:49:29: Received logout request
+20220421-09:49:29: Sent logout response
+20220421-09:49:29: Disconnecting: Received logout request
+20220421-10:23:48: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59487
+20220421-10:23:48: Acceptor heartbeat set to 30 seconds
+20220421-10:23:48: Received logon
+20220421-10:23:48: Responding to Logon request
+20220421-10:23:48: Disconnecting: Encountered END_OF_STREAM
+20220421-10:24:19: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59508
+20220421-10:24:19: Acceptor heartbeat set to 10 seconds
+20220421-10:24:19: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:24:19: Received logon
+20220421-10:24:19: Responding to Logon request
+20220421-10:24:27: Received logout request
+20220421-10:24:27: Sent logout response
+20220421-10:24:27: Disconnecting: Received logout request
+20220421-10:33:38: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59600
+20220421-10:33:38: Acceptor heartbeat set to 30 seconds
+20220421-10:33:38: Received logon
+20220421-10:33:38: Responding to Logon request
+20220421-10:33:38: Disconnecting: Encountered END_OF_STREAM
+20220421-10:34:09: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59627
+20220421-10:34:09: Acceptor heartbeat set to 10 seconds
+20220421-10:34:09: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:34:09: Received logon
+20220421-10:34:09: Responding to Logon request
+20220421-10:34:29: Received logout request
+20220421-10:34:29: Sent logout response
+20220421-10:34:29: Disconnecting: Received logout request
+20220421-10:39:50: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59706
+20220421-10:39:50: Acceptor heartbeat set to 30 seconds
+20220421-10:39:50: Received logon
+20220421-10:39:50: Responding to Logon request
+20220421-10:39:50: Disconnecting: Encountered END_OF_STREAM
+20220421-10:40:21: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59731
+20220421-10:40:21: Acceptor heartbeat set to 10 seconds
+20220421-10:40:21: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:40:21: Received logon
+20220421-10:40:21: Responding to Logon request
+20220421-10:40:36: Sent test request TEST
+20220421-10:40:42: Disconnecting: Encountered END_OF_STREAM
+20220421-10:40:51: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59754
+20220421-10:40:51: Acceptor heartbeat set to 10 seconds
+20220421-10:40:51: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:40:51: Received logon
+20220421-10:40:51: Responding to Logon request
+20220421-10:41:06: Sent test request TEST
+20220421-10:41:15: Disconnecting: Timed out waiting for heartbeat
+20220421-10:43:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59795
+20220421-10:43:27: Acceptor heartbeat set to 30 seconds
+20220421-10:43:27: Received logon
+20220421-10:43:27: Responding to Logon request
+20220421-10:43:27: Disconnecting: Encountered END_OF_STREAM
+20220421-10:43:58: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59819
+20220421-10:43:58: Acceptor heartbeat set to 10 seconds
+20220421-10:43:58: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:43:58: Received logon
+20220421-10:43:58: Responding to Logon request
+20220421-10:45:45: Sent test request TEST
+20220421-10:45:54: Disconnecting: Timed out waiting for heartbeat
+20220421-10:46:10: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59861
+20220421-10:46:10: Acceptor heartbeat set to 10 seconds
+20220421-10:46:10: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:46:10: Received logon
+20220421-10:46:10: Responding to Logon request
+20220421-10:46:15: Disconnecting: Socket exception (/127.0.0.1:59861): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220421-10:47:44: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59899
+20220421-10:47:44: Acceptor heartbeat set to 30 seconds
+20220421-10:47:44: Received logon
+20220421-10:47:44: Responding to Logon request
+20220421-10:47:44: Disconnecting: Encountered END_OF_STREAM
+20220421-10:48:15: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:59921
+20220421-10:48:15: Acceptor heartbeat set to 10 seconds
+20220421-10:48:15: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:48:15: Received logon
+20220421-10:48:15: Responding to Logon request
+20220421-10:51:21: Sent test request TEST
+20220421-10:51:30: Disconnecting: Timed out waiting for heartbeat
+20220421-10:51:42: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60027
+20220421-10:51:42: Acceptor heartbeat set to 10 seconds
+20220421-10:51:42: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:51:42: Received logon
+20220421-10:51:42: Responding to Logon request
+20220421-10:52:49: Disconnecting: Socket exception (/127.0.0.1:60027): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220421-10:53:36: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60079
+20220421-10:53:36: Acceptor heartbeat set to 30 seconds
+20220421-10:53:36: Received logon
+20220421-10:53:36: Responding to Logon request
+20220421-10:53:36: Disconnecting: Encountered END_OF_STREAM
+20220421-10:54:07: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60102
+20220421-10:54:07: Acceptor heartbeat set to 10 seconds
+20220421-10:54:07: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:54:07: Received logon
+20220421-10:54:07: Responding to Logon request
+20220421-10:55:24: Sent test request TEST
+20220421-10:55:33: Disconnecting: Timed out waiting for heartbeat
+20220421-10:56:30: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60145
+20220421-10:56:30: Acceptor heartbeat set to 10 seconds
+20220421-10:56:30: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:56:30: Received logon
+20220421-10:56:30: Responding to Logon request
+20220421-10:56:46: Sent test request TEST
+20220421-10:56:55: Disconnecting: Timed out waiting for heartbeat
+20220421-10:57:33: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60177
+20220421-10:57:33: Acceptor heartbeat set to 10 seconds
+20220421-10:57:33: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:57:33: Received logon
+20220421-10:57:33: Responding to Logon request
+20220421-10:57:48: Sent test request TEST
+20220421-10:58:08: Sent test request TEST
+20220421-10:58:29: Sent test request TEST
+20220421-10:58:38: Disconnecting: Timed out waiting for heartbeat
+20220421-10:59:26: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60211
+20220421-10:59:26: Acceptor heartbeat set to 10 seconds
+20220421-10:59:26: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-10:59:26: Received logon
+20220421-10:59:26: Responding to Logon request
+20220421-11:06:53: Disconnecting: Socket exception (/127.0.0.1:60211): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220421-11:07:10: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60325
+20220421-11:07:10: Acceptor heartbeat set to 30 seconds
+20220421-11:07:10: Received logon
+20220421-11:07:10: Responding to Logon request
+20220421-11:07:10: Disconnecting: Encountered END_OF_STREAM
+20220421-11:07:41: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60349
+20220421-11:07:41: Acceptor heartbeat set to 10 seconds
+20220421-11:07:41: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-11:07:41: Received logon
+20220421-11:07:41: Responding to Logon request
+20220421-11:08:01: Disconnecting: Socket exception (/127.0.0.1:60349): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220421-11:12:23: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60392
+20220421-11:12:23: Acceptor heartbeat set to 30 seconds
+20220421-11:12:23: Received logon
+20220421-11:12:23: Responding to Logon request
+20220421-11:12:23: Disconnecting: Encountered END_OF_STREAM
+20220421-11:12:54: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60417
+20220421-11:12:54: Acceptor heartbeat set to 10 seconds
+20220421-11:12:54: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-11:12:54: Received logon
+20220421-11:12:54: Responding to Logon request
+20220421-11:12:59: Rejecting invalid message: quickfix.FieldException: Tag appears more than once, field=34: 8=FIX.4.49=13135=D34=249=CLIENT5555952=20220421-11:12:59.55656=SERVER11=sLpoVOvR34=035=D41=52=2022-04-21T13:12:23.94867090098=0108=1010=102
+20220421-11:12:59: Reject sent for message 2: Tag appears more than once, field=34
+20220421-11:13:26: Rejecting invalid message: quickfix.FieldException: Tag appears more than once, field=34: 8=FIX.4.49=13235=D34=549=CLIENT5555952=20220421-11:13:26.35356=SERVER11=sLpoVOvR634=035=D41=52=2022-04-21T13:12:23.94867090098=0108=1010=150
+20220421-11:13:26: Reject sent for message 5: Tag appears more than once, field=34
+20220421-11:13:35: Sent test request TEST
+20220421-11:14:56: Disconnecting: Socket exception (/127.0.0.1:60417): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220421-11:16:53: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60470
+20220421-11:16:53: Acceptor heartbeat set to 30 seconds
+20220421-11:16:53: Received logon
+20220421-11:16:53: Responding to Logon request
+20220421-11:16:53: Disconnecting: Encountered END_OF_STREAM
+20220421-11:17:24: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60508
+20220421-11:17:24: Acceptor heartbeat set to 10 seconds
+20220421-11:17:24: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-11:17:24: Received logon
+20220421-11:17:24: Responding to Logon request
+20220421-11:17:37: Rejecting invalid message: quickfix.FieldException: Tag appears more than once, field=35: 8=FIX.4.49=12635=D34=349=CLIENT5555952=20220421-11:17:37.81856=SERVER11=gYHOZZJ435=D41=52=2022-04-21T13:16:53.83916450098=0108=1010=022
+20220421-11:17:37: Reject sent for message 3: Tag appears more than once, field=35
+20220421-11:18:34: Sent test request TEST
+20220421-11:18:43: Disconnecting: Timed out waiting for heartbeat
+20220421-11:18:56: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60518
+20220421-11:18:56: Acceptor heartbeat set to 10 seconds
+20220421-11:18:56: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-11:18:56: Received logon
+20220421-11:18:56: Responding to Logon request
+20220421-11:19:12: Sent test request TEST
+20220421-11:19:21: Disconnecting: Timed out waiting for heartbeat
+20220421-11:23:34: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60629
+20220421-11:23:34: Acceptor heartbeat set to 30 seconds
+20220421-11:23:34: Received logon
+20220421-11:23:34: Responding to Logon request
+20220421-11:23:34: Disconnecting: Encountered END_OF_STREAM
+20220421-11:24:05: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:60651
+20220421-11:24:05: Acceptor heartbeat set to 10 seconds
+20220421-11:24:05: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-11:24:05: Received logon
+20220421-11:24:05: Responding to Logon request
+20220421-11:24:21: Rejecting invalid message: quickfix.FieldException: Tag appears more than once, field=35: 8=FIX.4.49=12635=D34=349=CLIENT5555952=20220421-11:24:21.50056=SERVER11=kf5Kcftn35=D41=52=2022-04-21T13:23:34.36489930098=0108=1010=119
+20220421-11:24:21: Reject sent for message 3: Tag appears more than once, field=35
+20220421-11:24:31: Sent test request TEST
+20220421-11:24:39: Disconnecting: Socket exception (/127.0.0.1:60651): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220421-12:53:59: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:58212
+20220421-12:53:59: Acceptor heartbeat set to 30 seconds
+20220421-12:53:59: Received logon
+20220421-12:53:59: Responding to Logon request
+20220421-12:53:59: Disconnecting: Encountered END_OF_STREAM
+20220421-12:54:30: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:58240
+20220421-12:54:30: Acceptor heartbeat set to 10 seconds
+20220421-12:54:30: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-12:54:30: Received logon
+20220421-12:54:30: Responding to Logon request
+20220421-13:00:03: Rejecting invalid message: quickfix.FieldException: Tag appears more than once, field=52: 8=FIX.4.49=12235=D34=3549=CLIENT5555952=20220421-13:00:03.68956=SERVER11=ZmXDQq5f41=52=2022-04-21T14:53:59.09986550098=0108=1010=155
+20220421-13:00:03: Reject sent for message 35: Tag appears more than once, field=52
+20220421-13:01:02: Sent test request TEST
+20220421-13:01:26: Sent test request TEST
+20220421-13:01:35: Disconnecting: Timed out waiting for heartbeat
+20220421-13:02:43: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:49285
+20220421-13:02:43: Acceptor heartbeat set to 10 seconds
+20220421-13:02:43: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-13:02:43: Received logon
+20220421-13:02:43: Responding to Logon request
+20220421-13:02:54: Disconnecting: Encountered END_OF_STREAM
+20220421-13:03:15: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:49308
+20220421-13:03:15: Acceptor heartbeat set to 10 seconds
+20220421-13:03:15: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-13:03:15: Received logon
+20220421-13:03:15: Responding to Logon request
+20220421-13:03:17: Rejecting invalid message: quickfix.FieldException: Tag appears more than once, field=52: 8=FIX.4.49=12235=D34=249=CLIENT5555952=20220421-13:03:17.71356=SERVER11=ZmXDQq5f741=52=2022-04-21T14:53:59.09986550098=0108=1010=152
+20220421-13:03:17: Reject sent for message 2: Tag appears more than once, field=52
+20220421-13:04:28: Received logout request
+20220421-13:04:28: Sent logout response
+20220421-13:04:28: Disconnecting: Received logout request
+20220421-13:06:01: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:49350
+20220421-13:06:01: Acceptor heartbeat set to 30 seconds
+20220421-13:06:01: Received logon
+20220421-13:06:01: Responding to Logon request
+20220421-13:06:01: Disconnecting: Encountered END_OF_STREAM
+20220421-13:06:32: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:49374
+20220421-13:06:32: Acceptor heartbeat set to 10 seconds
+20220421-13:06:32: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-13:06:32: Received logon
+20220421-13:06:32: Responding to Logon request
+20220421-13:06:53: Rejecting invalid message: quickfix.FieldException: Required tag missing, field=54: 8=FIX.4.49=8835=D34=449=CLIENT5555952=20220421-13:06:53.93056=SERVER11=18FasOS441=98=0108=1010=068
+20220421-13:06:53: Reject sent for message 4: Required tag missing, field=54
+20220421-13:07:35: Rejecting invalid message: quickfix.FieldException: Required tag missing, field=40: 8=FIX.4.49=9935=D34=949=CLIENT5555952=20220421-13:07:35.45056=SERVER11=18FasOS441=44=1854=198=0108=1010=048
+20220421-13:07:35: Reject sent for message 9: Required tag missing, field=40
+20220421-13:07:53: Rejecting invalid message: quickfix.FieldException: Required tag missing, field=60: 8=FIX.4.49=10535=D34=1149=CLIENT5555952=20220421-13:07:53.08556=SERVER11=18FasOS440=241=44=1854=198=0108=1010=085
+20220421-13:07:53: Reject sent for message 11: Required tag missing, field=60
+20220421-13:08:01: Sent test request TEST
+20220421-13:08:28: Rejecting invalid message: quickfix.FieldException: Tag specified without a value, field=41: 8=FIX.4.49=13835=D34=1549=CLIENT5555952=20220421-13:08:28.24056=SERVER11=18FasOS440=241=44=1854=160=2022-04-21T15:06:01.83016520098=0108=1010=210
+20220421-13:08:28: Reject sent for message 15: Tag specified without a value, field=41
+20220421-13:08:37: Sent test request TEST
+20220421-13:08:40: Rejecting invalid message: quickfix.IncorrectDataFormat: Incorrect data format for value, field=60: 8=FIX.4.49=13435=D34=1749=CLIENT5555952=20220421-13:08:40.74556=SERVER11=18FasOS440=244=1854=160=2022-04-21T15:06:01.83016520098=0108=1010=049
+20220421-13:08:40: Reject sent for message 17: Incorrect data format for value, field=60
+20220421-13:09:27: Received logout request
+20220421-13:09:27: Sent logout response
+20220421-13:09:27: Disconnecting: Received logout request
+20220421-13:11:16: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:49798
+20220421-13:11:16: Acceptor heartbeat set to 30 seconds
+20220421-13:11:16: Received logon
+20220421-13:11:16: Responding to Logon request
+20220421-13:11:16: Disconnecting: Encountered END_OF_STREAM
+20220421-13:11:47: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:49820
+20220421-13:11:47: Acceptor heartbeat set to 10 seconds
+20220421-13:11:47: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-13:11:47: Received logon
+20220421-13:11:47: Responding to Logon request
+20220421-13:12:35: Rejecting invalid message: quickfix.FieldException: Required tag missing, field=40: 8=FIX.4.49=11935=D34=649=CLIENT5555952=20220421-13:12:35.23256=SERVER11=UF6BbBys44=554=160=20220421-13:12:35.23298=0108=1010=137
+20220421-13:12:35: Reject sent for message 6: Required tag missing, field=40
+20220421-13:12:43: Sent test request TEST
+20220421-13:12:47: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12435=D34=849=CLIENT5555952=20220421-13:12:47.76556=SERVER11=UF6BbBys40=244=554=160=20220421-13:12:47.76498=0108=1010=118
+20220421-13:12:47: Reject sent for message 8: Tag not defined for this message type, field=98
+20220421-13:13:12: Rejecting invalid message: quickfix.IncorrectDataFormat: Incorrect data format for value, field=98: 8=FIX.4.49=12735=D34=1149=CLIENT5555952=20220421-13:13:12.12456=SERVER11=UF6BbBys40=244=554=160=20220421-13:13:12.12498=N/A108=1010=014
+20220421-13:13:12: Reject sent for message 11: Incorrect data format for value, field=98
+20220421-13:13:23: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12535=D34=1349=CLIENT5555952=20220421-13:13:23.76756=SERVER11=UF6BbBys40=244=554=160=20220421-13:13:23.76798=0108=1010=158
+20220421-13:13:23: Reject sent for message 13: Tag not defined for this message type, field=98
+20220421-13:14:35: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12535=D34=2149=CLIENT5555952=20220421-13:14:35.73956=SERVER11=UF6BbBys40=244=554=160=20220421-13:14:35.73898=0108=1010=162
+20220421-13:14:35: Reject sent for message 21: Tag not defined for this message type, field=98
+20220421-13:15:23: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12535=D34=2649=CLIENT5555952=20220421-13:15:23.37056=SERVER11=UF6BbBys40=244=554=160=20220421-13:15:23.37098=0108=1010=146
+20220421-13:15:23: Reject sent for message 26: Tag not defined for this message type, field=98
+20220421-13:15:31: Sent test request TEST
+20220421-13:19:05: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12535=D34=4949=CLIENT5555952=20220421-13:19:05.32156=SERVER11=UF6BbBys40=244=554=160=20220421-13:19:05.32198=0108=1010=151
+20220421-13:19:05: Reject sent for message 49: Tag not defined for this message type, field=98
+20220421-13:27:33: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12635=D34=10049=CLIENT5555952=20220421-13:27:33.65656=SERVER11=UF6BbBys40=244=554=160=20220421-13:27:33.65698=0108=1010=210
+20220421-13:27:33: Reject sent for message 100: Tag not defined for this message type, field=98
+20220421-13:27:41: Sent test request TEST
+20220421-13:32:01: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12635=D34=12849=CLIENT5555952=20220421-13:32:01.86556=SERVER11=UF6BbBys40=244=554=160=20220421-13:32:01.86598=0108=1010=206
+20220421-13:32:01: Reject sent for message 128: Tag not defined for this message type, field=98
+20220421-13:32:27: Sent test request TEST
+20220421-13:32:36: Disconnecting: Timed out waiting for heartbeat
+20220421-13:33:10: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50292
+20220421-13:33:10: Acceptor heartbeat set to 10 seconds
+20220421-13:33:10: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-13:33:10: Received logon
+20220421-13:33:10: Responding to Logon request
+20220421-13:33:11: Disconnecting: Socket exception (/127.0.0.1:50292): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220421-13:49:35: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56083
+20220421-13:49:35: Acceptor heartbeat set to 30 seconds
+20220421-13:49:35: Received logon
+20220421-13:49:35: Responding to Logon request
+20220421-13:49:35: Disconnecting: Encountered END_OF_STREAM
+20220421-13:50:06: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56107
+20220421-13:50:06: Acceptor heartbeat set to 10 seconds
+20220421-13:50:06: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-13:50:06: Received logon
+20220421-13:50:06: Responding to Logon request
+20220421-13:50:52: Sent test request TEST
+20220421-13:51:08: Sent test request TEST
+20220421-13:54:55: Received logout request
+20220421-13:54:55: Sent logout response
+20220421-13:54:55: Disconnecting: Received logout request
+20220421-14:04:18: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56371
+20220421-14:04:18: Acceptor heartbeat set to 30 seconds
+20220421-14:04:18: Received logon
+20220421-14:04:18: Responding to Logon request
+20220421-14:04:18: Disconnecting: Encountered END_OF_STREAM
+20220421-14:04:49: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56393
+20220421-14:04:49: Acceptor heartbeat set to 10 seconds
+20220421-14:04:49: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-14:04:49: Received logon
+20220421-14:04:49: Responding to Logon request
+20220421-14:05:46: Received logout request
+20220421-14:05:46: Sent logout response
+20220421-14:05:46: Disconnecting: Received logout request
+20220421-14:08:41: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56444
+20220421-14:08:41: Acceptor heartbeat set to 30 seconds
+20220421-14:08:41: Received logon
+20220421-14:08:41: Responding to Logon request
+20220421-14:08:41: Disconnecting: Encountered END_OF_STREAM
+20220421-14:09:12: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56465
+20220421-14:09:12: Acceptor heartbeat set to 10 seconds
+20220421-14:09:12: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-14:09:12: Received logon
+20220421-14:09:12: Responding to Logon request
+20220421-14:10:23: Sent test request TEST
+20220421-14:10:32: Disconnecting: Timed out waiting for heartbeat
+20220421-14:10:34: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56494
+20220421-14:10:34: Acceptor heartbeat set to 10 seconds
+20220421-14:10:34: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-14:10:34: Received logon
+20220421-14:10:34: Responding to Logon request
+20220421-14:10:50: Sent test request TEST
+20220421-14:10:59: Disconnecting: Timed out waiting for heartbeat
+20220421-14:11:39: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56523
+20220421-14:11:39: Acceptor heartbeat set to 10 seconds
+20220421-14:11:39: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-14:11:39: Received logon
+20220421-14:11:39: Responding to Logon request
+20220421-14:11:40: Disconnecting: Socket exception (/127.0.0.1:56523): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220421-14:12:19: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56554
+20220421-14:12:19: Acceptor heartbeat set to 30 seconds
+20220421-14:12:19: Received logon
+20220421-14:12:19: Responding to Logon request
+20220421-14:12:19: Disconnecting: Encountered END_OF_STREAM
+20220421-14:12:50: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56577
+20220421-14:12:50: Acceptor heartbeat set to 10 seconds
+20220421-14:12:50: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-14:12:50: Received logon
+20220421-14:12:50: Responding to Logon request
+20220421-14:13:06: Sent test request TEST
+20220421-14:13:20: Rejecting invalid message: quickfix.FieldException: Required tag missing, field=54: 8=FIX.4.49=8835=D34=449=CLIENT5555952=20220421-14:13:20.09156=SERVER11=aAgtQYzM41=98=0108=1010=208
+20220421-14:13:20: Reject sent for message 4: Required tag missing, field=54
+20220421-14:13:24: Sent test request TEST
+20220421-14:13:49: Rejecting invalid message: quickfix.FieldException: Required tag missing, field=54: 8=FIX.4.49=8835=D34=849=CLIENT5555952=20220421-14:13:49.49456=SERVER11=aAgtQYzM41=98=0108=1010=230
+20220421-14:13:49: Reject sent for message 8: Required tag missing, field=54
+20220421-14:14:15: Rejecting invalid message: quickfix.FieldException: Required tag missing, field=40: 8=FIX.4.49=9435=D34=1149=CLIENT5555952=20220421-14:14:15.79656=SERVER11=aAgtQYzM41=54=198=0108=1010=228
+20220421-14:14:15: Reject sent for message 11: Required tag missing, field=40
+20220421-14:14:25: Sent test request TEST
+20220421-14:14:54: Rejecting invalid message: quickfix.FieldException: Required tag missing, field=60: 8=FIX.4.49=9935=D34=1549=CLIENT5555952=20220421-14:14:54.11256=SERVER11=aAgtQYzM40=241=54=198=0108=1010=178
+20220421-14:14:54: Reject sent for message 15: Required tag missing, field=60
+20220421-14:15:01: Sent test request TEST
+20220421-14:15:34: Rejecting invalid message: quickfix.FieldException: Tag specified without a value, field=41: 8=FIX.4.49=12935=D34=2049=CLIENT5555952=20220421-14:15:34.64656=SERVER11=aAgtQYzM40=241=54=160=2022-04-21T16:12:19.85076998=0108=1010=219
+20220421-14:15:34: Reject sent for message 20: Tag specified without a value, field=41
+20220421-14:15:58: Rejecting invalid message: quickfix.IncorrectDataFormat: Incorrect data format for value, field=60: 8=FIX.4.49=12535=D34=2349=CLIENT5555952=20220421-14:15:58.87256=SERVER11=aAgtQYzM40=254=160=2022-04-21T16:12:19.85076998=0108=1010=062
+20220421-14:15:58: Reject sent for message 23: Incorrect data format for value, field=60
+20220421-14:17:07: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12035=D34=3049=CLIENT5555952=20220421-14:17:07.56756=SERVER11=aAgtQYzM40=254=160=20160404-03:52:24.82498=0108=1010=014
+20220421-14:17:07: Reject sent for message 30: Tag not defined for this message type, field=98
+20220421-14:17:15: Sent test request TEST
+20220421-14:17:34: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12035=D34=3349=CLIENT5555952=20220421-14:17:34.47256=SERVER11=aAgtQYzM40=254=160=20160404-03:52:24.82498=0108=1010=012
+20220421-14:17:34: Reject sent for message 33: Tag not defined for this message type, field=98
+20220421-14:17:41: Sent test request TEST
+20220421-14:18:09: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=98: 8=FIX.4.49=12035=D34=3749=CLIENT5555952=20220421-14:18:09.69856=SERVER11=aAgtQYzM40=254=160=20160404-03:52:24.82498=0108=1010=029
+20220421-14:18:09: Reject sent for message 37: Tag not defined for this message type, field=98
+20220421-14:18:17: Sent test request TEST
+20220421-14:22:24: Rejecting invalid message: quickfix.FieldException: Required tag missing, field=40: 8=FIX.4.49=11535=D34=6349=CLIENT5555952=20220421-14:22:24.48056=SERVER11=aAgtQYzM44=554=560=20160404-03:52:24.824108=1010=057
+20220421-14:22:24: Reject sent for message 63: Required tag missing, field=40
+20220421-14:22:33: Sent test request TEST
+20220421-14:22:44: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=108: 8=FIX.4.49=12035=D34=6649=CLIENT5555952=20220421-14:22:44.17556=SERVER11=aAgtQYzM40=244=554=560=20160404-03:52:24.824108=1010=015
+20220421-14:22:44: Reject sent for message 66: Tag not defined for this message type, field=108
+20220421-14:22:57: Reject sent for message 68: Conditionally Required Field Missing: tag=55
+20220421-14:23:27: Reject sent for message 72: Conditionally Required Field Missing: tag=38
+20220421-14:31:08: Received logout request
+20220421-14:31:08: Sent logout response
+20220421-14:31:08: Disconnecting: Received logout request
+20220421-14:31:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56811
+20220421-14:31:27: Acceptor heartbeat set to 30 seconds
+20220421-14:31:27: Received logon
+20220421-14:31:27: Responding to Logon request
+20220421-14:31:27: Disconnecting: Encountered END_OF_STREAM
+20220421-14:31:58: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56843
+20220421-14:31:58: Acceptor heartbeat set to 10 seconds
+20220421-14:31:58: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-14:31:58: Received logon
+20220421-14:31:58: Responding to Logon request
+20220421-14:32:34: Rejecting invalid message: quickfix.IncorrectDataFormat: Incorrect data format for value, field=60: 8=FIX.4.49=13535=D34=549=CLIENT5555952=20220421-14:32:34.90056=SERVER11=v2fvo5UG38=10040=244=5054=155=N/A60=2022-04-21T16:31:27.62931240010=242
+20220421-14:32:34: Reject sent for message 5: Incorrect data format for value, field=60
+20220421-14:32:45: Sent test request TEST
+20220421-14:33:02: Rejecting invalid message: quickfix.IncorrectDataFormat: Incorrect data format for value, field=60: 8=FIX.4.49=13535=D34=849=CLIENT5555952=20220421-14:33:02.57456=SERVER11=v2fvo5UG38=10040=244=5054=155=N/A60=2022-04-21T16:31:27.62931240010=248
+20220421-14:33:02: Reject sent for message 8: Incorrect data format for value, field=60
+20220421-14:33:11: Sent test request TEST
+20220421-14:33:14: Rejecting invalid message: quickfix.IncorrectDataFormat: Incorrect data format for value, field=60: 8=FIX.4.49=13535=D34=949=CLIENT5555952=20220421-14:33:14.53156=SERVER11=v2fvo5UG38=10040=244=5054=155=N/A60=2022-04-21T16:31:27.62931240010=245
+20220421-14:33:14: Reject sent for message 9: Incorrect data format for value, field=60
+20220421-14:34:12: Sent test request TEST
+20220421-14:34:21: Disconnecting: Timed out waiting for heartbeat
+20220421-14:34:21: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:56851
+20220421-14:34:21: Acceptor heartbeat set to 10 seconds
+20220421-14:34:21: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-14:34:21: Received logon
+20220421-14:34:21: Responding to Logon request
+20220421-14:34:21: Disconnecting: Socket exception (/127.0.0.1:56851): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220421-14:40:40: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:57096
+20220421-14:40:40: Acceptor heartbeat set to 30 seconds
+20220421-14:40:40: Received logon
+20220421-14:40:40: Responding to Logon request
+20220421-14:40:40: Disconnecting: Encountered END_OF_STREAM
+20220421-14:41:10: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:57129
+20220421-14:41:10: Acceptor heartbeat set to 10 seconds
+20220421-14:41:10: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220421-14:41:10: Received logon
+20220421-14:41:10: Responding to Logon request
+20220421-14:41:32: Rejecting invalid message: quickfix.FieldException: Tag specified without a value, field=41: 8=FIX.4.49=12735=D34=449=CLIENT5555952=20220421-14:41:32.84856=SERVER11=i126RKHg38=10040=241=44=5054=155=N/A60=20220421-16:40:4010=169
+20220421-14:41:32: Reject sent for message 4: Tag specified without a value, field=41
+20220421-14:43:38: Received logout request
+20220421-14:43:38: Sent logout response
+20220421-14:43:38: Disconnecting: Received logout request

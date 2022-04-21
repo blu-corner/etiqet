@@ -8,6 +8,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
@@ -18,17 +20,24 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import quickfix.Session;
-import quickfix.StringField;
+import quickfix.*;
+import quickfix.field.*;
+import quickfix.fix44.MessageFactory;
 import quickfix.fix44.NewOrderSingle;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.neueda.etiqet.orderbook.etiqetorderbook.fix.Initator.price;
+import static com.neueda.etiqet.orderbook.etiqetorderbook.fix.Initator.side;
+import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class AdvancedRequestController implements Initializable {
 
@@ -49,6 +58,16 @@ public class AdvancedRequestController implements Initializable {
 
     public void injectMainController(MainController mainController) {
         this.mainController = mainController;
+        init();
+    }
+
+    private void init(){
+        Tag senderInDefaultList = Constants.defaultTags.stream().filter(tag -> tag.getField().equals(Constants.CONF_SENDER)).findFirst().get();
+        senderInDefaultList.setValue(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_SENDER ) + this.mainController.getConnectedPort());
+        tableViewTags.getItems().addAll(Constants.defaultTags);
+        textAreaFix.appendText(Utils.fixEncoder(Constants.defaultTags));
+        tags = new HashSet<>();
+        xmlReader("./spec/FIX44.xml");
     }
 
     @Override
@@ -68,11 +87,8 @@ public class AdvancedRequestController implements Initializable {
             substituteTag(data.getRowValue().getKey(), data.getNewValue());
         });
         tableViewTags.setEditable(true);
-        tableViewTags.getItems().addAll(Constants.defaultTags);
-        textAreaFix.appendText(Utils.fixEncoder(Constants.defaultTags));
-        tags = new HashSet<>();
-        xmlReader("./spec/FIX44.xml");
     }
+
 
 
     private void xmlReader(String file) {
@@ -111,21 +127,24 @@ public class AdvancedRequestController implements Initializable {
     }
 
     public void arButtonAdd(ActionEvent actionEvent) {
-        Platform.runLater(() -> {
-            String text = arTextFieldValue.getText();
-            String selectedItem = comboFieldTags.getSelectionModel().getSelectedItem();
-            Optional<Tag> any = tableViewTags.getItems().stream().filter(t -> t.getField().equals(selectedItem)).findAny();
-            if (any.isEmpty()) {
-                if (!StringUtils.isEmpty(text.trim())) {
+        try{
+            Platform.runLater(() -> {
+                String text = arTextFieldValue.getText();
+                String selectedItem = comboFieldTags.getSelectionModel().getSelectedItem();
+                Optional<Tag> any = tableViewTags.getItems().stream().filter(t -> t.getField().equals(selectedItem)).findAny();
+                if (any.isEmpty()) {
                     Tag tag = new Tag(Utils.getKeyFromValue(selectedItem), selectedItem, text);
-                    tableViewTags.getItems().add(tag);
-                    updateFixTextArea();
+                    if (isAddableItem(tag) && !StringUtils.isEmpty(text.trim())) {
+                        tableViewTags.getItems().add(tag);
+                        updateFixTextArea();
+                    }
+                } else {
+                    substituteTag(any.get().getKey(), text);
                 }
-            } else {
-                substituteTag(any.get().getKey(), text);
-            }
-        });
-
+            });
+        }catch (Exception ex){
+            this.logger.warn("Exception arButtonAdd -> {}", ex.getMessage());
+        }
     }
 
     public void substituteTag(String tagKey, String newValue) {
@@ -151,19 +170,10 @@ public class AdvancedRequestController implements Initializable {
     public void arButtonSend(ActionEvent actionEvent) {
         String msgType = tableViewTags.getItems().stream().filter(t -> t.getKey().equals(Constants.KEY_MSG_TYPE)).findFirst().get().getValue();
         try {
-            switch (msgType) {
-                case "D":
-                    NewOrderSingle newOrderSingle = new NewOrderSingle();
-                    for (Tag tag : tableViewTags.getItems()) {
-                        newOrderSingle.setField(new StringField(Integer.parseInt(tag.getKey()), tag.getValue()));
-                    }
-                    Session.sendToTarget(newOrderSingle);
-                    break;
-                case "F":
-                    break;
-                case "G":
-                    break;
-            }
+            MessageFactory messageFactory = new MessageFactory();
+            Message message = messageFactory.create("FIX.4.4", msgType);
+            message.fromString(Utils.replaceVerticalBar(textAreaFix.getText()), null, false, true);
+            Session.sendToTarget(message, this.mainController.getSessionId());
         } catch (Exception ex) {
             this.logger.error("Exception in arButtonSend: {}", ex.getMessage());
         }
@@ -194,11 +204,15 @@ public class AdvancedRequestController implements Initializable {
 
     private boolean isAddableItem(Tag tag) {
         if (tag == null) return false;
+        boolean isNotTarget= !tag.getKey().equals(Constants.KEY_TARGET);
+        boolean isNotSender= !tag.getKey().equals(Constants.KEY_SENDER);
         boolean isNotBeginString = !tag.getKey().equals(Constants.KEY_BEGIN_STRING);
         boolean isNotBodyLength = !tag.getKey().equals(Constants.KEY_BODY_LENGTH);
         boolean isNotMessageType = !tag.getKey().equals(Constants.KEY_MSG_TYPE);
         boolean isNotChecksum = !tag.getKey().equals(Constants.KEY_CHECKSUM);
-        return isNotBeginString && isNotBodyLength && isNotMessageType && isNotChecksum;
+        boolean existingKey = Constants.hmTagValue.containsKey(Integer.parseInt(tag.getKey()));
+        boolean existingField = !Utils.getKeyFromValue(tag.getField()).equals("-1");
+        return isNotTarget && isNotSender && isNotBeginString && isNotBodyLength && isNotMessageType && isNotChecksum && existingKey && existingField;
     }
 
     public void arButtonClear(ActionEvent actionEvent) {
@@ -248,8 +262,13 @@ public class AdvancedRequestController implements Initializable {
     }
 
     public void actionComboKeysTag(ActionEvent actionEvent) {
-        this.logger.info(comboKeyTags.getValue());
-        comboFieldTags.getSelectionModel().select(Constants.hmTagValue.get(Integer.parseInt(comboKeyTags.getValue())));
+        try{
+            this.logger.info(comboKeyTags.getValue());
+            comboFieldTags.getSelectionModel().select(Constants.hmTagValue.get(Integer.parseInt(comboKeyTags.getValue())));
+        }catch (Exception ex){
+            this.logger.warn("Exception in actionComboKeysTag -> {}", ex.getLocalizedMessage());
+        }
+
     }
 
     public void setFocusedAllText(MouseEvent mouseEvent) {
@@ -264,5 +283,6 @@ public class AdvancedRequestController implements Initializable {
         }
 
     }
+
 
 }

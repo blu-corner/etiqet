@@ -30,6 +30,10 @@ public class Utils {
         return content.replace(Constants.SOH, Constants.VERTICAL_BAR);
     }
 
+    public static String replaceVerticalBar(String message) {
+        return message.replace(Constants.VERTICAL_BAR, Constants.SOH) + Constants.SOH;
+    }
+
     public static boolean isNumber(String value){
         try{
             return StringUtils.isNumeric(value);
