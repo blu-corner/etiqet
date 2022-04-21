@@ -32,50 +32,56 @@ public class AutoCompleteComboBoxListener<T> implements EventHandler<KeyEvent> {
     }
     @Override
     public void handle(KeyEvent event) {
-        if(event.getCode() == KeyCode.UP) {
-            caretPos = -1;
-            moveCaret(comboBox.getEditor().getText().length());
-            return;
-        } else if(event.getCode() == KeyCode.DOWN) {
-            if(!comboBox.isShowing()) {
+        try{
+            if(event.getCode() == KeyCode.UP) {
+                caretPos = -1;
+                moveCaret(comboBox.getEditor().getText().length());
+                return;
+            } else if(event.getCode() == KeyCode.DOWN) {
+                if(!comboBox.isShowing()) {
+                    comboBox.show();
+                }
+                caretPos = -1;
+                moveCaret(comboBox.getEditor().getText().length());
+                return;
+            } else if(event.getCode() == KeyCode.BACK_SPACE) {
+                moveCaretToPos = true;
+                caretPos = comboBox.getEditor().getCaretPosition();
+            } else if(event.getCode() == KeyCode.DELETE) {
+                moveCaretToPos = true;
+                caretPos = comboBox.getEditor().getCaretPosition();
+            }
+
+            if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT
+                || event.isControlDown() || event.getCode() == KeyCode.HOME
+                || event.getCode() == KeyCode.END || event.getCode() == KeyCode.TAB) {
+                return;
+            }
+
+            ObservableList list = FXCollections.observableArrayList();
+            for (int i=0; i<data.size(); i++) {
+                String value = data.get(i).toString();
+                if(value.toLowerCase().startsWith(
+                    AutoCompleteComboBoxListener.this.comboBox
+                        .getEditor().getText().toLowerCase())) {
+                    list.add(data.get(i));
+                }
+            }
+            String t = comboBox.getEditor().getText();
+
+            comboBox.setItems(list);
+            comboBox.getEditor().setText(t);
+            if(!moveCaretToPos) {
+                caretPos = -1;
+            }
+            moveCaret(t.length());
+            if(!list.isEmpty()) {
                 comboBox.show();
             }
-            caretPos = -1;
-            moveCaret(comboBox.getEditor().getText().length());
-            return;
-        } else if(event.getCode() == KeyCode.BACK_SPACE) {
-            moveCaretToPos = true;
-            caretPos = comboBox.getEditor().getCaretPosition();
-        } else if(event.getCode() == KeyCode.DELETE) {
-            moveCaretToPos = true;
-            caretPos = comboBox.getEditor().getCaretPosition();
+        }catch (Exception ex){
+
         }
 
-        if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT
-            || event.isControlDown() || event.getCode() == KeyCode.HOME
-            || event.getCode() == KeyCode.END || event.getCode() == KeyCode.TAB) {
-            return;
-        }
-
-        ObservableList list = FXCollections.observableArrayList();
-        for (int i=0; i<data.size(); i++) {
-            if(data.get(i).toString().toLowerCase().startsWith(
-                AutoCompleteComboBoxListener.this.comboBox
-                    .getEditor().getText().toLowerCase())) {
-                list.add(data.get(i));
-            }
-        }
-        String t = comboBox.getEditor().getText();
-
-        comboBox.setItems(list);
-        comboBox.getEditor().setText(t);
-        if(!moveCaretToPos) {
-            caretPos = -1;
-        }
-        moveCaret(t.length());
-        if(!list.isEmpty()) {
-            comboBox.show();
-        }
     }
 
 
