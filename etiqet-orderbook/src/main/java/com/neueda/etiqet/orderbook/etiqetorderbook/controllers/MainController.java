@@ -804,4 +804,8 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    public void buttonCopyLast(ActionEvent actionEvent) {
+        textFieldOrigOrderID.setText(textFieldOrderID.getText());
+    }
 }

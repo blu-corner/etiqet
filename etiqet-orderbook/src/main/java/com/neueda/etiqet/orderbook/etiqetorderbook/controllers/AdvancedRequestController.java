@@ -68,6 +68,7 @@ public class AdvancedRequestController implements Initializable {
         Tag senderInDefaultList = Constants.defaultTags.stream().filter(tag -> tag.getField().equals(Constants.CONF_SENDER)).findFirst().get();
         senderInDefaultList.setValue(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_SENDER ) + this.mainController.getConnectedPort());
         tableViewTags.getItems().addAll(Constants.defaultTags);
+        textAreaFix.setWrapText(true);
         textAreaFix.appendText(Utils.fixEncoder(Constants.defaultTags));
         tags = new HashSet<>();
         storedOrigIDs = new ArrayList<>();
