@@ -88,11 +88,11 @@ public class Initator implements Application{
         this.messageAnalizer(message, Constants.IN);
     }
 
-    public void sendNewOrderSingle(String size, String price, String orderOd, boolean autoGen, char side){
+    public void sendNewOrderSingle(String size, String price, String orderId, char side){
         NewOrderSingle newOrderSingle = new NewOrderSingle();
         newOrderSingle.set(new OrderQty(Double.parseDouble(size)));
         newOrderSingle.set(new Price(Double.parseDouble(price)));
-        newOrderSingle.set(autoGen ? new ClOrdID(this.origOrderID.getText()) : new ClOrdID(orderOd));;
+        newOrderSingle.set(new ClOrdID(orderId));;
         newOrderSingle.set(new Side(side));
         newOrderSingle.set(new OrdType(OrdType.LIMIT));
         newOrderSingle.set(new HandlInst('3'));
@@ -106,11 +106,11 @@ public class Initator implements Application{
         }
     }
 
-    public void sendOrderCancelRequest(String orderOd, String origOrderOd, boolean autoGen, char side)  {
+    public void sendOrderCancelRequest(String orderOd, String origOrderOd, char side)  {
         OrderCancelRequest orderCancelRequest = new OrderCancelRequest();
         orderCancelRequest.set(new Side(side));
         orderCancelRequest.set(new OrigClOrdID(origOrderOd));
-        orderCancelRequest.set(autoGen ? new ClOrdID(this.origOrderID.getText()) : new ClOrdID(orderOd));
+        orderCancelRequest.set(new ClOrdID(orderOd));
         orderCancelRequest.set(new TransactTime());
         orderCancelRequest.set(new Symbol("N/A"));
         try {
@@ -121,11 +121,11 @@ public class Initator implements Application{
 
     }
 
-    public void sendOrderCancelReplaceRequest(String size, String price, String orderOd,  String origOrderOd, boolean autoGen, char side) {
+    public void sendOrderCancelReplaceRequest(String size, String price, String orderOd,  String origOrderOd, char side) {
         OrderCancelReplaceRequest orderCancelReplaceRequest = new OrderCancelReplaceRequest();
         orderCancelReplaceRequest.set(new Side(side));
         orderCancelReplaceRequest.set(new OrdType(OrdType.LIMIT));
-        orderCancelReplaceRequest.set(autoGen ? new ClOrdID(this.origOrderID.getText()) : new ClOrdID(orderOd));
+        orderCancelReplaceRequest.set(new ClOrdID(orderOd));
         orderCancelReplaceRequest.set(new OrigClOrdID(origOrderOd));
         orderCancelReplaceRequest.set(new TransactTime());
         orderCancelReplaceRequest.set(new Symbol("N/A"));

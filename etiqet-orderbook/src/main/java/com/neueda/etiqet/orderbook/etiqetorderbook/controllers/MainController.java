@@ -115,8 +115,8 @@ public class MainController implements Initializable {
     public TextField textFieldOrderID;
     @FXML
     public TextField textFieldOrigOrderID;
-    @FXML
-    public CheckBox checkBoxAutoGen;
+//    @FXML
+//    public CheckBox checkBoxAutoGen;
     @FXML
     public Button buttonSendOrder;
     @FXML
@@ -535,20 +535,20 @@ public class MainController implements Initializable {
             return;
         }
         String textFieldOrigOrderID = this.textFieldOrigOrderID.getText();
-        boolean checkBoxAutoGenSelected = checkBoxAutoGen.isSelected();
+//        boolean checkBoxAutoGenSelected = checkBoxAutoGen.isSelected();
         String comboOrdersValue = this.comboOrders.getValue().toString();
         char comboSideValue = this.comboSide.getValue().toString().equals("SELL") ? '2' : '1';
 
         switch (comboOrdersValue) {
             case Constants.COMBO_NEW_ORDER:
                 initator.sendNewOrderSingle(textFieldSizeText, textFieldPrice, textFieldOrderID,
-                    checkBoxAutoGenSelected, comboSideValue);
+                     comboSideValue);
                 break;
             case Constants.COMBO_CANCEL:
-                initator.sendOrderCancelRequest(textFieldOrderID, textFieldOrigOrderID, checkBoxAutoGenSelected, comboSideValue);
+                initator.sendOrderCancelRequest(textFieldOrderID, textFieldOrigOrderID, comboSideValue);
                 break;
             case Constants.COMBO_REPLACE:
-                initator.sendOrderCancelReplaceRequest(textFieldSizeText, textFieldPrice, textFieldOrderID, textFieldOrigOrderID, checkBoxAutoGenSelected, comboSideValue);
+                initator.sendOrderCancelReplaceRequest(textFieldSizeText, textFieldPrice, textFieldOrderID, textFieldOrigOrderID,  comboSideValue);
                 break;
         }
     }
@@ -658,12 +658,12 @@ public class MainController implements Initializable {
         cleanTrades(actionEvent);
     }
 
-    public void setAutoGenValue(ActionEvent actionEvent) {
-        this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(8));
-        if (!this.checkBoxAutoGen.isSelected()) {
-            this.textFieldOrderID.setText("");
-        }
-    }
+//    public void setAutoGenValue(ActionEvent actionEvent) {
+//        this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(8));
+//        if (!this.checkBoxAutoGen.isSelected()) {
+//            this.textFieldOrderID.setText("");
+//        }
+//    }
 
     public void resetSequenceNumber(ActionEvent actionEvent) {
         try {

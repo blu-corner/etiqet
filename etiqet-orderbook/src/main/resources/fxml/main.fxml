@@ -2,9 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -158,23 +158,24 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="643.0" prefWidth="810.0">
                             <children>
-                                <GridPane alignment="CENTER" layoutY="21.0" prefHeight="50.0" prefWidth="810.0">
+                                <GridPane alignment="CENTER" layoutY="21.0" prefHeight="50.0" prefWidth="800.0">
                                     <columnConstraints>
-                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="122.0" />
-                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="113.0" />
-                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="81.0" />
-                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="0.0" prefWidth="68.0" />
-                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="96.0" />
-                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="99.0" />
-                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="67.0" />
-                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="99.0" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="83.0" />
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="142.0" minWidth="100.0" prefWidth="120.0" />
+                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="59.0" />
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="0.0" prefWidth="66.0" />
+                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="84.0" />
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="94.0" />
+                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="137.0" />
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="76.0" />
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="83.0" />
                                     </columnConstraints>
                                     <rowConstraints>
-                                        <RowConstraints maxHeight="108.0" minHeight="10.0" prefHeight="66.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <children>
-                                        <ComboBox fx:id="comboOrders" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0">
+                                        <ComboBox fx:id="comboOrders" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                                             <tooltip>
                                                 <Tooltip text="Transaction (D,F,G)">
                                                     <font>
@@ -183,10 +184,10 @@
                                                 </Tooltip>
                                             </tooltip>
                                             <GridPane.margin>
-                                                <Insets left="20.0" />
+                                                <Insets />
                                             </GridPane.margin>
                                         </ComboBox>
-                                        <ComboBox fx:id="comboSide" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                                        <ComboBox fx:id="comboSide" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="110.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                                             <tooltip>
                                                 <Tooltip text="Side (54)">
                                                     <font>
@@ -195,11 +196,11 @@
                                                 </Tooltip>
                                             </tooltip>
                                             <GridPane.margin>
-                                                <Insets left="10.0" />
+                                                <Insets />
                                             </GridPane.margin>
 
                                         </ComboBox>
-                                        <TextField fx:id="textFieldSize" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="58.0" promptText="Qty" GridPane.columnIndex="2">
+                                        <TextField fx:id="textFieldSize" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="55.0" promptText="0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                                             <tooltip>
                                                 <Tooltip text="Quantity (38)">
                                                     <font>
@@ -208,7 +209,7 @@
                                                 </Tooltip>
                                             </tooltip>
                                         </TextField>
-                                        <TextField fx:id="textFieldPrice" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="55.0" promptText="Price" GridPane.columnIndex="3" GridPane.halignment="CENTER">
+                                        <TextField fx:id="textFieldPrice" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="55.0" promptText="0" GridPane.columnIndex="3" GridPane.halignment="CENTER">
                                             <tooltip>
                                                 <Tooltip text="Price (44)">
                                                     <font>
@@ -217,7 +218,7 @@
                                                 </Tooltip>
                                             </tooltip>
                                         </TextField>
-                                        <TextField fx:id="textFieldOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="81.0" promptText="OrderID" GridPane.columnIndex="5" GridPane.halignment="CENTER">
+                                        <TextField fx:id="textFieldOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" promptText="ID" GridPane.columnIndex="5" GridPane.halignment="CENTER">
                                             <tooltip>
                                                 <Tooltip text="OrderID (11)">
                                                     <font>
@@ -226,7 +227,7 @@
                                                 </Tooltip>
                                             </tooltip>
                                         </TextField>
-                                        <TextField fx:id="textFieldOrigOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="84.0" promptText="OrigOrderID" GridPane.columnIndex="4">
+                                        <TextField fx:id="textFieldOrigOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" promptText="ID" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                                             <tooltip>
                                                 <Tooltip text="Origin OrderID (41)">
                                                     <font>
@@ -235,13 +236,34 @@
                                                 </Tooltip>
                                             </tooltip>
                                         </TextField>
-                                        <CheckBox fx:id="checkBoxAutoGen" mnemonicParsing="false" onAction="#setAutoGenValue" prefHeight="17.0" prefWidth="102.0" text="Auto gen" GridPane.columnIndex="6" GridPane.halignment="CENTER" />
-                                        <Button fx:id="buttonSendOrder" mnemonicParsing="false" onAction="#sendOrder" prefHeight="25.0" prefWidth="80.0" text="SEND" GridPane.columnIndex="8" GridPane.halignment="LEFT" />
+<!--                                        <CheckBox fx:id="checkBoxAutoGen" mnemonicParsing="false" onAction="#setAutoGenValue" prefHeight="17.0" prefWidth="102.0" text="Auto gen" GridPane.columnIndex="6" GridPane.halignment="CENTER" />-->
+                                        <Button fx:id="buttonSendOrder" mnemonicParsing="false" onAction="#sendOrder" prefHeight="25.0" prefWidth="90.0" text="SEND" GridPane.columnIndex="8" GridPane.halignment="RIGHT">
+                                 <GridPane.margin>
+                                    <Insets right="2.0" />
+                                 </GridPane.margin></Button>
+                              <Button fx:id="buttonAutoGen" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="AutoGen" GridPane.columnIndex="6" GridPane.halignment="LEFT" />
+                              <Label text="Transaction" GridPane.halignment="RIGHT">
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label prefHeight="17.0" prefWidth="29.0" text="Side" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="5.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label text="Price" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+                              <Label text="OrderQty" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                              <Label text="ClOrdID" GridPane.columnIndex="4" GridPane.halignment="RIGHT" />
+                              <Label text="OrigClOrdID" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                              <Hyperlink fx:id="linkAdvanced" contentDisplay="RIGHT" onAction="#launchAdvancedRequest" prefHeight="23.0" prefWidth="55.0" text="Avanced" GridPane.columnIndex="8" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="2.0" />
+                                 </GridPane.margin></Hyperlink>
                                     </children>
                                 </GridPane>
-                                <ListView fx:id="listViewActions" layoutX="14.0" layoutY="109.0" prefHeight="584.0" prefWidth="782.0" />
-                                <Button fx:id="buttonClearMainLog" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" onAction="#clearMainLog" text="CLEAR" />
-                                <Button fx:id="buttonAdvancedRequest" layoutX="714.0" layoutY="77.0" mnemonicParsing="false" onAction="#launchAdvancedRequest" prefHeight="25.0" prefWidth="82.0" text="ADVANCED" />
+                                <ListView fx:id="listViewActions" layoutX="14.0" layoutY="96.0" prefHeight="348.0" prefWidth="782.0" />
+                                <Button fx:id="buttonClearMainLog" layoutX="14.0" layoutY="453.0" mnemonicParsing="false" onAction="#clearMainLog" text="CLEAR" />
                             </children>
                         </AnchorPane>
                     </content>
