@@ -7,6 +7,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import quickfix.Message;
@@ -19,11 +21,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Utils {
+
+    static DecimalFormat integerFormat = new DecimalFormat("#");
+    static DecimalFormat decimalFormat = new DecimalFormat("#.0###");
 
     public static String replaceSOH(Message message) {
         String content = message.toString();
@@ -179,6 +186,44 @@ public class Utils {
         return StringUtils.leftPad(String.valueOf(checksum), 3, '0');
 
     }
+
+
+    public static void configureTextFieldToAcceptOnlyIntegerValues(TextField textField) {
+        if (textField != null)
+            textField.setTextFormatter(integerTextFormatter);
+    }
+    public static void configureTextFieldToAcceptOnlyDecimalValues(TextField textField) {
+        if (textField != null)
+            textField.setTextFormatter(decimalTextFormatter);
+    }
+
+
+    private static final TextFormatter<Object> integerTextFormatter = new TextFormatter<>(change -> {
+        if (change.getControlNewText().isEmpty()) {
+            return change;
+        }
+        ParsePosition parsePosition = new ParsePosition(0);
+        Object object = integerFormat.parse(change.getControlNewText(), parsePosition);
+
+        if (object == null || parsePosition.getIndex() < change.getControlNewText().length()) {
+            return null;
+        } else {
+            return change;
+        }
+    });
+    private static final TextFormatter<Object> decimalTextFormatter = new TextFormatter<>(change -> {
+        if (change.getControlNewText().isEmpty()) {
+            return change;
+        }
+        ParsePosition parsePosition = new ParsePosition(0);
+        Object object = decimalFormat.parse(change.getControlNewText(), parsePosition);
+
+        if (object == null || parsePosition.getIndex() < change.getControlNewText().length()) {
+            return null;
+        } else {
+            return change;
+        }
+    });
 
     public void launchDatepicker() {
         try {

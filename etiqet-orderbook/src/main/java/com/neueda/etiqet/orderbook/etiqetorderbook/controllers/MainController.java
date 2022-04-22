@@ -209,6 +209,9 @@ public class MainController implements Initializable {
         setUseDefaultPort(true);
 
         fixSessions = new ArrayList<>();
+
+        Utils.configureTextFieldToAcceptOnlyIntegerValues(textFieldSize);
+        Utils.configureTextFieldToAcceptOnlyDecimalValues(textFieldPrice);
     }
 
     private void showFixFields(MouseEvent e) {
