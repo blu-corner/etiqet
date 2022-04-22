@@ -241,7 +241,7 @@
                                  <GridPane.margin>
                                     <Insets right="2.0" />
                                  </GridPane.margin></Button>
-                              <Button fx:id="buttonAutoGen" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="AutoGen" GridPane.columnIndex="6" GridPane.halignment="LEFT" />
+                              <Button fx:id="buttonAutoGen" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="AutoGen" GridPane.columnIndex="6" GridPane.halignment="LEFT" onAction="#setAutoGenValue"/>
                               <Label text="Transaction" GridPane.halignment="RIGHT">
                                  <GridPane.margin>
                                     <Insets />

@@ -107,6 +107,9 @@ public class Constants {
     public static final String KEY_PRICE = "44";
     public static final String KEY_CL_ORD_ID = "11";
     public static final String KEY_SIDE = "54";
+    public static final String KEY_ORIG_CL_ORD_ID = "41";
+    public static final Object COMBO_NEW_ORDER_ID = "New";
+
 
     //hmTagValue
     static{

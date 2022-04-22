@@ -616,3 +616,38 @@
 20220422-10:02:32: Received logout request
 20220422-10:02:32: Sent logout response
 20220422-10:02:32: Disconnecting: Received logout request
+20220422-10:28:57: Session FIX.4.4:SERVER->CLIENT55559 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220422-10:28:57: Created session: FIX.4.4:SERVER->CLIENT55559
+20220422-10:29:59: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:58555
+20220422-10:29:59: Acceptor heartbeat set to 30 seconds
+20220422-10:30:00: Received logon
+20220422-10:30:00: Responding to Logon request
+20220422-10:30:00: Disconnecting: Encountered END_OF_STREAM
+20220422-10:30:30: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:58579
+20220422-10:30:30: Acceptor heartbeat set to 10 seconds
+20220422-10:30:30: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220422-10:30:30: Received logon
+20220422-10:30:30: Responding to Logon request
+20220422-10:31:54: Sent test request TEST
+20220422-10:32:03: Disconnecting: Timed out waiting for heartbeat
+20220422-10:32:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:58609
+20220422-10:32:27: Acceptor heartbeat set to 10 seconds
+20220422-10:32:27: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220422-10:32:27: Received logon
+20220422-10:32:27: Responding to Logon request
+20220422-10:33:28: Received logout request
+20220422-10:33:28: Sent logout response
+20220422-10:33:28: Disconnecting: Received logout request
+20220422-10:35:02: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:58675
+20220422-10:35:02: Acceptor heartbeat set to 30 seconds
+20220422-10:35:02: Received logon
+20220422-10:35:02: Responding to Logon request
+20220422-10:35:02: Disconnecting: Encountered END_OF_STREAM
+20220422-10:35:33: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:58696
+20220422-10:35:33: Acceptor heartbeat set to 10 seconds
+20220422-10:35:33: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220422-10:35:33: Received logon
+20220422-10:35:33: Responding to Logon request
+20220422-10:45:58: Received logout request
+20220422-10:45:58: Sent logout response
+20220422-10:45:58: Disconnecting: Received logout request

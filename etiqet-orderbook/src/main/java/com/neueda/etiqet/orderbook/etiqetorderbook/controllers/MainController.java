@@ -658,12 +658,9 @@ public class MainController implements Initializable {
         cleanTrades(actionEvent);
     }
 
-//    public void setAutoGenValue(ActionEvent actionEvent) {
-//        this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(8));
-//        if (!this.checkBoxAutoGen.isSelected()) {
-//            this.textFieldOrderID.setText("");
-//        }
-//    }
+    public void setAutoGenValue(ActionEvent actionEvent) {
+        this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(8));
+    }
 
     public void resetSequenceNumber(ActionEvent actionEvent) {
         try {

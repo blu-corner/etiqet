@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -51,6 +52,8 @@ public class AdvancedRequestController implements Initializable {
     public TextArea textAreaFix;
     public TextField arTextFieldValue;
     public ComboBox<String> comboKeyTags;
+    public ComboBox<String> comboStoredOrigID;
+    private List<String> storedOrigIDs;
 
     private MainController mainController;
 
@@ -67,6 +70,7 @@ public class AdvancedRequestController implements Initializable {
         tableViewTags.getItems().addAll(Constants.defaultTags);
         textAreaFix.appendText(Utils.fixEncoder(Constants.defaultTags));
         tags = new HashSet<>();
+        storedOrigIDs = new ArrayList<>();
         xmlReader("./spec/FIX44.xml");
     }
 
@@ -87,6 +91,8 @@ public class AdvancedRequestController implements Initializable {
             substituteTag(data.getRowValue().getKey(), data.getNewValue());
         });
         tableViewTags.setEditable(true);
+        comboStoredOrigID.getItems().add("");
+        comboStoredOrigID.getItems().add("New");
     }
 
 
@@ -285,4 +291,38 @@ public class AdvancedRequestController implements Initializable {
     }
 
 
+    public void actionComboStoredOrigID(ActionEvent actionEvent) {
+        comboStoredID();
+    }
+
+    public void actionComboMouseStoredOrigID(MouseEvent mouseEvent) {
+        comboStoredID();
+    }
+
+    private void comboStoredID(){
+        try{
+            if (StringUtils.isEmpty(comboStoredOrigID.getValue())){
+                return;
+            }
+            tableViewTags.getItems().removeIf(tag -> tag.getKey().equals(Constants.KEY_ORIG_CL_ORD_ID));
+            Tag tag = new Tag();
+            tag.setKey(Constants.KEY_ORIG_CL_ORD_ID);
+            tag.setField("OrigClOrdID");
+            String newOrigOrdId = RandomStringUtils.randomAlphanumeric(8);
+            if (comboStoredOrigID.getValue().equals(Constants.COMBO_NEW_ORDER_ID)){
+                tag.setValue(newOrigOrdId);
+                tableViewTags.getItems().add(tag);
+                storedOrigIDs.add(newOrigOrdId);
+                comboStoredOrigID.getItems().add(newOrigOrdId);
+
+            }else{
+                tag.setValue(comboStoredOrigID.getValue());
+                tableViewTags.getItems().add(tag);
+            }
+            updateFixTextArea();
+        }catch (Exception ex){
+            this.logger.warn("Exception in comboStoredID -> {}", ex.getLocalizedMessage());
+        }
+
+    }
 }
