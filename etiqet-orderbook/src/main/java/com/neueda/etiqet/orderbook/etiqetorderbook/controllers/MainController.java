@@ -6,6 +6,7 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.FixSession;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.Initator;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
+import com.neueda.etiqet.orderbook.etiqetorderbook.utils.TooltipTableRow;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -79,56 +80,30 @@ public class MainController implements Initializable {
         this.changed = changed;
     }
 
-    @FXML
-    public TableView<Order> orderBookBuyTableView;
-    @FXML
-    public TableView<Order> orderBookSellTableView;
-    @FXML
-    public TableView<Action> actionTableView;
-    @FXML
-    public Circle circleStartAcceptor;
-    @FXML
-    private Circle circleStartInitiator;
-    @FXML
-    private MenuItem startAcceptor;
-    @FXML
-    private MenuItem startInitiator;
-    @FXML
-    private MenuBar menuBarGeneral;
-    @FXML
-    private Tab tabAcceptor;
-    @FXML
-    private Tab tabInitiator;
-    @FXML
-    private ComboBox comboOrders;
-    @FXML
-    private ComboBox comboSide;
-    @FXML
-    private TextArea logTextArea;
-    @FXML
-    private TabPane mainTabPane;
-    @FXML
-    public TextField textFieldSize;
-    @FXML
-    public TextField textFieldPrice;
-    @FXML
-    public TextField textFieldOrderID;
-    @FXML
-    public TextField textFieldOrigOrderID;
-//    @FXML
-//    public CheckBox checkBoxAutoGen;
-    @FXML
-    public Button buttonSendOrder;
-    @FXML
-    public ListView listViewLog;
-    @FXML
-    public ListView listViewActions;
-    @FXML
-    public CheckMenuItem checkMenuItemRemPort;
-    @FXML
-    public Menu menuItemMessagePort;
-    @FXML
-    public CheckMenuItem menuItemDecodeOnClick;
+    @FXML public TableView<Order> orderBookBuyTableView;
+    @FXML public TableView<Order> orderBookSellTableView;
+    @FXML public TableView<Action> actionTableView;
+    @FXML public Circle circleStartAcceptor;
+    @FXML private Circle circleStartInitiator;
+    @FXML private MenuItem startAcceptor;
+    @FXML private MenuItem startInitiator;
+    @FXML private MenuBar menuBarGeneral;
+    @FXML private Tab tabAcceptor;
+    @FXML private Tab tabInitiator;
+    @FXML private ComboBox comboOrders;
+    @FXML private ComboBox comboSide;
+    @FXML private TextArea logTextArea;
+    @FXML private TabPane mainTabPane;
+    @FXML public TextField textFieldSize;
+    @FXML public TextField textFieldPrice;
+    @FXML public TextField textFieldOrderID;
+    @FXML public TextField textFieldOrigOrderID;
+    @FXML public Button buttonSendOrder;
+    @FXML public ListView listViewLog;
+    @FXML public ListView listViewActions;
+    @FXML public CheckMenuItem checkMenuItemRemPort;
+    @FXML public Menu menuItemMessagePort;
+    @FXML public CheckMenuItem menuItemDecodeOnClick;
 
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
@@ -150,10 +125,6 @@ public class MainController implements Initializable {
     public TableColumn<Action, String> actionAgreedPriceTableColumn;
 
     public Circle circle;
-    public TextArea textAreaRangeA;
-    public TextArea textAreaRangeB;
-
-    private SocketAcceptor socketAcceptor;
     private static Thread orderBook;
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
@@ -176,7 +147,7 @@ public class MainController implements Initializable {
         actionTableView.setOnMouseClicked(this::cellToClipBoard);
         orderBookBuyTableView.setOnMouseClicked(this::cellToClipBoard);
         orderBookSellTableView.setOnMouseClicked(this::cellToClipBoard);
-//        listViewLog.setOnMouseClicked(this::cellToClipBoard);
+
         listViewLog.setOnMouseClicked(this::showFixFields);
         menuItemDecodeOnClick.setSelected(true);
 

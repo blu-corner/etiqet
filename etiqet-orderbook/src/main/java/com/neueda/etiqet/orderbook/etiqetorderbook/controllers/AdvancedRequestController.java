@@ -198,7 +198,6 @@ public class AdvancedRequestController implements Initializable {
                 Optional<String> any = comboStoredOrigID.getItems().stream().filter(v -> v.equals(tag.getValue())).findAny();
                 if (any.isEmpty()){
                     comboStoredOrigID.getItems().add(tag.getValue());
-
                 }
             }
         }

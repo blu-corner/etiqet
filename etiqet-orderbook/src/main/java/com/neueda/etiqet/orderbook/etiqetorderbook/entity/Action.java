@@ -6,7 +6,7 @@ public class Action {
     public Type type;
     private String buyID;
     private String sellID;
-    private LocalDateTime time;
+    private String time;
     private Double buySize;
     private Double sellSize;
     private Double leaveQty;
@@ -19,7 +19,7 @@ public class Action {
         REPLACED
     }
 
-    public Action(Type type, String orderIDBuy, String orderIDSell, LocalDateTime time, Double buySize, Double sellSize, Double leaveQty, Double agreedPrice) {
+    public Action(Type type, String orderIDBuy, String orderIDSell, String time, Double buySize, Double sellSize, Double leaveQty, Double agreedPrice) {
         this.type = type;
         this.buyID = orderIDBuy;
         this.sellID = orderIDSell;
@@ -46,11 +46,11 @@ public class Action {
         this.buyID = buyID;
     }
 
-    public LocalDateTime getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(LocalDateTime time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

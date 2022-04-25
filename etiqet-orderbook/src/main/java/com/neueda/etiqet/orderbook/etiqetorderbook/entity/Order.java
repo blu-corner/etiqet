@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 
 public class Order {
     private String orderID;
-    private LocalDateTime time;
+    private String time;
     private Double size;
     private Double price;
 
-    public Order(String orderID, LocalDateTime time, Double size, Double price) {
+    public Order(String orderID, String time, Double size, Double price) {
         this.orderID = orderID;
         this.time = time;
         this.size = size;
@@ -23,11 +23,11 @@ public class Order {
         this.orderID = orderID;
     }
 
-    public LocalDateTime getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(LocalDateTime time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

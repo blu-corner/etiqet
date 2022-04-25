@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -224,6 +225,14 @@ public class Utils {
             return change;
         }
     });
+
+
+    public static String getFormattedDate() {
+        String pattern = "yyyyMMdd-HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date());
+        return date;
+    }
 
     public void launchDatepicker() {
         try {

@@ -1183,9 +1183,7 @@ public class Constants {
         defaultTags.add(new Tag(Utils.getKeyFromValue("MsgType"), "MsgType", "D"));
         defaultTags.add(new Tag(Utils.getKeyFromValue("ClOrdID"), "ClOrdID", RandomStringUtils.randomAlphanumeric(8)));
 //        defaultTags.add(new Tag(Utils.getKeyFromValue("OrigClOrdID"), "OrigClOrdID", ""));
-        String pattern = "yyyyMMdd-HH:mm:ss";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String date = simpleDateFormat.format(new Date());
+        String date = Utils.getFormattedDate();
         defaultTags.add(new Tag(Utils.getKeyFromValue("SendingTime"), "SendingTime", date));
         defaultTags.add(new Tag(Utils.getKeyFromValue("TransactTime"), "TransactTime", date));
         defaultTags.add(new Tag(Utils.getKeyFromValue("Symbol"), "Symbol", "N/A"));
@@ -1194,4 +1192,6 @@ public class Constants {
         defaultTags.add(new Tag(Utils.getKeyFromValue("Side"), "Side", "1"));
         defaultTags.add(new Tag(Utils.getKeyFromValue("Price"), "Price", "50"));
     }
+
+
 }

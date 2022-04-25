@@ -109,7 +109,7 @@ public class Acceptor implements Application {
                     reports.add(generateExecReport(ExecType.PENDING_NEW, clOrdID, Constants.NEW, Constants.NEW, symbol, side, price, ordQty));
                     reports.add(generateExecReport(ExecType.NEW, clOrdID, orderId, execId, symbol, side, price, ordQty));
                     logger.info("################################ NEW ORDER SINGLE");
-                    addNewOrder(side, new Order(clOrdID.getValue(), LocalDateTime.now(), ordQty.getValue(), price.getValue()));
+                    addNewOrder(side, new Order(clOrdID.getValue(), Utils.getFormattedDate(), ordQty.getValue(), price.getValue()));
                     ExecutionReport finalExecutionReport = lookForNewTrade(clOrdID, orderId, execId, symbol, side, price, ordQty);
                     if (finalExecutionReport != null) {
                         reports.add(finalExecutionReport);
@@ -152,7 +152,7 @@ public class Acceptor implements Application {
                         reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
                     } else {
                         logger.info("################################ ORDER CANCEL REPLACE REQUEST");
-                        Order order = new Order(origClOrdID.getValue(), LocalDateTime.now(), ordQty.getValue(), price.getValue());
+                        Order order = new Order(origClOrdID.getValue(), Utils.getFormattedDate(), ordQty.getValue(), price.getValue());
                         reports.add(generateExecReport(ExecType.PENDING_REPLACE, clOrdID, Constants.NEW, Constants.NEW, symbol, side, ordQty, new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.REPLACED, clOrdID, orderId, execId, symbol, side, ordQty, price));
                         ExecutionReport tradeWhenReplacing = replaceOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, ordQty, price, order);
@@ -346,7 +346,7 @@ public class Acceptor implements Application {
                         printTrade(topBuy, topSell);
                         this.mainController.orderBookSellTableView.getItems().remove(topSell);
                         //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price
-                        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(), topBuy.getSize(), topSell.getSize(), 0d, topSell.getPrice());
+                        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), Utils.getFormattedDate(), topBuy.getSize(), topSell.getSize(), 0d, topSell.getPrice());
                         this.mainController.actionTableView.getItems().add(action);
                         this.mainController.reorderActionTableView();
                         this.mainController.reorderBookBuyTableView();
@@ -365,7 +365,7 @@ public class Acceptor implements Application {
                             this.mainController.orderBookSellTableView.getItems().remove(topSell);
                             mainController.orderBookBuyTableView.getItems().remove(0);
                             mainController.orderBookBuyTableView.getItems().add(topBuy);
-                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(), originalSize, topSell.getSize(), leaveQty, topSell.getPrice());
+                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), Utils.getFormattedDate(), originalSize, topSell.getSize(), leaveQty, topSell.getPrice());
                         } else {
                             leaveQty = topSell.getSize() - topBuy.getSize();
                             originalSize = topSell.getSize();
@@ -374,7 +374,7 @@ public class Acceptor implements Application {
                             mainController.orderBookBuyTableView.getItems().remove(topBuy);
                             mainController.orderBookSellTableView.getItems().remove(0);
                             mainController.orderBookSellTableView.getItems().add(topSell);
-                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), LocalDateTime.now(),topBuy.getSize(),  originalSize, leaveQty, topSell.getPrice());
+                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), Utils.getFormattedDate(),topBuy.getSize(),  originalSize, leaveQty, topSell.getPrice());
                         }
 
                         this.mainController.actionTableView.getItems().add(action);
