@@ -651,3 +651,172 @@
 20220422-10:45:58: Received logout request
 20220422-10:45:58: Sent logout response
 20220422-10:45:58: Disconnecting: Received logout request
+20220425-08:21:50: Session FIX.4.4:SERVER->CLIENT55559 schedule is daily, 00:00:00-UTC - 00:00:00-UTC
+20220425-08:21:50: Session state is not current; resetting FIX.4.4:SERVER->CLIENT55559
+20220425-08:21:50: Created session: FIX.4.4:SERVER->CLIENT55559
+20220425-08:21:56: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:61303
+20220425-08:21:56: Acceptor heartbeat set to 30 seconds
+20220425-08:21:56: Received logon
+20220425-08:21:56: Responding to Logon request
+20220425-08:21:56: Disconnecting: Encountered END_OF_STREAM
+20220425-08:22:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:61326
+20220425-08:22:27: Acceptor heartbeat set to 10 seconds
+20220425-08:22:27: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-08:22:27: Received logon
+20220425-08:22:27: Responding to Logon request
+20220425-08:29:49: Received logout request
+20220425-08:29:49: Sent logout response
+20220425-08:29:49: Disconnecting: Received logout request
+20220425-09:06:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:65375
+20220425-09:06:27: Acceptor heartbeat set to 30 seconds
+20220425-09:06:27: Received logon
+20220425-09:06:27: Responding to Logon request
+20220425-09:06:27: Disconnecting: Encountered END_OF_STREAM
+20220425-09:06:58: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:65403
+20220425-09:06:58: Acceptor heartbeat set to 10 seconds
+20220425-09:06:58: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-09:06:58: Received logon
+20220425-09:06:58: Responding to Logon request
+20220425-09:09:38: Received logout request
+20220425-09:09:38: Sent logout response
+20220425-09:09:38: Disconnecting: Received logout request
+20220425-09:09:56: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:65442
+20220425-09:09:56: Acceptor heartbeat set to 30 seconds
+20220425-09:09:56: Received logon
+20220425-09:09:56: Responding to Logon request
+20220425-09:09:56: Disconnecting: Encountered END_OF_STREAM
+20220425-09:10:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:65463
+20220425-09:10:27: Acceptor heartbeat set to 10 seconds
+20220425-09:10:27: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-09:10:27: Received logon
+20220425-09:10:27: Responding to Logon request
+20220425-09:10:41: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=41: 8=FIX.4.49=13535=D34=349=CLIENT5555952=20220425-09:10:41.66256=SERVER11=wRe53ZrE38=10040=241=rwL66Diw44=5054=155=N/A60=20220425-11:09:5610=206
+20220425-09:10:41: Reject sent for message 3: Tag not defined for this message type, field=41
+20220425-09:11:07: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=41: 8=FIX.4.49=13535=D34=649=CLIENT5555952=20220425-09:11:07.13156=SERVER11=wRe53ZrE38=10040=241=ejHtriuu44=5054=155=N/A60=20220425-11:09:5610=086
+20220425-09:11:07: Reject sent for message 6: Tag not defined for this message type, field=41
+20220425-09:11:17: Sent test request TEST
+20220425-09:12:22: Disconnecting: Socket exception (/127.0.0.1:65463): java.io.IOException: An existing connection was forcibly closed by the remote host
+20220425-09:13:03: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:65505
+20220425-09:13:03: Acceptor heartbeat set to 30 seconds
+20220425-09:13:03: Received logon
+20220425-09:13:03: Responding to Logon request
+20220425-09:13:03: Disconnecting: Encountered END_OF_STREAM
+20220425-09:13:34: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:65527
+20220425-09:13:34: Acceptor heartbeat set to 10 seconds
+20220425-09:13:34: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-09:13:34: Received logon
+20220425-09:13:34: Responding to Logon request
+20220425-09:17:28: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=41: 8=FIX.4.49=13635=D34=2549=CLIENT5555952=20220425-09:17:28.08256=SERVER11=eKJfv5PE38=10040=241=WNIuWxxh44=5054=155=N/A60=20220425-11:13:0310=068
+20220425-09:17:28: Reject sent for message 25: Tag not defined for this message type, field=41
+20220425-09:17:29: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=41: 8=FIX.4.49=13635=D34=2649=CLIENT5555952=20220425-09:17:29.65756=SERVER11=eKJfv5PE38=10040=241=WNIuWxxh44=5054=155=N/A60=20220425-11:13:0310=078
+20220425-09:17:29: Reject sent for message 26: Tag not defined for this message type, field=41
+20220425-09:20:21: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=40: 8=FIX.4.49=13635=F34=4449=CLIENT5555952=20220425-09:20:21.36456=SERVER11=eKJfv5PE38=10040=241=M2ClX6l044=5054=155=N/A60=20220425-11:13:0310=131
+20220425-09:20:21: Reject sent for message 44: Tag not defined for this message type, field=40
+20220425-09:20:32: Sent test request TEST
+20220425-09:33:10: Received logout request
+20220425-09:33:10: Sent logout response
+20220425-09:33:10: Disconnecting: Received logout request
+20220425-09:35:00: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50221
+20220425-09:35:00: Acceptor heartbeat set to 30 seconds
+20220425-09:35:00: Received logon
+20220425-09:35:00: Responding to Logon request
+20220425-09:35:00: Disconnecting: Encountered END_OF_STREAM
+20220425-09:35:31: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50245
+20220425-09:35:31: Acceptor heartbeat set to 10 seconds
+20220425-09:35:31: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-09:35:31: Received logon
+20220425-09:35:31: Responding to Logon request
+20220425-09:50:37: Received logout request
+20220425-09:50:37: Sent logout response
+20220425-09:50:37: Disconnecting: Received logout request
+20220425-09:55:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50401
+20220425-09:55:27: Acceptor heartbeat set to 30 seconds
+20220425-09:55:28: Received logon
+20220425-09:55:28: Responding to Logon request
+20220425-09:55:28: Disconnecting: Encountered END_OF_STREAM
+20220425-09:55:58: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50422
+20220425-09:55:58: Acceptor heartbeat set to 10 seconds
+20220425-09:55:58: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-09:55:58: Received logon
+20220425-09:55:58: Responding to Logon request
+20220425-09:56:44: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=41: 8=FIX.4.49=13535=D34=649=CLIENT5555952=20220425-09:56:44.43856=SERVER11=JYIHM4DU38=10040=241=JYIHM4DU44=5054=155=N/A60=20220425-11:55:2710=014
+20220425-09:56:44: Reject sent for message 6: Tag not defined for this message type, field=41
+20220425-09:56:53: Sent test request TEST
+20220425-09:57:06: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=40: 8=FIX.4.49=13535=F34=949=CLIENT5555952=20220425-09:57:06.32956=SERVER11=JYIHM4DU38=10040=241=JYIHM4DU44=5054=155=N/A60=20220425-11:55:2710=017
+20220425-09:57:06: Reject sent for message 9: Tag not defined for this message type, field=40
+20220425-09:57:35: Received logout request
+20220425-09:57:35: Sent logout response
+20220425-09:57:35: Disconnecting: Received logout request
+20220425-10:09:15: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50578
+20220425-10:09:15: Acceptor heartbeat set to 30 seconds
+20220425-10:09:15: Received logon
+20220425-10:09:15: Responding to Logon request
+20220425-10:09:15: Disconnecting: Encountered END_OF_STREAM
+20220425-10:09:46: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50603
+20220425-10:09:46: Acceptor heartbeat set to 10 seconds
+20220425-10:09:46: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-10:09:46: Received logon
+20220425-10:09:46: Responding to Logon request
+20220425-10:10:34: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=40: 8=FIX.4.49=13635=F34=749=CLIENT5555952=20220425-10:10:34.53756=SERVER11=4sBNMcAJ138=10040=241=4sBNMcAJ44=5054=155=N/A60=20220425-12:09:1510=117
+20220425-10:10:34: Reject sent for message 7: Tag not defined for this message type, field=40
+20220425-10:10:44: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=40: 8=FIX.4.49=13635=F34=949=CLIENT5555952=20220425-10:10:44.82856=SERVER11=4sBNMcAJ138=10040=241=4sBNMcAJ44=5054=155=N/A60=20220425-12:09:1510=123
+20220425-10:10:44: Reject sent for message 9: Tag not defined for this message type, field=40
+20220425-10:12:25: Received logout request
+20220425-10:12:25: Sent logout response
+20220425-10:12:25: Disconnecting: Received logout request
+20220425-10:18:30: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50665
+20220425-10:18:30: Acceptor heartbeat set to 30 seconds
+20220425-10:18:30: Received logon
+20220425-10:18:30: Responding to Logon request
+20220425-10:18:30: Disconnecting: Encountered END_OF_STREAM
+20220425-10:19:01: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50688
+20220425-10:19:01: Acceptor heartbeat set to 10 seconds
+20220425-10:19:01: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-10:19:01: Received logon
+20220425-10:19:01: Responding to Logon request
+20220425-10:19:16: Received logout request
+20220425-10:19:16: Sent logout response
+20220425-10:19:16: Disconnecting: Received logout request
+20220425-10:20:51: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50721
+20220425-10:20:51: Acceptor heartbeat set to 30 seconds
+20220425-10:20:51: Received logon
+20220425-10:20:51: Responding to Logon request
+20220425-10:20:51: Disconnecting: Encountered END_OF_STREAM
+20220425-10:21:22: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:50742
+20220425-10:21:22: Acceptor heartbeat set to 10 seconds
+20220425-10:21:22: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-10:21:22: Received logon
+20220425-10:21:22: Responding to Logon request
+20220425-10:22:37: Received logout request
+20220425-10:22:37: Sent logout response
+20220425-10:22:37: Disconnecting: Received logout request
+20220425-10:31:08: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:54766
+20220425-10:31:08: Acceptor heartbeat set to 30 seconds
+20220425-10:31:08: Received logon
+20220425-10:31:08: Responding to Logon request
+20220425-10:31:08: Disconnecting: Encountered END_OF_STREAM
+20220425-10:31:39: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:54787
+20220425-10:31:39: Acceptor heartbeat set to 10 seconds
+20220425-10:31:39: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-10:31:39: Received logon
+20220425-10:31:39: Responding to Logon request
+20220425-10:32:52: Received logout request
+20220425-10:32:52: Sent logout response
+20220425-10:32:52: Disconnecting: Received logout request
+20220425-10:34:56: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:54888
+20220425-10:34:56: Acceptor heartbeat set to 30 seconds
+20220425-10:34:56: Received logon
+20220425-10:34:56: Responding to Logon request
+20220425-10:34:56: Disconnecting: Encountered END_OF_STREAM
+20220425-10:35:27: Accepting session FIX.4.4:SERVER->CLIENT55559 from /127.0.0.1:54920
+20220425-10:35:27: Acceptor heartbeat set to 10 seconds
+20220425-10:35:27: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20220425-10:35:27: Received logon
+20220425-10:35:27: Responding to Logon request
+20220425-10:36:04: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=41: 8=FIX.4.49=13535=D34=649=CLIENT5555952=20220425-10:36:04.96356=SERVER11=SPLLSN5G38=10040=241=22FVGucW44=5054=155=N/A60=20220425-12:34:5610=053
+20220425-10:36:04: Reject sent for message 6: Tag not defined for this message type, field=41
+20220425-10:37:37: Rejecting invalid message: quickfix.FieldException: Tag not defined for this message type, field=41: 8=FIX.4.49=13635=D34=1749=CLIENT5555952=20220425-10:37:37.46856=SERVER11=nnSckoVK38=10040=241=WrENqrXj44=5054=155=N/A60=20220425-12:34:5610=175
+20220425-10:37:37: Reject sent for message 17: Tag not defined for this message type, field=41
+20220425-10:40:19: Received logout request
+20220425-10:40:19: Sent logout response
+20220425-10:40:19: Disconnecting: Received logout request

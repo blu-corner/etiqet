@@ -26,6 +26,7 @@ import quickfix.field.*;
 import quickfix.fix44.MessageFactory;
 import quickfix.fix44.NewOrderSingle;
 
+import javax.print.DocFlavor;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -92,8 +93,8 @@ public class AdvancedRequestController implements Initializable {
             substituteTag(data.getRowValue().getKey(), data.getNewValue());
         });
         tableViewTags.setEditable(true);
-        comboStoredOrigID.getItems().add("");
-        comboStoredOrigID.getItems().add("New");
+        comboStoredOrigID.getItems().add(Constants.SENT_ORIG_CL_ORD_I_DS);
+        comboStoredOrigID.getSelectionModel().select(0);
     }
 
 
@@ -175,14 +176,31 @@ public class AdvancedRequestController implements Initializable {
     }
 
     public void arButtonSend(ActionEvent actionEvent) {
-        String msgType = tableViewTags.getItems().stream().filter(t -> t.getKey().equals(Constants.KEY_MSG_TYPE)).findFirst().get().getValue();
         try {
+            updateFixTextArea();
+            String msgType = tableViewTags.getItems().stream().filter(t -> t.getKey().equals(Constants.KEY_MSG_TYPE)).findFirst().get().getValue();
             MessageFactory messageFactory = new MessageFactory();
             Message message = messageFactory.create("FIX.4.4", msgType);
             message.fromString(Utils.replaceVerticalBar(textAreaFix.getText()), null, false, true);
             Session.sendToTarget(message, this.mainController.getSessionId());
+            addOrigClOrdID();
+            comboStoredOrigID.getSelectionModel().select(0);
         } catch (Exception ex) {
             this.logger.error("Exception in arButtonSend: {}", ex.getMessage());
+        }
+    }
+
+    private void addOrigClOrdID(){
+        Optional<Tag> tagWithClOrdID = tableViewTags.getItems().stream().filter(t -> t.getKey().equals(Constants.KEY_CL_ORD_ID)).findFirst();
+        if (tagWithClOrdID.isPresent()){
+            Tag tag = tagWithClOrdID.get();
+            if (!StringUtils.isEmpty(tag.getValue())){
+                Optional<String> any = comboStoredOrigID.getItems().stream().filter(v -> v.equals(tag.getValue())).findAny();
+                if (any.isEmpty()){
+                    comboStoredOrigID.getItems().add(tag.getValue());
+
+                }
+            }
         }
     }
 
@@ -302,28 +320,32 @@ public class AdvancedRequestController implements Initializable {
 
     private void comboStoredID(){
         try{
-            if (StringUtils.isEmpty(comboStoredOrigID.getValue())){
-                return;
-            }
-            tableViewTags.getItems().removeIf(tag -> tag.getKey().equals(Constants.KEY_ORIG_CL_ORD_ID));
-            Tag tag = new Tag();
-            tag.setKey(Constants.KEY_ORIG_CL_ORD_ID);
-            tag.setField("OrigClOrdID");
-            String newOrigOrdId = RandomStringUtils.randomAlphanumeric(8);
-            if (comboStoredOrigID.getValue().equals(Constants.COMBO_NEW_ORDER_ID)){
-                tag.setValue(newOrigOrdId);
-                tableViewTags.getItems().add(tag);
-                storedOrigIDs.add(newOrigOrdId);
-                comboStoredOrigID.getItems().add(newOrigOrdId);
-
-            }else{
+            if (!comboStoredOrigID.getValue().equals(Constants.SENT_ORIG_CL_ORD_I_DS)){
+                tableViewTags.getItems().removeIf(tag -> tag.getKey().equals(Constants.KEY_ORIG_CL_ORD_ID));
+                Tag tag = new Tag();
+                tag.setKey(Constants.KEY_ORIG_CL_ORD_ID);
+                tag.setField("OrigClOrdID");
                 tag.setValue(comboStoredOrigID.getValue());
                 tableViewTags.getItems().add(tag);
+                updateFixTextArea();
             }
-            updateFixTextArea();
+            comboStoredOrigID.getSelectionModel().select(0);
         }catch (Exception ex){
             this.logger.warn("Exception in comboStoredID -> {}", ex.getLocalizedMessage());
         }
 
+    }
+
+    public void setAutoGenValue(ActionEvent actionEvent) {
+        Optional<Tag> tagClOrdID = tableViewTags.getItems().stream().filter(tag -> tag.getKey().equals(Constants.KEY_CL_ORD_ID)).findFirst();
+        if (tagClOrdID.isPresent()){
+            Tag tag = tagClOrdID.get();
+            Tag newTag = new Tag();
+            newTag.setField(tag.getField());
+            newTag.setKey(tag.getKey());
+            newTag.setValue(RandomStringUtils.randomAlphanumeric(8));
+            tableViewTags.getItems().remove(tag);
+            tableViewTags.getItems().add(newTag);
+        }
     }
 }

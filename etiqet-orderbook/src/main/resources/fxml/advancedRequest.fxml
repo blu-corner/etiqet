@@ -31,7 +31,7 @@
       <Button fx:id="arButtonUpdate" layoutX="784.0" layoutY="576.0" mnemonicParsing="false" onAction="#arButtonUpdate" prefHeight="25.0" prefWidth="70.0" text="UPDATE" />
       <ComboBox fx:id="comboKeyTags" layoutX="579.0" layoutY="58.0" onAction="#actionComboKeysTag" onMouseClicked="#setFocusedAllText" prefHeight="25.0" prefWidth="276.0" />
       <Label layoutX="539.0" layoutY="62.0" prefHeight="17.0" prefWidth="36.0" text="Key" />
-      <ComboBox fx:id="comboStoredOrigID" layoutX="662.0" layoutY="312.0" onAction="#actionComboStoredOrigID" onMouseClicked="#actionComboMouseStoredOrigID" prefHeight="25.0" prefWidth="191.0" />
-      <Label layoutX="537.0" layoutY="316.0" prefHeight="17.0" prefWidth="105.0" text="Stored OrigClOrdID" />
+      <ComboBox fx:id="comboStoredOrigID" layoutX="680.0" layoutY="268.0" onAction="#actionComboStoredOrigID" onMouseClicked="#actionComboMouseStoredOrigID" prefHeight="25.0" prefWidth="173.0" />
+      <Button fx:id="arButtonAutoGenerateNewOrdID" layoutX="681.0" layoutY="213.0" mnemonicParsing="false" onAction="#setAutoGenValue" prefHeight="25.0" prefWidth="173.0" text="Auto-generate new ClOrdID" />
    </children>
 </AnchorPane>

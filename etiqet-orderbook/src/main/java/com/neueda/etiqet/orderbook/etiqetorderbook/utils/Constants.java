@@ -109,6 +109,7 @@ public class Constants {
     public static final String KEY_SIDE = "54";
     public static final String KEY_ORIG_CL_ORD_ID = "41";
     public static final Object COMBO_NEW_ORDER_ID = "New";
+    public static final String SENT_ORIG_CL_ORD_I_DS = "Sent OrigClOrdIDs";
 
 
     //hmTagValue
@@ -1181,7 +1182,7 @@ public class Constants {
         defaultTags.add(new Tag(Utils.getKeyFromValue(CONF_TARGET), CONF_TARGET, getConfig(INITIATOR_ROLE, CONF_TARGET)));
         defaultTags.add(new Tag(Utils.getKeyFromValue("MsgType"), "MsgType", "D"));
         defaultTags.add(new Tag(Utils.getKeyFromValue("ClOrdID"), "ClOrdID", RandomStringUtils.randomAlphanumeric(8)));
-        defaultTags.add(new Tag(Utils.getKeyFromValue("OrigClOrdID"), "OrigClOrdID", ""));
+//        defaultTags.add(new Tag(Utils.getKeyFromValue("OrigClOrdID"), "OrigClOrdID", ""));
         String pattern = "yyyyMMdd-HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(new Date());
