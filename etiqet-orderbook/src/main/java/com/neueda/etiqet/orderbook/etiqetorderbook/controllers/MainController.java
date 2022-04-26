@@ -59,8 +59,6 @@ import java.util.stream.Collectors;
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class MainController implements Initializable {
-
-
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
     private List<Order> sell;
@@ -119,6 +117,8 @@ public class MainController implements Initializable {
     public TableColumn<Order, String> clientIDSellTableColumn;
 
     public TableColumn<Action, String> actionTypeTableColumn;
+    public TableColumn<Action, String> actionTypeClientIdBuyTableColumn;
+    public TableColumn<Action, String> actionTypeClientIdSellTableColumn;
     public TableColumn<Action, String> actionOrderIdBuyTableColumn;
     public TableColumn<Action, String> actionOrderIdSellTableColumn;
     public TableColumn<Action, String> actionTimeTableColumn;
@@ -167,6 +167,8 @@ public class MainController implements Initializable {
         clientIDSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("ClientID"));
 
         actionTypeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Type"));
+        actionTypeClientIdBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuyClientID"));
+        actionTypeClientIdSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellClientID"));
         actionOrderIdBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuyID"));
         actionOrderIdSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellID"));
         actionTimeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
@@ -348,7 +350,7 @@ public class MainController implements Initializable {
         }
         return null;
     }
-    
+
 
     public void stop() {
         try {

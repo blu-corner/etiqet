@@ -333,6 +333,8 @@ public class Acceptor implements Application {
         try {
             Order topBuy = this.mainController.getBuy().size() > 0 ? this.mainController.getOrderedBuy().get(0) : null;
             Order topSell = this.mainController.getSell().size() > 0 ? this.mainController.getOrderedSell().get(0) : null;
+            String topBuyClientID = topBuy != null ? topBuy.getClientID() : "";
+            String topSellClientID = topSell != null ? topSell.getClientID() : "";
             if (topBuy != null && topSell != null) {
                 if (topBuy.getPrice().equals(topSell.getPrice())) {
                     this.mainController.setChanged(true);
@@ -346,7 +348,7 @@ public class Acceptor implements Application {
                         printTrade(topBuy, topSell);
                         this.mainController.orderBookSellTableView.getItems().remove(topSell);
                         //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price
-                        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), Utils.getFormattedDate(), topBuy.getSize(), topSell.getSize(), 0d, topSell.getPrice());
+                        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(),topBuyClientID, topSellClientID, Utils.getFormattedDate(), topBuy.getSize(), topSell.getSize(), 0d, topSell.getPrice());
                         this.mainController.actionTableView.getItems().add(action);
                         this.mainController.reorderActionTableView();
                         this.mainController.reorderBookBuyTableView();
@@ -365,7 +367,7 @@ public class Acceptor implements Application {
                             this.mainController.orderBookSellTableView.getItems().remove(topSell);
                             mainController.orderBookBuyTableView.getItems().remove(0);
                             mainController.orderBookBuyTableView.getItems().add(topBuy);
-                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), Utils.getFormattedDate(), originalSize, topSell.getSize(), leaveQty, topSell.getPrice());
+                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), topBuyClientID, topSellClientID,Utils.getFormattedDate(), originalSize, topSell.getSize(), leaveQty, topSell.getPrice());
                         } else {
                             leaveQty = topSell.getSize() - topBuy.getSize();
                             originalSize = topSell.getSize();
@@ -374,7 +376,7 @@ public class Acceptor implements Application {
                             mainController.orderBookBuyTableView.getItems().remove(topBuy);
                             mainController.orderBookSellTableView.getItems().remove(0);
                             mainController.orderBookSellTableView.getItems().add(topSell);
-                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), Utils.getFormattedDate(),topBuy.getSize(),  originalSize, leaveQty, topSell.getPrice());
+                            action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(),topBuyClientID, topSellClientID,Utils.getFormattedDate(),topBuy.getSize(),  originalSize, leaveQty, topSell.getPrice());
                         }
 
                         this.mainController.actionTableView.getItems().add(action);
@@ -392,6 +394,10 @@ public class Acceptor implements Application {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private String getClientID(Order topBuy) {
+        return topBuy.getClientID();
     }
 
     private void printTrade(Order buy, Order sell) {

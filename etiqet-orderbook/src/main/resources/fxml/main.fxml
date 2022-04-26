@@ -138,12 +138,14 @@
                                       </TableView>
                                     <TableView fx:id="actionTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="802.0" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                         <columns>
-                                            <TableColumn fx:id="actionTimeTableColumn" prefWidth="200.0" text="Time" />
-                                            <TableColumn fx:id="actionTypeTableColumn" prefWidth="100.0" text="Type" />
+                                            <TableColumn fx:id="actionTimeTableColumn" prefWidth="120.0" text="Time" />
+                                            <TableColumn fx:id="actionTypeTableColumn" prefWidth="50.0" text="Type" />
+                                            <TableColumn fx:id="actionTypeClientIdBuyTableColumn" prefWidth="80.0" text="BuyClientID" />
+                                            <TableColumn fx:id="actionTypeClientIdSellTableColumn" prefWidth="80.0" text="SellClientID" />
                                             <TableColumn fx:id="actionOrderIdBuyTableColumn" prefWidth="80.0" text="BuyID" />
                                             <TableColumn fx:id="actionOrderIdSellTableColumn" prefWidth="80.0" text="SellID" />
-                                            <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="80.0" text="BuySize" />
-                                            <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="80.0" text="SellSize" />
+                                            <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="62.0" text="BuySize" />
+                                            <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="62.0" text="SellSize" />
                                             <TableColumn fx:id="actionLeaveQtyTableColumn" prefWidth="80.0" text="LeavesQty" />
                                             <TableColumn fx:id="actionAgreedPriceTableColumn" prefWidth="100.0" text="AgreedPrice" />
                                         </columns>

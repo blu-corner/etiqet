@@ -1,6 +1,7 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.fix;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController;
+import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
@@ -73,15 +74,15 @@ public class FixSession {
             new SenderCompID("SERVER"),
             new TargetCompID("CLIENT"+port));
         Dictionary dictionary = new Dictionary();
-        dictionary.setString("ConnectionType", "acceptor");
-        dictionary.setString("SocketAcceptPort", String.valueOf(port));
-        dictionary.setString("FileStorePath", "stores/acceptor/store" + port);
-        dictionary.setString("FileLogPath", "logs/acceptor/log" + port);
-        dictionary.setString("DataDictionary", "spec/FIX44.xml");
-        dictionary.setString("StartTime", "00:00:00");
-        dictionary.setString("EndTime", "00:00:00");
-        dictionary.setString("UseDataDictionary", "Y");
-        dictionary.setString("ResetOnLogon", "Y");
+        dictionary.setString(Constants.CONF_CONNECTION_TYPE, "acceptor");
+        dictionary.setString(Constants.ACC_ACCEPT_PORT, String.valueOf(port));
+        dictionary.setString(Constants.CONF_FILE_STORE_PATH, "stores/acceptor/store" + port);
+        dictionary.setString(Constants.CONF_FILE_LOG_PATH, "logs/acceptor/log" + port);
+        dictionary.setString(Constants.CONF_DATA_DIC, "spec/FIX44.xml");
+        dictionary.setString(Constants.CONF_START_TIME, "00:00:00");
+        dictionary.setString(Constants.CONF_END_TIME, "00:00:00");
+        dictionary.setString(Constants.CONF_USE_DATA_DIC, "Y");
+        dictionary.setString(Constants.CONF_RESET_ON_LOGON, "Y");
         try {
             sessionSettings.set(sessionID, dictionary);
             MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
