@@ -120,18 +120,20 @@
                                     </Label>
                                       <TableView fx:id="orderBookBuyTableView" GridPane.rowIndex="1">
                                           <columns>
-                                              <TableColumn fx:id="timeBuyTableColumn" prefWidth="200.0" text="Time" />
+                                              <TableColumn fx:id="timeBuyTableColumn" prefWidth="120.0" text="Time" />
                                               <TableColumn fx:id="orderIDBuyTableColumn" prefWidth="100.0" text="OrderID" />
                                               <TableColumn fx:id="sizeBuyTableColumn" prefWidth="50.0" text="Size" />
                                               <TableColumn fx:id="priceBuyTableColumn" prefWidth="50.0" text="Price" />
+                                              <TableColumn fx:id="clientIDBuyTableColumn" prefWidth="80.0" text="ClientID" />
                                           </columns>
                                       </TableView>
                                       <TableView fx:id="orderBookSellTableView" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                           <columns>
-                                              <TableColumn fx:id="timeSellTableColumn" prefWidth="200.0" text="Time" />
+                                              <TableColumn fx:id="timeSellTableColumn" prefWidth="120.0" text="Time" />
                                               <TableColumn fx:id="orderIDSellTableColumn" prefWidth="100.0" text="OrderID" />
                                               <TableColumn fx:id="sizeSellTableColumn" prefWidth="50.0" text="Size" />
                                               <TableColumn fx:id="priceSellTableColumn" prefWidth="50.0" text="Price" />
+                                              <TableColumn fx:id="clientIDSellTableColumn" prefWidth="80.0" text="ClientID" />
                                           </columns>
                                       </TableView>
                                     <TableView fx:id="actionTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="802.0" GridPane.rowIndex="2" GridPane.valignment="TOP">

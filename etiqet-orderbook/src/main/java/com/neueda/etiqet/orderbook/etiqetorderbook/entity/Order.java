@@ -1,18 +1,18 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 
-import java.time.LocalDateTime;
-
 public class Order {
     private String orderID;
     private String time;
     private Double size;
     private Double price;
+    private String clientID;
 
-    public Order(String orderID, String time, Double size, Double price) {
+    public Order(String orderID, String time, Double size, Double price, String clientID) {
         this.orderID = orderID;
         this.time = time;
         this.size = size;
         this.price = price;
+        this.clientID = clientID;
     }
 
     public String getOrderID() {
@@ -45,6 +45,14 @@ public class Order {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
     }
 
     @Override

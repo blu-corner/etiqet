@@ -14,3 +14,4 @@
 /etiqet-orderbook/initiator*
 /etiqet-orderbook/store*
 /etiqet-orderbook/logs*
+/etiqet-orderbook/logs/*

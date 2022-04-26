@@ -12,6 +12,7 @@ public class Action {
     private Double leaveQty;
     private Double agreedPrice;
 
+
     public enum Type{
         PARTIAL_FILL,
         FILL,

@@ -15,7 +15,6 @@ import quickfix.field.*;
 import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.OrderCancelReject;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class Acceptor implements Application {
@@ -87,6 +86,7 @@ public class Acceptor implements Application {
         String orderId = RandomStringUtils.randomAlphanumeric(5);
         String execId = RandomStringUtils.randomAlphanumeric(5);
         List<Message> reports = new ArrayList<>();
+        String clientID = message.getHeader().getField(new SenderCompID()).getValue();
 
         DoubleField ordQty;
         CharField ordType;
@@ -109,7 +109,7 @@ public class Acceptor implements Application {
                     reports.add(generateExecReport(ExecType.PENDING_NEW, clOrdID, Constants.NEW, Constants.NEW, symbol, side, price, ordQty));
                     reports.add(generateExecReport(ExecType.NEW, clOrdID, orderId, execId, symbol, side, price, ordQty));
                     logger.info("################################ NEW ORDER SINGLE");
-                    addNewOrder(side, new Order(clOrdID.getValue(), Utils.getFormattedDate(), ordQty.getValue(), price.getValue()));
+                    addNewOrder(side, new Order(clOrdID.getValue(), Utils.getFormattedDate(), ordQty.getValue(), price.getValue(), clientID));
                     ExecutionReport finalExecutionReport = lookForNewTrade(clOrdID, orderId, execId, symbol, side, price, ordQty);
                     if (finalExecutionReport != null) {
                         reports.add(finalExecutionReport);
@@ -152,7 +152,7 @@ public class Acceptor implements Application {
                         reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
                     } else {
                         logger.info("################################ ORDER CANCEL REPLACE REQUEST");
-                        Order order = new Order(origClOrdID.getValue(), Utils.getFormattedDate(), ordQty.getValue(), price.getValue());
+                        Order order = new Order(origClOrdID.getValue(), Utils.getFormattedDate(), ordQty.getValue(), price.getValue(), clientID);
                         reports.add(generateExecReport(ExecType.PENDING_REPLACE, clOrdID, Constants.NEW, Constants.NEW, symbol, side, ordQty, new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.REPLACED, clOrdID, orderId, execId, symbol, side, ordQty, price));
                         ExecutionReport tradeWhenReplacing = replaceOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, ordQty, price, order);

@@ -81,9 +81,9 @@ public class ConfigController implements Initializable {
             acceptorFromPort.setText(getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT));
 
             String accSocketAcceptorPortRangeLimit = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT);
-            if (StringUtils.isEmpty(accSocketAcceptorPortRangeLimit)){
+            if (StringUtils.isEmpty(accSocketAcceptorPortRangeLimit)) {
                 acceptorToPort.setText(getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT));
-            }else{
+            } else {
                 acceptorToPort.setText(accSocketAcceptorPortRangeLimit);
             }
 
@@ -101,8 +101,8 @@ public class ConfigController implements Initializable {
             initiatorStartTime.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_START_TIME));
             initiatorEndTime.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_END_TIME));
             initiatorHeartBeat.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_HEART_BT_INT));
-            initiatorConnectHost.setText(getConfig(Constants.INITIATOR_ROLE,Constants.INI_CONNECT_HOST));
-            initiatorConnectPort.setText(getConfig(Constants.INITIATOR_ROLE,Constants.INI_CONNECT_PORT));
+            initiatorConnectHost.setText(getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_HOST));
+            initiatorConnectPort.setText(getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_PORT));
 
 
             setConfigComboBox(initiatorDataDictionary, Constants.FIX_VERSIONS, Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_DATA_DIC));
@@ -112,9 +112,6 @@ public class ConfigController implements Initializable {
             setConfigComboBox(initiatorResetOnDisconnect, Constants.Y_N, Utils.getComboConfigValue(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_DISCONNECT));
         }
     }
-
-
-
 
 
     private void setConfigComboBox(ComboBox<String> comboBox, List<String> data, int selected) {
@@ -173,36 +170,40 @@ public class ConfigController implements Initializable {
     }
 
 
-    private void propertiesWriter(List<Tag> fields, String role){
-        try{
+    private void propertiesWriter(List<Tag> fields, String role) {
+        try {
             Path path = role.equals(Constants.ACCEPTOR_ROLE)
                 ? Paths.get(Constants.SRC_MAIN_RESOURCES_SERVER_CFG)
                 : Paths.get(Constants.SRC_MAIN_RESOURCES_CLIENT_CFG);
+
             List<String> lines = Files.readAllLines(path);
+
             List<String> newLines = new ArrayList<>();
-            for(String line : lines){
+            for (String line : lines) {
                 // Avoid overwritting DataDictionary (UseDataDictionary contains DataDictionary)
-                if (line.contains(Constants.CONF_DATA_DIC) && !line.contains(Constants.CONF_USE_DATA_DIC)){
+                if (line.contains(Constants.CONF_DATA_DIC) && !line.contains(Constants.CONF_USE_DATA_DIC)) {
                     propertyHandler(fields, newLines, line);
-                }else{
+                } else {
                     propertyHandler(fields, newLines, line);
                 }
             }
             newPropertiesHandler(fields, newLines);
+
             Files.write(path, newLines);
 
-        }catch (Exception e){
-            this.logger.warn("Exception in propertiesWriter: {}" , e.getLocalizedMessage());
+
+        } catch (Exception e) {
+            this.logger.warn("Exception in propertiesWriter: {}", e.getLocalizedMessage());
         }
     }
 
-    private String extractTag(String property){
-        try{
-            if (!StringUtils.isEmpty(property)){
+    private String extractTag(String property) {
+        try {
+            if (!StringUtils.isEmpty(property)) {
                 return property.substring(0, property.indexOf('='));
             }
-        }catch (Exception e){
-            this.logger.warn("Exception in extractTag, property -> {} :: exception: {}" , property, e.getLocalizedMessage());
+        } catch (Exception e) {
+            this.logger.warn("Exception in extractTag, property -> {} :: exception: {}", property, e.getLocalizedMessage());
         }
         return "";
     }
@@ -211,19 +212,19 @@ public class ConfigController implements Initializable {
         List<String> tags = fields.stream().map(Tag::getField).collect(Collectors.toList());
         String tag = extractTag(line);
         String newProperty;
-        if (!tags.contains(tag)){
+        if (!tags.contains(tag)) {
             newLines.add(line);
-        }else if (line.startsWith("#")){
+        } else if (line.startsWith("#")) {
             newLines.add(line);
-        }else{
+        } else {
             Optional<Tag> property = fields.stream().filter(t -> t.getField().equals(tag)).findFirst();
-            if (property.isPresent()){
+            if (property.isPresent()) {
                 Tag newTag = property.get();
                 newTag.setUsed();
                 String newValue = newTag.getValue();
-                if (tag.equals(Constants.CONF_DATA_DIC)){
+                if (tag.equals(Constants.CONF_DATA_DIC)) {
                     newProperty = tag + "=spec/" + newValue;
-                }else{
+                } else {
                     newProperty = tag + "=" + newValue;
                 }
                 newLines.add(newProperty);
@@ -234,12 +235,12 @@ public class ConfigController implements Initializable {
 
     private void newPropertiesHandler(List<Tag> fields, List<String> newLines) {
         List<Tag> nonUsed = fields.stream().filter(t -> !t.isUsed()).collect(Collectors.toList());
-        for (Tag tag : nonUsed){
+        for (Tag tag : nonUsed) {
             String newProperty;
-            if (!StringUtils.isEmpty(tag.getValue())){
-                if (tag.getField().equals(Constants.CONF_DATA_DIC)){
+            if (!StringUtils.isEmpty(tag.getValue())) {
+                if (tag.getField().equals(Constants.CONF_DATA_DIC)) {
                     newProperty = tag.getField() + "=spec/" + tag.getValue();
-                }else{
+                } else {
                     newProperty = tag.getField() + "=" + tag.getValue();
                 }
                 newLines.add(newProperty);
