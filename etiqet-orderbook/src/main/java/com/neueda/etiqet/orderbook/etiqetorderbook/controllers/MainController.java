@@ -3,12 +3,14 @@ package com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
 import com.neueda.etiqet.orderbook.etiqetorderbook.*;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.OrderXML;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.FixSession;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.Initator;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.TooltipTableRow;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
@@ -29,6 +31,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,10 +46,9 @@ import quickfix.field.*;
 import quickfix.fix44.*;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.beans.ExceptionListener;
+import java.beans.XMLEncoder;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -59,6 +62,7 @@ import java.util.stream.Collectors;
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class MainController implements Initializable {
+
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
     private List<Order> sell;
@@ -128,6 +132,8 @@ public class MainController implements Initializable {
     public TableColumn<Action, String> actionAgreedPriceTableColumn;
 
     public Circle circle;
+    public MenuItem menuItemImport;
+    public MenuItem menuItemExport;
     private static Thread orderBook;
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
@@ -190,6 +196,9 @@ public class MainController implements Initializable {
 
         Utils.configureTextFieldToAcceptOnlyIntegerValues(textFieldSize);
         Utils.configureTextFieldToAcceptOnlyDecimalValues(textFieldPrice);
+
+        menuItemImport.setDisable(true);
+        menuItemExport.setDisable(true);
     }
 
     private void showFixFields(MouseEvent e) {
@@ -283,6 +292,8 @@ public class MainController implements Initializable {
             this.circleStartAcceptor.setFill(Color.GREENYELLOW);
             this.tabInitiator.setDisable(true);
             this.mainTabPane.getSelectionModel().select(0);
+            menuItemImport.setDisable(false);
+            menuItemExport.setDisable(false);
         }
     }
 
@@ -324,6 +335,9 @@ public class MainController implements Initializable {
                 this.circleStartInitiator.setFill(Color.GREENYELLOW);
                 this.tabAcceptor.setDisable(true);
                 this.mainTabPane.getSelectionModel().select(1);
+                menuItemImport.setDisable(true);
+                menuItemExport.setDisable(true);
+
             }
         } catch (ConfigError | SessionNotFound   e) {
             e.printStackTrace();
@@ -381,6 +395,8 @@ public class MainController implements Initializable {
                 orderBook.stop();
             }
             menuItemMessagePort.setText("");
+            menuItemImport.setDisable(true);
+            menuItemExport.setDisable(true);
         }catch (Exception e){
             this.logger.warn("StopConfiguration exception: {}", e.getMessage());
         }
@@ -767,5 +783,42 @@ public class MainController implements Initializable {
 
     public void buttonCopyLast(ActionEvent actionEvent) {
         textFieldOrigOrderID.setText(textFieldOrderID.getText());
+    }
+
+    public void actionMenuItemImport(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File("."));
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("XML Files", "*.xml")
+            ,new FileChooser.ExtensionFilter("Json Files", "*.json")
+        );
+        File selectedFile = fileChooser.showOpenDialog(menuBarGeneral.getScene().getWindow());
+        this.logger.info(selectedFile.getAbsolutePath());
+    }
+
+    public void actionMenuItemExport(ActionEvent actionEvent) {
+        OrderXML orders = new OrderXML();
+
+        List<Order> orderBookBuyTableViewItems = orderBookBuyTableView.getItems();
+        List<Order> orderBookSellTableViewItems = orderBookSellTableView.getItems();
+        List<Order> orderList = new ArrayList<>(orderBookBuyTableViewItems);
+        orderList.addAll(orderBookSellTableViewItems);
+        List<Action> actionList = new ArrayList<>(actionTableView.getItems());
+        orders.setOrders(orderList);
+        orders.setActions(actionList);
+
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream("orders.xml");
+            XMLEncoder xmlEncoder = new XMLEncoder(fileOutputStream);
+            xmlEncoder.setExceptionListener(e -> System.out.println("Exception! : "+e.toString()));
+            xmlEncoder.writeObject(orders);
+            xmlEncoder.close();
+            fileOutputStream.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

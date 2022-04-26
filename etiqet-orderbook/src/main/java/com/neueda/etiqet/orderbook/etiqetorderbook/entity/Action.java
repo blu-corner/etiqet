@@ -35,6 +35,8 @@ public class Action {
         this.agreedPrice = agreedPrice;
     }
 
+    public Action(){}
+
     public Type getType() {
         return type;
     }

@@ -15,6 +15,8 @@ public class Order {
         this.clientID = clientID;
     }
 
+    public Order(){}
+
     public String getOrderID() {
         return orderID;
     }

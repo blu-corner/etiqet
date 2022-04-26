@@ -30,10 +30,12 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <children>
-        <MenuBar prefWidth="755.0">
+        <MenuBar fx:id="menuBarGeneral" prefWidth="755.0">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
+                  <MenuItem fx:id="menuItemImport" mnemonicParsing="false" onAction="#actionMenuItemImport" text="Import orders" />
+                  <MenuItem fx:id="menuItemExport" mnemonicParsing="false" onAction="#actionMenuItemExport" text="Export orders" />
                         <MenuItem fx:id="buttonCloseApplication" mnemonicParsing="false" onAction="#closeApplication" text="Close" />
                     </items>
                 </Menu>
@@ -144,8 +146,8 @@
                                             <TableColumn fx:id="actionTypeClientIdSellTableColumn" prefWidth="80.0" text="SellClientID" />
                                             <TableColumn fx:id="actionOrderIdBuyTableColumn" prefWidth="80.0" text="BuyID" />
                                             <TableColumn fx:id="actionOrderIdSellTableColumn" prefWidth="80.0" text="SellID" />
-                                            <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="62.0" text="BuySize" />
-                                            <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="62.0" text="SellSize" />
+                                            <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="65.0" text="BuySize" />
+                                            <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="65.0" text="SellSize" />
                                             <TableColumn fx:id="actionLeaveQtyTableColumn" prefWidth="80.0" text="LeavesQty" />
                                             <TableColumn fx:id="actionAgreedPriceTableColumn" prefWidth="100.0" text="AgreedPrice" />
                                         </columns>
