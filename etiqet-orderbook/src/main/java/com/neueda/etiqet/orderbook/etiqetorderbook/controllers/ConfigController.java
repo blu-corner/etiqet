@@ -11,6 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -172,15 +175,21 @@ public class ConfigController implements Initializable {
 
     private void propertiesWriter(List<Tag> fields, String role) {
         try {
-            Path path = role.equals(Constants.ACCEPTOR_ROLE)
-                ? Paths.get(Constants.SRC_MAIN_RESOURCES_SERVER_CFG)
-                : Paths.get(Constants.SRC_MAIN_RESOURCES_CLIENT_CFG);
+            Path pathRoot;
+            List<String> lines;
+            if (role.equals(Constants.ACCEPTOR_ROLE)) {
 
-            List<String> lines = Files.readAllLines(path);
+                pathRoot = Paths.get(Constants.PATH_OUTPUT_SERVER_CONFIG);
+                lines = readConfigFile(ConfigType.SERVER);
+            } else {
+
+                pathRoot = Paths.get(Constants.PATH_OUTPUT_CLIENT_CONFIG);
+                lines = readConfigFile(ConfigType.CLIENT);
+            }
 
             List<String> newLines = new ArrayList<>();
             for (String line : lines) {
-                // Avoid overwritting DataDictionary (UseDataDictionary contains DataDictionary)
+                // Avoid overwriting DataDictionary (UseDataDictionary contains DataDictionary)
                 if (line.contains(Constants.CONF_DATA_DIC) && !line.contains(Constants.CONF_USE_DATA_DIC)) {
                     propertyHandler(fields, newLines, line);
                 } else {
@@ -188,10 +197,7 @@ public class ConfigController implements Initializable {
                 }
             }
             newPropertiesHandler(fields, newLines);
-
-            Files.write(path, newLines);
-
-
+            Files.write(pathRoot, newLines);
         } catch (Exception e) {
             this.logger.warn("Exception in propertiesWriter: {}", e.getLocalizedMessage());
         }
@@ -246,5 +252,39 @@ public class ConfigController implements Initializable {
                 newLines.add(newProperty);
             }
         }
+    }
+
+    public enum ConfigType {
+        CLIENT,
+        SERVER
+    }
+    /**
+     *
+     * @param whichFile either CLIENT or SERVER
+     * @return
+     * @throws IOException
+     */
+    public static List<String> readConfigFile(ConfigType whichFile) throws IOException {
+        String insideConfig, outsideConfig;
+        if (whichFile == ConfigType.CLIENT){
+            insideConfig = Constants.PATH_CLIENT_CONFIG_JAR;
+            outsideConfig = Constants.PATH_OUTPUT_CLIENT_CONFIG;
+        } else {
+            insideConfig = Constants.PATH_SERVER_CONFIG_JAR;
+            outsideConfig = Constants.PATH_OUTPUT_SERVER_CONFIG;
+        }
+        Path path = Paths.get(outsideConfig);
+        List<String> lines;
+        if (path != null && Files.exists(path)) {
+            lines = Files.readAllLines(path);
+        }
+        else {
+            lines = new ArrayList<String>();
+            BufferedReader configBR = new BufferedReader(new InputStreamReader(ConfigController.class.getResourceAsStream(insideConfig)));
+            while(configBR.ready()) {
+                lines.add(configBR.readLine());
+            }
+        }
+        return lines;
     }
 }

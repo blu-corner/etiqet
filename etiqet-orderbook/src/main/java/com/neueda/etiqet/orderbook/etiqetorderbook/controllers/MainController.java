@@ -554,8 +554,8 @@ public class MainController implements Initializable {
         int index = 0, portIndex = 0;
         try {
             if (tabAcceptor.isSelected()) {
-                Path path = Paths.get("src/main/resources/server.cfg");
-                List<String> lines = Files.readAllLines(path);
+                List<String> lines = ConfigController.readConfigFile(ConfigController.ConfigType.SERVER);
+
                 String port = "";
                 for (String line : lines) {
                     if (!line.contains("#") && line.contains(Constants.ACC_ACCEPT_PORT)) {
@@ -574,13 +574,13 @@ public class MainController implements Initializable {
                 if (result.isPresent()) {
                     String current = writtenLines.get(portIndex);
                     writtenLines.set(portIndex, current + result.get());
-                    Files.write(Paths.get("src/main/resources/server.cfg"), writtenLines);
+                    Files.write(Paths.get(Constants.ROOT_SERVER_CONFIG), writtenLines);
                     this.changedDefaultPort = result.get();
                 }
 
             } else if (tabInitiator.isSelected()) {
-                Path path = Paths.get("src/main/resources/client.cfg");
-                List<String> lines = Files.readAllLines(path);
+                List<String> lines = ConfigController.readConfigFile(ConfigController.ConfigType.CLIENT);
+
                 String port = "";
                 for (String line : lines) {
                     if (!line.contains("#") && line.contains(Constants.INI_CONNECT_HOST)) {
@@ -599,7 +599,7 @@ public class MainController implements Initializable {
                 if (result.isPresent()) {
                     String current = writtenLines.get(portIndex);
                     writtenLines.set(portIndex, current + result.get());
-                    Files.write(Paths.get("src/main/resources/client.cfg"), writtenLines);
+                    Files.write(Paths.get(Constants.ROOT_CLIENT_CONFIG), writtenLines);
                     this.changedDefaultPort = result.get();
                 }
             }

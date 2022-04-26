@@ -88,8 +88,12 @@ public class Constants {
     public static final List<String> FIX_VERSIONS_COMBO = Arrays.asList(FIX40, FIX41, FIX42, FIX43, FIX44, FIX50);
     public static final String Y = "Y";
     public static final String N = "N";
-    public static final String SRC_MAIN_RESOURCES_SERVER_CFG = "src/main/resources/server.cfg";
-    public static final String SRC_MAIN_RESOURCES_CLIENT_CFG = "src/main/resources/client.cfg";
+    public static final String ROOT_SERVER_CONFIG = "/"+SERVER_CFG;
+    public static final String ROOT_CLIENT_CONFIG = "/"+CLIENT_CFG;
+    public static final String PATH_SERVER_CONFIG_JAR = "/"+SERVER_CFG;
+    public static final String PATH_CLIENT_CONFIG_JAR = "/"+CLIENT_CFG;
+    public static final String PATH_OUTPUT_SERVER_CONFIG = "./"+SERVER_CFG;
+    public static final String PATH_OUTPUT_CLIENT_CONFIG = "./"+CLIENT_CFG;
     public static final String INITIATOR_TITLE = "Initiator configuration";
     public static final String ACCEPTOR_TITLE = "Acceptor configuration";
     public static final String ADVANCED_REQUEST_TITLE = "Advanced request";
@@ -111,8 +115,7 @@ public class Constants {
     public static final String KEY_ORIG_CL_ORD_ID = "41";
     public static final Object COMBO_NEW_ORDER_ID = "New";
     public static final String SENT_ORIG_CL_ORD_I_DS = "Sent OrigClOrdIDs";
-    public static final String SRC_MAIN_RESOURCES_SERVER_CFG_ROOT = "./server.cfg";
-    public static final String SRC_MAIN_RESOURCES_CLIENT_CFG_ROOT = "./client.cfg";
+
 
 
     //hmTagValue

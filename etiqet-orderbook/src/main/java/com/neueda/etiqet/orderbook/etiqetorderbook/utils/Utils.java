@@ -1,6 +1,6 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 
-import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.DatepickerController;
+import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.ConfigController;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -18,15 +18,13 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static com.neueda.etiqet.orderbook.etiqetorderbook.controllers.ConfigController.readConfigFile;
 
 public class Utils {
 
@@ -85,14 +83,17 @@ public class Utils {
 
     public static String getConfig(String role, String field) {
         try {
-            Path path = role.equals(Constants.ACCEPTOR_ROLE)
-                ? Paths.get(Constants.SRC_MAIN_RESOURCES_SERVER_CFG)
-                : Paths.get(Constants.SRC_MAIN_RESOURCES_CLIENT_CFG);
-
-            List<String> lines = Files.readAllLines(path).stream()
+            List<String> lines;
+            if (role.equals(Constants.ACCEPTOR_ROLE)) {
+                lines = readConfigFile(ConfigController.ConfigType.SERVER);
+            }
+            else {
+                lines = readConfigFile(ConfigController.ConfigType.CLIENT);
+            }
+            List<String> filteredLines = lines.stream()
                 .filter(l -> !l.trim().startsWith("#"))
                 .collect(Collectors.toList());
-            return getValueFromConfig(lines, field);
+            return getValueFromConfig(filteredLines, field);
         } catch (IOException e) {
             e.printStackTrace();
         }
