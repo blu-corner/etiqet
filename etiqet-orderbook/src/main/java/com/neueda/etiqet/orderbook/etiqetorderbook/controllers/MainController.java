@@ -554,7 +554,7 @@ public class MainController implements Initializable {
         int index = 0, portIndex = 0;
         try {
             if (tabAcceptor.isSelected()) {
-                List<String> lines = ConfigController.readConfigFile(ConfigController.ConfigType.SERVER);
+                List<String> lines = Utils.readConfigFile(Constants.INITIATOR_ROLE);
 
                 String port = "";
                 for (String line : lines) {
@@ -579,7 +579,7 @@ public class MainController implements Initializable {
                 }
 
             } else if (tabInitiator.isSelected()) {
-                List<String> lines = ConfigController.readConfigFile(ConfigController.ConfigType.CLIENT);
+                List<String> lines = Utils.readConfigFile(Constants.ACCEPTOR_ROLE);
 
                 String port = "";
                 for (String line : lines) {

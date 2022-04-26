@@ -178,13 +178,11 @@ public class ConfigController implements Initializable {
             Path pathRoot;
             List<String> lines;
             if (role.equals(Constants.ACCEPTOR_ROLE)) {
-
                 pathRoot = Paths.get(Constants.PATH_OUTPUT_SERVER_CONFIG);
-                lines = readConfigFile(ConfigType.SERVER);
+                lines = Utils.readConfigFile(Constants.ACCEPTOR_ROLE);
             } else {
-
                 pathRoot = Paths.get(Constants.PATH_OUTPUT_CLIENT_CONFIG);
-                lines = readConfigFile(ConfigType.CLIENT);
+                lines =  Utils.readConfigFile(Constants.INITIATOR_ROLE);
             }
 
             List<String> newLines = new ArrayList<>();
@@ -254,37 +252,5 @@ public class ConfigController implements Initializable {
         }
     }
 
-    public enum ConfigType {
-        CLIENT,
-        SERVER
-    }
-    /**
-     *
-     * @param whichFile either CLIENT or SERVER
-     * @return
-     * @throws IOException
-     */
-    public static List<String> readConfigFile(ConfigType whichFile) throws IOException {
-        String insideConfig, outsideConfig;
-        if (whichFile == ConfigType.CLIENT){
-            insideConfig = Constants.PATH_CLIENT_CONFIG_JAR;
-            outsideConfig = Constants.PATH_OUTPUT_CLIENT_CONFIG;
-        } else {
-            insideConfig = Constants.PATH_SERVER_CONFIG_JAR;
-            outsideConfig = Constants.PATH_OUTPUT_SERVER_CONFIG;
-        }
-        Path path = Paths.get(outsideConfig);
-        List<String> lines;
-        if (path != null && Files.exists(path)) {
-            lines = Files.readAllLines(path);
-        }
-        else {
-            lines = new ArrayList<String>();
-            BufferedReader configBR = new BufferedReader(new InputStreamReader(ConfigController.class.getResourceAsStream(insideConfig)));
-            while(configBR.ready()) {
-                lines.add(configBR.readLine());
-            }
-        }
-        return lines;
-    }
+
 }

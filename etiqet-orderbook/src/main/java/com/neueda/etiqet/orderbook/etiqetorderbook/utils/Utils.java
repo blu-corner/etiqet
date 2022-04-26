@@ -14,17 +14,20 @@ import org.apache.commons.lang3.StringUtils;
 import quickfix.Message;
 
 import javax.sound.sampled.AudioFormat;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.neueda.etiqet.orderbook.etiqetorderbook.controllers.ConfigController.readConfigFile;
 
 public class Utils {
 
@@ -84,12 +87,7 @@ public class Utils {
     public static String getConfig(String role, String field) {
         try {
             List<String> lines;
-            if (role.equals(Constants.ACCEPTOR_ROLE)) {
-                lines = readConfigFile(ConfigController.ConfigType.SERVER);
-            }
-            else {
-                lines = readConfigFile(ConfigController.ConfigType.CLIENT);
-            }
+            lines = readConfigFile(role);
             List<String> filteredLines = lines.stream()
                 .filter(l -> !l.trim().startsWith("#"))
                 .collect(Collectors.toList());
@@ -250,5 +248,30 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static List<String> readConfigFile(String role) throws IOException {
+        String insideConfig, outsideConfig;
+        if (role.equals(Constants.INITIATOR_ROLE)){
+            insideConfig = Constants.PATH_CLIENT_CONFIG_JAR;
+            outsideConfig = Constants.PATH_OUTPUT_CLIENT_CONFIG;
+        } else {
+            insideConfig = Constants.PATH_SERVER_CONFIG_JAR;
+            outsideConfig = Constants.PATH_OUTPUT_SERVER_CONFIG;
+        }
+        Path path = Paths.get(outsideConfig);
+        List<String> lines;
+        if (path != null && Files.exists(path)) {
+            lines = Files.readAllLines(path);
+        }
+        else {
+            lines = new ArrayList<String>();
+            BufferedReader configBR = new BufferedReader(new InputStreamReader(ConfigController.class.getResourceAsStream(insideConfig)));
+            while(configBR.ready()) {
+                lines.add(configBR.readLine());
+            }
+        }
+        return lines;
     }
 }
