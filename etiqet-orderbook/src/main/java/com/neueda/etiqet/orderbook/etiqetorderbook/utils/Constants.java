@@ -5,17 +5,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.net.URI;
-import java.security.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class Constants {
-    public static final Logger orderBookLogger = LoggerFactory.getLogger("ORDER BOOK");
+    public static final Logger orderBook = LoggerFactory.getLogger("ORDER BOOK");
     public static final char SOH = '\u0001';
     public static final char VERTICAL_BAR = '\u007C';
     public static final String OUT = "[>>OUT>>]";
@@ -1190,7 +1185,7 @@ public class Constants {
         defaultTags.add(new Tag(Utils.getKeyFromValue("MsgType"), "MsgType", "D"));
         defaultTags.add(new Tag(Utils.getKeyFromValue("ClOrdID"), "ClOrdID", RandomStringUtils.randomAlphanumeric(8)));
 //        defaultTags.add(new Tag(Utils.getKeyFromValue("OrigClOrdID"), "OrigClOrdID", ""));
-        String date = Utils.getFormattedDate();
+        String date = Utils.getFormattedStringDate();
         defaultTags.add(new Tag(Utils.getKeyFromValue("SendingTime"), "SendingTime", date));
         defaultTags.add(new Tag(Utils.getKeyFromValue("TransactTime"), "TransactTime", date));
         defaultTags.add(new Tag(Utils.getKeyFromValue("Symbol"), "Symbol", "N/A"));

@@ -11,9 +11,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.Message;
 
-import javax.sound.sampled.AudioFormat;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 
 public class Utils {
 
+    private static Logger logger = LoggerFactory.getLogger(Utils.class);
     static DecimalFormat integerFormat = new DecimalFormat("#");
     static DecimalFormat decimalFormat = new DecimalFormat("#.0###");
 
@@ -225,13 +228,49 @@ public class Utils {
         }
     });
 
+    public static Date getFormattedDate() {
+        String pattern = "yyyyMMdd-HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(String.valueOf(new Date()));
+        } catch (ParseException e) {
+            logger.warn(e.getMessage());
+        }
+        return date;
+    }
 
-    public static String getFormattedDate() {
+    public static Date getFormattedDate(String stringDate) {
+        String pattern = "yyyyMMdd-HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        try {
+            Date date = simpleDateFormat.parse(stringDate);
+            return date;
+        } catch (ParseException e) {
+            logger.warn(e.getMessage());
+        }
+        return null;
+    }
+
+    public static String getFormattedStringDate() {
         String pattern = "yyyyMMdd-HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(new Date());
         return date;
     }
+
+    public static String getFormattedStringDate(String stringDate) {
+        String pattern = "yyyyMMdd-HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        try {
+            Date date = simpleDateFormat.parse(stringDate);
+            return simpleDateFormat.format(date);
+        } catch (ParseException e) {
+            logger.warn(e.getMessage());
+        }
+        return null;
+    }
+
 
     public void launchDatepicker() {
         try {

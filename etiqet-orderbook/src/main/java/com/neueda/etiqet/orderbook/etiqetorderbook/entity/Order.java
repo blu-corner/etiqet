@@ -6,13 +6,17 @@ public class Order {
     private Double size;
     private Double price;
     private String clientID;
+    private Character timeInForce;
+    private boolean removed;
 
-    public Order(String orderID, String time, Double size, Double price, String clientID) {
+    public Order(String orderID, String time, Double size, Double price, String clientID, Character timeInForce) {
         this.orderID = orderID;
         this.time = time;
         this.size = size;
         this.price = price;
         this.clientID = clientID;
+        this.timeInForce = timeInForce;
+        this.removed = false;
     }
 
     public Order(){}
@@ -57,12 +61,33 @@ public class Order {
         this.clientID = clientID;
     }
 
+    public Character getTimeInForce() {
+        return timeInForce;
+    }
+
+    public void setTimeInForce(Character timeInForce) {
+        this.timeInForce = timeInForce;
+    }
+
+    public void setRemoved(boolean removed) {
+        this.removed = removed;
+    }
+
+    public boolean isRemoved() {
+        return removed;
+    }
+
     @Override
     public String toString() {
-        return  "OrderID=" + orderID +
-                ".....Time=" + time +
-                ".....Size=" + size +
-                ".....Price=" + price;
-
+        return "Order{" +
+            "orderID='" + orderID + '\'' +
+            ", time='" + time + '\'' +
+            ", size=" + size +
+            ", price=" + price +
+            ", clientID='" + clientID + '\'' +
+            ", timeInForce=" + timeInForce +
+            '}';
     }
+
+
 }

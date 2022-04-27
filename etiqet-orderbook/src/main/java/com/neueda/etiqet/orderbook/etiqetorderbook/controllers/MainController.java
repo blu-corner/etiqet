@@ -284,7 +284,7 @@ public class MainController implements Initializable {
             String portsA = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT);
             String portsB = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT);
             if (listenOnPorts(portsA, portsB)){
-                OrderBookLogger orderBookLoggerThread = new OrderBookLogger(this);
+                OrderBook orderBookLoggerThread = new OrderBook(this);
                 orderBook = new Thread(orderBookLoggerThread);
                 orderBook.setDaemon(true);
                 orderBook.start();
