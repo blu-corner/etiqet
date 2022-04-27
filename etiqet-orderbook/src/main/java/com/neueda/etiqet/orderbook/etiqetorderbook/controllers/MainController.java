@@ -7,10 +7,8 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.entity.OrderXML;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.FixSession;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.Initator;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
-import com.neueda.etiqet.orderbook.etiqetorderbook.utils.TooltipTableRow;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXML;
@@ -31,7 +29,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -46,7 +43,7 @@ import quickfix.field.*;
 import quickfix.fix44.*;
 
 import java.awt.*;
-import java.beans.ExceptionListener;
+import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
 import java.net.URI;
@@ -277,24 +274,30 @@ public class MainController implements Initializable {
     }
 
     public void startAcceptor(ActionEvent actionEvent) {
-        String portsA = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT);
-        String portsB = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT);
-        if (listenOnPorts(portsA, portsB)){
-            OrderBookLogger orderBookLoggerThread = new OrderBookLogger(this);
-            orderBook = new Thread(orderBookLoggerThread);
-            orderBook.setDaemon(true);
-            orderBook.start();
+        try{
+            String portsA = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT);
+            String portsB = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT);
+            if (listenOnPorts(portsA, portsB)){
+                OrderBookLogger orderBookLoggerThread = new OrderBookLogger(this);
+                orderBook = new Thread(orderBookLoggerThread);
+                orderBook.setDaemon(true);
+                orderBook.start();
 
-            //javafx
-            circle.setFill(Color.GREENYELLOW);
-            this.startAcceptor.setDisable(true);
-            this.startInitiator.setDisable(true);
-            this.circleStartAcceptor.setFill(Color.GREENYELLOW);
-            this.tabInitiator.setDisable(true);
-            this.mainTabPane.getSelectionModel().select(0);
-            menuItemImport.setDisable(false);
-            menuItemExport.setDisable(false);
+                //javafx
+                circle.setFill(Color.GREENYELLOW);
+                this.startAcceptor.setDisable(true);
+                this.startInitiator.setDisable(true);
+                this.circleStartAcceptor.setFill(Color.GREENYELLOW);
+                this.tabInitiator.setDisable(true);
+                this.mainTabPane.getSelectionModel().select(0);
+                menuItemImport.setDisable(false);
+                menuItemExport.setDisable(false);
+                importOrders(new File(Constants.DEFAULT_ORDERS_FILE));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     public void startInitiator(ActionEvent actionEvent) {
@@ -397,6 +400,7 @@ public class MainController implements Initializable {
             menuItemMessagePort.setText("");
             menuItemImport.setDisable(true);
             menuItemExport.setDisable(true);
+            exportOrders(new File(Constants.DEFAULT_ORDERS_FILE));
         }catch (Exception e){
             this.logger.warn("StopConfiguration exception: {}", e.getMessage());
         }
@@ -786,39 +790,84 @@ public class MainController implements Initializable {
     }
 
     public void actionMenuItemImport(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("."));
-        fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("XML Files", "*.xml")
-            ,new FileChooser.ExtensionFilter("Json Files", "*.json")
-        );
-        File selectedFile = fileChooser.showOpenDialog(menuBarGeneral.getScene().getWindow());
-        this.logger.info(selectedFile.getAbsolutePath());
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(new File("."));
+            fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("XML Files", "*.xml")
+            );
+            File selectedFile = fileChooser.showOpenDialog(menuBarGeneral.getScene().getWindow());
+            importOrders(selectedFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void importOrders(File selectedFile) throws FileNotFoundException {
+        try{
+            if (selectedFile != null){
+                clearAll();
+                this.logger.info(selectedFile.getAbsolutePath());
+                FileInputStream fileInputStream = new FileInputStream(selectedFile);
+                XMLDecoder xmlDecoder = new XMLDecoder(fileInputStream);
+                OrderXML orderXML = (OrderXML) xmlDecoder.readObject();
+                this.logger.info(orderXML.toString());
+
+                orderBookSellTableView.getItems().addAll(orderXML.getSellOrders());
+                orderBookBuyTableView.getItems().addAll(orderXML.getBuyOrders());
+                this.buy.addAll(orderXML.getBuyOrders());
+                this.sell.addAll(orderXML.getSellOrders());
+                actionTableView.getItems().addAll(orderXML.getActions());
+                orderBookSellTableView.getSelectionModel().select(0);
+                orderBookBuyTableView.getSelectionModel().select(0);
+                actionTableView.getSelectionModel().select(0);
+            }
+        }catch (FileNotFoundException e){
+            this.logger.warn("orders.xml does no exist in the root directory");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void clearAll(){
+        this.orderBookSellTableView.getItems().clear();
+        this.orderBookBuyTableView.getItems().clear();
+        this.buy.clear();
+        this.sell.clear();
+        this.actionTableView.getItems().clear();
     }
 
     public void actionMenuItemExport(ActionEvent actionEvent) {
-        OrderXML orders = new OrderXML();
-
-        List<Order> orderBookBuyTableViewItems = orderBookBuyTableView.getItems();
-        List<Order> orderBookSellTableViewItems = orderBookSellTableView.getItems();
-        List<Order> orderList = new ArrayList<>(orderBookBuyTableViewItems);
-        orderList.addAll(orderBookSellTableViewItems);
-        List<Action> actionList = new ArrayList<>(actionTableView.getItems());
-        orders.setOrders(orderList);
-        orders.setActions(actionList);
-
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("orders.xml");
-            XMLEncoder xmlEncoder = new XMLEncoder(fileOutputStream);
-            xmlEncoder.setExceptionListener(e -> System.out.println("Exception! : "+e.toString()));
-            xmlEncoder.writeObject(orders);
-            xmlEncoder.close();
-            fileOutputStream.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save");
+            fileChooser.setInitialDirectory(new File("."));
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("XML files", "*.xml"));
+            File selectedFile = fileChooser.showSaveDialog(menuBarGeneral.getScene().getWindow());
+            exportOrders(selectedFile);
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void exportOrders(File selectedFile) throws IOException {
+        try{
+            if (selectedFile != null){
+                OrderXML orders = new OrderXML();
+                orders.setBuyOrders(new ArrayList<>(orderBookBuyTableView.getItems()));
+                orders.setSellOrders(new ArrayList<>(orderBookSellTableView.getItems()));
+                orders.setActions(new ArrayList<>(actionTableView.getItems()));
+                FileOutputStream fileOutputStream = new FileOutputStream(selectedFile);
+                XMLEncoder xmlEncoder = new XMLEncoder(fileOutputStream);
+                xmlEncoder.setExceptionListener(e -> this.logger.error("Exception! : {}" , e.getLocalizedMessage()));
+                xmlEncoder.writeObject(orders);
+                xmlEncoder.close();
+                fileOutputStream.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

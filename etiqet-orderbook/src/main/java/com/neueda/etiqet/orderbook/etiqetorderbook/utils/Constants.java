@@ -5,6 +5,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URI;
 import java.security.Timestamp;
 import java.text.SimpleDateFormat;
@@ -115,7 +116,7 @@ public class Constants {
     public static final String KEY_ORIG_CL_ORD_ID = "41";
     public static final Object COMBO_NEW_ORDER_ID = "New";
     public static final String SENT_ORIG_CL_ORD_I_DS = "Sent OrigClOrdIDs";
-
+    public static final String DEFAULT_ORDERS_FILE = "orders.xml";
 
 
     //hmTagValue

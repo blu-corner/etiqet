@@ -4,20 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderXML {
-    List<Order> orders;
+    List<Order> buyOrders;
+    List<Order> sellOrders;
     List<Action> actions;
 
     public OrderXML(){
-        this.orders = new ArrayList<>();
+        this.buyOrders = new ArrayList<>();
+        this.sellOrders = new ArrayList<>();
         this.actions = new ArrayList<>();
     }
 
-    public List<Order> getOrders() {
-        return orders;
+    public List<Order> getBuyOrders() {
+        return buyOrders;
     }
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setBuyOrders(List<Order> buyOrders) {
+        this.buyOrders = buyOrders;
+    }
+
+    public List<Order> getSellOrders() {
+        return sellOrders;
+    }
+
+    public void setSellOrders(List<Order> sellOrders) {
+        this.sellOrders = sellOrders;
     }
 
     public List<Action> getActions() {
@@ -26,5 +36,14 @@ public class OrderXML {
 
     public void setActions(List<Action> actions) {
         this.actions = actions;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderXML{" +
+            "buyOrders=" + buyOrders +
+            ", sellOrders=" + sellOrders +
+            ", actions=" + actions +
+            '}';
     }
 }
