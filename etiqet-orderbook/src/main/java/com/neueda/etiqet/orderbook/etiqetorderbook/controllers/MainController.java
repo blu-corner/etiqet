@@ -60,6 +60,8 @@ import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class MainController implements Initializable {
 
+
+
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
     private List<Order> sell;
@@ -131,6 +133,8 @@ public class MainController implements Initializable {
     public Circle circle;
     public MenuItem menuItemImport;
     public MenuItem menuItemExport;
+    public CheckMenuItem checkMenuItemExportOnClose;
+
     private static Thread orderBook;
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
@@ -196,6 +200,8 @@ public class MainController implements Initializable {
 
         menuItemImport.setDisable(true);
         menuItemExport.setDisable(true);
+
+        checkMenuItemExportOnClose.setSelected(true);
     }
 
     private void showFixFields(MouseEvent e) {
@@ -400,7 +406,10 @@ public class MainController implements Initializable {
             menuItemMessagePort.setText("");
             menuItemImport.setDisable(true);
             menuItemExport.setDisable(true);
-            exportOrders(new File(Constants.DEFAULT_ORDERS_FILE));
+            if (checkMenuItemExportOnClose.isSelected()){
+                exportOrders(new File(Constants.DEFAULT_ORDERS_FILE));
+            }
+
         }catch (Exception e){
             this.logger.warn("StopConfiguration exception: {}", e.getMessage());
         }

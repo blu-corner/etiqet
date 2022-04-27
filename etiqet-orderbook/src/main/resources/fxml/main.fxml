@@ -59,6 +59,7 @@
                             <items>
                                 <MenuItem fx:id="menuItemAcceptorConfiguration" mnemonicParsing="false" onAction="#launchAcceptorConfigWindow" text="Acceptor configuration" />
                                 <MenuItem fx:id="menuItemInitiatorConfiguration" mnemonicParsing="false" onAction="#launchInitiatorConfigWindow" text="Initiator configuration" />
+                                <CheckMenuItem fx:id="checkMenuItemExportOnClose" mnemonicParsing="false" text="Export on application close" />
                             </items>
                         </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
