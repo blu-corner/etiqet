@@ -19,7 +19,15 @@ public class Order {
         this.removed = false;
     }
 
-    public Order(){}
+    public Order(){
+        this.orderID = "";
+        this.time = "";
+        this.size = 0d;
+        this.price = 0d;
+        this.clientID = "";
+        this.timeInForce = 0;
+        this.removed = false;
+    }
 
     public String getOrderID() {
         return orderID;
@@ -69,11 +77,11 @@ public class Order {
         this.timeInForce = timeInForce;
     }
 
-    public void setRemoved(boolean removed) {
+    public synchronized void setRemoved(boolean removed) {
         this.removed = removed;
     }
 
-    public boolean isRemoved() {
+    public synchronized boolean isRemoved() {
         return removed;
     }
 

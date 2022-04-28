@@ -4,6 +4,7 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
+import javafx.application.Platform;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 
-public class OrderBook implements Runnable{
+public class OrderBook implements Runnable {
 
     private Logger logger = LoggerFactory.getLogger(OrderBook.class);
 
@@ -31,13 +32,15 @@ public class OrderBook implements Runnable{
         while (true) {
             try {
                 Thread.sleep(1000);
-                this.mainController.getBuy().removeIf(Order::isRemoved);
-                this.mainController.orderBookBuyTableView.getItems().removeIf(Order::isRemoved);
-                this.mainController.getSell().removeIf(Order::isRemoved);
-                this.mainController.orderBookSellTableView.getItems().removeIf(Order::isRemoved);
-                this.mainController.getBuy().forEach(this::removeIfTimeInForceDay);
-                this.mainController.getSell().forEach(this::removeIfTimeInForceDay);
-
+                Platform.runLater(() -> {
+                    this.mainController.getSell().forEach(s -> this.logger.info(s.getOrderID() + ": " + s.isRemoved()));
+                    this.mainController.getBuy().removeIf(Order::isRemoved);
+                    this.mainController.orderBookBuyTableView.getItems().removeIf(Order::isRemoved);
+                    this.mainController.getSell().removeIf(Order::isRemoved);
+                    this.mainController.orderBookSellTableView.getItems().removeIf(Order::isRemoved);
+                    this.mainController.getBuy().forEach(this::removeIfTimeInForceDay);
+                    this.mainController.getSell().forEach(this::removeIfTimeInForceDay);
+                });
 
                 if (this.mainController.isChanged()) {
                     System.out.print("\n\n");
@@ -57,15 +60,26 @@ public class OrderBook implements Runnable{
     }
 
     private void removeIfTimeInForceDay(Order order) {
-        if (order.getTimeInForce().equals(TimeInForce.DAY)){
-            String endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
+        String endTime;
+        switch (order.getTimeInForce()) {
+            case TimeInForce.DAY:
+                endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
+                break;
+            case TimeInForce.AT_THE_OPENING:
+                endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME);
+                break;
+            default:
+                endTime = null;
+        }
+
+        if (endTime != null) {
             String[] endTimeSplit = endTime.split(":");
             LocalDate localDateNow = LocalDate.now();
             LocalTime localTimeNow = LocalTime.now();
             LocalDateTime localDateTimeNow = LocalDateTime.of(localDateNow, localTimeNow);
-            LocalDateTime endOfDay = LocalDateTime.of(localDateNow, LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
-            this.logger.info("Now {} -> EndOfDay -> {}", localDateTimeNow, endOfDay);
-            if (localDateTimeNow.isAfter(endOfDay)){
+            LocalDateTime limitTime = LocalDateTime.of(localDateNow, LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
+            this.logger.info("Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
+            if (localDateTimeNow.isAfter(limitTime)) {
                 order.setRemoved(true);
             }
         }

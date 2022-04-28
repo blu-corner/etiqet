@@ -485,6 +485,16 @@ public class MainController implements Initializable {
         reorderBookSellTableView();
     }
 
+    public void removeBuy(Order buy) {
+        this.buy.remove(buy);
+        reorderBookBuyTableView();
+    }
+
+    public void removeSell(Order sell) {
+        this.sell.remove(sell);
+        reorderBookSellTableView();
+    }
+
     public List<Order> getOrderedBuy() {
         return this.getBuy().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).collect(Collectors.toList());
     }
