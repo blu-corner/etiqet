@@ -313,7 +313,6 @@ public class Acceptor implements Application {
                     o.setSize(order.getSize());
                 }
                 this.mainController.reorderBookBuyTableView();
-
             }
         } else {
             for (Order o : this.mainController.getSell()) {

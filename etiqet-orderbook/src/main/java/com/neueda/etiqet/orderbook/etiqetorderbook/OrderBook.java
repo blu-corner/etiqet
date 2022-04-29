@@ -1,6 +1,7 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController;
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
@@ -16,6 +17,7 @@ import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class OrderBook implements Runnable {
 
@@ -33,6 +35,7 @@ public class OrderBook implements Runnable {
             try {
                 Thread.sleep(1000);
                 Platform.runLater(() -> {
+                    addActions();
                     this.mainController.getSell().forEach(s -> this.logger.info(s.getOrderID() + ": " + s.isRemoved()));
                     this.mainController.getBuy().removeIf(Order::isRemoved);
                     this.mainController.orderBookBuyTableView.getItems().removeIf(Order::isRemoved);
@@ -57,6 +60,20 @@ public class OrderBook implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void addActions() {
+        for (Order order : this.mainController.getBuy().stream().filter(Order::isRemoved).collect(Collectors.toList())){
+            Action action = new Action(Action.Type.CANCELED, order.getOrderID(), "", order.getClientID(), "",Utils.getFormattedStringDate(), order.getSize(), null, 0d, 0d);
+            this.mainController.actionTableView.getItems().add(action);
+            this.mainController.reorderActionTableView();
+        }
+        for (Order order : this.mainController.getSell().stream().filter(Order::isRemoved).collect(Collectors.toList())){
+            Action action = new Action(Action.Type.CANCELED,  "", order.getOrderID(), "",order.getClientID(), Utils.getFormattedStringDate(),  null,order.getSize(), 0d, 0d);
+            this.mainController.actionTableView.getItems().add(action);
+            this.mainController.reorderActionTableView();
+        }
+
     }
 
     private void removeIfTimeInForceDay(Order order) {

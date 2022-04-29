@@ -92,8 +92,8 @@ public class MainController implements Initializable {
     @FXML private MenuBar menuBarGeneral;
     @FXML private Tab tabAcceptor;
     @FXML private Tab tabInitiator;
-    @FXML private ComboBox comboOrders;
-    @FXML private ComboBox comboSide;
+    @FXML private ComboBox<String> comboOrders;
+    @FXML private ComboBox<String> comboSide;
     @FXML private TextArea logTextArea;
     @FXML private TabPane mainTabPane;
     @FXML public TextField textFieldSize;
@@ -134,6 +134,7 @@ public class MainController implements Initializable {
     public MenuItem menuItemImport;
     public MenuItem menuItemExport;
     public CheckMenuItem checkMenuItemExportOnClose;
+    public ComboBox<String> comboBoxTimeInForce;
 
     private static Thread orderBook;
     private SocketInitiator socketInitiator;
@@ -187,7 +188,7 @@ public class MainController implements Initializable {
         comboOrders.getItems().addAll(Constants.COMBO_NEW_ORDER, Constants.COMBO_CANCEL, Constants.COMBO_REPLACE);
         comboOrders.getSelectionModel().select(0);
 
-        comboSide.getItems().addAll("BUY", "SELL");
+        comboSide.getItems().addAll(Constants.SIDE);
         comboSide.getSelectionModel().select(0);
         initator = new Initator(listViewActions, listViewLog, textFieldOrderID);
 
@@ -202,6 +203,8 @@ public class MainController implements Initializable {
         menuItemExport.setDisable(true);
 
         checkMenuItemExportOnClose.setSelected(true);
+        comboBoxTimeInForce.getItems().addAll(Constants.TIME_IN_FORCE.getContents());
+        comboBoxTimeInForce.getSelectionModel().select(0);
     }
 
     private void showFixFields(MouseEvent e) {
@@ -406,14 +409,23 @@ public class MainController implements Initializable {
             menuItemMessagePort.setText("");
             menuItemImport.setDisable(true);
             menuItemExport.setDisable(true);
+            removeOrdersTimeInForceAtTheClose();
             if (checkMenuItemExportOnClose.isSelected()){
                 exportOrders(new File(Constants.DEFAULT_ORDERS_FILE));
             }
+
 
         }catch (Exception e){
             this.logger.warn("StopConfiguration exception: {}", e.getMessage());
         }
 
+    }
+
+    private void removeOrdersTimeInForceAtTheClose() {
+        this.getBuy().removeIf(buy -> buy.getTimeInForce().equals(TimeInForce.AT_THE_CLOSE));
+        this.orderBookBuyTableView.getItems().removeIf(buy -> buy.getTimeInForce().equals(TimeInForce.AT_THE_CLOSE));
+        this.getSell().removeIf(sell -> sell.getTimeInForce().equals(TimeInForce.AT_THE_CLOSE));
+        this.orderBookSellTableView.getItems().removeIf(sell -> sell.getTimeInForce().equals(TimeInForce.AT_THE_CLOSE));
     }
 
     private void sendLogonRequest() throws SessionNotFound {
@@ -527,21 +539,21 @@ public class MainController implements Initializable {
     }
 
     public void sendOrder(ActionEvent actionEvent) {
-        String textFieldSizeText = this.textFieldSize.getText();
-        String textFieldPrice = this.textFieldPrice.getText();
         String textFieldOrderID = this.textFieldOrderID.getText();
         if (StringUtils.isEmpty(textFieldOrderID)) {
             return;
         }
+        String textFieldSizeText = this.textFieldSize.getText();
+        String textFieldPrice = this.textFieldPrice.getText();
         String textFieldOrigOrderID = this.textFieldOrigOrderID.getText();
-//        boolean checkBoxAutoGenSelected = checkBoxAutoGen.isSelected();
-        String comboOrdersValue = this.comboOrders.getValue().toString();
-        char comboSideValue = this.comboSide.getValue().toString().equals("SELL") ? '2' : '1';
+        String comboOrdersValue = this.comboOrders.getValue();
+        Character comboTimeInForceValue = Constants.TIME_IN_FORCE.getValue(this.comboBoxTimeInForce.getValue());
+        char comboSideValue = this.comboSide.getValue().equals(Constants.SIDE[0]) ? '1' : '2';
 
         switch (comboOrdersValue) {
             case Constants.COMBO_NEW_ORDER:
                 initator.sendNewOrderSingle(textFieldSizeText, textFieldPrice, textFieldOrderID,
-                     comboSideValue);
+                     comboSideValue, comboTimeInForceValue);
                 break;
             case Constants.COMBO_CANCEL:
                 initator.sendOrderCancelRequest(textFieldOrderID, textFieldOrigOrderID, comboSideValue);

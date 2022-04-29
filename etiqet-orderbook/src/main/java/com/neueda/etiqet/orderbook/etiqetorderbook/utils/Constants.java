@@ -18,12 +18,12 @@ public class Constants {
     public static final HashMap<String,String> hmMsgType;
     public static final HashMap<String,String> hmOrdStatus;
     public static final HashMap<String,String> hmExecType;
-//    public static final HashMap<String,String> hmTags;
     public static final HashMap<String,String> hmFixVersions;
     public static final HashMap<Integer,String> hmTagValue;
     public static final String EXECUTION_REPORT = "8";
     public static final String NEW = "0000";
     public static final String NONE = "NONE";
+
 
     public static final String CONF_BEGIN_STRING = "BeginString";
     public static final String CONF_SENDER = "SenderCompID";
@@ -56,9 +56,9 @@ public class Constants {
     public static final String INITIATOR_PORT_DIALOG_HEADER = "Introduce port to connect";
     public static final String INITIATOR_PORT_DIALOG_TEXT = "Port:";
     public static final String SET_DEFAULT_PORT = "Set default port: ";
-    public static final String COMBO_NEW_ORDER = "NEW ORDER";
-    public static final String COMBO_CANCEL = "CANCEL";
-    public static final String COMBO_REPLACE = "REPLACE";
+    public static final String COMBO_NEW_ORDER = "New Order Single (D)";
+    public static final String COMBO_CANCEL = "Order Cancel Request (F)";
+    public static final String COMBO_REPLACE = "Order Cancel/Replace Request (G)";
 
     public static final String MSG_TYPE = "35";
     public static final String PORTS_RANGE_ERROR = "PORTS RANGE ERROR";
@@ -68,6 +68,42 @@ public class Constants {
     public static final String INVALID_PORTS = "Invalid ports: ";
     public static final String HELP_SITE = "https://btobits.com/fixopaedia/fixdic44/fields_by_tag_.html";
     public static final List<String> Y_N = Arrays.asList("Y", "N");
+    public static final List<String> TIME_IN_FORCE_VALUES = Arrays.asList("Day (0)", "Good Till Cancel (1)", "At the opening (2)", "Immediate Or Cancel (3)", "Fill or Kill (4)", "At the close (7)");
+    public enum TIME_IN_FORCE{
+        DAY('0', "Day"),
+        GOOD_TILL_CANCEL('1', "Good Till Cancel"),
+        AT_THE_OPENING('2', "At the Opening"),
+        IMMEDIATE_OR_CANCEL('3', "Immediate or Cancel"),
+        FILL_OR_KILL('4', "Fill or Kill"),
+        AT_THE_CLOSE('7', "At the close");
+
+        private final Character value;
+        private final String content;
+
+        TIME_IN_FORCE(Character value, String content) {
+            this.value = value;
+            this.content = content;
+        }
+
+        public static List<String> getContents(){
+            List<String> values = new ArrayList<>();
+            for (TIME_IN_FORCE t : TIME_IN_FORCE.values()){
+                values.add(t.content + " (" + t.value + ")");
+            }
+            return values;
+        }
+
+        public static Character getValue(String content){
+            for (TIME_IN_FORCE t : TIME_IN_FORCE.values()){
+                if (content.contains(t.content)){
+                    return t.value;
+                }
+            }
+            return null;
+        }
+    }
+
+
     public static final String FIX_4_0 = "FIX.4.0";
     public static final String FIX_4_1 = "FIX.4.1";
     public static final String FIX_4_2 = "FIX.4.2";
@@ -112,6 +148,7 @@ public class Constants {
     public static final Object COMBO_NEW_ORDER_ID = "New";
     public static final String SENT_ORIG_CL_ORD_I_DS = "Sent OrigClOrdIDs";
     public static final String DEFAULT_ORDERS_FILE = "orders.xml";
+    public static final String[] SIDE = {"Buy (1)", "Sell (2)"};
 
 
     //hmTagValue
