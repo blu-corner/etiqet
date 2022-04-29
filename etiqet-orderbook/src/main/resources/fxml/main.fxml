@@ -141,7 +141,7 @@
                                              <TableColumn fx:id="timeInForceSellTableColumn" prefWidth="96.0" text="TimeInForce" />
                                           </columns>
                                       </TableView>
-                                    <TableView fx:id="actionTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="997.0" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                                    <TableView fx:id="actionTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="996.0" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                         <columns>
                                             <TableColumn fx:id="actionTimeTableColumn" prefWidth="120.0" text="Time" />
                                             <TableColumn fx:id="actionTypeTableColumn" prefWidth="92.0" text="Type" />

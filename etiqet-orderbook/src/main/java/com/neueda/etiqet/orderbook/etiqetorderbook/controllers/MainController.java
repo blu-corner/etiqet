@@ -14,10 +14,12 @@ import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -26,10 +28,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +61,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
+import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getStage;
 
 public class MainController implements Initializable {
 
@@ -159,9 +164,9 @@ public class MainController implements Initializable {
         orderBookBuyTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
         orderBookSellTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
 
-        actionTableView.setOnMouseClicked(this::cellToClipBoard);
-        orderBookBuyTableView.setOnMouseClicked(this::cellToClipBoard);
-        orderBookSellTableView.setOnMouseClicked(this::cellToClipBoard);
+        actionTableView.setOnMouseClicked(this::mouseClicks);
+        orderBookBuyTableView.setContextMenu(getContextMenu(Constants.SIDE_ENUM.BUY));
+        orderBookSellTableView.setContextMenu(getContextMenu(Constants.SIDE_ENUM.SELL));
 
         listViewLog.setOnMouseClicked(this::showFixFields);
         menuItemDecodeOnClick.setSelected(true);
@@ -226,7 +231,7 @@ public class MainController implements Initializable {
                 alert.setHeaderText("FIX message decoded");
                 alert.showAndWait();
             } else {
-                cellToClipBoard(e);
+                mouseClicks(e);
             }
 
         } catch (Exception ex) {
@@ -473,18 +478,108 @@ public class MainController implements Initializable {
         logger.info("Logout message sent: {}", sent);
     }
 
+    private ContextMenu getContextMenu(Constants.SIDE_ENUM side){
+        ContextMenu contextMenu = new ContextMenu();
+        Menu menuCopy = new Menu("Copy");
+        MenuItem menuItemCopyOrderID = new MenuItem("OrderID");
+        MenuItem menuItemCancel = new MenuItem("Cancel Order");
+
+        menuCopy.getItems().add(menuItemCopyOrderID);
+        contextMenu.getItems().add(menuCopy);
+        contextMenu.getItems().add(menuItemCancel);
+
+        menuItemCancel.setOnAction((event) -> contextMenuCancelAction(side));
+
+        menuItemCopyOrderID.setOnAction(e -> {
+            Order selectedOrder;
+            final Clipboard clipboard = Clipboard.getSystemClipboard();
+            final ClipboardContent content = new ClipboardContent();
+            if (side.equals(Constants.SIDE_ENUM.BUY)){
+                selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
+            }else{
+                selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
+            }
+            content.putString(selectedOrder.getOrderID());
+            Label label = new Label("OrderID copied");
+            label.setStyle("-fx-background-radius: 6;" +
+                "-fx-background-color: rgb(45, 45, 50), rgb(60, 60, 65);" +
+                "-fx-text-fill: white;");
+            label.setPadding(new Insets(10, 10, 10 ,10));
+            Popup popup = new Popup();
+            popup.getContent().add(label);
+            label.setMinWidth(100);
+            label.setMinHeight(50);
+            popup.show(menuBarGeneral.getScene().getWindow());
+            popup.setAutoHide(true);
+
+            clipboard.setContent(content);
+        });
+
+        return contextMenu;
+    }
+
+    private void contextMenuCancelAction(Constants.SIDE_ENUM side) {
+        Order selectedOrder;
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm order cancellation");
+        alert.setHeaderText("Cancel and remove order from orderbook");
+        alert.setContentText("An execution report will be sent to the client");
+        Optional<ButtonType> response = alert.showAndWait();
+        if (response.isPresent()){
+            ButtonType buttonType = response.get();
+            if (buttonType.equals(ButtonType.OK)){
+                if (side.equals(Constants.SIDE_ENUM.BUY)){
+                    selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
+                    this.getBuy().remove(selectedOrder);
+                    reorderBookBuyTableView();
+                }else{
+                    selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
+                    this.getSell().remove(selectedOrder);
+                    reorderBookSellTableView();
+                }
+                this.logger.info("Deleted");
+            }else{
+                this.logger.info("Canceled");
+            }
+        }
+    }
+
+    private void mouseClicks(MouseEvent event){
+        // create a menu
+
+
+
+//        if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
+//            removeOrderAlert(event);
+//        }else{
+//            cellToClipBoard(event);
+//        }
+    }
+
+
     private void cellToClipBoard(MouseEvent e) {
         try {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
-            String targetString = e.getTarget().toString();
-            int firstQuote = targetString.indexOf('"');
-            int secondQuote = targetString.indexOf('"', firstQuote + 1);
-            content.putString(targetString.substring(firstQuote + 1, secondQuote));
+            content.putString(getTargetContent(e));
             clipboard.setContent(content);
         } catch (Exception ex) {
             this.logger.error(ex.getLocalizedMessage());
         }
+    }
+
+    private String getTargetContent(MouseEvent e){
+        String targetString = e.getTarget().toString();
+        int firstQuote = targetString.indexOf('"');
+        int secondQuote = targetString.indexOf('"', firstQuote + 1);
+        return targetString.substring(firstQuote + 1, secondQuote);
+    }
+
+    private String getTargetContent(ActionEvent e){
+        String targetString = e.getTarget().toString();
+        int firstQuote = targetString.indexOf('"');
+        int secondQuote = targetString.indexOf('"', firstQuote + 1);
+        return targetString.substring(firstQuote + 1, secondQuote);
     }
 
     public List<Order> getBuy() {
