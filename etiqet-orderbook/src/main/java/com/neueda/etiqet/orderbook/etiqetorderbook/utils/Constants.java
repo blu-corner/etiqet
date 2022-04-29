@@ -93,6 +93,15 @@ public class Constants {
             return values;
         }
 
+        public static String getContent(Character value){
+            for (TIME_IN_FORCE t : TIME_IN_FORCE.values()){
+                if (value.equals(t.value)){
+                    return t.content;
+                }
+            }
+            return null;
+        }
+
         public static Character getValue(String content){
             for (TIME_IN_FORCE t : TIME_IN_FORCE.values()){
                 if (content.contains(t.content)){

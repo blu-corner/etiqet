@@ -6,10 +6,10 @@ public class Order {
     private Double size;
     private Double price;
     private String clientID;
-    private Character timeInForce;
+    private String timeInForce;
     private boolean removed;
 
-    public Order(String orderID, String time, Double size, Double price, String clientID, Character timeInForce) {
+    public Order(String orderID, String time, Double size, Double price, String clientID, String timeInForce) {
         this.orderID = orderID;
         this.time = time;
         this.size = size;
@@ -25,7 +25,7 @@ public class Order {
         this.size = 0d;
         this.price = 0d;
         this.clientID = "";
-        this.timeInForce = 0;
+        this.timeInForce = "1";
         this.removed = false;
     }
 
@@ -69,11 +69,11 @@ public class Order {
         this.clientID = clientID;
     }
 
-    public Character getTimeInForce() {
+    public String getTimeInForce() {
         return timeInForce;
     }
 
-    public void setTimeInForce(Character timeInForce) {
+    public void setTimeInForce(String timeInForce) {
         this.timeInForce = timeInForce;
     }
 

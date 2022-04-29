@@ -25,7 +25,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="container" prefHeight="573.0" prefWidth="841.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController">
+<VBox fx:id="container" prefHeight="573.0" prefWidth="1036.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -128,6 +128,7 @@
                                               <TableColumn fx:id="sizeBuyTableColumn" prefWidth="50.0" text="Size" />
                                               <TableColumn fx:id="priceBuyTableColumn" prefWidth="50.0" text="Price" />
                                               <TableColumn fx:id="clientIDBuyTableColumn" prefWidth="80.0" text="ClientID" />
+                                              <TableColumn fx:id="timeInForceBuyTableColumn" prefWidth="97.0" text="TimeInForce" />
                                           </columns>
                                       </TableView>
                                       <TableView fx:id="orderBookSellTableView" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -137,20 +138,24 @@
                                               <TableColumn fx:id="sizeSellTableColumn" prefWidth="50.0" text="Size" />
                                               <TableColumn fx:id="priceSellTableColumn" prefWidth="50.0" text="Price" />
                                               <TableColumn fx:id="clientIDSellTableColumn" prefWidth="80.0" text="ClientID" />
+                                             <TableColumn fx:id="timeInForceSellTableColumn" prefWidth="96.0" text="TimeInForce" />
                                           </columns>
                                       </TableView>
-                                    <TableView fx:id="actionTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="802.0" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                                    <TableView fx:id="actionTableView" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="997.0" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                         <columns>
                                             <TableColumn fx:id="actionTimeTableColumn" prefWidth="120.0" text="Time" />
-                                            <TableColumn fx:id="actionTypeTableColumn" prefWidth="50.0" text="Type" />
-                                            <TableColumn fx:id="actionTypeClientIdBuyTableColumn" prefWidth="80.0" text="BuyClientID" />
-                                            <TableColumn fx:id="actionTypeClientIdSellTableColumn" prefWidth="80.0" text="SellClientID" />
-                                            <TableColumn fx:id="actionOrderIdBuyTableColumn" prefWidth="80.0" text="BuyID" />
-                                            <TableColumn fx:id="actionOrderIdSellTableColumn" prefWidth="80.0" text="SellID" />
-                                            <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="65.0" text="BuySize" />
-                                            <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="65.0" text="SellSize" />
-                                            <TableColumn fx:id="actionLeaveQtyTableColumn" prefWidth="80.0" text="LeavesQty" />
-                                            <TableColumn fx:id="actionAgreedPriceTableColumn" prefWidth="100.0" text="AgreedPrice" />
+                                            <TableColumn fx:id="actionTypeTableColumn" prefWidth="92.0" text="Type" />
+                                            <TableColumn fx:id="actionTypeClientIdBuyTableColumn" prefWidth="75.0" text="BuyClientID" />
+                                            <TableColumn fx:id="actionTypeClientIdSellTableColumn" prefWidth="83.0" text="SellClientID" />
+
+                                 <TableColumn fx:id="actionTimeInForceBuyTableColumn" prefWidth="98.0" text="TimeInForceBuy" />
+                                 <TableColumn fx:id="actionTimeInForceSellTableColumn" prefWidth="102.0" text="TimeInForceSell" />
+                                            <TableColumn fx:id="actionOrderIdBuyTableColumn" prefWidth="61.0" text="BuyID" />
+                                            <TableColumn fx:id="actionOrderIdSellTableColumn" prefWidth="51.0" text="SellID" />
+                                            <TableColumn fx:id="actionBuySizeTableColumn" prefWidth="60.0" text="BuySize" />
+                                            <TableColumn fx:id="actionSellSizeTableColumn" prefWidth="72.0" text="SellSize" />
+                                            <TableColumn fx:id="actionLeaveQtyTableColumn" prefWidth="87.0" text="LeavesQty" />
+                                            <TableColumn fx:id="actionAgreedPriceTableColumn" prefWidth="95.0" text="AgreedPrice" />
                                         </columns>
                               <GridPane.margin>
                                  <Insets top="10.0" />
@@ -165,7 +170,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="643.0" prefWidth="810.0">
                             <children>
-                                <GridPane alignment="CENTER" layoutY="21.0" prefHeight="50.0" prefWidth="800.0">
+                                <GridPane alignment="CENTER" layoutY="21.0" prefHeight="50.0" prefWidth="988.0">
                                     <columnConstraints>
                                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="10.0" prefWidth="83.0" />
                                         <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="142.0" minWidth="100.0" prefWidth="120.0" />
@@ -269,10 +274,10 @@
                                  </GridPane.margin></Hyperlink>
                               <Button fx:id="buttonCopyLast" mnemonicParsing="false" onAction="#buttonCopyLast" prefHeight="25.0" prefWidth="70.0" text="Copy Last" GridPane.columnIndex="6" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                               <Label text="TimeInForce" GridPane.columnIndex="7" />
-                              <ComboBox fx:id="comboBoxTimeInForce" prefHeight="25.0" prefWidth="108.0" GridPane.columnIndex="8" />
+                              <ComboBox fx:id="comboBoxTimeInForce" prefHeight="25.0" prefWidth="132.0" GridPane.columnIndex="8" />
                                     </children>
                                 </GridPane>
-                                <ListView fx:id="listViewActions" layoutX="14.0" layoutY="96.0" prefHeight="348.0" prefWidth="782.0" />
+                                <ListView fx:id="listViewActions" layoutX="14.0" layoutY="96.0" prefHeight="348.0" prefWidth="976.0" />
                                 <Button fx:id="buttonClearMainLog" layoutX="14.0" layoutY="453.0" mnemonicParsing="false" onAction="#clearMainLog" text="CLEAR" />
                             </children>
                         </AnchorPane>
@@ -282,7 +287,7 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="643.0" prefWidth="810.0">
                             <children>
-                                <ListView fx:id="listViewLog" layoutX="14.0" layoutY="55.0" prefHeight="557.0" prefWidth="782.0" />
+                                <ListView fx:id="listViewLog" layoutX="14.0" layoutY="55.0" prefHeight="418.0" prefWidth="974.0" />
                                 <Button fx:id="buttonClearGlobalLog" layoutX="14.0" layoutY="23.0" mnemonicParsing="false" onAction="#clearGlobalLog" text="CLEAR" />
                             </children>
                         </AnchorPane>

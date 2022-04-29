@@ -118,10 +118,14 @@ public class MainController implements Initializable {
     public TableColumn<Order, String> priceSellTableColumn;
     public TableColumn<Order, String> clientIDBuyTableColumn;
     public TableColumn<Order, String> clientIDSellTableColumn;
+    public TableColumn<Order, String> timeInForceSellTableColumn;
+    public TableColumn<Order, String> timeInForceBuyTableColumn;
 
     public TableColumn<Action, String> actionTypeTableColumn;
     public TableColumn<Action, String> actionTypeClientIdBuyTableColumn;
     public TableColumn<Action, String> actionTypeClientIdSellTableColumn;
+    public TableColumn<Action, String> actionTimeInForceBuyTableColumn;
+    public TableColumn<Action, String> actionTimeInForceSellTableColumn;
     public TableColumn<Action, String> actionOrderIdBuyTableColumn;
     public TableColumn<Action, String> actionOrderIdSellTableColumn;
     public TableColumn<Action, String> actionTimeTableColumn;
@@ -167,16 +171,20 @@ public class MainController implements Initializable {
         sizeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
         priceBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
         clientIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("ClientID"));
+        timeInForceBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("TimeInForce"));
 
         orderIDSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
         timeSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
         sizeSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
         priceSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
         clientIDSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("ClientID"));
+        timeInForceSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("TimeInForce"));
 
         actionTypeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Type"));
         actionTypeClientIdBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuyClientID"));
         actionTypeClientIdSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellClientID"));
+        actionTimeInForceBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("TimeInForceBuy"));
+        actionTimeInForceSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("TimeInForceSell"));
         actionOrderIdBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("BuyID"));
         actionOrderIdSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("SellID"));
         actionTimeTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));

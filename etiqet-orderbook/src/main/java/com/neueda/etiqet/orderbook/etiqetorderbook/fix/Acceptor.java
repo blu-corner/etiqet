@@ -110,7 +110,8 @@ public class Acceptor implements Application {
                     reports.add(generateExecReport(ExecType.PENDING_NEW, clOrdID, Constants.NEW, Constants.NEW, symbol, side, price, ordQty));
                     reports.add(generateExecReport(ExecType.NEW, clOrdID, orderId, execId, symbol, side, price, ordQty));
                     logger.info("################################ NEW ORDER SINGLE");
-                    Order order = new Order(clOrdID.getValue(), Utils.getFormattedStringDate(), ordQty.getValue(), price.getValue(), clientID, timeInFoce.getValue());
+                    Order order = new Order(clOrdID.getValue(), Utils.getFormattedStringDate(),
+                        ordQty.getValue(), price.getValue(), clientID, Constants.TIME_IN_FORCE.getContent(timeInFoce.getValue()));
                     addNewOrder(side, order);
                     ExecutionReport finalExecutionReport = lookForNewTrade(clOrdID, orderId, execId, symbol, side, price, ordQty);
                     if (finalExecutionReport != null) {
@@ -158,7 +159,8 @@ public class Acceptor implements Application {
                         reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
                     } else {
                         logger.info("################################ ORDER CANCEL REPLACE REQUEST");
-                        Order order = new Order(origClOrdID.getValue(), Utils.getFormattedStringDate(), ordQty.getValue(), price.getValue(), clientID, timeInFoce.getValue());
+                        Order order = new Order(origClOrdID.getValue(), Utils.getFormattedStringDate(), ordQty.getValue(),
+                            price.getValue(), clientID, Constants.TIME_IN_FORCE.getContent(timeInFoce.getValue()));
                         reports.add(generateExecReport(ExecType.PENDING_REPLACE, clOrdID, Constants.NEW, Constants.NEW, symbol, side, ordQty, new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.REPLACED, clOrdID, orderId, execId, symbol, side, ordQty, price));
                         ExecutionReport tradeWhenReplacing = replaceOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, ordQty, price, order);
@@ -358,7 +360,7 @@ public class Acceptor implements Application {
                         return handlePartialFill(clOrdID, ordId, execId, symbol, side, price, topBuy, topSell, topBuyClientID, topSellClientID);
                     }
                 }else if (areTimeInForceFOKorIOC(topBuy, topSell)){
-                    Action action = new Action(Action.Type.CANCELED, topBuy.getOrderID(), topSell.getOrderID(), topBuyClientID, topSellClientID,Utils.getFormattedStringDate(), 0d, topSell.getSize(), 0d, topSell.getPrice());
+                    Action action = new Action(Action.Type.CANCELED, topBuy.getOrderID(), topSell.getOrderID(), topBuyClientID, topBuy.getTimeInForce(), topSell.getTimeInForce(), topSellClientID,Utils.getFormattedStringDate(), 0d, topSell.getSize(), 0d, topSell.getPrice());
                     addAction(topBuy, topSell, action);
                     topBuy.setRemoved(true);
                     topSell.setRemoved(true);
@@ -370,6 +372,7 @@ public class Acceptor implements Application {
                         topBuy.getOrderID(),
                         "",
                         topBuyClientID,
+                        topBuy.getTimeInForce(), "",
                         topSellClientID,
                         Utils.getFormattedStringDate(),
                         topBuy.getSize(),
@@ -383,6 +386,7 @@ public class Acceptor implements Application {
                         "",
                         topSell.getOrderID(),
                         topBuyClientID,
+                        "", topSell.getTimeInForce(),
                         topSellClientID,
                         Utils.getFormattedStringDate(),
                         0d,
@@ -407,12 +411,12 @@ public class Acceptor implements Application {
         Action action;
         Double originalSize;
         if (isTimeInForceFOK(topBuy)){
-            action = new Action(Action.Type.CANCELED, topBuy.getOrderID(), "", topBuyClientID, topSellClientID,Utils.getFormattedStringDate(), topBuy.getSize(), 0d, 0d, 0d);
+            action = new Action(Action.Type.CANCELED, topBuy.getOrderID(), "", topBuyClientID, topBuy.getTimeInForce(), "", topSellClientID,Utils.getFormattedStringDate(), topBuy.getSize(), 0d, 0d, 0d);
             addAction(topBuy, new Order(), action);
             topBuy.setRemoved(true);
             return generateExecReport(ExecType.CANCELED, clOrdID, ordId, execId, symbol, side, price, new DoubleField(leaveQty.intValue()));
         }else if (isTimeInForceFOK(topSell)){
-            action = new Action(Action.Type.CANCELED, "", topSell.getOrderID(), topBuyClientID, topSellClientID,Utils.getFormattedStringDate(), 0d, topSell.getSize(), 0d, 0d);
+            action = new Action(Action.Type.CANCELED, "", topSell.getOrderID(), topBuyClientID,"", topSell.getTimeInForce(), topSellClientID,Utils.getFormattedStringDate(), 0d, topSell.getSize(), 0d, 0d);
             addAction(new Order(), topSell, action);
             topSell.setRemoved(true);
             return generateExecReport(ExecType.CANCELED, clOrdID, ordId, execId, symbol, side, price, new DoubleField(leaveQty.intValue()));
@@ -425,7 +429,7 @@ public class Acceptor implements Application {
                 this.mainController.orderBookSellTableView.getItems().remove(topSell);
                 mainController.orderBookBuyTableView.getItems().remove(0);
                 mainController.orderBookBuyTableView.getItems().add(topBuy);
-                action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), topBuyClientID, topSellClientID,Utils.getFormattedStringDate(), originalSize, topSell.getSize(), leaveQty, topSell.getPrice());
+                action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), topBuyClientID, topBuy.getTimeInForce(), topSell.getTimeInForce(),  topSellClientID,Utils.getFormattedStringDate(), originalSize, topSell.getSize(), leaveQty, topSell.getPrice());
             } else {
                 leaveQty = topSell.getSize() - topBuy.getSize();
                 originalSize = topSell.getSize();
@@ -434,7 +438,7 @@ public class Acceptor implements Application {
                 mainController.orderBookBuyTableView.getItems().remove(topBuy);
                 mainController.orderBookSellTableView.getItems().remove(0);
                 mainController.orderBookSellTableView.getItems().add(topSell);
-                action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), topBuyClientID, topSellClientID,Utils.getFormattedStringDate(), topBuy.getSize(),  originalSize, leaveQty, topSell.getPrice());
+                action = new Action(Action.Type.PARTIAL_FILL, topBuy.getOrderID(), topSell.getOrderID(), topBuyClientID, topBuy.getTimeInForce(), topSell.getTimeInForce(),topSellClientID,Utils.getFormattedStringDate(), topBuy.getSize(),  originalSize, leaveQty, topSell.getPrice());
             }
         }
         addAction(topBuy, topSell, action);
@@ -477,7 +481,7 @@ public class Acceptor implements Application {
         printTrade(topBuy, topSell);
         this.mainController.orderBookSellTableView.getItems().remove(topSell);
         //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price
-        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), topBuyClientID,
+        Action action = new Action(Action.Type.FILL, topBuy.getOrderID(), topSell.getOrderID(), topBuyClientID,topBuy.getTimeInForce(), topSell.getTimeInForce(),
             topSellClientID, Utils.getFormattedStringDate(), topBuy.getSize(), topSell.getSize(), 0d, topSell.getPrice());
         this.mainController.actionTableView.getItems().add(action);
         this.mainController.reorderActionTableView();
