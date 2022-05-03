@@ -4,6 +4,7 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.*;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.OrderXML;
+import com.neueda.etiqet.orderbook.etiqetorderbook.fix.Acceptor;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.FixSession;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.Initator;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
@@ -28,7 +29,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -61,7 +61,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
-import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getStage;
 
 public class MainController implements Initializable {
 
@@ -74,6 +73,7 @@ public class MainController implements Initializable {
     private boolean useDefaultPort;
     private String changedDefaultPort = "";
     private static String port;
+    private FixSession fixSession;
 
     public String getConnectedPort(){
         return port;
@@ -165,8 +165,8 @@ public class MainController implements Initializable {
         orderBookSellTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
 
         actionTableView.setOnMouseClicked(this::mouseClicks);
-        orderBookBuyTableView.setContextMenu(getContextMenu(Constants.SIDE_ENUM.BUY));
-        orderBookSellTableView.setContextMenu(getContextMenu(Constants.SIDE_ENUM.SELL));
+        orderBookBuyTableView.setContextMenu(getOrderContextMenu(Constants.SIDE_ENUM.BUY));
+        orderBookSellTableView.setContextMenu(getOrderContextMenu(Constants.SIDE_ENUM.SELL));
 
         listViewLog.setOnMouseClicked(this::showFixFields);
         menuItemDecodeOnClick.setSelected(true);
@@ -235,6 +235,7 @@ public class MainController implements Initializable {
             }
 
         } catch (Exception ex) {
+            this.logger.warn("Exception showFixFields -> {}", ex.getLocalizedMessage());
         }
 
     }
@@ -478,7 +479,9 @@ public class MainController implements Initializable {
         logger.info("Logout message sent: {}", sent);
     }
 
-    private ContextMenu getContextMenu(Constants.SIDE_ENUM side){
+
+
+    private ContextMenu getOrderContextMenu(Constants.SIDE_ENUM side){
         ContextMenu contextMenu = new ContextMenu();
         Menu menuCopy = new Menu("Copy");
         MenuItem menuItemCopyOrderID = new MenuItem("OrderID");
@@ -524,25 +527,35 @@ public class MainController implements Initializable {
         alert.setTitle("Confirm order cancellation");
         alert.setHeaderText("Cancel and remove order from orderbook");
         alert.setContentText("An execution report will be sent to the client");
-        Optional<ButtonType> response = alert.showAndWait();
-        if (response.isPresent()){
-            ButtonType buttonType = response.get();
-            if (buttonType.equals(ButtonType.OK)){
-                if (side.equals(Constants.SIDE_ENUM.BUY)){
-                    selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
-                    this.getBuy().remove(selectedOrder);
-                    reorderBookBuyTableView();
+        try{
+            Optional<ButtonType> response = alert.showAndWait();
+            if (response.isPresent()){
+                ButtonType buttonType = response.get();
+                if (buttonType.equals(ButtonType.OK)){
+                    Acceptor acceptor = new Acceptor(this);
+                    if (side.equals(Constants.SIDE_ENUM.BUY)){
+                        selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
+                        acceptor.sendExecutionReportAfterCanceling(selectedOrder, fixSession);
+                        this.getBuy().remove(selectedOrder);
+                        reorderBookBuyTableView();
+                    }else{
+                        selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
+                        acceptor.sendExecutionReportAfterCanceling(selectedOrder, fixSession);
+                        this.getSell().remove(selectedOrder);
+                        reorderBookSellTableView();
+                    }
+                    this.logger.info("Deleted");
                 }else{
-                    selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
-                    this.getSell().remove(selectedOrder);
-                    reorderBookSellTableView();
+                    this.logger.info("Canceled");
                 }
-                this.logger.info("Deleted");
-            }else{
-                this.logger.info("Canceled");
             }
+        }catch (Exception e){
+            this.logger.warn("Exception::contextMenuCancelAction -> {}", e.getLocalizedMessage());
         }
+
     }
+
+
 
     private void mouseClicks(MouseEvent event){
         // create a menu
@@ -829,7 +842,7 @@ public class MainController implements Initializable {
             boolean existInvalidPorts = false;
             for (int port = iTestRangeA; port <= iTestRangeB; port++) {
                 if (Utils.availablePort(port)){
-                    FixSession fixSession = new FixSession(this, orderBook);
+                    fixSession = new FixSession(this, orderBook);
                     fixSession.start(port);
                     fixSessions.add(fixSession);
                     validPorts.append(port).append(",");

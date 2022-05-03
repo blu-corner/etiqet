@@ -1,13 +1,16 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.fix;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController;
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
-import quickfix.field.BeginString;
-import quickfix.field.SenderCompID;
-import quickfix.field.TargetCompID;
+import quickfix.field.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FixSession {
     private Logger logger = LoggerFactory.getLogger(FixSession.class);
@@ -97,6 +100,8 @@ public class FixSession {
             e.printStackTrace();
         }
     }
+
+
 
     public void stop(){
         try{

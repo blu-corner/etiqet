@@ -77,136 +77,24 @@ public class Acceptor implements Application {
         this.onMessage(message, sessionID);
     }
 
-    public void onMessage(Message message, SessionID sessionID) throws FieldNotFound, IncorrectTagValue {
-//        StringField beginString = message.getHeader().getField(new BeginString());
-        StringField msgType = message.getHeader().getField(new MsgType());
-        StringField clOrdID = message.getField(new ClOrdID());
-        StringField symbol = message.getField(new Symbol());
-        CharField side = message.getField(new Side());
-        CharField timeInFoce = message.getField(new TimeInForce());
+
+    public void sendExecutionReportAfterCanceling(Order order, FixSession fixSession){
+        List<Message> reports = new ArrayList<>();
         String orderId = RandomStringUtils.randomAlphanumeric(5);
         String execId = RandomStringUtils.randomAlphanumeric(5);
-        List<Message> reports = new ArrayList<>();
-        String clientID = message.getHeader().getField(new SenderCompID()).getValue();
-
-        DoubleField ordQty;
-        CharField ordType;
-        DoubleField price;
-        StringField origClOrdID;
-
-        switch (msgType.getValue()) {
-            case MsgType.ORDER_SINGLE:
-                price = message.getField(new Price());
-                ordQty = message.getField(new OrderQty());
-                ordType = message.getField(new OrdType());
-
-                if (ordType.getValue() != OrdType.LIMIT) {
-                    throw new IncorrectTagValue(ordType.getField());
-                }
-                if (duplicatedOrderId(clOrdID)) {
-                    logger.info("################################ NEW ORDER REJECTED: DUPLICATED ORDER ID");
-                    reports.add(generateExecReport(ExecType.REJECTED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
-                } else {
-                    reports.add(generateExecReport(ExecType.PENDING_NEW, clOrdID, Constants.NEW, Constants.NEW, symbol, side, price, ordQty));
-                    reports.add(generateExecReport(ExecType.NEW, clOrdID, orderId, execId, symbol, side, price, ordQty));
-                    logger.info("################################ NEW ORDER SINGLE");
-                    Order order = new Order(clOrdID.getValue(), Utils.getFormattedStringDate(),
-                        ordQty.getValue(), price.getValue(), clientID, Constants.TIME_IN_FORCE.getContent(timeInFoce.getValue()));
-                    addNewOrder(side, order);
-                    ExecutionReport finalExecutionReport = lookForNewTrade(clOrdID, orderId, execId, symbol, side, price, ordQty);
-                    if (finalExecutionReport != null) {
-                        if (finalExecutionReport.getExecType().equals(new ExecType(ExecType.CANCELED)) &&
-                            (timeInFoce.equals(new TimeInForce(TimeInForce.FILL_OR_KILL))  ||
-                                timeInFoce.equals(new TimeInForce(TimeInForce.IMMEDIATE_OR_CANCEL)))){
-                            order.setRemoved(true);
-                        }
-                        reports.add(finalExecutionReport);
-                    }
-                }
-                break;
-            case MsgType.ORDER_CANCEL_REQUEST:
-                origClOrdID = message.getField(new OrigClOrdID());
-                if (duplicatedOrderId(clOrdID)) {
-                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED, clOrdID.getValue()));
-                } else {
-                    if (!containsOrder(side, origClOrdID.getValue())) {
-                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
-                    } else {
-                        logger.info("################################ ORDER CANCEL REQUEST");
-                        //clOrdID, orderId, execId, symbol, side, price, ordQty
-                        reports.add(generateExecReport(ExecType.PENDING_CANCEL, clOrdID, Constants.NEW, Constants.NEW, symbol, side, new DoubleField(0), new DoubleField(0)));
-                        reports.add(generateExecReport(ExecType.CANCELED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
-                        ExecutionReport tradeWhenCancelling = cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, null, null);
-                        if (tradeWhenCancelling != null){
-                            reports.add(tradeWhenCancelling);
-                        }
-                    }
-                }
-
-                break;
-            case MsgType.ORDER_CANCEL_REPLACE_REQUEST:
-                origClOrdID = message.getField(new OrigClOrdID());
-                price = message.getField(new Price());
-                ordQty = message.getField(new OrderQty());
-                ordType = message.getField(new OrdType());
-                if (ordType.getValue() != OrdType.LIMIT) {
-                    throw new IncorrectTagValue(ordType.getField());
-                }
-                if (duplicatedOrderId(clOrdID)) {
-                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED, clOrdID.getValue()));
-                } else {
-                    if (!containsOrder(side, origClOrdID.getValue())) {
-                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
-                    } else {
-                        logger.info("################################ ORDER CANCEL REPLACE REQUEST");
-                        Order order = new Order(origClOrdID.getValue(), Utils.getFormattedStringDate(), ordQty.getValue(),
-                            price.getValue(), clientID, Constants.TIME_IN_FORCE.getContent(timeInFoce.getValue()));
-                        reports.add(generateExecReport(ExecType.PENDING_REPLACE, clOrdID, Constants.NEW, Constants.NEW, symbol, side, ordQty, new DoubleField(0)));
-                        reports.add(generateExecReport(ExecType.REPLACED, clOrdID, orderId, execId, symbol, side, ordQty, price));
-                        ExecutionReport tradeWhenReplacing = replaceOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, ordQty, price, order);
-                        if (tradeWhenReplacing != null){
-                            reports.add(tradeWhenReplacing);
-                        }
-                    }
-                }
-                break;
-            default:
-                break;
-        }
+        reports.add(generateExecReport(ExecType.CANCELED, new OrderID(order.getOrderID()),  orderId, execId,  new Symbol("N/A"), new Side(Side.BUY), new DoubleField(0), new DoubleField(0)));
 
         reports.forEach(r -> {
             try {
-                Session.sendToTarget(r, sessionID);
+                Session.sendToTarget(r, fixSession.getSessionID());
             } catch (SessionNotFound e) {
                 e.printStackTrace();
             }
         });
     }
 
-    private Message rejectOrder(int rejResponseTo, int cxlRejReason, String origClOrdID) {
-        String clOrdId = RandomStringUtils.randomAlphanumeric(5);
-        OrderCancelReject orderCancelReject = new OrderCancelReject();
-        switch (rejResponseTo) {
-            case CxlRejResponseTo.ORDER_CANCEL_REQUEST:
-                orderCancelReject.setField(new CxlRejResponseTo(CxlRejResponseTo.ORDER_CANCEL_REQUEST));
-                orderCancelReject.setField(new CxlRejReason(cxlRejReason));
-                logger.info("################################ ORDER CANCEL REQUEST REJECTED!!");
-                break;
-            case CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST:
-                orderCancelReject.setField(new CxlRejResponseTo(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST));
-                orderCancelReject.setField(new CxlRejReason(cxlRejReason));
-                logger.info("################################ ORDER CANCEL REPLACE REQUEST REJECTED!!");
-                break;
-        }
-        orderCancelReject.setField(new OrderID(Constants.NONE));
-        orderCancelReject.setField(new ClOrdID(clOrdId));
-        orderCancelReject.setField(new OrigClOrdID(origClOrdID));
-        orderCancelReject.setField(new OrdStatus(OrdStatus.REJECTED));
 
-        return orderCancelReject;
-    }
-
-    private ExecutionReport generateExecReport(char execType, StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
+    private static ExecutionReport generateExecReport(char execType, StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         ExecutionReport executionReport = new ExecutionReport();
 
         switch (execType) {
@@ -273,6 +161,152 @@ public class Acceptor implements Application {
         return executionReport;
     }
 
+    public void onMessage(Message message, SessionID sessionID) throws FieldNotFound, IncorrectTagValue {
+//        StringField beginString = message.getHeader().getField(new BeginString());
+        StringField msgType = message.getHeader().getField(new MsgType());
+        StringField clOrdID = message.getField(new ClOrdID());
+        StringField symbol = message.getField(new Symbol());
+        CharField side = message.getField(new Side());
+        String orderId = RandomStringUtils.randomAlphanumeric(5);
+        String execId = RandomStringUtils.randomAlphanumeric(5);
+        List<Message> reports = new ArrayList<>();
+        String clientID = message.getHeader().getField(new SenderCompID()).getValue();
+        CharField timeInFoce;
+        DoubleField ordQty;
+        CharField ordType;
+        DoubleField price;
+        StringField origClOrdID;
+
+        switch (msgType.getValue()) {
+            case MsgType.ORDER_SINGLE:
+                price = message.getField(new Price());
+                ordQty = message.getField(new OrderQty());
+                ordType = message.getField(new OrdType());
+                timeInFoce = message.getField(new TimeInForce());
+                if (ordType.getValue() != OrdType.LIMIT) {
+                    throw new IncorrectTagValue(ordType.getField());
+                }
+                if (duplicatedOrderId(clOrdID)) {
+                    logger.info("################################ NEW ORDER REJECTED: DUPLICATED ORDER ID");
+                    reports.add(generateExecReport(ExecType.REJECTED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
+                } else {
+                    reports.add(generateExecReport(ExecType.PENDING_NEW, clOrdID, Constants.NEW, Constants.NEW, symbol, side, price, ordQty));
+                    reports.add(generateExecReport(ExecType.NEW, clOrdID, orderId, execId, symbol, side, price, ordQty));
+                    logger.info("################################ NEW ORDER SINGLE");
+                    Order order = new Order(clOrdID.getValue(), Utils.getFormattedStringDate(),
+                        ordQty.getValue(), price.getValue(), clientID, Constants.TIME_IN_FORCE.getContent(timeInFoce.getValue()));
+                    addNewOrder(side, order);
+                    ExecutionReport finalExecutionReport = lookForNewTrade(clOrdID, orderId, execId, symbol, side, price, ordQty);
+                    if (finalExecutionReport != null) {
+                        if (finalExecutionReport.getExecType().equals(new ExecType(ExecType.CANCELED)) &&
+                            (timeInFoce.equals(new TimeInForce(TimeInForce.FILL_OR_KILL))  ||
+                                timeInFoce.equals(new TimeInForce(TimeInForce.IMMEDIATE_OR_CANCEL)))){
+                            order.setRemoved(true);
+                        }
+                        reports.add(finalExecutionReport);
+                    }
+                }
+                break;
+            case MsgType.ORDER_CANCEL_REQUEST:
+                origClOrdID = message.getField(new OrigClOrdID());
+                if (duplicatedOrderId(clOrdID)) {
+                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED, clOrdID.getValue()));
+                } else {
+                    if (!containsOrder(side, origClOrdID.getValue())) {
+                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
+                    } else {
+                        logger.info("################################ ORDER CANCEL REQUEST");
+                        //clOrdID, orderId, execId, symbol, side, price, ordQty
+                        reports.add(generateExecReport(ExecType.PENDING_CANCEL, clOrdID, Constants.NEW, Constants.NEW, symbol, side, new DoubleField(0), new DoubleField(0)));
+                        reports.add(generateExecReport(ExecType.CANCELED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
+                        ExecutionReport tradeWhenCancelling = cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, null, null);
+                        if (tradeWhenCancelling != null){
+                            reports.add(tradeWhenCancelling);
+                        }
+                    }
+                }
+
+                break;
+            case MsgType.ORDER_CANCEL_REPLACE_REQUEST:
+                origClOrdID = message.getField(new OrigClOrdID());
+                price = message.getField(new Price());
+                ordQty = message.getField(new OrderQty());
+                ordType = message.getField(new OrdType());
+                if (ordType.getValue() != OrdType.LIMIT) {
+                    throw new IncorrectTagValue(ordType.getField());
+                }
+                if (duplicatedOrderId(clOrdID)) {
+                    reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.DUPLICATE_CLORDID_RECEIVED, clOrdID.getValue()));
+                } else {
+                    if (!containsOrder(side, origClOrdID.getValue())) {
+                        reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
+                    } else {
+                        logger.info("################################ ORDER CANCEL REPLACE REQUEST");
+                        Order order = new Order(origClOrdID.getValue(), Utils.getFormattedStringDate(), ordQty.getValue(),
+                            price.getValue(), clientID, null);// TODO CHECK TIMEINFORCE
+                        reports.add(generateExecReport(ExecType.PENDING_REPLACE, clOrdID, Constants.NEW, Constants.NEW, symbol, side, ordQty, new DoubleField(0)));
+                        reports.add(generateExecReport(ExecType.REPLACED, clOrdID, orderId, execId, symbol, side, ordQty, price));
+                        ExecutionReport tradeWhenReplacing = replaceOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, ordQty, price, order);
+                        if (tradeWhenReplacing != null){
+                            reports.add(tradeWhenReplacing);
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        reports.forEach(r -> {
+            try {
+                Session.sendToTarget(r, sessionID);
+            } catch (SessionNotFound e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
+    private boolean containsOrder(CharField side, String orderId) {
+        if (side.getValue() == (Side.BUY)) {
+            return this.mainController.getBuy().stream().anyMatch(b -> b.getOrderID().equals(orderId));
+        } else {
+            return this.mainController.getSell().stream().anyMatch(b -> b.getOrderID().equals(orderId));
+        }
+    }
+
+    private boolean duplicatedOrderId(StringField clOrdID) {
+        return this.mainController.getBuy().stream().anyMatch(b -> b.getOrderID().equals(clOrdID.getValue()))
+            || this.mainController.getSell().stream().anyMatch(s -> s.getOrderID().equals(clOrdID.getValue()))
+            || this.mainController.actionTableView.getItems().stream().anyMatch(s -> s.getBuyID().equals(clOrdID.getValue())
+            || s.getSellID().equals(clOrdID.getValue()) );
+    }
+
+    private Message rejectOrder(int rejResponseTo, int cxlRejReason, String origClOrdID) {
+        String clOrdId = RandomStringUtils.randomAlphanumeric(5);
+        OrderCancelReject orderCancelReject = new OrderCancelReject();
+        switch (rejResponseTo) {
+            case CxlRejResponseTo.ORDER_CANCEL_REQUEST:
+                orderCancelReject.setField(new CxlRejResponseTo(CxlRejResponseTo.ORDER_CANCEL_REQUEST));
+                orderCancelReject.setField(new CxlRejReason(cxlRejReason));
+                logger.info("################################ ORDER CANCEL REQUEST REJECTED!!");
+                break;
+            case CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST:
+                orderCancelReject.setField(new CxlRejResponseTo(CxlRejResponseTo.ORDER_CANCEL_REPLACE_REQUEST));
+                orderCancelReject.setField(new CxlRejReason(cxlRejReason));
+                logger.info("################################ ORDER CANCEL REPLACE REQUEST REJECTED!!");
+                break;
+        }
+        orderCancelReject.setField(new OrderID(Constants.NONE));
+        orderCancelReject.setField(new ClOrdID(clOrdId));
+        orderCancelReject.setField(new OrigClOrdID(origClOrdID));
+        orderCancelReject.setField(new OrdStatus(OrdStatus.REJECTED));
+
+        return orderCancelReject;
+    }
+
+
+
     private void addNewOrder(CharField side, Order order) {
         if (side.getValue() == (Side.BUY)) {
             this.mainController.addBuy(order);
@@ -330,20 +364,7 @@ public class Acceptor implements Application {
         return lookForNewTrade(clOrdID, orderId, execId, symbol, side, size, priceOrder);
     }
 
-    private boolean containsOrder(CharField side, String orderId) {
-        if (side.getValue() == (Side.BUY)) {
-            return this.mainController.getBuy().stream().anyMatch(b -> b.getOrderID().equals(orderId));
-        } else {
-            return this.mainController.getSell().stream().anyMatch(b -> b.getOrderID().equals(orderId));
-        }
-    }
 
-    private boolean duplicatedOrderId(StringField clOrdID) {
-        return this.mainController.getBuy().stream().anyMatch(b -> b.getOrderID().equals(clOrdID.getValue()))
-            || this.mainController.getSell().stream().anyMatch(s -> s.getOrderID().equals(clOrdID.getValue()))
-            || this.mainController.actionTableView.getItems().stream().anyMatch(s -> s.getBuyID().equals(clOrdID.getValue())
-            || s.getSellID().equals(clOrdID.getValue()) );
-    }
 
     private ExecutionReport lookForNewTrade(StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         try {
