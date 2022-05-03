@@ -61,14 +61,34 @@ public class OrderBook implements Runnable {
 
     private void addActions() {
         for (Order order : this.mainController.getBuy().stream().filter(Order::isRemoved).collect(Collectors.toList())){
-            Action action = new Action(Action.Type.CANCELED, order.getClOrdID(), "", order.getClientID(), order.getTimeInForce(),
-                "", "",Utils.getFormattedStringDate(), order.getOrderQty(), null, 0d, 0d);
+//            Action action = new Action(Constants.Type.CANCELED, order.getClOrdID(), "", order.getClientID(), order.getTimeInForce(),
+//                "", "",Utils.getFormattedStringDate(), order.getOrderQty(), null, 0d, 0d);
+            Action action = new Action.ActionBuilder()
+                .type(Constants.Type.CANCELED)
+                .buyID(order.getClOrdID())
+                .buyClientID(order.getClientID())
+                .timeInForceBuy(order.getTimeInForce())
+                .time(Utils.getFormattedStringDate())
+                .buySize(order.getOrderQty())
+                .leaveQty(0d)
+                .agreedPrice(0d)
+                .build();
             this.mainController.actionTableView.getItems().add(action);
             this.mainController.reorderActionTableView();
         }
         for (Order order : this.mainController.getSell().stream().filter(Order::isRemoved).collect(Collectors.toList())){
-            Action action = new Action(Action.Type.CANCELED,  "", order.getClOrdID(), "","", order.getTimeInForce(),
-                order.getClientID(), Utils.getFormattedStringDate(),  null,order.getOrderQty(), 0d, 0d);
+//            Action action = new Action(Constants.Type.CANCELED,  "", order.getClOrdID(), "","", order.getTimeInForce(),
+//                order.getClientID(), Utils.getFormattedStringDate(),  null,order.getOrderQty(), 0d, 0d);
+            Action action = new Action.ActionBuilder()
+                .type(Constants.Type.CANCELED)
+                .sellID(order.getClOrdID())
+                .sellClientID(order.getClientID())
+                .timeInForceSell(order.getTimeInForce())
+                .time(Utils.getFormattedStringDate())
+                .sellSize(order.getOrderQty())
+                .leaveQty(0d)
+                .agreedPrice(0d)
+                .build();
             this.mainController.actionTableView.getItems().add(action);
             this.mainController.reorderActionTableView();
         }

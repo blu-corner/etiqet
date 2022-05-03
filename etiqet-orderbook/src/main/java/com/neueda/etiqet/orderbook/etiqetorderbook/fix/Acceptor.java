@@ -236,7 +236,7 @@ public class Acceptor implements Application {
                         //clOrdID, orderId, execId, symbol, side, price, ordQty
                         reports.add(generateExecReport(ExecType.PENDING_CANCEL, clOrdID, Constants.NEW, Constants.NEW, symbol, side, new DoubleField(0), new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.CANCELED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
-                        ExecutionReport tradeWhenCancelling = cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, null, null);
+                        ExecutionReport tradeWhenCancelling = cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0));
                         if (tradeWhenCancelling != null){
                             reports.add(tradeWhenCancelling);
                         }
@@ -416,7 +416,23 @@ public class Acceptor implements Application {
                         return handlePartialFill(clOrdID, ordId, execId, symbol, side, price, topBuy, topSell, topBuyClientID, topSellClientID);
                     }
                 }else if (areTimeInForceFOKorIOC(topBuy, topSell)){
-                    Action action = new Action(Action.Type.CANCELED, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID, topBuy.getTimeInForce(), topSell.getTimeInForce(), topSellClientID,Utils.getFormattedStringDate(), 0d, topSell.getOrderQty(), 0d, topSell.getPrice());
+//                    Action action = new Action(Constants.Type.CANCELED, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID, topBuy.getTimeInForce(),
+//                        topSell.getTimeInForce(), topSellClientID,Utils.getFormattedStringDate(), 0d, topSell.getOrderQty(), 0d, topSell.getPrice());
+                    Action action = new Action.ActionBuilder()
+                        .type(Constants.Type.CANCELED)
+                        .buyID(topBuy.getClOrdID())
+                        .sellID(topSell.getClOrdID())
+                        .buyClientID(topBuyClientID)
+                        .sellClientID(topSellClientID)
+                        .timeInForceBuy(topBuy.getTimeInForce())
+                        .timeInForceSell(topSell.getTimeInForce())
+                        .time(Utils.getFormattedStringDate())
+                        .buySize(0d)
+                        .sellSize(topSell.getOrderQty())
+                        .leaveQty(0d)
+                        .agreedPrice(topSell.getPrice())
+                        .build();
+
                     addAction(topBuy, topSell, action);
                     topBuy.setRemoved(true);
                     topSell.setRemoved(true);
@@ -424,29 +440,51 @@ public class Acceptor implements Application {
                 }
             }else{
                 if (topBuy != null && isTimeInForceFOKorIOC(topBuy)){
-                    Action action = new Action(Action.Type.CANCELED,
-                        topBuy.getClOrdID(),
-                        "",
-                        topBuyClientID,
-                        topBuy.getTimeInForce(), "",
-                        topSellClientID,
-                        Utils.getFormattedStringDate(),
-                        topBuy.getOrderQty(),
-                        0d, 0d, 0d);
+//                    Action action = new Action(Constants.Type.CANCELED,
+//                        topBuy.getClOrdID(),
+//                        "",
+//                        topBuyClientID,
+//                        topBuy.getTimeInForce(), "",
+//                        topSellClientID,
+//                        Utils.getFormattedStringDate(),
+//                        topBuy.getOrderQty(),
+//                        0d, 0d, 0d);
+                    Action action = new Action.ActionBuilder()
+                        .type(Constants.Type.CANCELED)
+                        .buyID(topBuy.getClOrdID())
+                        .buyClientID(topBuyClientID)
+                        .timeInForceBuy(topBuy.getTimeInForce())
+                        .time(Utils.getFormattedStringDate())
+                        .buySize(topBuy.getOrderQty())
+                        .sellSize(0d)
+                        .leaveQty(0d)
+                        .agreedPrice(0d)
+                        .build();
                     topBuy.setRemoved(true);
                     addAction(topBuy, new Order(), action);
                     return generateExecReport(ExecType.CANCELED, clOrdID, ordId, execId, symbol, side, price, new DoubleField(0));
 
                 }else if (topSell != null && isTimeInForceFOKorIOC(topSell)){
-                    Action action = new Action(Action.Type.CANCELED,
-                        "",
-                        topSell.getClOrdID(),
-                        topBuyClientID,
-                        "", topSell.getTimeInForce(),
-                        topSellClientID,
-                        Utils.getFormattedStringDate(),
-                        0d,
-                        topSell.getOrderQty(), 0d, 0d);
+//                    Action action = new Action(Constants.Type.CANCELED,
+//                        "",
+//                        topSell.getClOrdID(),
+//                        topBuyClientID,
+//                        "", topSell.getTimeInForce(),
+//                        topSellClientID,
+//                        Utils.getFormattedStringDate(),
+//                        0d,
+//                        topSell.getOrderQty(), 0d, 0d);
+                    Action action = new Action.ActionBuilder()
+                        .type(Constants.Type.CANCELED)
+                        .sellID(topSell.getClOrdID())
+                        .buyClientID(topBuyClientID)
+                        .timeInForceSell(topSell.getTimeInForce())
+                        .time(Utils.getFormattedStringDate())
+                        .buySize(0d)
+                        .sellSize(topSell.getOrderQty())
+                        .leaveQty(0d)
+                        .agreedPrice(0d)
+                        .build();
                     addAction(new Order(), topSell, action);
                     topSell.setRemoved(true);
                     return generateExecReport(ExecType.CANCELED, clOrdID, ordId, execId, symbol, side, price, new DoubleField(0));
@@ -467,12 +505,39 @@ public class Acceptor implements Application {
         Action action;
         Double originalSize;
         if (isTimeInForceFOK(topBuy)){
-            action = new Action(Action.Type.CANCELED, topBuy.getClOrdID(), "", topBuyClientID, topBuy.getTimeInForce(), "", topSellClientID,Utils.getFormattedStringDate(), topBuy.getOrderQty(), 0d, 0d, 0d);
+//            action = new Action(Constants.Type.CANCELED, topBuy.getClOrdID(), "", topBuyClientID,
+//                topBuy.getTimeInForce(), "", topSellClientID,Utils.getFormattedStringDate(), topBuy.getOrderQty(), 0d, 0d, 0d);
+            action = new Action.ActionBuilder()
+                .type(Constants.Type.CANCELED)
+                .buyID(topBuy.getClOrdID())
+                .buyClientID(topBuyClientID)
+                .sellClientID(topSellClientID)
+                .timeInForceBuy(topBuy.getTimeInForce())
+                .time(Utils.getFormattedStringDate())
+                .buySize(topBuy.getOrderQty())
+                .sellSize(0d)
+                .leaveQty(0d)
+                .agreedPrice(0d)
+                .build();
             addAction(topBuy, new Order(), action);
             topBuy.setRemoved(true);
             return generateExecReport(ExecType.CANCELED, clOrdID, ordId, execId, symbol, side, price, new DoubleField(leaveQty.intValue()));
         }else if (isTimeInForceFOK(topSell)){
-            action = new Action(Action.Type.CANCELED, "", topSell.getClOrdID(), topBuyClientID,"", topSell.getTimeInForce(), topSellClientID,Utils.getFormattedStringDate(), 0d, topSell.getOrderQty(), 0d, 0d);
+//            action = new Action(Constants.Type.CANCELED, "", topSell.getClOrdID(), topBuyClientID,"", topSell.getTimeInForce(),
+//                topSellClientID,Utils.getFormattedStringDate(), 0d, topSell.getOrderQty(), 0d, 0d);
+            action = new Action.ActionBuilder()
+                .type(Constants.Type.CANCELED)
+                .sellID(topSell.getClOrdID())
+                .buyClientID(topBuyClientID)
+                .sellClientID(topSellClientID)
+                .timeInForceSell(topSell.getTimeInForce())
+                .time(Utils.getFormattedStringDate())
+                .buySize(0d)
+                .sellSize(topSell.getOrderQty())
+                .sellSize(0d)
+                .leaveQty(0d)
+                .agreedPrice(0d)
+                .build();
             addAction(new Order(), topSell, action);
             topSell.setRemoved(true);
             return generateExecReport(ExecType.CANCELED, clOrdID, ordId, execId, symbol, side, price, new DoubleField(leaveQty.intValue()));
@@ -485,7 +550,23 @@ public class Acceptor implements Application {
                 this.mainController.orderBookSellTableView.getItems().remove(topSell);
                 mainController.orderBookBuyTableView.getItems().remove(0);
                 mainController.orderBookBuyTableView.getItems().add(topBuy);
-                action = new Action(Action.Type.PARTIAL_FILL, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID, topBuy.getTimeInForce(), topSell.getTimeInForce(),  topSellClientID,Utils.getFormattedStringDate(), originalSize, topSell.getOrderQty(), leaveQty, topSell.getPrice());
+//                action = new Action(Constants.Type.PARTIAL_FILL, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID, topBuy.getTimeInForce(),
+//                    topSell.getTimeInForce(),  topSellClientID,Utils.getFormattedStringDate(), originalSize, topSell.getOrderQty(), leaveQty, topSell.getPrice());
+                action = new Action.ActionBuilder()
+                    .type(Constants.Type.PARTIAL_FILL)
+                    .buyID(topBuy.getClOrdID())
+                    .sellID(topSell.getClOrdID())
+                    .buyClientID(topBuyClientID)
+                    .sellClientID(topSellClientID)
+                    .timeInForceBuy(topBuy.getTimeInForce())
+                    .timeInForceSell(topSell.getTimeInForce())
+                    .time(Utils.getFormattedStringDate())
+                    .buySize(topBuy.getOrderQty())
+                    .sellSize(topSell.getOrderQty())
+                    .leaveQty(leaveQty)
+                    .agreedPrice(topSell.getPrice())
+                    .build();
+
             } else {
                 leaveQty = topSell.getOrderQty() - topBuy.getOrderQty();
                 originalSize = topSell.getOrderQty();
@@ -494,7 +575,23 @@ public class Acceptor implements Application {
                 mainController.orderBookBuyTableView.getItems().remove(topBuy);
                 mainController.orderBookSellTableView.getItems().remove(0);
                 mainController.orderBookSellTableView.getItems().add(topSell);
-                action = new Action(Action.Type.PARTIAL_FILL, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID, topBuy.getTimeInForce(), topSell.getTimeInForce(),topSellClientID,Utils.getFormattedStringDate(), topBuy.getOrderQty(),  originalSize, leaveQty, topSell.getPrice());
+//                action = new Action(Constants.Type.PARTIAL_FILL, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID, topBuy.getTimeInForce(),
+//                    topSell.getTimeInForce(),topSellClientID,Utils.getFormattedStringDate(), topBuy.getOrderQty(),  originalSize, leaveQty, topSell.getPrice());
+                action = new Action.ActionBuilder()
+                    .type(Constants.Type.PARTIAL_FILL)
+                    .buyID(topBuy.getClOrdID())
+                    .sellID(topSell.getClOrdID())
+                    .buyClientID(topBuyClientID)
+                    .sellClientID(topSellClientID)
+                    .timeInForceBuy(topBuy.getTimeInForce())
+                    .timeInForceSell(topSell.getTimeInForce())
+                    .time(Utils.getFormattedStringDate())
+                    .buySize(topBuy.getOrderQty())
+                    .sellSize(topSell.getOrderQty())
+                    .leaveQty(leaveQty)
+                    .agreedPrice(topSell.getPrice())
+                    .build();
+
             }
         }
         addAction(topBuy, topSell, action);
@@ -537,8 +634,22 @@ public class Acceptor implements Application {
         printTrade(topBuy, topSell);
         this.mainController.orderBookSellTableView.getItems().remove(topSell);
         //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price
-        Action action = new Action(Action.Type.FILL, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID,topBuy.getTimeInForce(), topSell.getTimeInForce(),
-            topSellClientID, Utils.getFormattedStringDate(), topBuy.getOrderQty(), topSell.getOrderQty(), 0d, topSell.getPrice());
+//        Action action = new Action(Constants.Type.FILL, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID,topBuy.getTimeInForce(), topSell.getTimeInForce(),
+//            topSellClientID, Utils.getFormattedStringDate(), topBuy.getOrderQty(), topSell.getOrderQty(), 0d, topSell.getPrice());
+        Action action = new Action.ActionBuilder()
+            .type(Constants.Type.FILL)
+            .buyID(topBuy.getClOrdID())
+            .sellID(topSell.getClOrdID())
+            .buyClientID(topBuyClientID)
+            .sellClientID(topSellClientID)
+            .timeInForceBuy(topBuy.getTimeInForce())
+            .timeInForceSell(topSell.getTimeInForce())
+            .time(Utils.getFormattedStringDate())
+            .buySize(topBuy.getOrderQty())
+            .sellSize(topSell.getOrderQty())
+            .leaveQty(0d)
+            .agreedPrice(topSell.getPrice())
+            .build();
         this.mainController.actionTableView.getItems().add(action);
         this.mainController.reorderActionTableView();
         this.mainController.reorderBookBuyTableView();

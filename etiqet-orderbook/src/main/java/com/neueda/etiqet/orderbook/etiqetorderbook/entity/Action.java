@@ -1,12 +1,13 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 
+import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants.*;
+
 public class Action {
     public Type type;
     private String buyID;
     private String sellID;
     private String buyClientID;
     private String sellClientID;
-
     private String timeInForceSell;
     private String timeInForceBuy;
     private String time;
@@ -15,27 +16,36 @@ public class Action {
     private Double leaveQty;
     private Double agreedPrice;
 
+//
+//    public Action(Type type, String buyID, String sellID, String buyClientID, String buyTimeInForce, String sellTimeInForce, String sellClientID, String time, Double buySize, Double sellSize, Double leaveQty, Double agreedPrice) {
+//        this.type = type;
+//        this.buyID = buyID;
+//        this.buyClientID = buyClientID;
+//        this.sellClientID = sellClientID;
+//        this.timeInForceBuy = buyTimeInForce;
+//        this.timeInForceSell = sellTimeInForce;
+//        this.sellID = sellID;
+//        this.time = time;
+//        this.buySize = buySize;
+//        this.sellSize = sellSize;
+//        this.leaveQty = leaveQty;
+//        this.agreedPrice = agreedPrice;
+//    }
 
-    public enum Type{
-        PARTIAL_FILL,
-        FILL,
-        CANCELED,
-        REPLACED
-    }
 
-    public Action(Type type, String buyID, String sellID, String buyClientID, String buyTimeInForce, String sellTimeInForce, String sellClientID, String time, Double buySize, Double sellSize, Double leaveQty, Double agreedPrice) {
-        this.type = type;
-        this.buyID = buyID;
-        this.buyClientID = buyClientID;
-        this.sellClientID = sellClientID;
-        this.timeInForceBuy = buyTimeInForce;
-        this.timeInForceSell = sellTimeInForce;
-        this.sellID = sellID;
-        this.time = time;
-        this.buySize = buySize;
-        this.sellSize = sellSize;
-        this.leaveQty = leaveQty;
-        this.agreedPrice = agreedPrice;
+    public Action(ActionBuilder actionBuilder) {
+        this.type = actionBuilder.type;
+        this.buyID = actionBuilder.buyID;
+        this.buyClientID = actionBuilder.buyClientID;
+        this.sellClientID = actionBuilder.sellClientID;
+        this.timeInForceBuy = actionBuilder.timeInForceBuy;
+        this.timeInForceSell = actionBuilder.timeInForceSell;
+        this.sellID = actionBuilder.sellID;
+        this.time = actionBuilder.time;
+        this.buySize = actionBuilder.buySize;
+        this.sellSize = actionBuilder.sellSize;
+        this.leaveQty = actionBuilder.leaveQty;
+        this.agreedPrice = actionBuilder.agreedPrice;
     }
 
     public Action(){}
@@ -134,6 +144,86 @@ public class Action {
 
     public void setTimeInForceBuy(String timeInForceBuy) {
         this.timeInForceBuy = timeInForceBuy;
+    }
+
+    public static class ActionBuilder{
+        public Type type;
+        private String buyID;
+        private String sellID;
+        private String buyClientID;
+        private String sellClientID;
+        private String timeInForceSell;
+        private String timeInForceBuy;
+        private String time;
+        private Double buySize;
+        private Double sellSize;
+        private Double leaveQty;
+        private Double agreedPrice;
+
+        public ActionBuilder type(Type type){
+            this.type = type;
+            return this;
+        }
+
+        public ActionBuilder buyID(String buyID){
+            this.buyID = buyID;
+            return this;
+        }
+
+        public ActionBuilder sellID(String sellID){
+            this.sellID = sellID;
+            return this;
+        }
+
+        public ActionBuilder buyClientID(String buyClientID){
+            this.buyClientID = buyClientID;
+            return this;
+        }
+
+        public ActionBuilder sellClientID(String sellClientID){
+            this.sellClientID = sellClientID;
+            return this;
+        }
+
+        public ActionBuilder timeInForceSell(String timeInForceSell){
+            this.timeInForceSell = timeInForceSell;
+            return this;
+        }
+
+        public ActionBuilder timeInForceBuy(String timeInForceBuy){
+            this.timeInForceBuy = timeInForceBuy;
+            return this;
+        }
+
+        public ActionBuilder time(String time){
+            this.time = time;
+            return this;
+        }
+
+        public ActionBuilder buySize(Double buySize){
+            this.buySize = buySize;
+            return this;
+        }
+
+        public ActionBuilder sellSize(Double sellSize){
+            this.sellSize = sellSize;
+            return this;
+        }
+
+        public ActionBuilder leaveQty(Double leaveQty){
+            this.leaveQty = leaveQty;
+            return this;
+        }
+
+        public ActionBuilder agreedPrice(Double agreedPrice){
+            this.agreedPrice = agreedPrice;
+            return this;
+        }
+
+        public Action build(){
+            return new Action(this);
+        }
+
     }
 
     @Override
