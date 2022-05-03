@@ -6,7 +6,6 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.field.TimeInForce;
@@ -14,9 +13,7 @@ import quickfix.field.TimeInForce;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.stream.Collectors;
 
 public class OrderBook implements Runnable {
@@ -36,7 +33,7 @@ public class OrderBook implements Runnable {
                 Thread.sleep(1000);
                 Platform.runLater(() -> {
                     addActions();
-                    this.mainController.getSell().forEach(s -> this.logger.info(s.getOrderID() + ": " + s.isRemoved()));
+                    this.mainController.getSell().forEach(s -> this.logger.info(s.getClOrdID() + ": " + s.isRemoved()));
                     this.mainController.getBuy().removeIf(Order::isRemoved);
                     this.mainController.orderBookBuyTableView.getItems().removeIf(Order::isRemoved);
                     this.mainController.getSell().removeIf(Order::isRemoved);
@@ -64,14 +61,14 @@ public class OrderBook implements Runnable {
 
     private void addActions() {
         for (Order order : this.mainController.getBuy().stream().filter(Order::isRemoved).collect(Collectors.toList())){
-            Action action = new Action(Action.Type.CANCELED, order.getOrderID(), "", order.getClientID(), order.getTimeInForce(),
-                "", "",Utils.getFormattedStringDate(), order.getSize(), null, 0d, 0d);
+            Action action = new Action(Action.Type.CANCELED, order.getClOrdID(), "", order.getClientID(), order.getTimeInForce(),
+                "", "",Utils.getFormattedStringDate(), order.getOrderQty(), null, 0d, 0d);
             this.mainController.actionTableView.getItems().add(action);
             this.mainController.reorderActionTableView();
         }
         for (Order order : this.mainController.getSell().stream().filter(Order::isRemoved).collect(Collectors.toList())){
-            Action action = new Action(Action.Type.CANCELED,  "", order.getOrderID(), "","", order.getTimeInForce(),
-                order.getClientID(), Utils.getFormattedStringDate(),  null,order.getSize(), 0d, 0d);
+            Action action = new Action(Action.Type.CANCELED,  "", order.getClOrdID(), "","", order.getTimeInForce(),
+                order.getClientID(), Utils.getFormattedStringDate(),  null,order.getOrderQty(), 0d, 0d);
             this.mainController.actionTableView.getItems().add(action);
             this.mainController.reorderActionTableView();
         }

@@ -1,40 +1,91 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 
 public class Order {
-    private String orderID;
+    private String clOrdID;
     private String time;
-    private Double size;
+    private Double orderQty;
     private Double price;
     private String clientID;
     private String timeInForce;
     private boolean removed;
 
-    public Order(String orderID, String time, Double size, Double price, String clientID, String timeInForce) {
-        this.orderID = orderID;
-        this.time = time;
-        this.size = size;
-        this.price = price;
-        this.clientID = clientID;
-        this.timeInForce = timeInForce;
-        this.removed = false;
+    public static class OrderBuilder{
+        private String clOrdID;
+        private String time;
+        private Double orderQty;
+        private Double price;
+        private String clientID;
+        private String timeInForce;
+        private boolean removed;
+
+        public OrderBuilder clOrdID(String clOrdID){
+            this.clOrdID = clOrdID;
+            return this;
+        }
+
+        public OrderBuilder time(String time){
+            this.time = time;
+            return this;
+        }
+
+        public OrderBuilder orderQty(Double orderQty){
+            this.orderQty = orderQty;
+            return this;
+        }
+
+        public OrderBuilder price(Double price){
+            this.price = price;
+            return this;
+        }
+
+        public OrderBuilder clientID(String clientID){
+            this.clientID = clientID;
+            return this;
+        }
+
+        public OrderBuilder timeInForce(String timeInForce){
+            this.timeInForce = timeInForce;
+            return this;
+        }
+
+        public OrderBuilder removed(Boolean removed){
+            this.removed = removed;
+            return this;
+        }
+
+        public Order build(){
+            return new Order(this);
+        }
+
+
+    }
+
+    public Order(OrderBuilder orderBuilder) {
+        this.clOrdID = orderBuilder.clOrdID;
+        this.time = orderBuilder.time;
+        this.orderQty = orderBuilder.orderQty;
+        this.price = orderBuilder.price;
+        this.clientID = orderBuilder.clientID;
+        this.timeInForce = orderBuilder.timeInForce;
+        this.removed = orderBuilder.removed;
     }
 
     public Order(){
-        this.orderID = "";
+        this.clOrdID = "";
         this.time = "";
-        this.size = 0d;
+        this.orderQty = 0d;
         this.price = 0d;
         this.clientID = "";
         this.timeInForce = "1";
         this.removed = false;
     }
 
-    public String getOrderID() {
-        return orderID;
+    public String getClOrdID() {
+        return clOrdID;
     }
 
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
+    public void setClOrdID(String clOrdID) {
+        this.clOrdID = clOrdID;
     }
 
     public String getTime() {
@@ -45,12 +96,12 @@ public class Order {
         this.time = time;
     }
 
-    public Double getSize() {
-        return size;
+    public Double getOrderQty() {
+        return orderQty;
     }
 
-    public void setSize(Double size) {
-        this.size = size;
+    public void setOrderQty(Double orderQty) {
+        this.orderQty = orderQty;
     }
 
     public Double getPrice() {
@@ -88,9 +139,9 @@ public class Order {
     @Override
     public String toString() {
         return "Order{" +
-            "orderID='" + orderID + '\'' +
+            "orderID='" + clOrdID + '\'' +
             ", time='" + time + '\'' +
-            ", size=" + size +
+            ", size=" + orderQty +
             ", price=" + price +
             ", clientID='" + clientID + '\'' +
             ", timeInForce=" + timeInForce +

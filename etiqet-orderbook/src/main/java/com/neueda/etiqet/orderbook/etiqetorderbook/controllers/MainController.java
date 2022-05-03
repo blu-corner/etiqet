@@ -502,7 +502,7 @@ public class MainController implements Initializable {
             }else{
                 selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
             }
-            content.putString(selectedOrder.getOrderID());
+            content.putString(selectedOrder.getClOrdID());
             Label label = new Label("OrderID copied");
             label.setStyle("-fx-background-radius: 6;" +
                 "-fx-background-color: rgb(45, 45, 50), rgb(60, 60, 65);" +
