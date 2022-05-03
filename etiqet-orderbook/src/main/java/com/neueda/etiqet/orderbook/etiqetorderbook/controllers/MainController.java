@@ -59,6 +59,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
@@ -73,7 +74,7 @@ public class MainController implements Initializable {
     private boolean useDefaultPort;
     private String changedDefaultPort = "";
     private static String port;
-    private FixSession fixSession;
+    private List<FixSession> fixSessionsList;
 
     public String getConnectedPort(){
         return port;
@@ -171,16 +172,16 @@ public class MainController implements Initializable {
         listViewLog.setOnMouseClicked(this::showFixFields);
         menuItemDecodeOnClick.setSelected(true);
 
-        orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
+        orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("ClOrdID"));
         timeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
-        sizeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
+        sizeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("orderQty"));
         priceBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
         clientIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("ClientID"));
         timeInForceBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("TimeInForce"));
 
-        orderIDSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("OrderID"));
+        orderIDSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("ClOrdID"));
         timeSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
-        sizeSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Size"));
+        sizeSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("orderQty"));
         priceSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("Price"));
         clientIDSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("ClientID"));
         timeInForceSellTableColumn.setCellValueFactory(new PropertyValueFactory<>("TimeInForce"));
@@ -218,6 +219,8 @@ public class MainController implements Initializable {
         checkMenuItemExportOnClose.setSelected(true);
         comboBoxTimeInForce.getItems().addAll(Constants.TIME_IN_FORCE.getContents());
         comboBoxTimeInForce.getSelectionModel().select(0);
+
+        fixSessionsList = new ArrayList<>();
     }
 
     private void showFixFields(MouseEvent e) {
@@ -484,7 +487,7 @@ public class MainController implements Initializable {
     private ContextMenu getOrderContextMenu(Constants.SIDE_ENUM side){
         ContextMenu contextMenu = new ContextMenu();
         Menu menuCopy = new Menu("Copy");
-        MenuItem menuItemCopyOrderID = new MenuItem("OrderID");
+        MenuItem menuItemCopyOrderID = new MenuItem("ClOrdID");
         MenuItem menuItemCancel = new MenuItem("Cancel Order");
 
         menuCopy.getItems().add(menuItemCopyOrderID);
@@ -503,7 +506,7 @@ public class MainController implements Initializable {
                 selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
             }
             content.putString(selectedOrder.getClOrdID());
-            Label label = new Label("OrderID copied");
+            Label label = new Label("ClOrdID copied");
             label.setStyle("-fx-background-radius: 6;" +
                 "-fx-background-color: rgb(45, 45, 50), rgb(60, 60, 65);" +
                 "-fx-text-fill: white;");
@@ -533,13 +536,16 @@ public class MainController implements Initializable {
                 ButtonType buttonType = response.get();
                 if (buttonType.equals(ButtonType.OK)){
                     Acceptor acceptor = new Acceptor(this);
+
                     if (side.equals(Constants.SIDE_ENUM.BUY)){
                         selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
+                        FixSession fixSession = fixSessionsList.stream().filter(s -> s.getSessionID().toString().equals(selectedOrder.getSessionID())).findFirst().get();
                         acceptor.sendExecutionReportAfterCanceling(selectedOrder, fixSession);
                         this.getBuy().remove(selectedOrder);
                         reorderBookBuyTableView();
                     }else{
                         selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
+                        FixSession fixSession = fixSessionsList.stream().filter(s -> s.getSessionID().toString().equals(selectedOrder.getSessionID())).findFirst().get();
                         acceptor.sendExecutionReportAfterCanceling(selectedOrder, fixSession);
                         this.getSell().remove(selectedOrder);
                         reorderBookSellTableView();
@@ -842,7 +848,8 @@ public class MainController implements Initializable {
             boolean existInvalidPorts = false;
             for (int port = iTestRangeA; port <= iTestRangeB; port++) {
                 if (Utils.availablePort(port)){
-                    fixSession = new FixSession(this, orderBook);
+                    FixSession fixSession = new FixSession(this, orderBook);
+                    fixSessionsList.add(fixSession);
                     fixSession.start(port);
                     fixSessions.add(fixSession);
                     validPorts.append(port).append(",");

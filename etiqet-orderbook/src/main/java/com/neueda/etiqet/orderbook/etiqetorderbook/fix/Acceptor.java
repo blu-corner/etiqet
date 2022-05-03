@@ -22,6 +22,7 @@ public class Acceptor implements Application {
     private final MainController mainController;
     Logger logger = LoggerFactory.getLogger(Acceptor.class);
 
+
     public Acceptor(MainController mainController) {
         this.mainController = mainController;
     }
@@ -82,8 +83,13 @@ public class Acceptor implements Application {
         List<Message> reports = new ArrayList<>();
         String orderId = RandomStringUtils.randomAlphanumeric(5);
         String execId = RandomStringUtils.randomAlphanumeric(5);
-        reports.add(generateExecReport(ExecType.CANCELED, new OrderID(order.getClOrdID()),  orderId, execId,  new Symbol("N/A"), new Side(Side.BUY), new DoubleField(0), new DoubleField(0)));
 
+        reports.add(generateExecReport(ExecType.PENDING_CANCEL, new ClOrdID(order.getClOrdID()), Constants.NEW, Constants.NEW, new Symbol(order.getSymbol()), new Side(order.getSide()), new DoubleField(0), new DoubleField(0)));
+        reports.add(generateExecReport(ExecType.CANCELED, new ClOrdID(order.getClOrdID()), orderId, execId, new Symbol(order.getSymbol()), new Side(order.getSide()),new DoubleField(0), new DoubleField(0)));
+        ExecutionReport tradeWhenCancelling = cancelOrder(null, new ClOrdID(order.getClOrdID()), orderId, execId, new Symbol(order.getSymbol()), new Side(order.getSide()), null, null);
+        if (tradeWhenCancelling != null){
+            reports.add(tradeWhenCancelling);
+        }
         reports.forEach(r -> {
             try {
                 Session.sendToTarget(r, fixSession.getSessionID());
@@ -199,8 +205,11 @@ public class Acceptor implements Application {
                         .time(Utils.getFormattedStringDate())
                         .orderQty(ordQty.getValue())
                         .price(price.getValue())
+                        .symbol(symbol.getValue())
+                        .side(side.getValue())
                         .clientID(clientID)
                         .timeInForce( Constants.TIME_IN_FORCE.getContent(timeInFoce.getValue()))
+                        .sessionID(sessionID.toString())
                         .build();
 
                     addNewOrder(side, order);
@@ -256,8 +265,11 @@ public class Acceptor implements Application {
                             .time(Utils.getFormattedStringDate())
                             .orderQty(ordQty.getValue())
                             .price(price.getValue())
+                            .symbol(symbol.getValue())
+                            .side(side.getValue())
                             .clientID(clientID)
                             .timeInForce(null)
+                            .sessionID(sessionID.toString())
                             .build();
                         reports.add(generateExecReport(ExecType.PENDING_REPLACE, clOrdID, Constants.NEW, Constants.NEW, symbol, side, ordQty, new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.REPLACED, clOrdID, orderId, execId, symbol, side, ordQty, price));
@@ -342,11 +354,19 @@ public class Acceptor implements Application {
 
     private ExecutionReport cancelOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol, CharField side, DoubleField size, DoubleField price) {
         if (side.getValue() == (Side.BUY)) {
-            this.mainController.getBuy().removeIf(b -> b.getClOrdID().equals(origClOrdID.getValue()));
+            if (origClOrdID == null){
+                this.mainController.getBuy().removeIf(b -> b.getClOrdID().equals(clOrdID.getValue()));
+            }else{
+                this.mainController.getBuy().removeIf(b -> b.getClOrdID().equals(origClOrdID.getValue()));
+            }
             this.mainController.reorderBookBuyTableView();
 
         } else {
-            this.mainController.getSell().removeIf(s -> s.getClOrdID().equals(origClOrdID.getValue()));
+            if (origClOrdID == null){
+                this.mainController.getSell().removeIf(b -> b.getClOrdID().equals(clOrdID.getValue()));
+            }else{
+                this.mainController.getSell().removeIf(s -> s.getClOrdID().equals(origClOrdID.getValue()));
+            }
             this.mainController.reorderBookSellTableView();
         }
         this.mainController.setChanged(true);

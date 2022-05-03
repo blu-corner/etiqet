@@ -5,18 +5,24 @@ public class Order {
     private String time;
     private Double orderQty;
     private Double price;
+    private String symbol;
+    private Character side;
     private String clientID;
     private String timeInForce;
     private boolean removed;
+    private String sessionID;
 
     public static class OrderBuilder{
         private String clOrdID;
         private String time;
         private Double orderQty;
         private Double price;
+        private String symbol;
+        private Character side;
         private String clientID;
         private String timeInForce;
         private boolean removed;
+        private String sessionID;
 
         public OrderBuilder clOrdID(String clOrdID){
             this.clOrdID = clOrdID;
@@ -30,6 +36,16 @@ public class Order {
 
         public OrderBuilder orderQty(Double orderQty){
             this.orderQty = orderQty;
+            return this;
+        }
+
+        public OrderBuilder symbol(String symbol){
+            this.symbol = symbol;
+            return this;
+        }
+
+        public OrderBuilder side(Character side){
+            this.side = side;
             return this;
         }
 
@@ -53,6 +69,11 @@ public class Order {
             return this;
         }
 
+        public OrderBuilder sessionID(String sessionID){
+            this.sessionID = sessionID;
+            return this;
+        }
+
         public Order build(){
             return new Order(this);
         }
@@ -65,9 +86,12 @@ public class Order {
         this.time = orderBuilder.time;
         this.orderQty = orderBuilder.orderQty;
         this.price = orderBuilder.price;
+        this.symbol = orderBuilder.symbol;
+        this.side = orderBuilder.side;
         this.clientID = orderBuilder.clientID;
         this.timeInForce = orderBuilder.timeInForce;
         this.removed = orderBuilder.removed;
+        this.sessionID = orderBuilder.sessionID;
     }
 
     public Order(){
@@ -75,9 +99,12 @@ public class Order {
         this.time = "";
         this.orderQty = 0d;
         this.price = 0d;
+        this.symbol = "";
+        this.side = ' ';
         this.clientID = "";
         this.timeInForce = "1";
         this.removed = false;
+        this.sessionID = "";
     }
 
     public String getClOrdID() {
@@ -136,17 +163,44 @@ public class Order {
         return removed;
     }
 
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public Character getSide() {
+        return side;
+    }
+
+    public void setSide(Character side) {
+        this.side = side;
+    }
+
+    public String getSessionID() {
+        return sessionID;
+    }
+
+    public void setSessionID(String sessionID) {
+        this.sessionID = sessionID;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
-            "orderID='" + clOrdID + '\'' +
+            "clOrdID='" + clOrdID + '\'' +
             ", time='" + time + '\'' +
-            ", size=" + orderQty +
+            ", orderQty=" + orderQty +
             ", price=" + price +
+            ", symbol='" + symbol + '\'' +
+            ", side=" + side +
             ", clientID='" + clientID + '\'' +
-            ", timeInForce=" + timeInForce +
+            ", timeInForce='" + timeInForce + '\'' +
+            ", removed=" + removed +
+            ", sessionID='" + sessionID + '\'' +
             '}';
     }
-
-
 }

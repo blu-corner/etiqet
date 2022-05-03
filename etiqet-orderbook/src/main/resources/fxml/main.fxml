@@ -124,8 +124,8 @@
                                       <TableView fx:id="orderBookBuyTableView" GridPane.rowIndex="1">
                                           <columns>
                                               <TableColumn fx:id="timeBuyTableColumn" prefWidth="120.0" text="Time" />
-                                              <TableColumn fx:id="orderIDBuyTableColumn" prefWidth="100.0" text="OrderID" />
-                                              <TableColumn fx:id="sizeBuyTableColumn" prefWidth="50.0" text="Size" />
+                                              <TableColumn fx:id="orderIDBuyTableColumn" prefWidth="100.0" text="ClOrdID" />
+                                              <TableColumn fx:id="sizeBuyTableColumn" prefWidth="50.0" text="Qty" />
                                               <TableColumn fx:id="priceBuyTableColumn" prefWidth="50.0" text="Price" />
                                               <TableColumn fx:id="clientIDBuyTableColumn" prefWidth="80.0" text="ClientID" />
                                               <TableColumn fx:id="timeInForceBuyTableColumn" prefWidth="97.0" text="TimeInForce" />
@@ -134,8 +134,8 @@
                                       <TableView fx:id="orderBookSellTableView" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                           <columns>
                                               <TableColumn fx:id="timeSellTableColumn" prefWidth="120.0" text="Time" />
-                                              <TableColumn fx:id="orderIDSellTableColumn" prefWidth="100.0" text="OrderID" />
-                                              <TableColumn fx:id="sizeSellTableColumn" prefWidth="50.0" text="Size" />
+                                              <TableColumn fx:id="orderIDSellTableColumn" prefWidth="100.0" text="ClOrdID" />
+                                              <TableColumn fx:id="sizeSellTableColumn" prefWidth="50.0" text="Qty" />
                                               <TableColumn fx:id="priceSellTableColumn" prefWidth="50.0" text="Price" />
                                               <TableColumn fx:id="clientIDSellTableColumn" prefWidth="80.0" text="ClientID" />
                                              <TableColumn fx:id="timeInForceSellTableColumn" prefWidth="96.0" text="TimeInForce" />
@@ -232,7 +232,7 @@
                                         </TextField>
                                         <TextField fx:id="textFieldOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" promptText="ID" GridPane.columnIndex="5" GridPane.halignment="CENTER">
                                             <tooltip>
-                                                <Tooltip text="OrderID (11)">
+                                                <Tooltip text="ClOrdID (11)">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -241,7 +241,7 @@
                                         </TextField>
                                         <TextField fx:id="textFieldOrigOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" promptText="ID" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                                             <tooltip>
-                                                <Tooltip text="Origin OrderID (41)">
+                                                <Tooltip text="OrigClOrdID (41)">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
