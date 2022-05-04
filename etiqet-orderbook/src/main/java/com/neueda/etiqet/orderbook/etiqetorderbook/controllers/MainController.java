@@ -74,7 +74,7 @@ public class MainController implements Initializable {
     private boolean useDefaultPort;
     private String changedDefaultPort = "";
     private static String port;
-    private List<FixSession> fixSessionsList;
+//    private List<FixSession> fixSessionsList;
 
     public String getConnectedPort(){
         return port;
@@ -220,7 +220,7 @@ public class MainController implements Initializable {
         comboBoxTimeInForce.getItems().addAll(Constants.TIME_IN_FORCE.getContents());
         comboBoxTimeInForce.getSelectionModel().select(0);
 
-        fixSessionsList = new ArrayList<>();
+//        fixSessionsList = new ArrayList<>();
     }
 
     private void showFixFields(MouseEvent e) {
@@ -539,13 +539,13 @@ public class MainController implements Initializable {
 
                     if (side.equals(Constants.SIDE_ENUM.BUY)){
                         selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
-                        FixSession fixSession = fixSessionsList.stream().filter(s -> s.getSessionID().toString().equals(selectedOrder.getSessionID())).findFirst().get();
+                        FixSession fixSession = fixSessions.stream().filter(s -> s.getSessionID().toString().equals(selectedOrder.getSessionID())).findFirst().get();
                         acceptor.sendExecutionReportAfterCanceling(selectedOrder, fixSession);
                         this.getBuy().remove(selectedOrder);
                         reorderBookBuyTableView();
                     }else{
                         selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
-                        FixSession fixSession = fixSessionsList.stream().filter(s -> s.getSessionID().toString().equals(selectedOrder.getSessionID())).findFirst().get();
+                        FixSession fixSession = fixSessions.stream().filter(s -> s.getSessionID().toString().equals(selectedOrder.getSessionID())).findFirst().get();
                         acceptor.sendExecutionReportAfterCanceling(selectedOrder, fixSession);
                         this.getSell().remove(selectedOrder);
                         reorderBookSellTableView();
@@ -849,7 +849,7 @@ public class MainController implements Initializable {
             for (int port = iTestRangeA; port <= iTestRangeB; port++) {
                 if (Utils.availablePort(port)){
                     FixSession fixSession = new FixSession(this, orderBook);
-                    fixSessionsList.add(fixSession);
+//                    fixSessionsList.add(fixSession);
                     fixSession.start(port);
                     fixSessions.add(fixSession);
                     validPorts.append(port).append(",");

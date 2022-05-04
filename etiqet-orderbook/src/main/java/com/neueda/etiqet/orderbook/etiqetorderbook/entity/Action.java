@@ -1,5 +1,8 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants.*;
 
 public class Action {
@@ -16,24 +19,26 @@ public class Action {
     private Double leaveQty;
     private Double agreedPrice;
 
-//
-//    public Action(Type type, String buyID, String sellID, String buyClientID, String buyTimeInForce, String sellTimeInForce, String sellClientID, String time, Double buySize, Double sellSize, Double leaveQty, Double agreedPrice) {
-//        this.type = type;
-//        this.buyID = buyID;
-//        this.buyClientID = buyClientID;
-//        this.sellClientID = sellClientID;
-//        this.timeInForceBuy = buyTimeInForce;
-//        this.timeInForceSell = sellTimeInForce;
-//        this.sellID = sellID;
-//        this.time = time;
-//        this.buySize = buySize;
-//        this.sellSize = sellSize;
-//        this.leaveQty = leaveQty;
-//        this.agreedPrice = agreedPrice;
-//    }
+
+/*    public Action(Type type, String buyID, String sellID, String buyClientID, String buyTimeInForce, String sellTimeInForce,
+                  String sellClientID, String time, Double buySize, Double sellSize, Double leaveQty, Double agreedPrice) {
+        this.type = type;
+        this.buyID = buyID;
+        this.buyClientID = buyClientID;
+        this.sellClientID = sellClientID;
+        this.timeInForceBuy = buyTimeInForce;
+        this.timeInForceSell = sellTimeInForce;
+        this.sellID = sellID;
+        this.time = time;
+        this.buySize = buySize;
+        this.sellSize = sellSize;
+        this.leaveQty = leaveQty;
+        this.agreedPrice = agreedPrice;
+    }*/
 
 
     public Action(ActionBuilder actionBuilder) {
+        this();
         this.type = actionBuilder.type;
         this.buyID = actionBuilder.buyID;
         this.buyClientID = actionBuilder.buyClientID;
@@ -48,7 +53,20 @@ public class Action {
         this.agreedPrice = actionBuilder.agreedPrice;
     }
 
-    public Action(){}
+    public Action(){
+        this.type = Type.CANCELED;
+        this.buyID = StringUtils.EMPTY;
+        this.buyClientID = StringUtils.EMPTY;
+        this.sellClientID = StringUtils.EMPTY;
+        this.timeInForceBuy = StringUtils.EMPTY;
+        this.timeInForceSell = StringUtils.EMPTY;
+        this.sellID = StringUtils.EMPTY;
+        this.time = StringUtils.EMPTY;
+        this.buySize = 0d;
+        this.sellSize =  0d;;
+        this.leaveQty =  0d;;
+        this.agreedPrice =  0d;;
+    }
 
     public Type getType() {
         return type;
@@ -161,63 +179,92 @@ public class Action {
         private Double agreedPrice;
 
         public ActionBuilder type(Type type){
-            this.type = type;
-            return this;
+            synchronized (this.type){
+                this.type = type;
+                return this;
+            }
         }
 
         public ActionBuilder buyID(String buyID){
-            this.buyID = buyID;
-            return this;
+            synchronized (this.buyID){
+                this.buyID = buyID;
+                return this;
+            }
         }
 
         public ActionBuilder sellID(String sellID){
-            this.sellID = sellID;
-            return this;
+            synchronized (this.sellID){
+                this.sellID = sellID;
+                return this;
+            }
         }
 
         public ActionBuilder buyClientID(String buyClientID){
-            this.buyClientID = buyClientID;
-            return this;
+            synchronized (this.buyClientID){
+                this.buyClientID = buyClientID;
+                return this;
+            }
         }
 
         public ActionBuilder sellClientID(String sellClientID){
-            this.sellClientID = sellClientID;
-            return this;
+            synchronized (this.sellClientID){
+                this.sellClientID = sellClientID;
+                return this;
+            }
         }
 
         public ActionBuilder timeInForceSell(String timeInForceSell){
-            this.timeInForceSell = timeInForceSell;
-            return this;
+            synchronized (this.timeInForceSell){
+                this.timeInForceSell = timeInForceSell;
+                return this;
+            }
         }
 
         public ActionBuilder timeInForceBuy(String timeInForceBuy){
-            this.timeInForceBuy = timeInForceBuy;
-            return this;
+            synchronized (this.timeInForceBuy){
+                this.timeInForceBuy = timeInForceBuy;
+                return this;
+            }
         }
 
         public ActionBuilder time(String time){
-            this.time = time;
-            return this;
+            synchronized (this.time){
+                this.time = time;
+                return this;
+            }
+
         }
 
         public ActionBuilder buySize(Double buySize){
-            this.buySize = buySize;
-            return this;
+            synchronized (this.buySize){
+                this.buySize = buySize;
+                return this;
+            }
+
         }
 
         public ActionBuilder sellSize(Double sellSize){
-            this.sellSize = sellSize;
-            return this;
+            synchronized (this.sellSize){
+                this.sellSize = sellSize;
+                return this;
+            }
+
         }
 
         public ActionBuilder leaveQty(Double leaveQty){
-            this.leaveQty = leaveQty;
-            return this;
+            synchronized (this.leaveQty){
+                this.leaveQty = leaveQty;
+                return this;
+            }
+
         }
 
         public ActionBuilder agreedPrice(Double agreedPrice){
-            this.agreedPrice = agreedPrice;
-            return this;
+            synchronized (this.agreedPrice){
+                this.agreedPrice = agreedPrice;
+                return this;
+            }
+
         }
 
         public Action build(){

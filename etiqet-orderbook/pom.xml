@@ -6,7 +6,7 @@
 
     <groupId>com.neueda.etiqet.orderbook</groupId>
     <artifactId>etiqet-orderbook</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.5</version>
     <name>etiqet-orderbook</name>
 
     <properties>

@@ -70,9 +70,8 @@ public class OrderBook implements Runnable {
                 .timeInForceBuy(order.getTimeInForce())
                 .time(Utils.getFormattedStringDate())
                 .buySize(order.getOrderQty())
-                .leaveQty(0d)
-                .agreedPrice(0d)
                 .build();
+
             this.mainController.actionTableView.getItems().add(action);
             this.mainController.reorderActionTableView();
         }
@@ -86,8 +85,6 @@ public class OrderBook implements Runnable {
                 .timeInForceSell(order.getTimeInForce())
                 .time(Utils.getFormattedStringDate())
                 .sellSize(order.getOrderQty())
-                .leaveQty(0d)
-                .agreedPrice(0d)
                 .build();
             this.mainController.actionTableView.getItems().add(action);
             this.mainController.reorderActionTableView();
