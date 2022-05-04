@@ -170,7 +170,7 @@ public class MainController implements Initializable {
         orderBookBuyTableView.setContextMenu(getOrderContextMenu(Constants.SIDE_ENUM.BUY));
         orderBookSellTableView.setContextMenu(getOrderContextMenu(Constants.SIDE_ENUM.SELL));
 
-        listViewLog.setOnMouseClicked(this::showFixFields);
+        listViewLog.setContextMenu(getLogContextMenu());
         menuItemDecodeOnClick.setSelected(true);
 
         orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("ClOrdID"));
@@ -224,22 +224,11 @@ public class MainController implements Initializable {
 //        fixSessionsList = new ArrayList<>();
     }
 
-    private void showFixFields(MouseEvent e) {
+    private void showFixFields() {
         try {
-            if (menuItemDecodeOnClick.isSelected()) {
-                String targetString = e.getTarget().toString();
-                List<Tag> tagList = fixDecoderToTag(targetString);
-                launchDecoderWindow(tagList);
-/*                StringBuilder result = fixDecoder(targetString);
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setContentText(result.toString());
-                alert.setTitle("Decoder");
-                alert.setHeaderText("FIX message decoded");
-                alert.showAndWait();*/
-            } else {
-                mouseClicks(e);
-            }
-
+            String targetString = listViewLog.getSelectionModel().getSelectedItem().toString();
+            List<Tag> tagList = fixDecoderToTag(targetString);
+            launchDecoderWindow(tagList);
         } catch (Exception ex) {
             this.logger.warn("Exception showFixFields -> {}", ex.getLocalizedMessage());
         }
@@ -247,16 +236,8 @@ public class MainController implements Initializable {
     }
 
     private List<Tag> fixDecoderToTag(String targetString) {
-        int firstQuote = targetString.indexOf('"');
-        int secondQuote = targetString.indexOf('"', firstQuote + 1);
-        String content = targetString.substring(firstQuote + 1, secondQuote);
-        if (content.contains(Constants.OUT)) {
-            content = content.replace(Constants.OUT + StringUtils.SPACE, "");
-        } else {
-            content = content.replace(Constants.IN + StringUtils.SPACE, "");
-        }
-
-        String[] fields = content.split("\\|");
+        targetString = removeOutInInfoFromFixString(targetString);
+        String[] fields = targetString.split("\\|");
         List<String> fieldList = List.of(fields);
         List<Tag> tagList = new ArrayList<>();
         for (String field : fieldList) {
@@ -272,15 +253,20 @@ public class MainController implements Initializable {
         return tagList;
     }
 
+    private String removeOutInInfoFromFixString(String targetString) {
+        if (targetString.contains(Constants.OUT)) {
+            targetString = targetString.replace(Constants.OUT + StringUtils.SPACE, "");
+        } else {
+            targetString = targetString.replace(Constants.IN + StringUtils.SPACE, "");
+        }
+        return targetString;
+    }
+
     private StringBuilder fixDecoder(String targetString) {
         int firstQuote = targetString.indexOf('"');
         int secondQuote = targetString.indexOf('"', firstQuote + 1);
         String content = targetString.substring(firstQuote + 1, secondQuote);
-        if (content.contains(Constants.OUT)) {
-            content = content.replace(Constants.OUT + StringUtils.SPACE, "");
-        } else {
-            content = content.replace(Constants.IN + StringUtils.SPACE, "");
-        }
+        content = removeOutInInfoFromFixString(content);
 
         String[] fields = content.split("\\|");
         List<String> fieldList = List.of(fields);
@@ -512,6 +498,27 @@ public class MainController implements Initializable {
     }
 
 
+    private ContextMenu getLogContextMenu(){
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItemCopy = new MenuItem("Copy");
+        MenuItem menuItemDecode= new MenuItem("Decode");
+
+        contextMenu.getItems().add(menuItemCopy);
+        contextMenu.getItems().add(menuItemDecode);
+
+        menuItemDecode.setOnAction((event) -> showFixFields());
+
+        menuItemCopy.setOnAction(e -> {
+            final Clipboard clipboard = Clipboard.getSystemClipboard();
+            final ClipboardContent content = new ClipboardContent();
+            String row = removeOutInInfoFromFixString(listViewLog.getSelectionModel().getSelectedItem().toString());
+            content.putString(row);
+            clipboard.setContent(content);
+            showCopiedPopUp("Row copied");
+        });
+
+        return contextMenu;
+    }
 
     private ContextMenu getOrderContextMenu(Constants.SIDE_ENUM side){
         ContextMenu contextMenu = new ContextMenu();
@@ -535,22 +542,27 @@ public class MainController implements Initializable {
                 selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
             }
             content.putString(selectedOrder.getClOrdID());
-            Label label = new Label("ClOrdID copied");
-            label.setStyle("-fx-background-radius: 6;" +
-                "-fx-background-color: rgb(45, 45, 50), rgb(60, 60, 65);" +
-                "-fx-text-fill: white;");
-            label.setPadding(new Insets(10, 10, 10 ,10));
-            Popup popup = new Popup();
-            popup.getContent().add(label);
-            label.setMinWidth(100);
-            label.setMinHeight(50);
-            popup.show(menuBarGeneral.getScene().getWindow());
-            popup.setAutoHide(true);
+
+            showCopiedPopUp("ClOrdID Copied");
 
             clipboard.setContent(content);
         });
 
         return contextMenu;
+    }
+
+    private void showCopiedPopUp(String message) {
+        Label label = new Label(message);
+        label.setStyle("-fx-background-radius: 6;" +
+            "-fx-background-color: rgb(45, 45, 50), rgb(60, 60, 65);" +
+            "-fx-text-fill: white;");
+        label.setPadding(new Insets(10, 10, 10 ,10));
+        Popup popup = new Popup();
+        popup.getContent().add(label);
+        label.setMinWidth(100);
+        label.setMinHeight(50);
+        popup.show(menuBarGeneral.getScene().getWindow());
+        popup.setAutoHide(true);
     }
 
     private void contextMenuCancelAction(Constants.SIDE_ENUM side) {
