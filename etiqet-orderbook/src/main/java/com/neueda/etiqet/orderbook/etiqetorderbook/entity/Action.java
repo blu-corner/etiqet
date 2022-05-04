@@ -178,6 +178,21 @@ public class Action {
         private Double leaveQty;
         private Double agreedPrice;
 
+        public ActionBuilder(){
+            this.type = Type.CANCELED;
+            this.buyID = StringUtils.EMPTY;
+            this.sellID = StringUtils.EMPTY;
+            this.buyClientID = StringUtils.EMPTY;
+            this.sellClientID = StringUtils.EMPTY;
+            this.timeInForceSell = StringUtils.EMPTY;
+            this.timeInForceBuy = StringUtils.EMPTY;
+            this.time = StringUtils.EMPTY;
+            this.buySize = 0d;
+            this.sellSize = 0d;
+            this.leaveQty = 0d;
+            this.agreedPrice = 0d;
+        }
+
         public ActionBuilder type(Type type){
             synchronized (this.type){
                 this.type = type;

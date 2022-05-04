@@ -598,12 +598,12 @@ public class Acceptor implements Application {
 
     private boolean isTimeInForceFOK(Order order) {
         if (order == null) return false;
-        return order.getTimeInForce().equals(TimeInForce.FILL_OR_KILL);
+        return order.getTimeInForce().equals(Constants.TIME_IN_FORCE.getContent(TimeInForce.FILL_OR_KILL));
     }
 
     private boolean isTimeInForceIOC(Order order) {
         if (order == null) return false;
-        return order.getTimeInForce().equals(TimeInForce.IMMEDIATE_OR_CANCEL);
+        return order.getTimeInForce().equals(Constants.TIME_IN_FORCE.getContent(TimeInForce.IMMEDIATE_OR_CANCEL));
     }
 
     private boolean areTimeInForceFOKorIOC(Order buy, Order sell) {
