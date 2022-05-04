@@ -4,6 +4,7 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.*;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.OrderXML;
+import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.Acceptor;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.FixSession;
 import com.neueda.etiqet.orderbook.etiqetorderbook.fix.Initator;
@@ -227,12 +228,14 @@ public class MainController implements Initializable {
         try {
             if (menuItemDecodeOnClick.isSelected()) {
                 String targetString = e.getTarget().toString();
-                StringBuilder result = fixDecoder(targetString);
+                List<Tag> tagList = fixDecoderToTag(targetString);
+                launchDecoderWindow(tagList);
+/*                StringBuilder result = fixDecoder(targetString);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setContentText(result.toString());
                 alert.setTitle("Decoder");
                 alert.setHeaderText("FIX message decoded");
-                alert.showAndWait();
+                alert.showAndWait();*/
             } else {
                 mouseClicks(e);
             }
@@ -241,6 +244,32 @@ public class MainController implements Initializable {
             this.logger.warn("Exception showFixFields -> {}", ex.getLocalizedMessage());
         }
 
+    }
+
+    private List<Tag> fixDecoderToTag(String targetString) {
+        int firstQuote = targetString.indexOf('"');
+        int secondQuote = targetString.indexOf('"', firstQuote + 1);
+        String content = targetString.substring(firstQuote + 1, secondQuote);
+        if (content.contains(Constants.OUT)) {
+            content = content.replace(Constants.OUT + StringUtils.SPACE, "");
+        } else {
+            content = content.replace(Constants.IN + StringUtils.SPACE, "");
+        }
+
+        String[] fields = content.split("\\|");
+        List<String> fieldList = List.of(fields);
+        List<Tag> tagList = new ArrayList<>();
+        for (String field : fieldList) {
+            String[] keyValue = field.split("=");
+            Tag newTag = new Tag();
+            newTag.setKey(keyValue[0]);
+            newTag.setField(Constants.hmTagValue.get(Integer.valueOf(keyValue[0])));
+            newTag.setValue(keyValue[1]);
+            newTag.setMeaning(getAdditinalInfo(keyValue[0], keyValue[1]));
+            tagList.add(newTag);
+
+        }
+        return tagList;
     }
 
     private StringBuilder fixDecoder(String targetString) {
@@ -880,6 +909,24 @@ public class MainController implements Initializable {
             return false;
         }
 
+    }
+
+    public void launchDecoderWindow(List<Tag> tagList) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/fxml/fixdecoder.fxml"));
+            Parent root = fxmlLoader.load();
+            DecoderController decoderController = fxmlLoader.getController();
+            decoderController.injectTags(tagList);
+            Stage stage = new Stage();
+            stage.setTitle(Constants.FIX_DECODER_TITLE);
+            stage.setScene(new Scene(root));
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void launchInitiatorConfigWindow(ActionEvent actionEvent) {

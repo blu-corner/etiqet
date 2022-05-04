@@ -5,6 +5,7 @@ public class Tag {
     private String key;
     private String field;
     private String value;
+    private String meaning;
     private Boolean used;
 
     public Tag(String field, String value) {
@@ -63,12 +64,21 @@ public class Tag {
         this.field = field;
     }
 
+    public String getMeaning() {
+        return meaning;
+    }
+
+    public void setMeaning(String meaning) {
+        this.meaning = meaning;
+    }
+
     @Override
     public String toString() {
         return "Tag{" +
             "key='" + key + '\'' +
             ", field='" + field + '\'' +
             ", value='" + value + '\'' +
+            ", meaning='" + meaning + '\'' +
             ", used=" + used +
             '}';
     }

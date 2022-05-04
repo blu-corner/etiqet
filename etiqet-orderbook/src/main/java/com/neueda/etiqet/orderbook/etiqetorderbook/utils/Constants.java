@@ -69,6 +69,7 @@ public class Constants {
     public static final String HELP_SITE = "https://btobits.com/fixopaedia/fixdic44/fields_by_tag_.html";
     public static final List<String> Y_N = Arrays.asList("Y", "N");
     public static final List<String> TIME_IN_FORCE_VALUES = Arrays.asList("Day (0)", "Good Till Cancel (1)", "At the opening (2)", "Immediate Or Cancel (3)", "Fill or Kill (4)", "At the close (7)");
+    public static final String FIX_DECODER_TITLE = "FIX Decoder";
 
 
     public enum SIDE_ENUM{
