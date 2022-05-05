@@ -66,8 +66,6 @@ import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class MainController implements Initializable {
 
-
-
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
     private List<Order> sell;
@@ -101,7 +99,6 @@ public class MainController implements Initializable {
     @FXML private Tab tabInitiator;
     @FXML private ComboBox<String> comboOrders;
     @FXML private ComboBox<String> comboSide;
-    @FXML private TextArea logTextArea;
     @FXML private TabPane mainTabPane;
     @FXML public TextField textFieldSize;
     @FXML public TextField textFieldPrice;
@@ -110,9 +107,8 @@ public class MainController implements Initializable {
     @FXML public Button buttonSendOrder;
     @FXML public ListView listViewLog;
     @FXML public ListView listViewActions;
-    @FXML public CheckMenuItem checkMenuItemRemPort;
     @FXML public Menu menuItemMessagePort;
-    @FXML public CheckMenuItem menuItemDecodeOnClick;
+
 
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
@@ -166,12 +162,10 @@ public class MainController implements Initializable {
         orderBookBuyTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
         orderBookSellTableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: green;");
 
-        actionTableView.setOnMouseClicked(this::mouseClicks);
         orderBookBuyTableView.setContextMenu(getOrderContextMenu(Constants.SIDE_ENUM.BUY));
         orderBookSellTableView.setContextMenu(getOrderContextMenu(Constants.SIDE_ENUM.SELL));
 
         listViewLog.setContextMenu(getLogContextMenu());
-        menuItemDecodeOnClick.setSelected(true);
 
         orderIDBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("ClOrdID"));
         timeBuyTableColumn.setCellValueFactory(new PropertyValueFactory<>("Time"));
@@ -221,7 +215,6 @@ public class MainController implements Initializable {
         comboBoxTimeInForce.getItems().addAll(Constants.TIME_IN_FORCE.getContents());
         comboBoxTimeInForce.getSelectionModel().select(0);
 
-//        fixSessionsList = new ArrayList<>();
     }
 
     private void showFixFields() {
@@ -262,28 +255,7 @@ public class MainController implements Initializable {
         return targetString;
     }
 
-    private StringBuilder fixDecoder(String targetString) {
-        int firstQuote = targetString.indexOf('"');
-        int secondQuote = targetString.indexOf('"', firstQuote + 1);
-        String content = targetString.substring(firstQuote + 1, secondQuote);
-        content = removeOutInInfoFromFixString(content);
 
-        String[] fields = content.split("\\|");
-        List<String> fieldList = List.of(fields);
-        StringBuilder result = new StringBuilder();
-        for (String field : fieldList) {
-            String[] keyValue = field.split("=");
-            result
-                .append(keyValue[0])
-                .append(StringUtils.SPACE)
-                .append(Constants.hmTagValue.get(Integer.valueOf(keyValue[0])))
-                .append(StringUtils.SPACE)
-                .append(keyValue[1])
-                .append(getAdditinalInfo(keyValue[0], keyValue[1]))
-                .append("\n");
-        }
-        return result;
-    }
 
     private String getAdditinalInfo(String tag, String value) {
         String additionalInfo = "";
@@ -602,46 +574,6 @@ public class MainController implements Initializable {
 
     }
 
-
-
-    private void mouseClicks(MouseEvent event){
-        // create a menu
-
-
-
-//        if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
-//            removeOrderAlert(event);
-//        }else{
-//            cellToClipBoard(event);
-//        }
-    }
-
-
-    private void cellToClipBoard(MouseEvent e) {
-        try {
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(getTargetContent(e));
-            clipboard.setContent(content);
-        } catch (Exception ex) {
-            this.logger.error(ex.getLocalizedMessage());
-        }
-    }
-
-    private String getTargetContent(MouseEvent e){
-        String targetString = e.getTarget().toString();
-        int firstQuote = targetString.indexOf('"');
-        int secondQuote = targetString.indexOf('"', firstQuote + 1);
-        return targetString.substring(firstQuote + 1, secondQuote);
-    }
-
-    private String getTargetContent(ActionEvent e){
-        String targetString = e.getTarget().toString();
-        int firstQuote = targetString.indexOf('"');
-        int secondQuote = targetString.indexOf('"', firstQuote + 1);
-        return targetString.substring(firstQuote + 1, secondQuote);
-    }
-
     public List<Order> getBuy() {
         return buy;
     }
@@ -744,68 +676,6 @@ public class MainController implements Initializable {
     public void closeApplication(ActionEvent actionEvent) {
         stop();
         Platform.exit();
-    }
-
-    public void setDefaultPort(ActionEvent actionEvent) {
-        TextInputDialog dialog = null;
-        List<String> writtenLines = new ArrayList<>();
-        int index = 0, portIndex = 0;
-        try {
-            if (tabAcceptor.isSelected()) {
-                List<String> lines = Utils.readConfigFile(Constants.INITIATOR_ROLE);
-
-                String port = "";
-                for (String line : lines) {
-                    if (!line.contains("#") && line.contains(Constants.ACC_ACCEPT_PORT)) {
-                        port = line.substring(line.indexOf('=') + 1);
-                        line = line.replace(port, "");
-                        portIndex = index;
-                    }
-                    writtenLines.add(line);
-                    index++;
-                }
-                dialog = new TextInputDialog(port);
-                dialog.setTitle(Constants.ACCEPTOR_ROLE);
-                dialog.setHeaderText(Constants.SET_DEFAULT_PORT);
-                dialog.setContentText(Constants.ACCEPTOR_PORT_DIALOG_TEXT);
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    String current = writtenLines.get(portIndex);
-                    writtenLines.set(portIndex, current + result.get());
-                    Files.write(Paths.get(Constants.ROOT_SERVER_CONFIG), writtenLines);
-                    this.changedDefaultPort = result.get();
-                }
-
-            } else if (tabInitiator.isSelected()) {
-                List<String> lines = Utils.readConfigFile(Constants.ACCEPTOR_ROLE);
-
-                String port = "";
-                for (String line : lines) {
-                    if (!line.contains("#") && line.contains(Constants.INI_CONNECT_HOST)) {
-                        port = line.substring(line.indexOf('=') + 1);
-                        line = line.replace(port, "");
-                        portIndex = index;
-                    }
-                    writtenLines.add(line);
-                    index++;
-                }
-                dialog = new TextInputDialog(port);
-                dialog.setTitle(Constants.INITIATOR_ROLE);
-                dialog.setHeaderText(Constants.SET_DEFAULT_PORT);
-                dialog.setContentText(Constants.ACCEPTOR_PORT_DIALOG_TEXT);
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    String current = writtenLines.get(portIndex);
-                    writtenLines.set(portIndex, current + result.get());
-                    Files.write(Paths.get(Constants.ROOT_CLIENT_CONFIG), writtenLines);
-                    this.changedDefaultPort = result.get();
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public void cleanBid(ActionEvent actionEvent) {

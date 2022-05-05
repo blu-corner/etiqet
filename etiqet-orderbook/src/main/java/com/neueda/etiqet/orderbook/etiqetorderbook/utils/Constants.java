@@ -1206,7 +1206,7 @@ public class Constants {
         hmOrdStatus.put("2", "FILLED");
         hmOrdStatus.put("3", "DONE FOR DAY");
         hmOrdStatus.put("4", "CANCELED");
-        hmOrdStatus.put("5", "");//removed in FIX 44
+        hmOrdStatus.put("5", "REPLACED");//TODO removed in FIX 44
         hmOrdStatus.put("6", "PENDING CANCEL");
         hmOrdStatus.put("7", "STOPPED");
         hmOrdStatus.put("8", "REJECTED");

@@ -83,8 +83,6 @@
                                 <MenuItem fx:id="menuItemClearAll" mnemonicParsing="false" onAction="#cleanAll" text="Clear all" />
                             </items>
                         </Menu>
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <CheckMenuItem fx:id="menuItemDecodeOnClick" mnemonicParsing="false" text="Decode on click" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

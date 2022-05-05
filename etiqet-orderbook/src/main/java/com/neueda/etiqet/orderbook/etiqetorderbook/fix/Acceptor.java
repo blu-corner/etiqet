@@ -18,6 +18,7 @@ import quickfix.fix44.OrderCancelReject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class Acceptor implements Application {
 
@@ -71,7 +72,7 @@ public class Acceptor implements Application {
             case ExecType.REPLACED:
                 executionReport.setField(new ExecType(execType));
                 executionReport.setField(new LeavesQty(0));
-//                executionReport.setField(new OrdStatus(OrdStatus.REPLACED));
+                executionReport.setField(new OrdStatus(OrdStatus.REPLACED));
                 break;
             case ExecType.REJECTED:
                 executionReport.setField(new ExecType(execType));
@@ -375,24 +376,22 @@ public class Acceptor implements Application {
 
     private ExecutionReport replaceOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol,
                                          CharField side, DoubleField size, DoubleField priceOrder, Order order) {
-        if (side.getValue() == (Side.BUY)) {
-            for (Order o : this.mainController.getBuy()) {
-                String orderID = o.getClOrdID();
-                if (orderID.equals(order.getClOrdID())) {
-                    o.setPrice(order.getPrice());
-                    o.setOrderQty(order.getOrderQty());
-                }
+        if (side.getValue() == Side.BUY) {
+            Optional<Order> toReplace = this.mainController.getBuy().stream().filter(buy -> buy.getClOrdID().equals(origClOrdID.getValue())).findFirst();
+            if (toReplace.isPresent()){
+                toReplace.get().setPrice(order.getPrice());
+                toReplace.get().setOrderQty(order.getOrderQty());
                 this.mainController.reorderBookBuyTableView();
             }
+
         } else {
-            for (Order o : this.mainController.getSell()) {
-                String orderID = o.getClOrdID();
-                if (orderID.equals(order.getClOrdID())) {
-                    o.setPrice(order.getPrice());
-                    o.setOrderQty(order.getOrderQty());
-                }
+            Optional<Order> toReplace = this.mainController.getSell().stream().filter(sell -> sell.getClOrdID().equals(origClOrdID.getValue())).findFirst();
+            if (toReplace.isPresent()){
+                toReplace.get().setPrice(order.getPrice());
+                toReplace.get().setOrderQty(order.getOrderQty());
+                this.mainController.reorderBookSellTableView();
             }
-            this.mainController.reorderBookSellTableView();
+;
         }
         this.mainController.setChanged(true);
         return lookForNewTrade(clOrdID, orderId, execId, symbol, side, size, priceOrder);
