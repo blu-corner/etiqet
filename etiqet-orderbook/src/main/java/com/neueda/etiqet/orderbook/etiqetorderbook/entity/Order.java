@@ -11,6 +11,7 @@ public class Order {
     private String timeInForce;
     private boolean removed;
     private String sessionID;
+    private String timeToBeRemoved;
 
     public static class OrderBuilder{
         private String clOrdID;
@@ -23,6 +24,7 @@ public class Order {
         private String timeInForce;
         private boolean removed;
         private String sessionID;
+        private String timeToBeRemoved;
 
         public OrderBuilder clOrdID(String clOrdID){
             this.clOrdID = clOrdID;
@@ -74,6 +76,11 @@ public class Order {
             return this;
         }
 
+        public OrderBuilder timeToBeRemoved(String timeToBeRemoved){
+            this.timeToBeRemoved = timeToBeRemoved;
+            return this;
+        }
+
         public Order build(){
             return new Order(this);
         }
@@ -92,6 +99,7 @@ public class Order {
         this.timeInForce = orderBuilder.timeInForce;
         this.removed = orderBuilder.removed;
         this.sessionID = orderBuilder.sessionID;
+        this.timeToBeRemoved = orderBuilder.timeToBeRemoved;
     }
 
     public Order(){
@@ -105,6 +113,7 @@ public class Order {
         this.timeInForce = "1";
         this.removed = false;
         this.sessionID = "";
+        this.timeToBeRemoved = "";
     }
 
     public String getClOrdID() {
@@ -188,6 +197,14 @@ public class Order {
         this.sessionID = sessionID;
     }
 
+    public String getTimeToBeRemoved() {
+        return timeToBeRemoved;
+    }
+
+    public void setTimeToBeRemoved(String timeToBeRemoved) {
+        this.timeToBeRemoved = timeToBeRemoved;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -201,6 +218,7 @@ public class Order {
             ", timeInForce='" + timeInForce + '\'' +
             ", removed=" + removed +
             ", sessionID='" + sessionID + '\'' +
+            ", timeToBeRemoved='" + timeToBeRemoved + '\'' +
             '}';
     }
 }

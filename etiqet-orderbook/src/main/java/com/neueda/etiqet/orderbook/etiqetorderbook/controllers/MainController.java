@@ -66,6 +66,7 @@ import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class MainController implements Initializable {
 
+
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
     private List<Order> sell;
@@ -214,6 +215,8 @@ public class MainController implements Initializable {
         checkMenuItemExportOnClose.setSelected(true);
         comboBoxTimeInForce.getItems().addAll(Constants.TIME_IN_FORCE.getContents());
         comboBoxTimeInForce.getSelectionModel().select(0);
+
+
     }
 
     private void showFixFields() {
@@ -955,5 +958,22 @@ public class MainController implements Initializable {
 
     public void selectAllField(MouseEvent event) {
         textFieldOrigOrderID.selectAll();
+    }
+
+    public void launchTimePicker(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/fxml/datepicker.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Picker");
+            stage.setScene(new Scene(root));
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

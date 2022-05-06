@@ -259,6 +259,13 @@ public class Utils {
         return date;
     }
 
+    public static String getFormattedStringDate(Date date) {
+        String pattern = "yyyyMMdd-HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String rdate = simpleDateFormat.format(date);
+        return rdate;
+    }
+
     public static String getFormattedStringDate(String stringDate) {
         String pattern = "yyyyMMdd-HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);

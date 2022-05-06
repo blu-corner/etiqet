@@ -8,6 +8,7 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
@@ -15,10 +16,11 @@ import quickfix.field.*;
 import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.OrderCancelReject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.*;
 
 public class Acceptor implements Application {
 
@@ -210,17 +212,18 @@ public class Acceptor implements Application {
                         .side(side.getValue())
                         .clientID(clientID)
                         .timeInForce(Constants.TIME_IN_FORCE.getContent(timeInFoce.getValue()))
+                        .timeToBeRemoved(getTimeToBeRemoved(timeInFoce.getValue()))
                         .sessionID(sessionID.toString())
                         .build();
 
                     addNewOrder(side, order);
                     ExecutionReport finalExecutionReport = lookForNewTrade(clOrdID, orderId, execId, symbol, side, price, ordQty);
                     if (finalExecutionReport != null) {
-                        if (finalExecutionReport.getExecType().equals(new ExecType(ExecType.CANCELED)) &&
-                            (timeInFoce.equals(new TimeInForce(TimeInForce.FILL_OR_KILL)) ||
-                                timeInFoce.equals(new TimeInForce(TimeInForce.IMMEDIATE_OR_CANCEL)))) {
-                            order.setRemoved(true);
-                        }
+//                        if (finalExecutionReport.getExecType().equals(new ExecType(ExecType.CANCELED)) &&
+//                            (timeInFoce.equals(new TimeInForce(TimeInForce.FILL_OR_KILL)) ||
+//                                timeInFoce.equals(new TimeInForce(TimeInForce.IMMEDIATE_OR_CANCEL)))) {
+//                            order.setRemoved(true);
+//                        }
                         reports.add(finalExecutionReport);
                     }
                 }
@@ -292,6 +295,26 @@ public class Acceptor implements Application {
                 e.printStackTrace();
             }
         });
+    }
+
+    private String getTimeToBeRemoved(char timeInForce) {
+        String timeToBeRemoved = StringUtils.EMPTY;
+        String[] endTimeSplit;
+        LocalDateTime limitTime = null;
+        LocalDate localDateNow = LocalDate.now();
+        LocalTime localTimeNow = LocalTime.now();
+//        LocalDateTime localDateTimeNow = LocalDateTime.of(localDateNow, localTimeNow);
+        switch (timeInForce){
+            case TimeInForce.DAY:
+                String endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
+                endTimeSplit = endTime.split(":");
+                limitTime = LocalDateTime.of(localDateNow.plusDays(1), LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
+                Date dateLimitTime = Date.from(limitTime.atZone(ZoneId.systemDefault()).toInstant());
+                timeToBeRemoved = Utils.getFormattedStringDate(dateLimitTime);
+                break;
+
+        }
+        return timeToBeRemoved;
     }
 
 

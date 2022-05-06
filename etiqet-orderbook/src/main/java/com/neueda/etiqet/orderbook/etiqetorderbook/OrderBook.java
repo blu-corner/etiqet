@@ -89,38 +89,44 @@ public class OrderBook implements Runnable {
     }
 
     private void removeIfTimeInForceDay(Order order) {
-        String endTime;
-        Character timeInForce = Constants.TIME_IN_FORCE.getValue(order.getTimeInForce());
-        String[] endTimeSplit;
-        LocalDate localDateNow;
-        LocalTime localTimeNow;
-        LocalDateTime localDateTimeNow = null;
-        LocalDateTime limitTime = null;
-        if (timeInForce != null){
-            localDateNow = LocalDate.now();
-            localTimeNow = LocalTime.now();
-            localDateTimeNow = LocalDateTime.of(localDateNow, localTimeNow);
-            switch (timeInForce) {
-                case TimeInForce.DAY:
-                    endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
-                    endTimeSplit = endTime.split(":");
-                    limitTime = LocalDateTime.of(localDateNow.plusDays(1), LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
-                    this.logger.info("timeinforce.DAY :: Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
-                    break;
-                case TimeInForce.AT_THE_OPENING:
-                    endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME);
-                    endTimeSplit = endTime.split(":");
-                    limitTime = LocalDateTime.of(localDateNow, LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
-                    this.logger.info("timeinforce.AT_THE_OPENING :: Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
-                    break;
-                default:
-                    endTime = null;
-            }
-            if (endTime != null && localDateTimeNow.isAfter(limitTime)){
-
-                order.setRemoved(true);
-            }
-
+//        String endTime;
+//        Character timeInForce = Constants.TIME_IN_FORCE.getValue(order.getTimeInForce());
+//        String[] endTimeSplit;
+//        LocalDate localDateNow;
+//        LocalTime localTimeNow;
+//        LocalDateTime localDateTimeNow = null;
+//        LocalDateTime limitTime = null;
+//        if (timeInForce != null){
+//            localDateNow = LocalDate.now();
+//            localTimeNow = LocalTime.now();
+//            localDateTimeNow = LocalDateTime.of(localDateNow, localTimeNow);
+//            switch (timeInForce) {
+//                case TimeInForce.DAY:
+//                    endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
+//                    endTimeSplit = endTime.split(":");
+//                    limitTime = LocalDateTime.of(localDateNow.plusDays(1), LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
+//                    this.logger.info("timeinforce.DAY :: Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
+//                    break;
+//                case TimeInForce.AT_THE_OPENING:
+//                    endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME);
+//                    endTimeSplit = endTime.split(":");
+//                    limitTime = LocalDateTime.of(localDateNow, LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
+//                    this.logger.info("timeinforce.AT_THE_OPENING :: Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
+//                    break;
+//                default:
+//                    endTime = null;
+//            }
+//            if (endTime != null && localDateTimeNow.isAfter(limitTime)){
+//
+//                order.setRemoved(true);
+//            }
+//
+//        }
+        this.logger.info("Order time: " + order.getTime());
+        this.logger.info("Order timeToBeRemoved: " + order.getTimeToBeRemoved());
+        this.logger.info("********************************************************");
+        if(order.getTimeToBeRemoved().compareTo(order.getTime()) < 0) {
+            order.setRemoved(true);
         }
     }
 }

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import jfxtras.scene.control.LocalDateTimePicker?>
+<?import jfxtras.scene.control.LocalTimePicker?>
 
-
-<AnchorPane fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.DatepickerController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="47.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="452.0" prefWidth="654.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.DateTimePickerController">
    <children>
-      <DatePicker layoutX="14.0" layoutY="14.0" />
+      <LocalDateTimePicker fx:id="localDateTimePicker" layoutX="90.0" layoutY="42.0" prefHeight="299.0" prefWidth="384.0" />
+      <Button fx:id="buttonShowDateTime" layoutX="106.0" layoutY="341.0" mnemonicParsing="false" onAction="#showDateTime" text="SHOW" />
+      <LocalTimePicker fx:id="localTimePicker" layoutX="518.0" layoutY="366.0" prefHeight="32.0" prefWidth="99.0" />
    </children>
 </AnchorPane>
