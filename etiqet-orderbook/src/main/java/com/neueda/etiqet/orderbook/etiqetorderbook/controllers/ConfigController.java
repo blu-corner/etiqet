@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import jfxtras.scene.control.LocalTimePicker;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +19,19 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class ConfigController implements Initializable {
-
     private Logger logger = LoggerFactory.getLogger(ConfigController.class);
 
+    public LocalTimePicker acceptorStartTime;
+    public LocalTimePicker acceptorEndTime;
+    public LocalTimePicker initiatorStartTime;
+    public LocalTimePicker initiatorEndTime;
     public TextField initiatorBeginString;
     public TextField initiatorSender;
     public TextField initiatorTarget;
@@ -35,8 +40,6 @@ public class ConfigController implements Initializable {
     public TextField initiatorConnectPort;
     public TextField initiatorStorePath;
     public TextField initiatorLogPath;
-    public TextField initiatorStartTime;
-    public TextField initiatorEndTime;
     public ComboBox<String> initiatorUseDataDic;
     public TextField initiatorHeartBeat;
     public ComboBox<String> initiatorResetOnLogon;
@@ -51,8 +54,6 @@ public class ConfigController implements Initializable {
     public TextField acceptorToPort;
     public TextField acceptorStorePath;
     public TextField acceptorLogPath;
-    public TextField acceptorStartTime;
-    public TextField acceptorEndTime;
     public ComboBox<String> acceptorUseDataDic;
     public TextField acceptorHeartBeat;
     public ComboBox<String> acceptorResetOnLogon;
@@ -78,8 +79,8 @@ public class ConfigController implements Initializable {
             acceptorTarget.setText(getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_TARGET));
             acceptorStorePath.setText(getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_FILE_STORE_PATH));
             acceptorLogPath.setText(getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_FILE_LOG_PATH));
-            acceptorStartTime.setText(getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME));
-            acceptorEndTime.setText(getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME));
+            acceptorStartTime.setLocalTime(LocalTime.parse(getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME)));
+            acceptorEndTime.setLocalTime(LocalTime.parse(getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME)));
             acceptorHeartBeat.setText(getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_HEART_BT_INT));
             acceptorFromPort.setText(getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT));
 
@@ -101,8 +102,8 @@ public class ConfigController implements Initializable {
             initiatorTarget.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_TARGET));
             initiatorStorePath.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_STORE_PATH));
             initiatorLogPath.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_LOG_PATH));
-            initiatorStartTime.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_START_TIME));
-            initiatorEndTime.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_END_TIME));
+            initiatorStartTime.setLocalTime(LocalTime.parse(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_START_TIME)));
+            initiatorEndTime.setLocalTime(LocalTime.parse(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_END_TIME)));
             initiatorHeartBeat.setText(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_HEART_BT_INT));
             initiatorConnectHost.setText(getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_HOST));
             initiatorConnectPort.setText(getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_PORT));
@@ -137,8 +138,8 @@ public class ConfigController implements Initializable {
         tagList.add(new Tag(Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT, acceptorToPort.getText()));
         tagList.add(new Tag(Constants.CONF_FILE_STORE_PATH, acceptorStorePath.getText()));
         tagList.add(new Tag(Constants.CONF_FILE_LOG_PATH, acceptorLogPath.getText()));
-        tagList.add(new Tag(Constants.CONF_START_TIME, acceptorStartTime.getText()));
-        tagList.add(new Tag(Constants.CONF_END_TIME, acceptorEndTime.getText()));
+        tagList.add(new Tag(Constants.CONF_START_TIME, acceptorStartTime.getLocalTime().toString()));
+        tagList.add(new Tag(Constants.CONF_END_TIME, acceptorEndTime.getLocalTime().toString()));
         tagList.add(new Tag(Constants.CONF_USE_DATA_DIC, acceptorUseDataDic.getSelectionModel().getSelectedItem()));
         tagList.add(new Tag(Constants.CONF_HEART_BT_INT, acceptorHeartBeat.getText()));
         tagList.add(new Tag(Constants.CONF_RESET_ON_LOGON, acceptorResetOnLogon.getSelectionModel().getSelectedItem()));
@@ -162,8 +163,8 @@ public class ConfigController implements Initializable {
         tagList.add(new Tag(Constants.INI_CONNECT_PORT, initiatorConnectPort.getText()));
         tagList.add(new Tag(Constants.CONF_FILE_STORE_PATH, initiatorStorePath.getText()));
         tagList.add(new Tag(Constants.CONF_FILE_LOG_PATH, initiatorLogPath.getText()));
-        tagList.add(new Tag(Constants.CONF_START_TIME, initiatorStartTime.getText()));
-        tagList.add(new Tag(Constants.CONF_END_TIME, initiatorEndTime.getText()));
+        tagList.add(new Tag(Constants.CONF_START_TIME, initiatorStartTime.getLocalTime().toString()));
+        tagList.add(new Tag(Constants.CONF_END_TIME, initiatorEndTime.getLocalTime().toString()));
         tagList.add(new Tag(Constants.CONF_USE_DATA_DIC, initiatorUseDataDic.getSelectionModel().getSelectedItem()));
         tagList.add(new Tag(Constants.CONF_HEART_BT_INT, initiatorHeartBeat.getText()));
         tagList.add(new Tag(Constants.CONF_RESET_ON_LOGON, initiatorResetOnLogon.getSelectionModel().getSelectedItem()));

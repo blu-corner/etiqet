@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import jfxtras.scene.control.LocalTimePicker?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="577.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.ConfigController">
    <children>
@@ -62,8 +63,10 @@
             </VBox>
             <VBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="470.0" prefWidth="134.0" spacing="22.0">
                <children>
-                  <TextField fx:id="initiatorStartTime" text="00:00:00" />
-                  <TextField fx:id="initiatorEndTime" text="00:00:00" />
+                  <LocalTimePicker fx:id="initiatorStartTime" prefHeight="9.0" prefWidth="134.0" />
+                  <LocalTimePicker fx:id="initiatorEndTime"/>
+<!--                  <TextField fx:id="initiatorStartTime" text="00:00:00" />-->
+<!--                  <TextField fx:id="initiatorEndTime" text="00:00:00" />-->
                   <ComboBox fx:id="initiatorUseDataDic" prefWidth="150.0" />
                   <TextField fx:id="initiatorHeartBeat" text="30" />
                   <ComboBox fx:id="initiatorResetOnLogon" prefWidth="150.0" />
@@ -77,7 +80,7 @@
                   </HBox>
                </children>
                <padding>
-                  <Insets top="20.0" />
+                  <Insets top="6.0" />
                </padding>
             </VBox>
          </children>
