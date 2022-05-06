@@ -214,7 +214,6 @@ public class MainController implements Initializable {
         checkMenuItemExportOnClose.setSelected(true);
         comboBoxTimeInForce.getItems().addAll(Constants.TIME_IN_FORCE.getContents());
         comboBoxTimeInForce.getSelectionModel().select(0);
-
     }
 
     private void showFixFields() {
@@ -952,5 +951,9 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
 
+    }
+
+    public void selectAllField(MouseEvent event) {
+        textFieldOrigOrderID.selectAll();
     }
 }

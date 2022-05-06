@@ -61,8 +61,6 @@ public class OrderBook implements Runnable {
 
     private void addActions() {
         for (Order order : this.mainController.getBuy().stream().filter(Order::isRemoved).collect(Collectors.toList())){
-//            Action action = new Action(Constants.Type.CANCELED, order.getClOrdID(), "", order.getClientID(), order.getTimeInForce(),
-//                "", "",Utils.getFormattedStringDate(), order.getOrderQty(), null, 0d, 0d);
             Action action = new Action.ActionBuilder()
                 .type(Constants.Type.CANCELED)
                 .buyID(order.getClOrdID())
@@ -76,8 +74,6 @@ public class OrderBook implements Runnable {
             this.mainController.reorderActionTableView();
         }
         for (Order order : this.mainController.getSell().stream().filter(Order::isRemoved).collect(Collectors.toList())){
-//            Action action = new Action(Constants.Type.CANCELED,  "", order.getClOrdID(), "","", order.getTimeInForce(),
-//                order.getClientID(), Utils.getFormattedStringDate(),  null,order.getOrderQty(), 0d, 0d);
             Action action = new Action.ActionBuilder()
                 .type(Constants.Type.CANCELED)
                 .sellID(order.getClOrdID())
@@ -95,29 +91,36 @@ public class OrderBook implements Runnable {
     private void removeIfTimeInForceDay(Order order) {
         String endTime;
         Character timeInForce = Constants.TIME_IN_FORCE.getValue(order.getTimeInForce());
+        String[] endTimeSplit;
+        LocalDate localDateNow;
+        LocalTime localTimeNow;
+        LocalDateTime localDateTimeNow = null;
+        LocalDateTime limitTime = null;
         if (timeInForce != null){
+            localDateNow = LocalDate.now();
+            localTimeNow = LocalTime.now();
+            localDateTimeNow = LocalDateTime.of(localDateNow, localTimeNow);
             switch (timeInForce) {
                 case TimeInForce.DAY:
                     endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
+                    endTimeSplit = endTime.split(":");
+                    limitTime = LocalDateTime.of(localDateNow.plusDays(1), LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
+                    this.logger.info("timeinforce.DAY :: Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
                     break;
                 case TimeInForce.AT_THE_OPENING:
                     endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME);
+                    endTimeSplit = endTime.split(":");
+                    limitTime = LocalDateTime.of(localDateNow, LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
+                    this.logger.info("timeinforce.AT_THE_OPENING :: Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
                     break;
                 default:
                     endTime = null;
             }
+            if (endTime != null && localDateTimeNow.isAfter(limitTime)){
 
-            if (endTime != null) {
-                String[] endTimeSplit = endTime.split(":");
-                LocalDate localDateNow = LocalDate.now();
-                LocalTime localTimeNow = LocalTime.now();
-                LocalDateTime localDateTimeNow = LocalDateTime.of(localDateNow, localTimeNow);
-                LocalDateTime limitTime = LocalDateTime.of(localDateNow, LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
-                this.logger.info("Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
-                if (localDateTimeNow.isAfter(limitTime)) {
-                    order.setRemoved(true);
-                }
+                order.setRemoved(true);
             }
+
         }
     }
 }

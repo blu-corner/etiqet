@@ -237,7 +237,7 @@
                                                 </Tooltip>
                                             </tooltip>
                                         </TextField>
-                                        <TextField fx:id="textFieldOrigOrderID" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" promptText="ID" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                                        <TextField fx:id="textFieldOrigOrderID" onMouseClicked="#selectAllField" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="80.0" promptText="ID" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                                             <tooltip>
                                                 <Tooltip text="OrigClOrdID (41)">
                                                     <font>
