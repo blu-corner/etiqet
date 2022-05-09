@@ -5,6 +5,7 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.utils.AutoCompleteComboBoxLis
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -83,6 +84,7 @@ public class AdvancedRequestController implements Initializable {
             substituteTag(data.getRowValue().getKey(), data.getNewValue());
         });
         tableViewTags.setEditable(true);
+        sortTableViewTags();
         comboStoredOrigID.getItems().add(Constants.SENT_ORIG_CL_ORD_I_DS);
         comboStoredOrigID.getSelectionModel().select(0);
     }
@@ -134,6 +136,7 @@ public class AdvancedRequestController implements Initializable {
                     if (isAddableItem(tag) && !StringUtils.isEmpty(text.trim())) {
                         tableViewTags.getItems().add(tag);
                         updateFixTextArea();
+                        sortTableViewTags();
                     }
                 } else {
                     substituteTag(any.get().getKey(), text);
@@ -152,6 +155,7 @@ public class AdvancedRequestController implements Initializable {
             List<Tag> newTagList = new ArrayList<>(tableViewTags.getItems());
             tableViewTags.getItems().clear();
             tableViewTags.getItems().addAll(newTagList);
+            sortTableViewTags();
             updateFixTextArea();
         }
     }
@@ -198,6 +202,7 @@ public class AdvancedRequestController implements Initializable {
             Platform.runLater(() -> {
                 tableViewTags.getItems().remove(selectedItem);
                 updateFixTextArea();
+                sortTableViewTags();
             });
 
         }
@@ -211,27 +216,28 @@ public class AdvancedRequestController implements Initializable {
         if (tag == null) return false;
         boolean isNotBeginString = !tag.getKey().equals(Constants.KEY_BEGIN_STRING);
         boolean isNotBodyLength = !tag.getKey().equals(Constants.KEY_BODY_LENGTH);
-        boolean isNotMessageType = !tag.getKey().equals(Constants.KEY_MSG_TYPE);
-        return isNotBeginString && isNotBodyLength && isNotMessageType;
+//        boolean isNotMessageType = !tag.getKey().equals(Constants.KEY_MSG_TYPE);
+        return isNotBeginString && isNotBodyLength; // && isNotMessageType;
     }
 
     private boolean isAddableItem(Tag tag) {
         if (tag == null) return false;
-        boolean isNotTarget = !tag.getKey().equals(Constants.KEY_TARGET);
-        boolean isNotSender = !tag.getKey().equals(Constants.KEY_SENDER);
+//        boolean isNotTarget = !tag.getKey().equals(Constants.KEY_TARGET);
+//        boolean isNotSender = !tag.getKey().equals(Constants.KEY_SENDER);
         boolean isNotBeginString = !tag.getKey().equals(Constants.KEY_BEGIN_STRING);
         boolean isNotBodyLength = !tag.getKey().equals(Constants.KEY_BODY_LENGTH);
-        boolean isNotMessageType = !tag.getKey().equals(Constants.KEY_MSG_TYPE);
+//        boolean isNotMessageType = !tag.getKey().equals(Constants.KEY_MSG_TYPE);
         boolean isNotChecksum = !tag.getKey().equals(Constants.KEY_CHECKSUM);
         boolean existingKey = Constants.hmTagValue.containsKey(Integer.parseInt(tag.getKey()));
         boolean existingField = !Utils.getKeyFromValue(tag.getField()).equals("-1");
-        return isNotTarget && isNotSender && isNotBeginString && isNotBodyLength && isNotMessageType && isNotChecksum && existingKey && existingField;
+        return /*isNotTarget && isNotSender &&*/ isNotBeginString && isNotBodyLength && /*isNotMessageType && */isNotChecksum && existingKey && existingField;
     }
 
     public void arButtonClear(ActionEvent actionEvent) {
         Platform.runLater(() -> {
             tableViewTags.getItems().removeIf(this::isRemovableItem);
             updateFixTextArea();
+            sortTableViewTags();
         });
     }
 
@@ -264,6 +270,7 @@ public class AdvancedRequestController implements Initializable {
                 }
             }
             updateFixTextArea();
+            sortTableViewTags();
         });
 
     }
@@ -316,6 +323,7 @@ public class AdvancedRequestController implements Initializable {
                 tag.setValue(comboStoredOrigID.getValue());
                 tableViewTags.getItems().add(tag);
                 updateFixTextArea();
+                sortTableViewTags();
             }
             comboStoredOrigID.getSelectionModel().select(0);
         } catch (Exception ex) {
@@ -334,6 +342,7 @@ public class AdvancedRequestController implements Initializable {
             newTag.setValue(RandomStringUtils.randomAlphanumeric(8));
             tableViewTags.getItems().remove(tag);
             tableViewTags.getItems().add(newTag);
+            sortTableViewTags();
         }
     }
 
@@ -392,6 +401,9 @@ public class AdvancedRequestController implements Initializable {
                     newTag.setKey(tag.getKey());
                     tableViewTags.getItems().remove(selectedIndex);
                     tableViewTags.getItems().add(newTag);
+                    updateFixTextArea();
+                    sortTableViewTags();
+
                 }
             }
 
@@ -399,5 +411,15 @@ public class AdvancedRequestController implements Initializable {
             this.logger.warn("Exception launchTimePicker -> {}", e.getLocalizedMessage());
         }
 
+    }
+
+    private void sortTableViewTags(){
+        Platform.runLater(() -> {
+            if (!tableViewTags.getItems().isEmpty()){
+                List<Tag> tags = new ArrayList<>(tableViewTags.getItems());
+                tableViewTags.getItems().clear();
+                tableViewTags.getItems().addAll(tags.stream().sorted(Comparator.comparing(t -> Integer.parseInt(t.getKey()))).collect(Collectors.toList()));
+            }
+        });
     }
 }
