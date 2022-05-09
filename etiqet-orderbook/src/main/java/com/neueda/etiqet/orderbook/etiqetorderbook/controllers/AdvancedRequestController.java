@@ -131,15 +131,19 @@ public class AdvancedRequestController implements Initializable {
                 String text = arTextFieldValue.getText();
                 String selectedItem = comboFieldTags.getSelectionModel().getSelectedItem();
                 Optional<Tag> any = tableViewTags.getItems().stream().filter(t -> t.getField().equals(selectedItem)).findAny();
-                if (any.isEmpty()) {
-                    Tag tag = new Tag(Utils.getKeyFromValue(selectedItem), selectedItem, text);
-                    if (isAddableItem(tag) && !StringUtils.isEmpty(text.trim())) {
-                        tableViewTags.getItems().add(tag);
-                        updateFixTextArea();
-                        sortTableViewTags();
+                if (isDate(selectedItem) && text.isEmpty()){
+                    launchTimePicker(-1, selectedItem, Utils.getKeyFromValue(selectedItem));
+                }else{
+                    if (any.isEmpty()) {
+                        Tag tag = new Tag(Utils.getKeyFromValue(selectedItem), selectedItem, text);
+                        if (isAddableItem(tag) && !StringUtils.isEmpty(text.trim())) {
+                            tableViewTags.getItems().add(tag);
+                            updateFixTextArea();
+                            sortTableViewTags();
+                        }
+                    } else {
+                        substituteTag(any.get().getKey(), text);
                     }
-                } else {
-                    substituteTag(any.get().getKey(), text);
                 }
             });
         } catch (Exception ex) {
@@ -352,13 +356,12 @@ public class AdvancedRequestController implements Initializable {
         MenuItem menuItemEdit = new MenuItem("Edit");
         contextMenu.getItems().add(menuItemEdit);
 
-
         menuItemEdit.setOnAction(e -> {
             Tag tag = tableViewTags.getSelectionModel().getSelectedItem();
             int selectedIndex = tableViewTags.getSelectionModel().getSelectedIndex();
-            if (tag.getField().toLowerCase().contains("time")) {
+            if (tag.getField().toLowerCase().contains("time") || tag.getKey().equals("432")) {
                 Platform.runLater(() -> {
-                    launchTimePicker(selectedIndex);
+                    launchTimePicker(selectedIndex, null, null);
                 });
 
             } else {
@@ -370,7 +373,7 @@ public class AdvancedRequestController implements Initializable {
     }
 
 
-    public void launchTimePicker(int selectedIndex) {
+    public void launchTimePicker(int selectedIndex, String field, String key) {
         try {
             final Dialog dialog = new Dialog();
             dialog.setTitle("Date Time Picker");
@@ -393,14 +396,22 @@ public class AdvancedRequestController implements Initializable {
                 if (type.equals("O")) {
                     String date = Utils.getFormattedDateFromLocalDateTime(localDateTimePicker.getLocalDateTime());
                     this.logger.info(date);
-
-                    Tag tag = tableViewTags.getItems().get(selectedIndex);
-                    Tag newTag = new Tag();
-                    newTag.setValue(date);
-                    newTag.setField(tag.getField());
-                    newTag.setKey(tag.getKey());
-                    tableViewTags.getItems().remove(selectedIndex);
-                    tableViewTags.getItems().add(newTag);
+                    if (selectedIndex != -1){
+                        Tag tag = tableViewTags.getItems().get(selectedIndex);
+                        Tag newTag = new Tag();
+                        newTag.setValue(date);
+                        newTag.setField(tag.getField());
+                        newTag.setKey(tag.getKey());
+                        tableViewTags.getItems().remove(selectedIndex);
+                        tableViewTags.getItems().add(newTag);
+                    }else{
+                        tableViewTags.getItems().removeIf( t -> t.getKey().equals(key));
+                        Tag tag = new Tag();
+                        tag.setValue(date);
+                        tag.setField(field);
+                        tag.setKey(key);
+                        tableViewTags.getItems().add(tag);
+                    }
                     updateFixTextArea();
                     sortTableViewTags();
 
@@ -421,5 +432,9 @@ public class AdvancedRequestController implements Initializable {
                 tableViewTags.getItems().addAll(tags.stream().sorted(Comparator.comparing(t -> Integer.parseInt(t.getKey()))).collect(Collectors.toList()));
             }
         });
+    }
+
+    private boolean isDate(String field){
+        return field.toLowerCase().contains("time") || field.toLowerCase().contains("date");
     }
 }
