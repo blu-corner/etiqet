@@ -28,6 +28,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -278,22 +280,11 @@ public class Utils {
         return null;
     }
 
-
-    public void launchDatepicker() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("/fxml/datepicker.fxml"));
-            Parent root = fxmlLoader.load();
-//            DatepickerController advancedRequestController = fxmlLoader.getController();
-//            advancedRequestController.injectMainController(this);
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setAlwaysOnTop(true);
-            stage.setResizable(false);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static String getFormattedDateFromLocalDateTime(LocalDateTime localDateTime){
+        Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        String pattern = "yyyyMMdd-HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
     }
 
 

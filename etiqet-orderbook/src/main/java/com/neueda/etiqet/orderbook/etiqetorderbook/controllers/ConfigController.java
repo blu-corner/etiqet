@@ -188,12 +188,7 @@ public class ConfigController implements Initializable {
 
             List<String> newLines = new ArrayList<>();
             for (String line : lines) {
-                // Avoid overwriting DataDictionary (UseDataDictionary contains DataDictionary)
-                if (line.contains(Constants.CONF_DATA_DIC) && !line.contains(Constants.CONF_USE_DATA_DIC)) {
-                    propertyHandler(fields, newLines, line);
-                } else {
-                    propertyHandler(fields, newLines, line);
-                }
+                propertyHandler(fields, newLines, line);
             }
             newPropertiesHandler(fields, newLines);
             Files.write(pathRoot, newLines);
