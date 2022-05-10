@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OrderBook implements Runnable {
@@ -38,19 +39,19 @@ public class OrderBook implements Runnable {
                     this.mainController.orderBookBuyTableView.getItems().removeIf(Order::isRemoved);
                     this.mainController.getSell().removeIf(Order::isRemoved);
                     this.mainController.orderBookSellTableView.getItems().removeIf(Order::isRemoved);
-                    this.mainController.getBuy().forEach(this::removeIfTimeInForceDay);
-                    this.mainController.getSell().forEach(this::removeIfTimeInForceDay);
+                    this.mainController.getBuy().forEach(this::removeIfTimeExpired);
+                    this.mainController.getSell().forEach(this::removeIfTimeExpired);
                 });
 
                 if (this.mainController.isChanged()) {
-                    System.out.print("\n\n");
-                    Constants.orderBook.info("=================================================================================");
-                    Constants.orderBook.info(".....................................BID.........................................");
-                    this.mainController.getBuy().stream().sorted(Comparator.comparing(Order::getPrice)).forEach(System.out::println);
-                    Constants.orderBook.info(".....................................OFFER.......................................");
-                    this.mainController.getSell().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).forEach(System.out::println);
-                    Constants.orderBook.info("=================================================================================\n\n");
-                    this.mainController.setChanged(false);
+//                    System.out.print("\n\n");
+//                    Constants.orderBook.info("=================================================================================");
+//                    Constants.orderBook.info(".....................................BID.........................................");
+//                    this.mainController.getBuy().stream().sorted(Comparator.comparing(Order::getPrice)).forEach(System.out::println);
+//                    Constants.orderBook.info(".....................................OFFER.......................................");
+//                    this.mainController.getSell().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).forEach(System.out::println);
+//                    Constants.orderBook.info("=================================================================================\n\n");
+//                    this.mainController.setChanged(false);
                 }
 
             } catch (InterruptedException e) {
@@ -88,45 +89,29 @@ public class OrderBook implements Runnable {
 
     }
 
-    private void removeIfTimeInForceDay(Order order) {
-//        String endTime;
-//        Character timeInForce = Constants.TIME_IN_FORCE.getValue(order.getTimeInForce());
-//        String[] endTimeSplit;
-//        LocalDate localDateNow;
-//        LocalTime localTimeNow;
-//        LocalDateTime localDateTimeNow = null;
-//        LocalDateTime limitTime = null;
-//        if (timeInForce != null){
-//            localDateNow = LocalDate.now();
-//            localTimeNow = LocalTime.now();
-//            localDateTimeNow = LocalDateTime.of(localDateNow, localTimeNow);
-//            switch (timeInForce) {
-//                case TimeInForce.DAY:
-//                    endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
-//                    endTimeSplit = endTime.split(":");
-//                    limitTime = LocalDateTime.of(localDateNow.plusDays(1), LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
-//                    this.logger.info("timeinforce.DAY :: Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
-//                    break;
-//                case TimeInForce.AT_THE_OPENING:
-//                    endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME);
-//                    endTimeSplit = endTime.split(":");
-//                    limitTime = LocalDateTime.of(localDateNow, LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
-//                    this.logger.info("timeinforce.AT_THE_OPENING :: Now {} -> EndOfDay -> {}", localDateTimeNow, limitTime);
-//                    break;
-//                default:
-//                    endTime = null;
-//            }
-//            if (endTime != null && localDateTimeNow.isAfter(limitTime)){
-//
-//                order.setRemoved(true);
-//            }
-//
-//        }
-        this.logger.info("Order time: " + order.getTime());
-        this.logger.info("Order timeToBeRemoved: " + order.getTimeToBeRemoved());
+    private void removeIfTimeExpired(Order order) {
+        LocalDate localDateNow = LocalDate.now();
+        LocalTime localTimeNow = LocalTime.now();
+        LocalDateTime localDateTimeNow = LocalDateTime.of(localDateNow, localTimeNow);
+        String formattedDate = Utils.getFormattedDateFromLocalDateTime(localDateTimeNow);
+        this.logger.info("Order {} time: {} timeToBeRemoved {} result -> {}", order.getClOrdID(), formattedDate, order.getTimeToBeRemoved(), (order.getTime().compareTo(order.getTimeToBeRemoved())));
         this.logger.info("********************************************************");
-        if(order.getTimeToBeRemoved().compareTo(order.getTime()) < 0) {
-            order.setRemoved(true);
+
+        Optional<Character> timeInForce = Optional.ofNullable(Constants.TIME_IN_FORCE.getValue(order.getTimeInForce()));
+        if (timeInForce.isPresent()){
+            switch (timeInForce.get()){
+                case TimeInForce.DAY:
+                case TimeInForce.IMMEDIATE_OR_CANCEL:
+                case TimeInForce.FILL_OR_KILL:
+                case TimeInForce.AT_THE_OPENING:
+                case TimeInForce.GOOD_TILL_DATE:
+                    if(formattedDate.compareTo(order.getTimeToBeRemoved()) > 0) {
+                        order.setRemoved(true);
+                    }
+                    break;
+            }
+
         }
+
     }
 }

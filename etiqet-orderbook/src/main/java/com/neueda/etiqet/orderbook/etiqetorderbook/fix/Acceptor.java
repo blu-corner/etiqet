@@ -16,6 +16,7 @@ import quickfix.field.*;
 import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.OrderCancelReject;
 
+import javax.print.DocFlavor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,7 +33,7 @@ public class Acceptor implements Application {
         this.mainController = mainController;
     }
 
-    private static ExecutionReport generateExecReport(char execType, StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
+    public static ExecutionReport generateExecReport(char execType, StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         ExecutionReport executionReport = new ExecutionReport();
 
         switch (execType) {
@@ -171,7 +172,6 @@ public class Acceptor implements Application {
     }
 
     public void onMessage(Message message, SessionID sessionID) throws FieldNotFound, IncorrectTagValue {
-//        StringField beginString = message.getHeader().getField(new BeginString());
         StringField msgType = message.getHeader().getField(new MsgType());
         StringField clOrdID = message.getField(new ClOrdID());
         StringField symbol = message.getField(new Symbol());
@@ -192,6 +192,10 @@ public class Acceptor implements Application {
                 ordQty = message.getField(new OrderQty());
                 ordType = message.getField(new OrdType());
                 timeInFoce = message.getField(new TimeInForce());
+                StringField expireDate = null;
+                if (timeInFoce.getValue() == TimeInForce.GOOD_TILL_DATE){
+                    expireDate =  message.getField(new ExpireDate());
+                }
                 if (ordType.getValue() != OrdType.LIMIT) {
                     throw new IncorrectTagValue(ordType.getField());
                 }
@@ -212,7 +216,7 @@ public class Acceptor implements Application {
                         .side(side.getValue())
                         .clientID(clientID)
                         .timeInForce(Constants.TIME_IN_FORCE.getContent(timeInFoce.getValue()))
-                        .timeToBeRemoved(getTimeToBeRemoved(timeInFoce.getValue()))
+                        .timeToBeRemoved(getTimeToBeRemoved(timeInFoce.getValue(), expireDate))
                         .sessionID(sessionID.toString())
                         .build();
 
@@ -297,22 +301,40 @@ public class Acceptor implements Application {
         });
     }
 
-    private String getTimeToBeRemoved(char timeInForce) {
+    private String getTimeToBeRemoved(char timeInForce, StringField expireDate) {
         String timeToBeRemoved = StringUtils.EMPTY;
         String[] endTimeSplit;
-        LocalDateTime limitTime = null;
+        LocalDateTime limitTime;
+        String endTime;
         LocalDate localDateNow = LocalDate.now();
         LocalTime localTimeNow = LocalTime.now();
-//        LocalDateTime localDateTimeNow = LocalDateTime.of(localDateNow, localTimeNow);
         switch (timeInForce){
             case TimeInForce.DAY:
-                String endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
+                endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
                 endTimeSplit = endTime.split(":");
-                limitTime = LocalDateTime.of(localDateNow.plusDays(1), LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
-                Date dateLimitTime = Date.from(limitTime.atZone(ZoneId.systemDefault()).toInstant());
-                timeToBeRemoved = Utils.getFormattedStringDate(dateLimitTime);
+                limitTime = LocalDateTime.of(localDateNow, LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
+                timeToBeRemoved = Utils.getFormattedDateFromLocalDateTime(limitTime);
                 break;
-
+                case TimeInForce.GOOD_TILL_CANCEL:
+                case TimeInForce.AT_THE_CLOSE:
+                case TimeInForce.GOOD_THROUGH_CROSSING:
+                    // If at the close, it will be canceled when the application is stopped
+                    // Good through crossing is not considered
+                    break;
+                case TimeInForce.AT_THE_OPENING:
+                    endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME);
+                    endTimeSplit = endTime.split(":");
+                    limitTime = LocalDateTime.of(localDateNow.plusDays(1), LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
+                    timeToBeRemoved = Utils.getFormattedDateFromLocalDateTime(limitTime);
+                    break;
+                case TimeInForce.IMMEDIATE_OR_CANCEL:
+                case TimeInForce.FILL_OR_KILL:
+                    limitTime = LocalDateTime.of(localDateNow, localTimeNow.plusSeconds(2));
+                    timeToBeRemoved = Utils.getFormattedDateFromLocalDateTime(limitTime);
+                    break;
+                case TimeInForce.GOOD_TILL_DATE:
+                    timeToBeRemoved = expireDate.getValue();
+                    break;
         }
         return timeToBeRemoved;
     }
@@ -375,7 +397,7 @@ public class Acceptor implements Application {
         this.mainController.setChanged(true);
     }
 
-    private ExecutionReport cancelOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol, CharField side, DoubleField size, DoubleField price) {
+    public ExecutionReport cancelOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol, CharField side, DoubleField size, DoubleField price) {
         if (side.getValue() == (Side.BUY)) {
             if (origClOrdID == null) {
                 this.mainController.getBuy().removeIf(b -> b.getClOrdID().equals(clOrdID.getValue()));
@@ -594,12 +616,12 @@ public class Acceptor implements Application {
     }
 
     private boolean isTimeInForceFOK(Order order) {
-        if (order == null) return false;
+        if (order == null || order.getTimeInForce() == null) return false;
         return order.getTimeInForce().equals(Constants.TIME_IN_FORCE.getContent(TimeInForce.FILL_OR_KILL));
     }
 
     private boolean isTimeInForceIOC(Order order) {
-        if (order == null) return false;
+        if (order == null || order.getTimeInForce() == null) return false;
         return order.getTimeInForce().equals(Constants.TIME_IN_FORCE.getContent(TimeInForce.IMMEDIATE_OR_CANCEL));
     }
 
@@ -620,9 +642,7 @@ public class Acceptor implements Application {
         this.mainController.orderBookSellTableView.getItems().remove(topSell);
         printTrade(topBuy, topSell);
         this.mainController.orderBookSellTableView.getItems().remove(topSell);
-        //Type type, String orderIDBuy, String orderIDSell, String origOrderID, LocalDateTime time, Double size, Double price
-//        Action action = new Action(Constants.Type.FILL, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID, topBuy.getTimeInForce(), topSell.getTimeInForce(),
-//            topSellClientID, Utils.getFormattedStringDate(), topBuy.getOrderQty(), topSell.getOrderQty(), 0d, topSell.getPrice());
+
         Action action = new Action.ActionBuilder()
             .type(Constants.Type.FILL)
             .buyID(topBuy.getClOrdID())

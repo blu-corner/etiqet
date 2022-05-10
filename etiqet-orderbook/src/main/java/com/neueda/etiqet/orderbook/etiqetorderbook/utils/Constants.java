@@ -91,6 +91,7 @@ public class Constants {
         AT_THE_OPENING('2', "At the Opening"),
         IMMEDIATE_OR_CANCEL('3', "Immediate or Cancel"),
         FILL_OR_KILL('4', "Fill or Kill"),
+        GOOD_TILL_DATE('6', "Good Till Date"),
         AT_THE_CLOSE('7', "At the close");
 
         private final Character value;
@@ -116,6 +117,10 @@ public class Constants {
                 }
             }
             return null;
+        }
+
+        public String getContent(){
+            return this.content;
         }
 
         public static Character getValue(String content){

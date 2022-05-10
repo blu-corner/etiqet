@@ -1,6 +1,6 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
 
-import com.neueda.etiqet.orderbook.etiqetorderbook.*;
+import com.neueda.etiqet.orderbook.etiqetorderbook.OrderBook;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.OrderXML;
@@ -19,14 +19,13 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -40,12 +39,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import quickfix.*;
 import quickfix.Dictionary;
-import quickfix.Message;
-import quickfix.MessageFactory;
+import quickfix.*;
 import quickfix.field.*;
-import quickfix.fix44.*;
+import quickfix.fix44.ExecutionReport;
+import quickfix.fix44.Logon;
+import quickfix.fix44.Logout;
+import quickfix.fix44.SequenceReset;
 
 import java.awt.*;
 import java.beans.XMLDecoder;
@@ -57,60 +57,44 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
 import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class MainController implements Initializable {
 
 
-    Logger logger = LoggerFactory.getLogger(MainController.class);
-    private List<Order> buy;
-    private List<Order> sell;
-    private boolean changed;
-    private boolean useDefaultPort;
-    private String changedDefaultPort = "";
     private static String port;
-//    private List<FixSession> fixSessionsList;
-
-    public String getConnectedPort(){
-        return port;
-    }
-
-    public boolean isChanged() {
-        return changed;
-    }
-
-    public void setChanged(boolean changed) {
-        this.changed = changed;
-    }
-
-    @FXML public TableView<Order> orderBookBuyTableView;
-    @FXML public TableView<Order> orderBookSellTableView;
-    @FXML public TableView<Action> actionTableView;
-    @FXML public Circle circleStartAcceptor;
-    @FXML private Circle circleStartInitiator;
-    @FXML private MenuItem startAcceptor;
-    @FXML private MenuItem startInitiator;
-    @FXML private MenuBar menuBarGeneral;
-    @FXML private Tab tabAcceptor;
-    @FXML private Tab tabInitiator;
-    @FXML private ComboBox<String> comboOrders;
-    @FXML private ComboBox<String> comboSide;
-    @FXML private TabPane mainTabPane;
-    @FXML public TextField textFieldSize;
-    @FXML public TextField textFieldPrice;
-    @FXML public TextField textFieldOrderID;
-    @FXML public TextField textFieldOrigOrderID;
-    @FXML public Button buttonSendOrder;
-    @FXML public ListView listViewLog;
-    @FXML public ListView listViewActions;
-    @FXML public Menu menuItemMessagePort;
-
-
+    private static Thread orderBook;
+    private final String changedDefaultPort = "";
+    @FXML
+    public TableView<Order> orderBookBuyTableView;
+    @FXML
+    public TableView<Order> orderBookSellTableView;
+    @FXML
+    public TableView<Action> actionTableView;
+    @FXML
+    public Circle circleStartAcceptor;
+    @FXML
+    public TextField textFieldSize;
+    //    private List<FixSession> fixSessionsList;
+    @FXML
+    public TextField textFieldPrice;
+    @FXML
+    public TextField textFieldOrderID;
+    @FXML
+    public TextField textFieldOrigOrderID;
+    @FXML
+    public Button buttonSendOrder;
+    @FXML
+    public ListView listViewLog;
+    @FXML
+    public ListView listViewActions;
+    @FXML
+    public Menu menuItemMessagePort;
     @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
     public TableColumn<Order, String> timeBuyTableColumn;
@@ -124,7 +108,6 @@ public class MainController implements Initializable {
     public TableColumn<Order, String> clientIDSellTableColumn;
     public TableColumn<Order, String> timeInForceSellTableColumn;
     public TableColumn<Order, String> timeInForceBuyTableColumn;
-
     public TableColumn<Action, String> actionTypeTableColumn;
     public TableColumn<Action, String> actionTypeClientIdBuyTableColumn;
     public TableColumn<Action, String> actionTypeClientIdSellTableColumn;
@@ -137,20 +120,52 @@ public class MainController implements Initializable {
     public TableColumn<Action, String> actionSellSizeTableColumn;
     public TableColumn<Action, String> actionLeaveQtyTableColumn;
     public TableColumn<Action, String> actionAgreedPriceTableColumn;
-
     public Circle circle;
     public MenuItem menuItemImport;
     public MenuItem menuItemExport;
     public CheckMenuItem checkMenuItemExportOnClose;
     public ComboBox<String> comboBoxTimeInForce;
-
-    private static Thread orderBook;
+    Logger logger = LoggerFactory.getLogger(MainController.class);
+    private List<Order> buy;
+    private List<Order> sell;
+    private boolean changed;
+    private boolean useDefaultPort;
+    @FXML
+    private Circle circleStartInitiator;
+    @FXML
+    private MenuItem startAcceptor;
+    @FXML
+    private MenuItem startInitiator;
+    @FXML
+    private MenuBar menuBarGeneral;
+    @FXML
+    private Tab tabAcceptor;
+    @FXML
+    private Tab tabInitiator;
+    @FXML
+    private ComboBox<String> comboOrders;
+    @FXML
+    private ComboBox<String> comboSide;
+    @FXML
+    private TabPane mainTabPane;
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
     private Initator initator;
     private List<FixSession> fixSessions;
 
-    public SessionID getSessionId(){
+    public String getConnectedPort() {
+        return port;
+    }
+
+    public boolean isChanged() {
+        return changed;
+    }
+
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+    }
+
+    public SessionID getSessionId() {
         return this.sessionId;
     }
 
@@ -258,7 +273,6 @@ public class MainController implements Initializable {
     }
 
 
-
     private String getAdditinalInfo(String tag, String value) {
         String additionalInfo = "";
         switch (tag) {
@@ -289,10 +303,10 @@ public class MainController implements Initializable {
     }
 
     public void startAcceptor(ActionEvent actionEvent) {
-        try{
+        try {
             String portsA = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT);
             String portsB = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT);
-            if (listenOnPorts(portsA, portsB)){
+            if (listenOnPorts(portsA, portsB)) {
                 OrderBook orderBookLoggerThread = new OrderBook(this);
                 orderBook = new Thread(orderBookLoggerThread);
                 orderBook.setDaemon(true);
@@ -309,7 +323,7 @@ public class MainController implements Initializable {
                 menuItemExport.setDisable(false);
                 importOrders(new File(Constants.DEFAULT_ORDERS_FILE));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -319,24 +333,24 @@ public class MainController implements Initializable {
         try {
             SessionSettings initiatorSettings = new SessionSettings();
             port = getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_PORT);
-            if (!StringUtils.isEmpty(port)){
+            if (!StringUtils.isEmpty(port)) {
                 sessionId = new SessionID(
                     new BeginString(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_BEGIN_STRING)),
                     new SenderCompID(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_SENDER) + port),
                     new TargetCompID(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_TARGET)));
                 Dictionary dictionary = new Dictionary();
                 dictionary.setString(Constants.CONF_CONNECTION_TYPE, StringUtils.lowerCase(Constants.INITIATOR_ROLE));
-                dictionary.setString(Constants.INI_CONNECT_PORT,  port);
-                dictionary.setString(Constants.INI_CONNECT_HOST,  getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_HOST));
-                dictionary.setString(Constants.CONF_FILE_STORE_PATH,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_STORE_PATH) + port);
-                dictionary.setString(Constants.CONF_FILE_LOG_PATH,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_LOG_PATH) + port);
-                dictionary.setString(Constants.CONF_DATA_DIC,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_DATA_DIC));
-                dictionary.setString(Constants.CONF_START_TIME,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_START_TIME) );
-                dictionary.setString(Constants.CONF_END_TIME, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_END_TIME) );
-                dictionary.setString(Constants.CONF_USE_DATA_DIC,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_USE_DATA_DIC) );
-                dictionary.setString(Constants.CONF_RESET_ON_LOGON,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGON) );
+                dictionary.setString(Constants.INI_CONNECT_PORT, port);
+                dictionary.setString(Constants.INI_CONNECT_HOST, getConfig(Constants.INITIATOR_ROLE, Constants.INI_CONNECT_HOST));
+                dictionary.setString(Constants.CONF_FILE_STORE_PATH, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_STORE_PATH) + port);
+                dictionary.setString(Constants.CONF_FILE_LOG_PATH, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_FILE_LOG_PATH) + port);
+                dictionary.setString(Constants.CONF_DATA_DIC, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_DATA_DIC));
+                dictionary.setString(Constants.CONF_START_TIME, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_START_TIME));
+                dictionary.setString(Constants.CONF_END_TIME, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_END_TIME));
+                dictionary.setString(Constants.CONF_USE_DATA_DIC, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_USE_DATA_DIC));
+                dictionary.setString(Constants.CONF_RESET_ON_LOGON, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_LOGON));
 //                dictionary.setString(Constants.CONF_RESET_ON_DISCONNECT,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_RESET_ON_DISCONNECT) );
-                dictionary.setString(Constants.CONF_HEART_BT_INT,  getConfig(Constants.INITIATOR_ROLE, Constants.CONF_HEART_BT_INT) );
+                dictionary.setString(Constants.CONF_HEART_BT_INT, getConfig(Constants.INITIATOR_ROLE, Constants.CONF_HEART_BT_INT));
                 initiatorSettings.set(sessionId, dictionary);
                 menuItemMessagePort.setText("Connected to port: " + port);
 
@@ -357,7 +371,7 @@ public class MainController implements Initializable {
                 menuItemExport.setDisable(true);
 
             }
-        } catch (ConfigError | SessionNotFound   e) {
+        } catch (ConfigError | SessionNotFound e) {
             e.printStackTrace();
         }
     }
@@ -389,19 +403,77 @@ public class MainController implements Initializable {
             if (socketInitiator != null) {
                 socketInitiator.stop();
             } else {
+                removeAtTheStopOrders();
                 for (FixSession fixSession : fixSessions) {
                     fixSession.stop();
                 }
             }
         } catch (Exception ex) {
             this.logger.error(ex.getLocalizedMessage());
-        }finally {
+        } finally {
             stopConfiguration();
         }
     }
 
+    private void removeAtTheStopOrders() {
+        HashMap<Integer, Map.Entry<String,Message>> reports = new HashMap<>();
+        String orderId = RandomStringUtils.randomAlphanumeric(5);
+        String execId = RandomStringUtils.randomAlphanumeric(5);
+        Acceptor acceptor = new Acceptor(this);
+        try {
+            List<Order> buys = this.getBuy().stream().filter(buy -> buy.getTimeInForce().equals(Constants.TIME_IN_FORCE.AT_THE_CLOSE.getContent())).collect(Collectors.toList());
+            AtomicInteger id = new AtomicInteger(0);
+            buys.forEach( buy -> {
+                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), Acceptor.generateExecReport(ExecType.PENDING_CANCEL, new ClOrdID(buy.getClOrdID()), Constants.NEW,
+                        Constants.NEW, new Symbol(buy.getSymbol()), new Side(buy.getSide()), new DoubleField(0), new DoubleField(0))));
+
+                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), Acceptor.generateExecReport(ExecType.CANCELED, new ClOrdID(buy.getClOrdID()), orderId,
+                        execId, new Symbol(buy.getSymbol()), new Side(buy.getSide()), new DoubleField(0), new DoubleField(0))));
+
+                    ExecutionReport tradeWhenCancelling = acceptor.cancelOrder(null, new ClOrdID(buy.getClOrdID()), orderId, execId, new Symbol(buy.getSymbol()), new Side(buy.getSide()), null, null);
+                    if (tradeWhenCancelling != null) {
+                        reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), tradeWhenCancelling));
+                    }
+            });
+            id.set(0);
+            List<Order> sells = this.getSell().stream().filter(sell -> sell.getTimeInForce().equals(Constants.TIME_IN_FORCE.AT_THE_CLOSE.getContent())).collect(Collectors.toList());
+            sells.forEach(sell -> {
+                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), Acceptor.generateExecReport(ExecType.PENDING_CANCEL, new ClOrdID(sell.getClOrdID()), Constants.NEW,
+                        Constants.NEW, new Symbol(sell.getSymbol()), new Side(sell.getSide()), new DoubleField(0), new DoubleField(0))));
+
+                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), Acceptor.generateExecReport(ExecType.CANCELED, new ClOrdID(sell.getClOrdID()), orderId,
+                        execId, new Symbol(sell.getSymbol()), new Side(sell.getSide()), new DoubleField(0), new DoubleField(0))));
+
+                    ExecutionReport tradeWhenCancelling = acceptor.cancelOrder(null, new ClOrdID(sell.getClOrdID()), orderId, execId, new Symbol(sell.getSymbol()), new Side(sell.getSide()), null, null);
+                    if (tradeWhenCancelling != null) {
+                        reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), tradeWhenCancelling));
+                    }
+            });
+
+            reports.forEach((i, entry) -> {
+                try {
+                    String sID = entry.getKey();
+                    Message executionReport = entry.getValue();
+                    Optional<FixSession> sessionID = fixSessions.stream().filter(session -> session.getSessionID().toString().equals(sID)).findFirst();
+                    if (sessionID.isPresent()){
+                        Session.sendToTarget(executionReport, sessionID.get().getSessionID());
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            Thread.sleep(2000);
+
+        } catch (Exception ex) {
+            this.logger.warn("Exception in removeAtTheStopOrders -> {}", ex.getLocalizedMessage());
+        }
+
+
+    }
+
     private void stopConfiguration() {
-        try{
+        try {
             this.circle.setFill(Color.RED);
             this.startAcceptor.setDisable(false);
             this.startInitiator.setDisable(false);
@@ -409,30 +481,24 @@ public class MainController implements Initializable {
             this.circleStartInitiator.setFill(Color.RED);
             this.tabAcceptor.setDisable(false);
             this.tabInitiator.setDisable(false);
-            if (orderBook != null){
+            if (orderBook != null) {
                 orderBook.stop();
             }
             menuItemMessagePort.setText("");
             menuItemImport.setDisable(true);
             menuItemExport.setDisable(true);
-            removeOrdersTimeInForceAtTheClose();
-            if (checkMenuItemExportOnClose.isSelected()){
+
+            if (checkMenuItemExportOnClose.isSelected()) {
                 exportOrders(new File(Constants.DEFAULT_ORDERS_FILE));
             }
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             this.logger.warn("StopConfiguration exception: {}", e.getMessage());
         }
 
     }
 
-    private void removeOrdersTimeInForceAtTheClose() {
-        this.getBuy().removeIf(buy -> buy.getTimeInForce().equals(TimeInForce.AT_THE_CLOSE));
-        this.orderBookBuyTableView.getItems().removeIf(buy -> buy.getTimeInForce().equals(TimeInForce.AT_THE_CLOSE));
-        this.getSell().removeIf(sell -> sell.getTimeInForce().equals(TimeInForce.AT_THE_CLOSE));
-        this.orderBookSellTableView.getItems().removeIf(sell -> sell.getTimeInForce().equals(TimeInForce.AT_THE_CLOSE));
-    }
 
     private void sendLogonRequest() throws SessionNotFound {
         Logon logon = new Logon();
@@ -472,10 +538,10 @@ public class MainController implements Initializable {
     }
 
 
-    private ContextMenu getLogContextMenu(){
+    private ContextMenu getLogContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemCopy = new MenuItem("Copy");
-        MenuItem menuItemDecode= new MenuItem("Decode");
+        MenuItem menuItemDecode = new MenuItem("Decode");
 
         contextMenu.getItems().add(menuItemCopy);
         contextMenu.getItems().add(menuItemDecode);
@@ -494,7 +560,7 @@ public class MainController implements Initializable {
         return contextMenu;
     }
 
-    private ContextMenu getOrderContextMenu(Constants.SIDE_ENUM side){
+    private ContextMenu getOrderContextMenu(Constants.SIDE_ENUM side) {
         ContextMenu contextMenu = new ContextMenu();
         Menu menuCopy = new Menu("Copy");
         MenuItem menuItemCopyOrderID = new MenuItem("ClOrdID");
@@ -510,9 +576,9 @@ public class MainController implements Initializable {
             Order selectedOrder;
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
-            if (side.equals(Constants.SIDE_ENUM.BUY)){
+            if (side.equals(Constants.SIDE_ENUM.BUY)) {
                 selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
-            }else{
+            } else {
                 selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
             }
             content.putString(selectedOrder.getClOrdID());
@@ -530,7 +596,7 @@ public class MainController implements Initializable {
         label.setStyle("-fx-background-radius: 6;" +
             "-fx-background-color: rgb(45, 45, 50), rgb(60, 60, 65);" +
             "-fx-text-fill: white;");
-        label.setPadding(new Insets(10, 10, 10 ,10));
+        label.setPadding(new Insets(10, 10, 10, 10));
         Popup popup = new Popup();
         popup.getContent().add(label);
         label.setMinWidth(100);
@@ -545,20 +611,20 @@ public class MainController implements Initializable {
         alert.setTitle("Confirm order cancellation");
         alert.setHeaderText("Cancel and remove order from orderbook");
         alert.setContentText("An execution report will be sent to the client");
-        try{
+        try {
             Optional<ButtonType> response = alert.showAndWait();
-            if (response.isPresent()){
+            if (response.isPresent()) {
                 ButtonType buttonType = response.get();
-                if (buttonType.equals(ButtonType.OK)){
+                if (buttonType.equals(ButtonType.OK)) {
                     Acceptor acceptor = new Acceptor(this);
 
-                    if (side.equals(Constants.SIDE_ENUM.BUY)){
+                    if (side.equals(Constants.SIDE_ENUM.BUY)) {
                         selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
                         FixSession fixSession = fixSessions.stream().filter(s -> s.getSessionID().toString().equals(selectedOrder.getSessionID())).findFirst().get();
                         acceptor.sendExecutionReportAfterCanceling(selectedOrder, fixSession);
                         this.getBuy().remove(selectedOrder);
                         reorderBookBuyTableView();
-                    }else{
+                    } else {
                         selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
                         FixSession fixSession = fixSessions.stream().filter(s -> s.getSessionID().toString().equals(selectedOrder.getSessionID())).findFirst().get();
                         acceptor.sendExecutionReportAfterCanceling(selectedOrder, fixSession);
@@ -566,11 +632,11 @@ public class MainController implements Initializable {
                         reorderBookSellTableView();
                     }
                     this.logger.info("Deleted");
-                }else{
+                } else {
                     this.logger.info("Canceled");
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             this.logger.warn("Exception::contextMenuCancelAction -> {}", e.getLocalizedMessage());
         }
 
@@ -650,13 +716,13 @@ public class MainController implements Initializable {
         switch (comboOrdersValue) {
             case Constants.COMBO_NEW_ORDER:
                 initator.sendNewOrderSingle(textFieldSizeText, textFieldPrice, textFieldOrderID,
-                     comboSideValue, comboTimeInForceValue);
+                    comboSideValue, comboTimeInForceValue);
                 break;
             case Constants.COMBO_CANCEL:
                 initator.sendOrderCancelRequest(textFieldOrderID, textFieldOrigOrderID, comboSideValue);
                 break;
             case Constants.COMBO_REPLACE:
-                initator.sendOrderCancelReplaceRequest(textFieldSizeText, textFieldPrice, textFieldOrderID, textFieldOrigOrderID,  comboSideValue);
+                initator.sendOrderCancelReplaceRequest(textFieldSizeText, textFieldPrice, textFieldOrderID, textFieldOrigOrderID, comboSideValue);
                 break;
         }
     }
@@ -760,25 +826,25 @@ public class MainController implements Initializable {
 
             boolean existInvalidPorts = false;
             for (int port = iTestRangeA; port <= iTestRangeB; port++) {
-                if (Utils.availablePort(port)){
+                if (Utils.availablePort(port)) {
                     FixSession fixSession = new FixSession(this, orderBook);
 //                    fixSessionsList.add(fixSession);
                     fixSession.start(port);
                     fixSessions.add(fixSession);
                     validPorts.append(port).append(",");
-                }else{
+                } else {
                     existInvalidPorts = true;
                     invalidPorts.append(port).append("\n");
                 }
             }
-            if (existInvalidPorts){
+            if (existInvalidPorts) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle(Constants.PORTS_RANGE_ERROR);
                 alert.setHeaderText(Constants.PORTS_IN_USE);
                 alert.setContentText(invalidPorts.toString());
                 alert.showAndWait();
             }
-            if (validPorts.length() > 0){
+            if (validPorts.length() > 0) {
                 validPorts.deleteCharAt(validPorts.length() - 1);
                 menuItemMessagePort.setText(String.format(Constants.LISTENING_ON_PORTS, validPorts));
             }
@@ -889,8 +955,8 @@ public class MainController implements Initializable {
     }
 
     private void importOrders(File selectedFile) throws FileNotFoundException {
-        try{
-            if (selectedFile != null){
+        try {
+            if (selectedFile != null) {
                 clearAll();
                 this.logger.info(selectedFile.getAbsolutePath());
                 FileInputStream fileInputStream = new FileInputStream(selectedFile);
@@ -907,15 +973,15 @@ public class MainController implements Initializable {
                 orderBookBuyTableView.getSelectionModel().select(0);
                 actionTableView.getSelectionModel().select(0);
             }
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             this.logger.warn("orders.xml does no exist in the root directory");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private void clearAll(){
+    private void clearAll() {
         this.orderBookSellTableView.getItems().clear();
         this.orderBookBuyTableView.getItems().clear();
         this.buy.clear();
@@ -937,20 +1003,20 @@ public class MainController implements Initializable {
     }
 
     private void exportOrders(File selectedFile) throws IOException {
-        try{
-            if (selectedFile != null){
+        try {
+            if (selectedFile != null) {
                 OrderXML orders = new OrderXML();
                 orders.setBuyOrders(new ArrayList<>(orderBookBuyTableView.getItems()));
                 orders.setSellOrders(new ArrayList<>(orderBookSellTableView.getItems()));
                 orders.setActions(new ArrayList<>(actionTableView.getItems()));
                 FileOutputStream fileOutputStream = new FileOutputStream(selectedFile);
                 XMLEncoder xmlEncoder = new XMLEncoder(fileOutputStream);
-                xmlEncoder.setExceptionListener(e -> this.logger.error("Exception! : {}" , e.getLocalizedMessage()));
+                xmlEncoder.setExceptionListener(e -> this.logger.error("Exception! : {}", e.getLocalizedMessage()));
                 xmlEncoder.writeObject(orders);
                 xmlEncoder.close();
                 fileOutputStream.close();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
