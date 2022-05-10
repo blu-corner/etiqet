@@ -66,6 +66,7 @@ import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class MainController implements Initializable {
 
+    Logger logger = LoggerFactory.getLogger(MainController.class);
 
     private static String port;
     private static Thread orderBook;
@@ -125,7 +126,10 @@ public class MainController implements Initializable {
     public MenuItem menuItemExport;
     public CheckMenuItem checkMenuItemExportOnClose;
     public ComboBox<String> comboBoxTimeInForce;
-    Logger logger = LoggerFactory.getLogger(MainController.class);
+    public Label labelClock;
+
+
+
     private List<Order> buy;
     private List<Order> sell;
     private boolean changed;
@@ -230,7 +234,6 @@ public class MainController implements Initializable {
         checkMenuItemExportOnClose.setSelected(true);
         comboBoxTimeInForce.getItems().addAll(Constants.TIME_IN_FORCE.getContents());
         comboBoxTimeInForce.getSelectionModel().select(0);
-
 
     }
 

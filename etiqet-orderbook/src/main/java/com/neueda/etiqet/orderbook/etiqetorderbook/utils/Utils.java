@@ -287,6 +287,13 @@ public class Utils {
         return simpleDateFormat.format(date);
     }
 
+    public static String getFormattedTimeFromLocalTime(LocalDateTime localDateTime){
+        Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        String pattern = "HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
+    }
+
 
     public static List<String> readConfigFile(String role) throws IOException {
         String insideConfig, outsideConfig;

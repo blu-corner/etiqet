@@ -32,7 +32,9 @@ public class OrderBook implements Runnable {
         while (true) {
             try {
                 Thread.sleep(1000);
+
                 Platform.runLater(() -> {
+                    this.mainController.labelClock.setText(Utils.getFormattedTimeFromLocalTime(LocalDateTime.now()));
                     addActions();
                     this.mainController.getSell().forEach(s -> this.logger.info(s.getClOrdID() + ": " + s.isRemoved()));
                     this.mainController.getBuy().removeIf(Order::isRemoved);
@@ -44,14 +46,14 @@ public class OrderBook implements Runnable {
                 });
 
                 if (this.mainController.isChanged()) {
-//                    System.out.print("\n\n");
-//                    Constants.orderBook.info("=================================================================================");
-//                    Constants.orderBook.info(".....................................BID.........................................");
-//                    this.mainController.getBuy().stream().sorted(Comparator.comparing(Order::getPrice)).forEach(System.out::println);
-//                    Constants.orderBook.info(".....................................OFFER.......................................");
-//                    this.mainController.getSell().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).forEach(System.out::println);
-//                    Constants.orderBook.info("=================================================================================\n\n");
-//                    this.mainController.setChanged(false);
+                    System.out.print("\n\n");
+                    Constants.orderBook.info("=================================================================================");
+                    Constants.orderBook.info(".....................................BID.........................................");
+                    this.mainController.getBuy().stream().sorted(Comparator.comparing(Order::getPrice)).forEach(System.out::println);
+                    Constants.orderBook.info(".....................................OFFER.......................................");
+                    this.mainController.getSell().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).forEach(System.out::println);
+                    Constants.orderBook.info("=================================================================================\n\n");
+                    this.mainController.setChanged(false);
                 }
 
             } catch (InterruptedException e) {

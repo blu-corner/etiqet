@@ -99,6 +99,11 @@
                 <Tab fx:id="tabAcceptor" text="Acceptor">
                     <content>
                         <VBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="491.0" prefWidth="801.0">
+                     <Label fx:id="labelClock" alignment="CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="1016.0" textFill="#1739eb">
+                        <font>
+                           <Font name="System Bold" size="24.0" />
+                        </font>
+                     </Label>
                      <GridPane prefHeight="465.0" prefWidth="801.0">
                        <columnConstraints>
                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -110,14 +115,14 @@
                          <RowConstraints maxHeight="200.0" minHeight="200.0" prefHeight="200.0" vgrow="SOMETIMES" />
                        </rowConstraints>
                         <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="397.0" text="BID">
+                                    <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="397.0" text="BID" GridPane.halignment="CENTER">
                                         <font>
-                                            <Font name="System Bold" size="18.0" />
+                                            <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label alignment="CENTER" prefHeight="27.0" prefWidth="401.0" text="OFFER" GridPane.columnIndex="1">
+                                    <Label alignment="CENTER" prefHeight="27.0" prefWidth="86.0" text="OFFER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                                         <font>
-                                            <Font name="System Bold" size="18.0" />
+                                            <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
                                       <TableView fx:id="orderBookBuyTableView" GridPane.rowIndex="1">
