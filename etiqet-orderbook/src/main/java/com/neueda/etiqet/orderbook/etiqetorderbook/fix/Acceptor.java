@@ -457,27 +457,28 @@ public class Acceptor implements Application {
                     } else {
                         return handlePartialFill(clOrdID, ordId, execId, symbol, side, price, topBuy, topSell, topBuyClientID, topSellClientID);
                     }
-                } else if (areTimeInForceFOKorIOC(topBuy, topSell)) {
-//                    Action action = new Action(Constants.Type.CANCELED, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID,
-//                        topBuy.getTimeInForce(), topSell.getTimeInForce(), topSellClientID, Utils.getFormattedStringDate(), 0d, topSell.getOrderQty(), 0d, topSell.getPrice());
-                    Action action = new Action.ActionBuilder()
-                        .type(Constants.Type.CANCELED)
-                        .buyID(topBuy.getClOrdID())
-                        .sellID(topSell.getClOrdID())
-                        .buyClientID(topBuyClientID)
-                        .sellClientID(topSellClientID)
-                        .timeInForceBuy(topBuy.getTimeInForce())
-                        .timeInForceSell(topSell.getTimeInForce())
-                        .time(Utils.getFormattedStringDate())
-                        .sellSize(topSell.getOrderQty())
-                        .agreedPrice(topSell.getPrice())
-                        .build();
-
-                    addAction(topBuy, topSell, action);
-                    topBuy.setRemoved(true);
-                    topSell.setRemoved(true);
-                    return generateExecReport(ExecType.CANCELED, clOrdID, ordId, execId, symbol, side, price, new DoubleField(0));
                 }
+//                else if (areTimeInForceFOKorIOC(topBuy, topSell)) {
+////                    Action action = new Action(Constants.Type.CANCELED, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID,
+////                        topBuy.getTimeInForce(), topSell.getTimeInForce(), topSellClientID, Utils.getFormattedStringDate(), 0d, topSell.getOrderQty(), 0d, topSell.getPrice());
+//                    Action action = new Action.ActionBuilder()
+//                        .type(Constants.Type.CANCELED)
+//                        .buyID(topBuy.getClOrdID())
+//                        .sellID(topSell.getClOrdID())
+//                        .buyClientID(topBuyClientID)
+//                        .sellClientID(topSellClientID)
+//                        .timeInForceBuy(topBuy.getTimeInForce())
+//                        .timeInForceSell(topSell.getTimeInForce())
+//                        .time(Utils.getFormattedStringDate())
+//                        .sellSize(topSell.getOrderQty())
+//                        .agreedPrice(topSell.getPrice())
+//                        .build();
+//
+//                    addAction(topBuy, topSell, action);
+//                    topBuy.setRemoved(true);
+//                    topSell.setRemoved(true);
+//                    return generateExecReport(ExecType.CANCELED, clOrdID, ordId, execId, symbol, side, price, new DoubleField(0));
+//                }
             } else {
                 if (topBuy != null && isTimeInForceFOKorIOC(topBuy)) {
                     Action action = new Action.ActionBuilder()
