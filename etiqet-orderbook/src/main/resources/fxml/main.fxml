@@ -182,9 +182,9 @@
                                         <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="383.0" minWidth="0.0" prefWidth="66.0" />
                                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="84.0" />
                                         <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="94.0" />
-                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="103.0" />
-                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="79.0" />
-                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="114.0" />
+                                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="74.0" />
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="228.0" />
+                                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="660.0" minWidth="10.0" prefWidth="66.0" />
                                     </columnConstraints>
                                     <rowConstraints>
                                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
@@ -253,7 +253,7 @@
                                             </tooltip>
                                         </TextField>
 <!--                                        <CheckBox fx:id="checkBoxAutoGen" mnemonicParsing="false" onAction="#setAutoGenValue" prefHeight="17.0" prefWidth="102.0" text="Auto gen" GridPane.columnIndex="6" GridPane.halignment="CENTER" />-->
-                                        <Button fx:id="buttonSendOrder" mnemonicParsing="false" onAction="#sendOrder" prefHeight="25.0" prefWidth="90.0" text="SEND" GridPane.columnIndex="7" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                                        <Button fx:id="buttonSendOrder" mnemonicParsing="false" onAction="#sendOrder" prefHeight="25.0" prefWidth="57.0" text="SEND" GridPane.columnIndex="8" GridPane.halignment="RIGHT">
                                  <GridPane.margin>
                                     <Insets right="2.0" />
                                  </GridPane.margin></Button>
@@ -278,7 +278,17 @@
                                  </GridPane.margin></Hyperlink>
                               <Button fx:id="buttonCopyLast" mnemonicParsing="false" onAction="#buttonCopyLast" prefHeight="25.0" prefWidth="70.0" text="Copy Last" GridPane.columnIndex="6" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                               <Label text="TimeInForce" GridPane.columnIndex="7" />
-                              <ComboBox fx:id="comboBoxTimeInForce" prefHeight="25.0" prefWidth="132.0" GridPane.columnIndex="8" />
+                              <ComboBox fx:id="comboBoxTimeInForce" prefHeight="25.0" prefWidth="160.0" GridPane.columnIndex="7" GridPane.halignment="RIGHT" onAction="#comboTimeInForceAction" onMouseClicked="#comboTimeInForceMouse"/>
+                              <TextField fx:id="textFieldExpireDate" maxWidth="-Infinity" minWidth="-Infinity" onMouseClicked="#selectAllField" prefHeight="25.0" prefWidth="160.0" promptText="ExpireDate" GridPane.columnIndex="7" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                                 <tooltip>
+                                    <Tooltip text="OrigClOrdID (41)">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Tooltip>
+                                 </tooltip>
+                              </TextField>
+                              <Label text="ExpireDate" GridPane.columnIndex="7" GridPane.rowIndex="1" />
                                     </children>
                                 </GridPane>
                                 <ListView fx:id="listViewActions" layoutX="14.0" layoutY="96.0" prefHeight="348.0" prefWidth="976.0" />

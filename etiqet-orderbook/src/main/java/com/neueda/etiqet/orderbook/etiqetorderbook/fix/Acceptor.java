@@ -329,7 +329,7 @@ public class Acceptor implements Application {
                     break;
                 case TimeInForce.IMMEDIATE_OR_CANCEL:
                 case TimeInForce.FILL_OR_KILL:
-                    limitTime = LocalDateTime.of(localDateNow, localTimeNow.plusSeconds(2));
+                    limitTime = LocalDateTime.of(localDateNow, localTimeNow);
                     timeToBeRemoved = Utils.getFormattedDateFromLocalDateTime(limitTime);
                     break;
                 case TimeInForce.GOOD_TILL_DATE:

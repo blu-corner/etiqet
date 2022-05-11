@@ -88,7 +88,7 @@ public class Initator implements Application{
         this.messageAnalizer(message, Constants.IN);
     }
 
-    public void sendNewOrderSingle(String size, String price, String orderId, char side, char comboTimeInForceValue){
+    public void sendNewOrderSingle(String size, String price, String orderId, char side, char comboTimeInForceValue, String expireDate){
         NewOrderSingle newOrderSingle = new NewOrderSingle();
         newOrderSingle.set(new OrderQty(Double.parseDouble(size)));
         newOrderSingle.set(new Price(Double.parseDouble(price)));
@@ -99,6 +99,9 @@ public class Initator implements Application{
         newOrderSingle.set(new TransactTime());
         newOrderSingle.set(new Symbol("N/A"));
         newOrderSingle.set(new TimeInForce(comboTimeInForceValue));
+        if (comboTimeInForceValue == TimeInForce.GOOD_TILL_DATE){
+            newOrderSingle.set(new ExpireDate(expireDate));
+        }
 
         try {
             Session.sendToTarget(newOrderSingle, sessionID);

@@ -20,6 +20,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -30,11 +31,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import jfxtras.scene.control.LocalDateTimePicker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -65,9 +68,6 @@ import java.util.stream.Collectors;
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class MainController implements Initializable {
-
-    Logger logger = LoggerFactory.getLogger(MainController.class);
-
     private static String port;
     private static Thread orderBook;
     private final String changedDefaultPort = "";
@@ -127,9 +127,8 @@ public class MainController implements Initializable {
     public CheckMenuItem checkMenuItemExportOnClose;
     public ComboBox<String> comboBoxTimeInForce;
     public Label labelClock;
-
-
-
+    public TextField textFieldExpireDate;
+    Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
     private List<Order> sell;
     private boolean changed;
@@ -419,38 +418,38 @@ public class MainController implements Initializable {
     }
 
     private void removeAtTheStopOrders() {
-        HashMap<Integer, Map.Entry<String,Message>> reports = new HashMap<>();
+        HashMap<Integer, Map.Entry<String, Message>> reports = new HashMap<>();
         String orderId = RandomStringUtils.randomAlphanumeric(5);
         String execId = RandomStringUtils.randomAlphanumeric(5);
         Acceptor acceptor = new Acceptor(this);
         try {
             List<Order> buys = this.getBuy().stream().filter(buy -> buy.getTimeInForce().equals(Constants.TIME_IN_FORCE.AT_THE_CLOSE.getContent())).collect(Collectors.toList());
             AtomicInteger id = new AtomicInteger(0);
-            buys.forEach( buy -> {
-                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), Acceptor.generateExecReport(ExecType.PENDING_CANCEL, new ClOrdID(buy.getClOrdID()), Constants.NEW,
-                        Constants.NEW, new Symbol(buy.getSymbol()), new Side(buy.getSide()), new DoubleField(0), new DoubleField(0))));
+            buys.forEach(buy -> {
+                reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), Acceptor.generateExecReport(ExecType.PENDING_CANCEL, new ClOrdID(buy.getClOrdID()), Constants.NEW,
+                    Constants.NEW, new Symbol(buy.getSymbol()), new Side(buy.getSide()), new DoubleField(0), new DoubleField(0))));
 
-                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), Acceptor.generateExecReport(ExecType.CANCELED, new ClOrdID(buy.getClOrdID()), orderId,
-                        execId, new Symbol(buy.getSymbol()), new Side(buy.getSide()), new DoubleField(0), new DoubleField(0))));
+                reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), Acceptor.generateExecReport(ExecType.CANCELED, new ClOrdID(buy.getClOrdID()), orderId,
+                    execId, new Symbol(buy.getSymbol()), new Side(buy.getSide()), new DoubleField(0), new DoubleField(0))));
 
-                    ExecutionReport tradeWhenCancelling = acceptor.cancelOrder(null, new ClOrdID(buy.getClOrdID()), orderId, execId, new Symbol(buy.getSymbol()), new Side(buy.getSide()), null, null);
-                    if (tradeWhenCancelling != null) {
-                        reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), tradeWhenCancelling));
-                    }
+                ExecutionReport tradeWhenCancelling = acceptor.cancelOrder(null, new ClOrdID(buy.getClOrdID()), orderId, execId, new Symbol(buy.getSymbol()), new Side(buy.getSide()), null, null);
+                if (tradeWhenCancelling != null) {
+                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), tradeWhenCancelling));
+                }
             });
             id.set(0);
             List<Order> sells = this.getSell().stream().filter(sell -> sell.getTimeInForce().equals(Constants.TIME_IN_FORCE.AT_THE_CLOSE.getContent())).collect(Collectors.toList());
             sells.forEach(sell -> {
-                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), Acceptor.generateExecReport(ExecType.PENDING_CANCEL, new ClOrdID(sell.getClOrdID()), Constants.NEW,
-                        Constants.NEW, new Symbol(sell.getSymbol()), new Side(sell.getSide()), new DoubleField(0), new DoubleField(0))));
+                reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), Acceptor.generateExecReport(ExecType.PENDING_CANCEL, new ClOrdID(sell.getClOrdID()), Constants.NEW,
+                    Constants.NEW, new Symbol(sell.getSymbol()), new Side(sell.getSide()), new DoubleField(0), new DoubleField(0))));
 
-                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), Acceptor.generateExecReport(ExecType.CANCELED, new ClOrdID(sell.getClOrdID()), orderId,
-                        execId, new Symbol(sell.getSymbol()), new Side(sell.getSide()), new DoubleField(0), new DoubleField(0))));
+                reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), Acceptor.generateExecReport(ExecType.CANCELED, new ClOrdID(sell.getClOrdID()), orderId,
+                    execId, new Symbol(sell.getSymbol()), new Side(sell.getSide()), new DoubleField(0), new DoubleField(0))));
 
-                    ExecutionReport tradeWhenCancelling = acceptor.cancelOrder(null, new ClOrdID(sell.getClOrdID()), orderId, execId, new Symbol(sell.getSymbol()), new Side(sell.getSide()), null, null);
-                    if (tradeWhenCancelling != null) {
-                        reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), tradeWhenCancelling));
-                    }
+                ExecutionReport tradeWhenCancelling = acceptor.cancelOrder(null, new ClOrdID(sell.getClOrdID()), orderId, execId, new Symbol(sell.getSymbol()), new Side(sell.getSide()), null, null);
+                if (tradeWhenCancelling != null) {
+                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), tradeWhenCancelling));
+                }
             });
 
             reports.forEach((i, entry) -> {
@@ -458,7 +457,7 @@ public class MainController implements Initializable {
                     String sID = entry.getKey();
                     Message executionReport = entry.getValue();
                     Optional<FixSession> sessionID = fixSessions.stream().filter(session -> session.getSessionID().toString().equals(sID)).findFirst();
-                    if (sessionID.isPresent()){
+                    if (sessionID.isPresent()) {
                         Session.sendToTarget(executionReport, sessionID.get().getSessionID());
                     }
 
@@ -715,11 +714,12 @@ public class MainController implements Initializable {
         String comboOrdersValue = this.comboOrders.getValue();
         Character comboTimeInForceValue = Constants.TIME_IN_FORCE.getValue(this.comboBoxTimeInForce.getValue());
         char comboSideValue = this.comboSide.getValue().equals(Constants.SIDE[0]) ? '1' : '2';
+        String expireDate = this.textFieldExpireDate.getText();
 
         switch (comboOrdersValue) {
             case Constants.COMBO_NEW_ORDER:
                 initator.sendNewOrderSingle(textFieldSizeText, textFieldPrice, textFieldOrderID,
-                    comboSideValue, comboTimeInForceValue);
+                    comboSideValue, comboTimeInForceValue == null ? ' ' : comboTimeInForceValue, expireDate);
                 break;
             case Constants.COMBO_CANCEL:
                 initator.sendOrderCancelRequest(textFieldOrderID, textFieldOrigOrderID, comboSideValue);
@@ -1044,5 +1044,50 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
 
+    }
+
+    public void launchTimePicker() {
+        try {
+            final Dialog dialog = new Dialog();
+            dialog.setTitle("Date Time Picker");
+            dialog.setContentText("Test");
+            dialog.initOwner(orderBookBuyTableView.getScene().getWindow());
+            AnchorPane pane = new AnchorPane();
+            pane.setMinSize(410d, 280d);
+            final LocalDateTimePicker localDateTimePicker = new LocalDateTimePicker();
+            ButtonType save = new ButtonType("SAVE", ButtonBar.ButtonData.OK_DONE);
+            localDateTimePicker.setMinSize(420d, 270d);
+            AnchorPane.setLeftAnchor(localDateTimePicker, 10.0);
+            AnchorPane.setTopAnchor(localDateTimePicker, 20.0);
+            pane.getChildren().add(localDateTimePicker);
+            dialog.getDialogPane().setContent(pane);
+            dialog.getDialogPane().getButtonTypes().add(save);
+            Optional<ButtonType> optional = dialog.showAndWait();
+            if (optional.isPresent()) {
+                String type = optional.get().getButtonData().getTypeCode();
+                if (type.equals("O")) {
+                    String date = Utils.getFormattedDateFromLocalDateTime(localDateTimePicker.getLocalDateTime());
+                    textFieldExpireDate.setText(date);
+                }
+            }
+
+        } catch (Exception e) {
+            this.logger.warn("Exception launchTimePicker MainController -> {}", e.getLocalizedMessage());
+        }
+
+    }
+
+    public void comboTimeInForceAction(ActionEvent actionEvent) {
+        if (comboBoxTimeInForce.getValue().contains(Constants.TIME_IN_FORCE.GOOD_TILL_DATE.getContent())) {
+            launchTimePicker();
+        }
+    }
+
+    public void comboTimeInForceMouse(MouseEvent e) {
+        if (!comboBoxTimeInForce.isShowing()) {
+            if (comboBoxTimeInForce.getValue().contains(Constants.TIME_IN_FORCE.GOOD_TILL_DATE.getContent())) {
+                launchTimePicker();
+            }
+        }
     }
 }
