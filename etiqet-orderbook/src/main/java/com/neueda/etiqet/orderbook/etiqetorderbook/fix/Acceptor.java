@@ -607,7 +607,7 @@ public class Acceptor implements Application {
         return generateExecReport(ExecType.PARTIAL_FILL, clOrdID, ordId, execId, symbol, side, price, new DoubleField(leaveQty.intValue()));
     }
 
-    private void addAction(Order topBuy, Order topSell, Action action) {
+    public void addAction(Order topBuy, Order topSell, Action action) {
         this.mainController.actionTableView.getItems().add(action);
         this.mainController.reorderActionTableView();
         this.printTrade(topBuy, topSell);
@@ -671,9 +671,9 @@ public class Acceptor implements Application {
         System.out.print("\n\n");
         Constants.orderBook.info("=================================================================================");
         Constants.orderBook.info(".....................................BID.........................................");
-        Constants.orderBook.info(buy.toString());
+        Constants.orderBook.info(buy != null ? buy.toString(): "");
         Constants.orderBook.info(".....................................ASK.........................................");
-        Constants.orderBook.info(sell.toString());
+        Constants.orderBook.info(sell != null ? sell.toString() : "");
         Constants.orderBook.info("=================================================================================\n\n");
     }
 

@@ -3,6 +3,8 @@ package com.neueda.etiqet.orderbook.etiqetorderbook;
 import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Action;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
+import com.neueda.etiqet.orderbook.etiqetorderbook.fix.Acceptor;
+import com.neueda.etiqet.orderbook.etiqetorderbook.fix.FixSession;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
@@ -63,6 +65,7 @@ public class OrderBook implements Runnable {
     }
 
     private void addActions() {
+        Acceptor acceptor = new Acceptor(this.mainController);
         for (Order order : this.mainController.getBuy().stream().filter(Order::isRemoved).collect(Collectors.toList())){
             Action action = new Action.ActionBuilder()
                 .type(Constants.Type.CANCELED)
@@ -72,9 +75,10 @@ public class OrderBook implements Runnable {
                 .time(Utils.getFormattedStringDate())
                 .buySize(order.getOrderQty())
                 .build();
+            acceptor.addAction(order, null, action);
+            FixSession fixSession = this.mainController.fixSessions.stream().filter(s -> s.getSessionID().toString().equals(order.getSessionID())).findFirst().get();
+            acceptor.sendExecutionReportAfterCanceling(order, fixSession);
 
-            this.mainController.actionTableView.getItems().add(action);
-            this.mainController.reorderActionTableView();
         }
         for (Order order : this.mainController.getSell().stream().filter(Order::isRemoved).collect(Collectors.toList())){
             Action action = new Action.ActionBuilder()
@@ -85,8 +89,10 @@ public class OrderBook implements Runnable {
                 .time(Utils.getFormattedStringDate())
                 .sellSize(order.getOrderQty())
                 .build();
-            this.mainController.actionTableView.getItems().add(action);
-            this.mainController.reorderActionTableView();
+            acceptor.addAction(null, order, action);
+            FixSession fixSession = this.mainController.fixSessions.stream().filter(s -> s.getSessionID().toString().equals(order.getSessionID())).findFirst().get();
+            acceptor.sendExecutionReportAfterCanceling(order, fixSession);
+
         }
 
     }

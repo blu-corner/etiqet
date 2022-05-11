@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import quickfix.Dictionary;
 import quickfix.*;
 import quickfix.field.*;
-import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.Logon;
 import quickfix.fix44.Logout;
 import quickfix.fix44.SequenceReset;
@@ -62,7 +61,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
@@ -128,6 +126,7 @@ public class MainController implements Initializable {
     public ComboBox<String> comboBoxTimeInForce;
     public Label labelClock;
     public TextField textFieldExpireDate;
+    public List<FixSession> fixSessions;
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private List<Order> buy;
     private List<Order> sell;
@@ -154,7 +153,6 @@ public class MainController implements Initializable {
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
     private Initator initator;
-    private List<FixSession> fixSessions;
 
     public String getConnectedPort() {
         return port;
@@ -405,7 +403,7 @@ public class MainController implements Initializable {
             if (socketInitiator != null) {
                 socketInitiator.stop();
             } else {
-                removeAtTheStopOrders();
+                removeAtTheStopAndSendExecReport();
                 for (FixSession fixSession : fixSessions) {
                     fixSession.stop();
                 }
@@ -417,56 +415,39 @@ public class MainController implements Initializable {
         }
     }
 
-    private void removeAtTheStopOrders() {
-        HashMap<Integer, Map.Entry<String, Message>> reports = new HashMap<>();
-        String orderId = RandomStringUtils.randomAlphanumeric(5);
-        String execId = RandomStringUtils.randomAlphanumeric(5);
-        Acceptor acceptor = new Acceptor(this);
+    private void removeAtTheStopAndSendExecReport() {
         try {
             List<Order> buys = this.getBuy().stream().filter(buy -> buy.getTimeInForce().equals(Constants.TIME_IN_FORCE.AT_THE_CLOSE.getContent())).collect(Collectors.toList());
-            AtomicInteger id = new AtomicInteger(0);
+            Acceptor acceptor = new Acceptor(this);
             buys.forEach(buy -> {
-                reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), Acceptor.generateExecReport(ExecType.PENDING_CANCEL, new ClOrdID(buy.getClOrdID()), Constants.NEW,
-                    Constants.NEW, new Symbol(buy.getSymbol()), new Side(buy.getSide()), new DoubleField(0), new DoubleField(0))));
+                FixSession fixSession = this.fixSessions.stream().filter(s -> s.getSessionID().toString().equals(buy.getSessionID())).findFirst().get();
+                acceptor.sendExecutionReportAfterCanceling(buy, fixSession);
+                Action action = new Action.ActionBuilder()
+                    .type(Constants.Type.CANCELED)
+                    .buyID(buy.getClOrdID())
+                    .buyClientID(buy.getClientID())
+                    .timeInForceBuy(buy.getTimeInForce())
+                    .time(Utils.getFormattedStringDate())
+                    .sellSize(buy.getOrderQty())
+                    .build();
+                acceptor.addAction(buy, null, action);
 
-                reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), Acceptor.generateExecReport(ExecType.CANCELED, new ClOrdID(buy.getClOrdID()), orderId,
-                    execId, new Symbol(buy.getSymbol()), new Side(buy.getSide()), new DoubleField(0), new DoubleField(0))));
-
-                ExecutionReport tradeWhenCancelling = acceptor.cancelOrder(null, new ClOrdID(buy.getClOrdID()), orderId, execId, new Symbol(buy.getSymbol()), new Side(buy.getSide()), null, null);
-                if (tradeWhenCancelling != null) {
-                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(buy.getSessionID(), tradeWhenCancelling));
-                }
             });
-            id.set(0);
             List<Order> sells = this.getSell().stream().filter(sell -> sell.getTimeInForce().equals(Constants.TIME_IN_FORCE.AT_THE_CLOSE.getContent())).collect(Collectors.toList());
             sells.forEach(sell -> {
-                reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), Acceptor.generateExecReport(ExecType.PENDING_CANCEL, new ClOrdID(sell.getClOrdID()), Constants.NEW,
-                    Constants.NEW, new Symbol(sell.getSymbol()), new Side(sell.getSide()), new DoubleField(0), new DoubleField(0))));
-
-                reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), Acceptor.generateExecReport(ExecType.CANCELED, new ClOrdID(sell.getClOrdID()), orderId,
-                    execId, new Symbol(sell.getSymbol()), new Side(sell.getSide()), new DoubleField(0), new DoubleField(0))));
-
-                ExecutionReport tradeWhenCancelling = acceptor.cancelOrder(null, new ClOrdID(sell.getClOrdID()), orderId, execId, new Symbol(sell.getSymbol()), new Side(sell.getSide()), null, null);
-                if (tradeWhenCancelling != null) {
-                    reports.put(id.getAndIncrement(), new AbstractMap.SimpleEntry<>(sell.getSessionID(), tradeWhenCancelling));
-                }
-            });
-
-            reports.forEach((i, entry) -> {
-                try {
-                    String sID = entry.getKey();
-                    Message executionReport = entry.getValue();
-                    Optional<FixSession> sessionID = fixSessions.stream().filter(session -> session.getSessionID().toString().equals(sID)).findFirst();
-                    if (sessionID.isPresent()) {
-                        Session.sendToTarget(executionReport, sessionID.get().getSessionID());
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                FixSession fixSession = this.fixSessions.stream().filter(s -> s.getSessionID().toString().equals(sell.getSessionID())).findFirst().get();
+                acceptor.sendExecutionReportAfterCanceling(sell, fixSession);
+                Action action = new Action.ActionBuilder()
+                    .type(Constants.Type.CANCELED)
+                    .sellID(sell.getClOrdID())
+                    .sellClientID(sell.getClientID())
+                    .timeInForceSell(sell.getTimeInForce())
+                    .time(Utils.getFormattedStringDate())
+                    .sellSize(sell.getOrderQty())
+                    .build();
+                acceptor.addAction(null, sell, action);
             });
             Thread.sleep(2000);
-
         } catch (Exception ex) {
             this.logger.warn("Exception in removeAtTheStopOrders -> {}", ex.getLocalizedMessage());
         }
