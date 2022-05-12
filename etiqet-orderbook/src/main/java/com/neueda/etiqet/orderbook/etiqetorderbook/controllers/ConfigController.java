@@ -25,6 +25,11 @@ import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
+/**
+ * @author enol.cacheroramirez@version1.com
+ * Used by acceptorConfigWindow.fxml and initiatorConfigWindow.fxml
+ * Launched from MainController
+ */
 public class ConfigController implements Initializable {
     public LocalTimePicker acceptorStartTime;
     public LocalTimePicker acceptorEndTime;
@@ -114,16 +119,29 @@ public class ConfigController implements Initializable {
         }
     }
 
-
+    /**
+     * Used by multiple combos to be configured
+     * @param comboBox
+     * @param data
+     * @param selected
+     */
     private void setConfigComboBox(ComboBox<String> comboBox, List<String> data, int selected) {
         comboBox.getItems().addAll(data);
         comboBox.getSelectionModel().select(selected);
     }
 
+    /**
+     * Close acceptor config view
+     * @param actionEvent
+     */
     public void closeAcceptorConfig(ActionEvent actionEvent) {
         Utils.getStage(actionEvent).close();
     }
 
+    /**
+     * Save info to server.cfg
+     * @param actionEvent
+     */
     public void saveAcceptorConfig(ActionEvent actionEvent) {
         Utils.getStage(actionEvent).close();
         List<Tag> tagList = new ArrayList<>();
@@ -145,10 +163,18 @@ public class ConfigController implements Initializable {
         propertiesWriter(tagList, Constants.ACCEPTOR_ROLE);
     }
 
+    /**
+     * Close initiator config view
+     * @param actionEvent
+     */
     public void closeInitiatorConfig(ActionEvent actionEvent) {
         Utils.getStage(actionEvent).close();
     }
 
+    /**
+     * Save config to client.cfg
+     * @param actionEvent
+     */
     public void saveInitiatorConfig(ActionEvent actionEvent) {
         Utils.getStage(actionEvent).close();
         List<Tag> tagList = new ArrayList<>();
@@ -170,7 +196,11 @@ public class ConfigController implements Initializable {
         propertiesWriter(tagList, Constants.INITIATOR_ROLE);
     }
 
-
+    /**
+     * Saves config in both acceptor and initiator .cfg files
+     * @param fields
+     * @param role
+     */
     private void propertiesWriter(List<Tag> fields, String role) {
         try {
             Path pathRoot;
@@ -194,6 +224,11 @@ public class ConfigController implements Initializable {
         }
     }
 
+    /**
+     * Extracts tag from a String
+     * @param property
+     * @return
+     */
     private String extractTag(String property) {
         try {
             if (!StringUtils.isEmpty(property)) {
@@ -205,6 +240,12 @@ public class ConfigController implements Initializable {
         return "";
     }
 
+    /**
+     * Turns a Tag List into a String List
+     * @param fields
+     * @param newLines
+     * @param line
+     */
     private void propertyHandler(List<Tag> fields, List<String> newLines, String line) {
         List<String> tags = fields.stream().map(Tag::getField).collect(Collectors.toList());
         String tag = extractTag(line);
@@ -230,6 +271,11 @@ public class ConfigController implements Initializable {
         }
     }
 
+    /**
+     * Deals with the non-used tags
+     * @param fields
+     * @param newLines
+     */
     private void newPropertiesHandler(List<Tag> fields, List<String> newLines) {
         List<Tag> nonUsed = fields.stream().filter(t -> !t.isUsed()).collect(Collectors.toList());
         for (Tag tag : nonUsed) {
@@ -244,6 +290,4 @@ public class ConfigController implements Initializable {
             }
         }
     }
-
-
 }
