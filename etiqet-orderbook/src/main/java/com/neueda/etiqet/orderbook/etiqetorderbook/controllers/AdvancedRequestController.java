@@ -24,7 +24,6 @@ import org.w3c.dom.NodeList;
 import quickfix.Message;
 import quickfix.Session;
 import quickfix.fix44.MessageFactory;
-
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,6 +34,11 @@ import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
+/**
+ * @author enol.cacheroramirez@version1.com
+ * Advanced view to send orders to the Acceptor
+ * Launched from MainController
+ */
 public class AdvancedRequestController implements Initializable {
 
     private final Logger logger = LoggerFactory.getLogger(AdvancedRequestController.class);
@@ -47,17 +51,21 @@ public class AdvancedRequestController implements Initializable {
     public TextField arTextFieldValue;
     public ComboBox<String> comboKeyTags;
     public ComboBox<String> comboStoredOrigID;
-    private List<String> storedOrigIDs;
-
     private MainController mainController;
-
     private Set<String> tags;
 
+    /**
+     * Injects MainController after being instantiated
+     * @param mainController
+     */
     public void injectMainController(MainController mainController) {
         this.mainController = mainController;
         init();
     }
 
+    /**
+     * Initializes some components
+     */
     private void init() {
         Tag senderInDefaultList = Constants.defaultTags.stream().filter(tag -> tag.getField().equals(Constants.CONF_SENDER)).findFirst().get();
         senderInDefaultList.setValue(getConfig(Constants.INITIATOR_ROLE, Constants.CONF_SENDER) + this.mainController.getConnectedPort());
@@ -66,10 +74,14 @@ public class AdvancedRequestController implements Initializable {
         textAreaFix.setWrapText(true);
         textAreaFix.appendText(Utils.fixEncoder(Constants.defaultTags));
         tags = new HashSet<>();
-        storedOrigIDs = new ArrayList<>();
         xmlReader("./spec/FIX44.xml");
     }
 
+    /**
+     * From Initializable
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -78,8 +90,8 @@ public class AdvancedRequestController implements Initializable {
         tableColumnValue.setCellValueFactory(new PropertyValueFactory<>("Value"));
         tableColumnValue.setCellFactory(TextFieldTableCell.forTableColumn());
         tableColumnValue.setOnEditCommit(data -> {
-            this.logger.info("Edit request: old value -> {}", data.getOldValue());
-            this.logger.info("Edit request: new value -> {}", data.getNewValue());
+            this.logger.debug("Edit request: old value -> {}", data.getOldValue());
+            this.logger.debug("Edit request: new value -> {}", data.getNewValue());
             substituteTag(data.getRowValue().getKey(), data.getNewValue());
         });
         tableViewTags.setEditable(true);
@@ -88,7 +100,10 @@ public class AdvancedRequestController implements Initializable {
         comboStoredOrigID.getSelectionModel().select(0);
     }
 
-
+    /**
+     * Reads xml
+     * @param file
+     */
     private void xmlReader(String file) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newDefaultInstance();
         try {
@@ -124,6 +139,10 @@ public class AdvancedRequestController implements Initializable {
         }
     }
 
+    /**
+     * Adds new tag to the tableView
+     * @param actionEvent
+     */
     public void arButtonAdd(ActionEvent actionEvent) {
         try {
             Platform.runLater(() -> {
@@ -150,6 +169,11 @@ public class AdvancedRequestController implements Initializable {
         }
     }
 
+    /**
+     * If a tags already exists, it replaces the value
+     * @param tagKey
+     * @param newValue
+     */
     public void substituteTag(String tagKey, String newValue) {
         Optional<Tag> target = tableViewTags.getItems().stream().filter(t -> t.getKey().equals(tagKey)).findFirst();
         if (target.isPresent()) {
@@ -163,6 +187,9 @@ public class AdvancedRequestController implements Initializable {
         }
     }
 
+    /**
+     * Update FIX message at the bottom of the view
+     */
     private void updateFixTextArea() {
         try {
             textAreaFix.setText(Utils.fixEncoder(tableViewTags.getItems()));
@@ -171,6 +198,10 @@ public class AdvancedRequestController implements Initializable {
         }
     }
 
+    /**
+     * Send new transaction to the Aceptor
+     * @param actionEvent
+     */
     public void arButtonSend(ActionEvent actionEvent) {
         try {
             updateFixTextArea();
@@ -186,6 +217,9 @@ public class AdvancedRequestController implements Initializable {
         }
     }
 
+    /**
+     *  Adds send ClOrdID to the combo items
+     */
     private void addOrigClOrdID() {
         Optional<Tag> tagWithClOrdID = tableViewTags.getItems().stream().filter(t -> t.getKey().equals(Constants.KEY_CL_ORD_ID)).findFirst();
         if (tagWithClOrdID.isPresent()) {
@@ -199,6 +233,10 @@ public class AdvancedRequestController implements Initializable {
         }
     }
 
+    /**
+     * Remove tag from TableView
+     * @param actionEvent
+     */
     public void arButtonRemove(ActionEvent actionEvent) {
         Tag selectedItem = tableViewTags.getSelectionModel().getSelectedItem();
         if (isRemovableItem(selectedItem)) {
@@ -211,10 +249,19 @@ public class AdvancedRequestController implements Initializable {
         }
     }
 
+    /**
+     * Cancels and closes the advanced request view
+     * @param actionEvent
+     */
     public void arButtonCancel(ActionEvent actionEvent) {
         Utils.getStage(actionEvent).close();
     }
 
+    /**
+     * Check if the item can be removed from the FIX message structure
+     * @param tag
+     * @return
+     */
     private boolean isRemovableItem(Tag tag) {
         if (tag == null) return false;
         boolean isNotBeginString = !tag.getKey().equals(Constants.KEY_BEGIN_STRING);
@@ -223,8 +270,14 @@ public class AdvancedRequestController implements Initializable {
         return isNotBeginString && isNotBodyLength; // && isNotMessageType;
     }
 
+    /**
+     * Check if the tag can be added to the tableView/ Fix message
+     * @param tag
+     * @return
+     */
     private boolean isAddableItem(Tag tag) {
         if (tag == null) return false;
+        //TODO CHECK COMMENTED FIELDS
 //        boolean isNotTarget = !tag.getKey().equals(Constants.KEY_TARGET);
 //        boolean isNotSender = !tag.getKey().equals(Constants.KEY_SENDER);
         boolean isNotBeginString = !tag.getKey().equals(Constants.KEY_BEGIN_STRING);
@@ -236,6 +289,11 @@ public class AdvancedRequestController implements Initializable {
         return /*isNotTarget && isNotSender &&*/ isNotBeginString && isNotBodyLength && /*isNotMessageType && */isNotChecksum && existingKey && existingField;
     }
 
+    /**
+     * Clear all tags (except for those mandatory in the FIX message)
+     * from the tableView/ fix message in the textArea
+     * @param actionEvent
+     */
     public void arButtonClear(ActionEvent actionEvent) {
         Platform.runLater(() -> {
             tableViewTags.getItems().removeIf(this::isRemovableItem);
@@ -244,6 +302,11 @@ public class AdvancedRequestController implements Initializable {
         });
     }
 
+    /**
+     * When you edit the FIX message textArea, it updates
+     * the tableView
+     * @param actionEvent
+     */
     public void arButtonUpdate(ActionEvent actionEvent) {
         String[] fields = textAreaFix.getText().split("\\|");
         List<String> fieldList = List.of(fields);
@@ -278,12 +341,19 @@ public class AdvancedRequestController implements Initializable {
 
     }
 
-
+    /**
+     * Combo with Field values
+     * @param actionEvent
+     */
     public void actionComboFieldTag(ActionEvent actionEvent) {
         this.logger.info(comboFieldTags.getValue());
         comboKeyTags.getSelectionModel().select(Utils.getKeyFromValue(comboFieldTags.getValue()));
     }
 
+    /**
+     * Combo with Tag values
+     * @param actionEvent
+     */
     public void actionComboKeysTag(ActionEvent actionEvent) {
         try {
             this.logger.info(comboKeyTags.getValue());
@@ -294,6 +364,10 @@ public class AdvancedRequestController implements Initializable {
 
     }
 
+    /**
+     * Focuses all textfield
+     * @param mouseEvent
+     */
     public void setFocusedAllText(MouseEvent mouseEvent) {
         if (mouseEvent.getSource().toString().contains("comboKeyTags")) {
             Platform.runLater(() -> {
@@ -307,15 +381,25 @@ public class AdvancedRequestController implements Initializable {
 
     }
 
-
+    /**
+     *
+     * @param actionEvent
+     */
     public void actionComboStoredOrigID(ActionEvent actionEvent) {
         comboStoredID();
     }
 
+    /**
+     *
+     * @param mouseEvent
+     */
     public void actionComboMouseStoredOrigID(MouseEvent mouseEvent) {
         comboStoredID();
     }
 
+    /**
+     * Returns already sent ClOrdID
+     */
     private void comboStoredID() {
         try {
             if (!comboStoredOrigID.getValue().equals(Constants.SENT_ORIG_CL_ORD_I_DS)) {
@@ -335,6 +419,10 @@ public class AdvancedRequestController implements Initializable {
 
     }
 
+    /**
+     * Auto-generates ClOrdID
+     * @param actionEvent
+     */
     public void setAutoGenValue(ActionEvent actionEvent) {
         Optional<Tag> tagClOrdID = tableViewTags.getItems().stream().filter(tag -> tag.getKey().equals(Constants.KEY_CL_ORD_ID)).findFirst();
         if (tagClOrdID.isPresent()) {
@@ -349,7 +437,10 @@ public class AdvancedRequestController implements Initializable {
         }
     }
 
-
+    /**
+     * Creates a context menu
+     * @return
+     */
     private ContextMenu getRequestContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemEdit = new MenuItem("Edit");
@@ -371,7 +462,12 @@ public class AdvancedRequestController implements Initializable {
         return contextMenu;
     }
 
-
+    /**
+     *
+     * @param selectedIndex
+     * @param field
+     * @param key
+     */
     public void launchTimePicker(int selectedIndex, String field, String key) {
         try {
             final Dialog dialog = new Dialog();
@@ -423,6 +519,9 @@ public class AdvancedRequestController implements Initializable {
 
     }
 
+    /**
+     * Sorts tableViewTags
+     */
     private void sortTableViewTags() {
         Platform.runLater(() -> {
             if (!tableViewTags.getItems().isEmpty()) {
@@ -433,6 +532,11 @@ public class AdvancedRequestController implements Initializable {
         });
     }
 
+    /**
+     * Check if it is a date-time related field
+     * @param field
+     * @return
+     */
     private boolean isDate(String field) {
         return field.toLowerCase().contains("time") || field.toLowerCase().contains("date");
     }
