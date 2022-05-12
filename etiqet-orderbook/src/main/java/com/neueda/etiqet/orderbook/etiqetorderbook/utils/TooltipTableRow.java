@@ -1,8 +1,9 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 
-import java.util.function.Function;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.Tooltip;
+
+import java.util.function.Function;
 
 public class TooltipTableRow<T> extends TableRow<T> {
 
@@ -13,11 +14,10 @@ public class TooltipTableRow<T> extends TableRow<T> {
     }
 
 
-
     @Override
     protected void updateItem(T item, boolean empty) {
         super.updateItem(item, empty);
-        if(item == null) {
+        if (item == null) {
             setTooltip(null);
         } else {
             Tooltip tooltip = new Tooltip(toolTipStringFunction.apply(item));

@@ -21,9 +21,8 @@ import java.util.stream.Collectors;
 
 public class OrderBook implements Runnable {
 
-    private Logger logger = LoggerFactory.getLogger(OrderBook.class);
-
     private final MainController mainController;
+    private final Logger logger = LoggerFactory.getLogger(OrderBook.class);
 
     public OrderBook(MainController mainController) {
         this.mainController = mainController;
@@ -66,7 +65,7 @@ public class OrderBook implements Runnable {
 
     private void addActions() {
         Acceptor acceptor = new Acceptor(this.mainController);
-        for (Order order : this.mainController.getBuy().stream().filter(Order::isRemoved).collect(Collectors.toList())){
+        for (Order order : this.mainController.getBuy().stream().filter(Order::isRemoved).collect(Collectors.toList())) {
             Action action = new Action.ActionBuilder()
                 .type(Constants.Type.CANCELED)
                 .buyID(order.getClOrdID())
@@ -80,7 +79,7 @@ public class OrderBook implements Runnable {
             acceptor.sendExecutionReportAfterCanceling(order, fixSession);
 
         }
-        for (Order order : this.mainController.getSell().stream().filter(Order::isRemoved).collect(Collectors.toList())){
+        for (Order order : this.mainController.getSell().stream().filter(Order::isRemoved).collect(Collectors.toList())) {
             Action action = new Action.ActionBuilder()
                 .type(Constants.Type.CANCELED)
                 .sellID(order.getClOrdID())
@@ -106,14 +105,14 @@ public class OrderBook implements Runnable {
         this.logger.info("********************************************************");
 
         Optional<Character> timeInForce = Optional.ofNullable(Constants.TIME_IN_FORCE.getValue(order.getTimeInForce()));
-        if (timeInForce.isPresent()){
-            switch (timeInForce.get()){
+        if (timeInForce.isPresent()) {
+            switch (timeInForce.get()) {
                 case TimeInForce.DAY:
                 case TimeInForce.IMMEDIATE_OR_CANCEL:
                 case TimeInForce.FILL_OR_KILL:
                 case TimeInForce.AT_THE_OPENING:
                 case TimeInForce.GOOD_TILL_DATE:
-                    if(formattedDate.compareTo(order.getTimeToBeRemoved()) > 0) {
+                    if (formattedDate.compareTo(order.getTimeToBeRemoved()) > 0) {
                         order.setRemoved(true);
                     }
                     break;

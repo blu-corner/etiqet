@@ -12,22 +12,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
 public class ConfigController implements Initializable {
-    private Logger logger = LoggerFactory.getLogger(ConfigController.class);
-
     public LocalTimePicker acceptorStartTime;
     public LocalTimePicker acceptorEndTime;
     public LocalTimePicker initiatorStartTime;
@@ -45,7 +43,6 @@ public class ConfigController implements Initializable {
     public ComboBox<String> initiatorResetOnLogon;
     public ComboBox<String> initiatorResetOnLogout;
     public ComboBox<String> initiatorResetOnDisconnect;
-
     public TextField acceptorBeginString;
     public TextField acceptorSender;
     public TextField acceptorTarget;
@@ -59,7 +56,7 @@ public class ConfigController implements Initializable {
     public ComboBox<String> acceptorResetOnLogon;
     public ComboBox<String> acceptorResetOnLogout;
     public ComboBox<String> acceptorResetOnDisconnect;
-
+    private final Logger logger = LoggerFactory.getLogger(ConfigController.class);
     private MainController mainController;
     private String role;
 
@@ -183,7 +180,7 @@ public class ConfigController implements Initializable {
                 lines = Utils.readConfigFile(Constants.ACCEPTOR_ROLE);
             } else {
                 pathRoot = Paths.get(Constants.PATH_OUTPUT_CLIENT_CONFIG);
-                lines =  Utils.readConfigFile(Constants.INITIATOR_ROLE);
+                lines = Utils.readConfigFile(Constants.INITIATOR_ROLE);
             }
 
             List<String> newLines = new ArrayList<>();

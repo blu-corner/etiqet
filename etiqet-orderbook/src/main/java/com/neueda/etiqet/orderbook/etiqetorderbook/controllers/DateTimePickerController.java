@@ -2,31 +2,22 @@ package com.neueda.etiqet.orderbook.etiqetorderbook.controllers;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import jfxtras.scene.control.LocalDateTimePicker;
-import jfxtras.scene.control.LocalTimePicker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 public class DateTimePickerController implements Initializable {
 
 
-    private Logger logger = LoggerFactory.getLogger(DateTimePickerController.class);
-
     public LocalDateTimePicker localDateTimePicker;
+    private final Logger logger = LoggerFactory.getLogger(DateTimePickerController.class);
     private MainController mainController;
 
     @FXML
@@ -44,7 +35,7 @@ public class DateTimePickerController implements Initializable {
         this.advancedRequestController = advancedRequestController;
     }
 
-    public void injectTable(TableView<Tag> tableView){
+    public void injectTable(TableView<Tag> tableView) {
         this.tableView = tableView;
     }
 
@@ -54,7 +45,7 @@ public class DateTimePickerController implements Initializable {
     }
 
     public void showDateTime(ActionEvent actionEvent) {
-        try{
+        try {
             String date = Utils.getFormattedDateFromLocalDateTime(localDateTimePicker.getLocalDateTime());
             this.logger.info(date);
 
@@ -66,7 +57,7 @@ public class DateTimePickerController implements Initializable {
 //            TableView<Tag> tableViewTags = controller.tableViewTags;
 //            String field = tableViewTags.getSelectionModel().getSelectedItem().getField();
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             this.logger.warn("Exception in showDateTime -> {}", ex.getLocalizedMessage());
         }
     }

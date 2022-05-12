@@ -1,26 +1,23 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.fix;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.MainController;
-import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Order;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.*;
-import quickfix.field.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import quickfix.field.BeginString;
+import quickfix.field.SenderCompID;
+import quickfix.field.TargetCompID;
 
 public class FixSession {
-    private Logger logger = LoggerFactory.getLogger(FixSession.class);
     private final MainController mainController;
+    private Logger logger = LoggerFactory.getLogger(FixSession.class);
     private Thread orderBook;
     private Integer port;
     private SessionID sessionID;
     private SocketAcceptor socketAcceptor;
 
-    public FixSession(MainController mainController, Thread orderBook){
+    public FixSession(MainController mainController, Thread orderBook) {
         this.mainController = mainController;
         this.orderBook = orderBook;
     }
@@ -69,13 +66,13 @@ public class FixSession {
         this.socketAcceptor = socketAcceptor;
     }
 
-    public void start(Integer port){
+    public void start(Integer port) {
         this.port = port;
         SessionSettings sessionSettings = new SessionSettings();
         sessionID = new SessionID(
             new BeginString("FIX.4.4"),
             new SenderCompID("SERVER"),
-            new TargetCompID("CLIENT"+port));
+            new TargetCompID("CLIENT" + port));
         Dictionary dictionary = new Dictionary();
         dictionary.setString(Constants.CONF_CONNECTION_TYPE, "acceptor");
         dictionary.setString(Constants.ACC_ACCEPT_PORT, String.valueOf(port));
@@ -102,11 +99,10 @@ public class FixSession {
     }
 
 
-
-    public void stop(){
-        try{
+    public void stop() {
+        try {
             this.socketAcceptor.stop();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }

@@ -65,36 +65,26 @@ import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
 
+/**
+ * @author enol.cacheroramirez@version1.com
+ * Handles rest of controllers and interacts with
+ * Acceptor and Initiator classes
+ */
 public class MainController implements Initializable {
     private static String port;
     private static Thread orderBook;
-    private final String changedDefaultPort = "";
-    @FXML
     public TableView<Order> orderBookBuyTableView;
-    @FXML
     public TableView<Order> orderBookSellTableView;
-    @FXML
     public TableView<Action> actionTableView;
-    @FXML
     public Circle circleStartAcceptor;
-    @FXML
     public TextField textFieldSize;
-    //    private List<FixSession> fixSessionsList;
-    @FXML
     public TextField textFieldPrice;
-    @FXML
     public TextField textFieldOrderID;
-    @FXML
     public TextField textFieldOrigOrderID;
-    @FXML
     public Button buttonSendOrder;
-    @FXML
     public ListView listViewLog;
-    @FXML
     public ListView listViewActions;
-    @FXML
     public Menu menuItemMessagePort;
-    @FXML
     public TableColumn<Order, String> orderIDBuyTableColumn;
     public TableColumn<Order, String> timeBuyTableColumn;
     public TableColumn<Order, String> sizeBuyTableColumn;
@@ -128,6 +118,9 @@ public class MainController implements Initializable {
     public TextField textFieldExpireDate;
     public List<FixSession> fixSessions;
     Logger logger = LoggerFactory.getLogger(MainController.class);
+    private SocketInitiator socketInitiator;
+    private SessionID sessionId;
+    private Initator initator;
     private List<Order> buy;
     private List<Order> sell;
     private boolean changed;
@@ -150,9 +143,7 @@ public class MainController implements Initializable {
     private ComboBox<String> comboSide;
     @FXML
     private TabPane mainTabPane;
-    private SocketInitiator socketInitiator;
-    private SessionID sessionId;
-    private Initator initator;
+
 
     public String getConnectedPort() {
         return port;
@@ -283,9 +274,6 @@ public class MainController implements Initializable {
         return additionalInfo != null ? additionalInfo : "";
     }
 
-    public boolean isUseDefaultPort() {
-        return useDefaultPort;
-    }
 
     public void setUseDefaultPort(boolean useDefaultPort) {
         this.useDefaultPort = useDefaultPort;
@@ -375,28 +363,6 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
     }
-
-    private String getPort() {
-        URL resource = getClass().getClassLoader().getResource(Constants.CLIENT_CFG);
-        try {
-            SessionSettings initiatorSettings = new SessionSettings(new FileInputStream(new File(resource.toURI())));
-            TextInputDialog dialog = null;
-            String port = initiatorSettings.getDefaultProperties().getProperty(Constants.INI_CONNECT_PORT);
-            dialog = new TextInputDialog(port);
-            dialog.setTitle(Constants.INITIATOR_PORT_DIALOG_TITLE);
-            dialog.setHeaderText(Constants.INITIATOR_PORT_DIALOG_HEADER);
-            dialog.setContentText(Constants.INITIATOR_PORT_DIALOG_TEXT);
-
-            Optional<String> result = dialog.showAndWait();
-            if (result.isPresent()) {
-                return result.get();
-            }
-        } catch (ConfigError | FileNotFoundException | URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
     public void stop() {
         try {
@@ -938,7 +904,7 @@ public class MainController implements Initializable {
         }
     }
 
-    private void importOrders(File selectedFile) throws FileNotFoundException {
+    private void importOrders(File selectedFile) {
         try {
             if (selectedFile != null) {
                 clearAll();

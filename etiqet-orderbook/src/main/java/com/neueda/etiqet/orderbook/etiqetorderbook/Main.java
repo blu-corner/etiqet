@@ -1,17 +1,20 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class Main extends Application {
 
+
+    public static void main(String[] args) {
+//        System.setProperty("prism.allowhidpi", "false");
+        launch();
+    }
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -24,10 +27,5 @@ public class Main extends Application {
         stage.getIcons().add(icon);
 
         stage.show();
-    }
-
-    public static void main(String[] args) {
-//        System.setProperty("prism.allowhidpi", "false");
-        launch();
     }
 }

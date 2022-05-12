@@ -5,7 +5,6 @@ import com.neueda.etiqet.orderbook.etiqetorderbook.utils.AutoCompleteComboBoxLis
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants;
 import com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -131,9 +130,9 @@ public class AdvancedRequestController implements Initializable {
                 String text = arTextFieldValue.getText();
                 String selectedItem = comboFieldTags.getSelectionModel().getSelectedItem();
                 Optional<Tag> any = tableViewTags.getItems().stream().filter(t -> t.getField().equals(selectedItem)).findAny();
-                if (isDate(selectedItem) && text.isEmpty()){
+                if (isDate(selectedItem) && text.isEmpty()) {
                     launchTimePicker(-1, selectedItem, Utils.getKeyFromValue(selectedItem));
-                }else{
+                } else {
                     if (any.isEmpty()) {
                         Tag tag = new Tag(Utils.getKeyFromValue(selectedItem), selectedItem, text);
                         if (isAddableItem(tag) && !StringUtils.isEmpty(text.trim())) {
@@ -396,7 +395,7 @@ public class AdvancedRequestController implements Initializable {
                 if (type.equals("O")) {
                     String date = Utils.getFormattedDateFromLocalDateTime(localDateTimePicker.getLocalDateTime());
                     this.logger.info(date);
-                    if (selectedIndex != -1){
+                    if (selectedIndex != -1) {
                         Tag tag = tableViewTags.getItems().get(selectedIndex);
                         Tag newTag = new Tag();
                         newTag.setValue(date);
@@ -404,8 +403,8 @@ public class AdvancedRequestController implements Initializable {
                         newTag.setKey(tag.getKey());
                         tableViewTags.getItems().remove(selectedIndex);
                         tableViewTags.getItems().add(newTag);
-                    }else{
-                        tableViewTags.getItems().removeIf( t -> t.getKey().equals(key));
+                    } else {
+                        tableViewTags.getItems().removeIf(t -> t.getKey().equals(key));
                         Tag tag = new Tag();
                         tag.setValue(date);
                         tag.setField(field);
@@ -424,9 +423,9 @@ public class AdvancedRequestController implements Initializable {
 
     }
 
-    private void sortTableViewTags(){
+    private void sortTableViewTags() {
         Platform.runLater(() -> {
-            if (!tableViewTags.getItems().isEmpty()){
+            if (!tableViewTags.getItems().isEmpty()) {
                 List<Tag> tags = new ArrayList<>(tableViewTags.getItems());
                 tableViewTags.getItems().clear();
                 tableViewTags.getItems().addAll(tags.stream().sorted(Comparator.comparing(t -> Integer.parseInt(t.getKey()))).collect(Collectors.toList()));
@@ -434,7 +433,7 @@ public class AdvancedRequestController implements Initializable {
         });
     }
 
-    private boolean isDate(String field){
+    private boolean isDate(String field) {
         return field.toLowerCase().contains("time") || field.toLowerCase().contains("date");
     }
 }

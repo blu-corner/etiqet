@@ -27,7 +27,7 @@ public class DecoderController implements Initializable {
 
     private List<Tag> tagList;
 
-    public void injectTags(List<Tag> tagList){
+    public void injectTags(List<Tag> tagList) {
         this.tagList = tagList;
         this.tableViewDecoder.getItems().addAll(this.tagList);
     }

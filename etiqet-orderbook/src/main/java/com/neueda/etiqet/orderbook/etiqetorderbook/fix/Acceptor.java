@@ -16,12 +16,13 @@ import quickfix.field.*;
 import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.OrderCancelReject;
 
-import javax.print.DocFlavor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class Acceptor implements Application {
 
@@ -151,6 +152,19 @@ public class Acceptor implements Application {
         this.onMessage(message, sessionID);
     }
 
+    public void messageAnalizer(Message message, String direction) {
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                Platform.runLater(() -> {
+                    mainController.listViewLog.getItems().add(String.format("%s %s", direction, Utils.replaceSOH(message)));
+                });
+                return null;
+            }
+        };
+        task.run();
+    }
+
     public void sendExecutionReportAfterCanceling(Order order, FixSession fixSession) {
         List<Message> reports = new ArrayList<>();
         String orderId = RandomStringUtils.randomAlphanumeric(5);
@@ -193,8 +207,8 @@ public class Acceptor implements Application {
                 ordType = message.getField(new OrdType());
                 timeInFoce = message.getField(new TimeInForce());
                 StringField expireDate = null;
-                if (timeInFoce.getValue() == TimeInForce.GOOD_TILL_DATE){
-                    expireDate =  message.getField(new ExpireDate());
+                if (timeInFoce.getValue() == TimeInForce.GOOD_TILL_DATE) {
+                    expireDate = message.getField(new ExpireDate());
                 }
                 if (ordType.getValue() != OrdType.LIMIT) {
                     throw new IncorrectTagValue(ordType.getField());
@@ -223,11 +237,6 @@ public class Acceptor implements Application {
                     addNewOrder(side, order);
                     ExecutionReport finalExecutionReport = lookForNewTrade(clOrdID, orderId, execId, symbol, side, price, ordQty);
                     if (finalExecutionReport != null) {
-//                        if (finalExecutionReport.getExecType().equals(new ExecType(ExecType.CANCELED)) &&
-//                            (timeInFoce.equals(new TimeInForce(TimeInForce.FILL_OR_KILL)) ||
-//                                timeInFoce.equals(new TimeInForce(TimeInForce.IMMEDIATE_OR_CANCEL)))) {
-//                            order.setRemoved(true);
-//                        }
                         reports.add(finalExecutionReport);
                     }
                 }
@@ -308,37 +317,36 @@ public class Acceptor implements Application {
         String endTime;
         LocalDate localDateNow = LocalDate.now();
         LocalTime localTimeNow = LocalTime.now();
-        switch (timeInForce){
+        switch (timeInForce) {
             case TimeInForce.DAY:
                 endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_END_TIME);
                 endTimeSplit = endTime.split(":");
                 limitTime = LocalDateTime.of(localDateNow, LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
                 timeToBeRemoved = Utils.getFormattedDateFromLocalDateTime(limitTime);
                 break;
-                case TimeInForce.GOOD_TILL_CANCEL:
-                case TimeInForce.AT_THE_CLOSE:
-                case TimeInForce.GOOD_THROUGH_CROSSING:
-                    // If at the close, it will be canceled when the application is stopped
-                    // Good through crossing is not considered
-                    break;
-                case TimeInForce.AT_THE_OPENING:
-                    endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME);
-                    endTimeSplit = endTime.split(":");
-                    limitTime = LocalDateTime.of(localDateNow.plusDays(1), LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
-                    timeToBeRemoved = Utils.getFormattedDateFromLocalDateTime(limitTime);
-                    break;
-                case TimeInForce.IMMEDIATE_OR_CANCEL:
-                case TimeInForce.FILL_OR_KILL:
-                    limitTime = LocalDateTime.of(localDateNow, localTimeNow);
-                    timeToBeRemoved = Utils.getFormattedDateFromLocalDateTime(limitTime);
-                    break;
-                case TimeInForce.GOOD_TILL_DATE:
-                    timeToBeRemoved = expireDate.getValue();
-                    break;
+            case TimeInForce.GOOD_TILL_CANCEL:
+            case TimeInForce.AT_THE_CLOSE:
+            case TimeInForce.GOOD_THROUGH_CROSSING:
+                // If at the close, it will be canceled when the application is stopped
+                // Good through crossing is not considered
+                break;
+            case TimeInForce.AT_THE_OPENING:
+                endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME);
+                endTimeSplit = endTime.split(":");
+                limitTime = LocalDateTime.of(localDateNow.plusDays(1), LocalTime.of(Integer.parseInt(endTimeSplit[0]), Integer.parseInt(endTimeSplit[1])));
+                timeToBeRemoved = Utils.getFormattedDateFromLocalDateTime(limitTime);
+                break;
+            case TimeInForce.IMMEDIATE_OR_CANCEL:
+            case TimeInForce.FILL_OR_KILL:
+                limitTime = LocalDateTime.of(localDateNow, localTimeNow);
+                timeToBeRemoved = Utils.getFormattedDateFromLocalDateTime(limitTime);
+                break;
+            case TimeInForce.GOOD_TILL_DATE:
+                timeToBeRemoved = expireDate.getValue();
+                break;
         }
         return timeToBeRemoved;
     }
-
 
     private boolean containsOrder(CharField side, String orderId) {
         if (side.getValue() == (Side.BUY)) {
@@ -378,21 +386,11 @@ public class Acceptor implements Application {
         return orderCancelReject;
     }
 
-
     private void addNewOrder(CharField side, Order order) {
         if (side.getValue() == (Side.BUY)) {
             this.mainController.addBuy(order);
         } else {
             this.mainController.addSell(order);
-        }
-        this.mainController.setChanged(true);
-    }
-
-    private void removeOrder(CharField side, Order order) {
-        if (side.getValue() == (Side.BUY)) {
-            this.mainController.removeBuy(order);
-        } else {
-            this.mainController.removeSell(order);
         }
         this.mainController.setChanged(true);
     }
@@ -423,7 +421,7 @@ public class Acceptor implements Application {
                                          CharField side, DoubleField size, DoubleField priceOrder, Order order) {
         if (side.getValue() == Side.BUY) {
             Optional<Order> toReplace = this.mainController.getBuy().stream().filter(buy -> buy.getClOrdID().equals(origClOrdID.getValue())).findFirst();
-            if (toReplace.isPresent()){
+            if (toReplace.isPresent()) {
                 toReplace.get().setPrice(order.getPrice());
                 toReplace.get().setOrderQty(order.getOrderQty());
                 this.mainController.reorderBookBuyTableView();
@@ -431,17 +429,15 @@ public class Acceptor implements Application {
 
         } else {
             Optional<Order> toReplace = this.mainController.getSell().stream().filter(sell -> sell.getClOrdID().equals(origClOrdID.getValue())).findFirst();
-            if (toReplace.isPresent()){
+            if (toReplace.isPresent()) {
                 toReplace.get().setPrice(order.getPrice());
                 toReplace.get().setOrderQty(order.getOrderQty());
                 this.mainController.reorderBookSellTableView();
             }
-;
         }
         this.mainController.setChanged(true);
         return lookForNewTrade(clOrdID, orderId, execId, symbol, side, size, priceOrder);
     }
-
 
     private ExecutionReport lookForNewTrade(StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         try {
@@ -616,6 +612,10 @@ public class Acceptor implements Application {
         this.mainController.reorderBookSellTableView();
     }
 
+    private boolean areTimeInForceFOKorIOC(Order buy, Order sell) {
+        return isTimeInForceFOK(buy) || isTimeInForceFOK(sell) || isTimeInForceIOC(buy) || isTimeInForceIOC(sell);
+    }
+
     private boolean isTimeInForceFOK(Order order) {
         if (order == null || order.getTimeInForce() == null) return false;
         return order.getTimeInForce().equals(Constants.TIME_IN_FORCE.getContent(TimeInForce.FILL_OR_KILL));
@@ -624,10 +624,6 @@ public class Acceptor implements Application {
     private boolean isTimeInForceIOC(Order order) {
         if (order == null || order.getTimeInForce() == null) return false;
         return order.getTimeInForce().equals(Constants.TIME_IN_FORCE.getContent(TimeInForce.IMMEDIATE_OR_CANCEL));
-    }
-
-    private boolean areTimeInForceFOKorIOC(Order buy, Order sell) {
-        return isTimeInForceFOK(buy) || isTimeInForceFOK(sell) || isTimeInForceIOC(buy) || isTimeInForceIOC(sell);
     }
 
     private boolean isTimeInForceFOKorIOC(Order order) {
@@ -672,23 +668,10 @@ public class Acceptor implements Application {
         System.out.print("\n\n");
         Constants.orderBook.info("=================================================================================");
         Constants.orderBook.info(".....................................BID.........................................");
-        Constants.orderBook.info(buy != null ? buy.toString(): "");
+        Constants.orderBook.info(buy != null ? buy.toString() : "");
         Constants.orderBook.info(".....................................ASK.........................................");
         Constants.orderBook.info(sell != null ? sell.toString() : "");
         Constants.orderBook.info("=================================================================================\n\n");
-    }
-
-    public void messageAnalizer(Message message, String direction) {
-        Task<Void> task = new Task<>() {
-            @Override
-            protected Void call() throws Exception {
-                Platform.runLater(() -> {
-                    mainController.listViewLog.getItems().add(String.format("%s %s", direction, Utils.replaceSOH(message)));
-                });
-                return null;
-            }
-        };
-        task.run();
     }
 
 }

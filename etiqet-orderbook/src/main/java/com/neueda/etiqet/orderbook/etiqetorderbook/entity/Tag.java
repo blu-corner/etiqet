@@ -21,34 +21,38 @@ public class Tag {
         this.used = false;
     }
 
-    public Tag(){
+    public Tag() {
         this.used = false;
         this.key = "0";
     }
 
-    public void put(String field, String value, Boolean used){
+    public void put(String field, String value, Boolean used) {
         this.field = field;
         this.value = value;
         this.used = used;
     }
 
-    public String getField(){
+    public String getField() {
         return this.field;
     }
 
-    public String getValue(){
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public String getValue() {
         return this.value;
     }
 
-    public void setValue(String value){
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public boolean isUsed(){
+    public boolean isUsed() {
         return this.used;
     }
 
-    public void setUsed(){
+    public void setUsed() {
         this.used = true;
     }
 
@@ -58,10 +62,6 @@ public class Tag {
 
     public void setKey(String key) {
         this.key = key;
-    }
-
-    public void setField(String field) {
-        this.field = field;
     }
 
     public String getMeaning() {

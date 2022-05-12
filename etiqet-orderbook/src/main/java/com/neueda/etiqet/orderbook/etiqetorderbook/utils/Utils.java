@@ -3,10 +3,7 @@ package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 import com.neueda.etiqet.orderbook.etiqetorderbook.controllers.ConfigController;
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
@@ -35,9 +32,35 @@ import java.util.stream.Collectors;
 
 public class Utils {
 
-    private static Logger logger = LoggerFactory.getLogger(Utils.class);
     static DecimalFormat integerFormat = new DecimalFormat("#");
+    private static final TextFormatter<Object> integerTextFormatter = new TextFormatter<>(change -> {
+        if (change.getControlNewText().isEmpty()) {
+            return change;
+        }
+        ParsePosition parsePosition = new ParsePosition(0);
+        Object object = integerFormat.parse(change.getControlNewText(), parsePosition);
+
+        if (object == null || parsePosition.getIndex() < change.getControlNewText().length()) {
+            return null;
+        } else {
+            return change;
+        }
+    });
     static DecimalFormat decimalFormat = new DecimalFormat("#.0###");
+    private static final TextFormatter<Object> decimalTextFormatter = new TextFormatter<>(change -> {
+        if (change.getControlNewText().isEmpty()) {
+            return change;
+        }
+        ParsePosition parsePosition = new ParsePosition(0);
+        Object object = decimalFormat.parse(change.getControlNewText(), parsePosition);
+
+        if (object == null || parsePosition.getIndex() < change.getControlNewText().length()) {
+            return null;
+        } else {
+            return change;
+        }
+    });
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     public static String replaceSOH(Message message) {
         String content = message.toString();
@@ -48,29 +71,29 @@ public class Utils {
         return message.replace(Constants.VERTICAL_BAR, Constants.SOH) + Constants.SOH;
     }
 
-    public static boolean isNumber(String value){
-        try{
+    public static boolean isNumber(String value) {
+        try {
             return StringUtils.isNumeric(value);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return false;
         }
     }
 
-    public static boolean availablePort(int port){
+    public static boolean availablePort(int port) {
         ServerSocket socket = null;
         DatagramSocket datagramSocket = null;
-        try{
+        try {
             socket = new ServerSocket(port);
             socket.setReuseAddress(true);
             datagramSocket = new DatagramSocket(port);
             datagramSocket.setReuseAddress(true);
             return true;
-        }catch (Exception e){}
-        finally {
-            if (datagramSocket != null){
+        } catch (Exception e) {
+        } finally {
+            if (datagramSocket != null) {
                 datagramSocket.close();
             }
-            if (socket != null){
+            if (socket != null) {
                 try {
                     socket.close();
                 } catch (IOException e) {
@@ -81,13 +104,11 @@ public class Utils {
         return false;
     }
 
-
     public static Stage getStage(ActionEvent actionEvent) {
         final Node source = (Node) actionEvent.getSource();
         final Stage stage = (Stage) source.getScene().getWindow();
         return stage;
     }
-
 
     public static String getConfig(String role, String field) {
         try {
@@ -105,22 +126,21 @@ public class Utils {
 
     private static String getValueFromConfig(List<String> lines, String field) {
         String value = StringUtils.EMPTY;
-        if (field.equals(Constants.CONF_DATA_DIC)){
+        if (field.equals(Constants.CONF_DATA_DIC)) {
             for (String line : lines) {
-                if (line.contains(field) && !line.contains(Constants.CONF_USE_DATA_DIC)){
+                if (line.contains(field) && !line.contains(Constants.CONF_USE_DATA_DIC)) {
                     value = line.substring(line.indexOf('=') + 1);
                 }
             }
-        }else{
+        } else {
             for (String line : lines) {
-                if (line.contains(field)){
+                if (line.contains(field)) {
                     value = line.substring(line.indexOf('=') + 1);
                 }
             }
         }
         return value;
     }
-
 
     public static int getComboConfigValue(String role, String field) {
         String value = getConfig(role, field);
@@ -133,21 +153,21 @@ public class Utils {
         }
     }
 
-    public static String getKeyFromValue(String value){
+    public static String getKeyFromValue(String value) {
         Optional<Integer> key = Constants.hmTagValue.entrySet()
             .stream()
             .filter(entry -> Objects.equals(entry.getValue(), value))
             .map(Map.Entry::getKey)
             .findFirst();
 
-        if (key.isPresent()){
+        if (key.isPresent()) {
             return String.valueOf(key.get());
-        }else{
+        } else {
             return "-1";
         }
     }
 
-    public static String fixEncoder(List<Tag>tags){
+    public static String fixEncoder(List<Tag> tags) {
         StringBuilder encodedFix = new StringBuilder();
         String beginStringTag = tags.stream().filter(t -> t.getKey().equals(Constants.KEY_BEGIN_STRING)).findFirst().get().getValue();
         encodedFix.append("8=").append(beginStringTag).append(Constants.VERTICAL_BAR);
@@ -156,8 +176,8 @@ public class Utils {
         String msgTypeag = tags.stream().filter(t -> t.getKey().equals("35")).findFirst().get().getValue();
         encodedFix.append("35=").append(msgTypeag).append(Constants.VERTICAL_BAR);
 
-        for (Tag tag: tags){
-            if (!tag.getKey().equals(Constants.KEY_BEGIN_STRING) && !tag.getKey().equals(Constants.KEY_BODY_LENGTH) && !tag.getKey().equals(Constants.KEY_MSG_TYPE)){
+        for (Tag tag : tags) {
+            if (!tag.getKey().equals(Constants.KEY_BEGIN_STRING) && !tag.getKey().equals(Constants.KEY_BODY_LENGTH) && !tag.getKey().equals(Constants.KEY_MSG_TYPE)) {
                 String keyValue = tag.getKey() + "=" + tag.getValue() + Constants.VERTICAL_BAR;
                 encodedFix.append(keyValue);
             }
@@ -168,10 +188,10 @@ public class Utils {
         return encodedFix.toString();
     }
 
-    public static int bodyLenghtCalculator(List<Tag>tags){
+    public static int bodyLenghtCalculator(List<Tag> tags) {
         int acum = 0;
-        for(Tag tag: tags){
-            if (!tag.getKey().equals(Constants.KEY_BEGIN_STRING) && !tag.getKey().equals(Constants.KEY_BODY_LENGTH)){
+        for (Tag tag : tags) {
+            if (!tag.getKey().equals(Constants.KEY_BEGIN_STRING) && !tag.getKey().equals(Constants.KEY_BODY_LENGTH)) {
                 String keyValue = tag.getKey() + "=" + tag.getValue() + Constants.VERTICAL_BAR;
                 acum += keyValue.length();
             }
@@ -179,12 +199,11 @@ public class Utils {
         return acum;
     }
 
-
-    public static String checksumCalculator(String fixMessage){
+    public static String checksumCalculator(String fixMessage) {
         int acum = 0, checksum = 0;
         String replaced = fixMessage.replace(Constants.VERTICAL_BAR, Constants.SOH);
         byte[] bytes = replaced.getBytes(StandardCharsets.UTF_8);
-        for (int i = 0 ; i < bytes.length; i++){
+        for (int i = 0; i < bytes.length; i++) {
             acum += bytes[i];
         }
         checksum = acum % 256;
@@ -192,43 +211,15 @@ public class Utils {
 
     }
 
-
     public static void configureTextFieldToAcceptOnlyIntegerValues(TextField textField) {
         if (textField != null)
             textField.setTextFormatter(integerTextFormatter);
     }
+
     public static void configureTextFieldToAcceptOnlyDecimalValues(TextField textField) {
         if (textField != null)
             textField.setTextFormatter(decimalTextFormatter);
     }
-
-
-    private static final TextFormatter<Object> integerTextFormatter = new TextFormatter<>(change -> {
-        if (change.getControlNewText().isEmpty()) {
-            return change;
-        }
-        ParsePosition parsePosition = new ParsePosition(0);
-        Object object = integerFormat.parse(change.getControlNewText(), parsePosition);
-
-        if (object == null || parsePosition.getIndex() < change.getControlNewText().length()) {
-            return null;
-        } else {
-            return change;
-        }
-    });
-    private static final TextFormatter<Object> decimalTextFormatter = new TextFormatter<>(change -> {
-        if (change.getControlNewText().isEmpty()) {
-            return change;
-        }
-        ParsePosition parsePosition = new ParsePosition(0);
-        Object object = decimalFormat.parse(change.getControlNewText(), parsePosition);
-
-        if (object == null || parsePosition.getIndex() < change.getControlNewText().length()) {
-            return null;
-        } else {
-            return change;
-        }
-    });
 
     public static Date getFormattedDate() {
         String pattern = "yyyyMMdd-HH:mm:ss";
@@ -280,14 +271,14 @@ public class Utils {
         return null;
     }
 
-    public static String getFormattedDateFromLocalDateTime(LocalDateTime localDateTime){
+    public static String getFormattedDateFromLocalDateTime(LocalDateTime localDateTime) {
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         String pattern = "yyyyMMdd-HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(date);
     }
 
-    public static String getFormattedTimeFromLocalTime(LocalDateTime localDateTime){
+    public static String getFormattedTimeFromLocalTime(LocalDateTime localDateTime) {
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         String pattern = "HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -297,7 +288,7 @@ public class Utils {
 
     public static List<String> readConfigFile(String role) throws IOException {
         String insideConfig, outsideConfig;
-        if (role.equals(Constants.INITIATOR_ROLE)){
+        if (role.equals(Constants.INITIATOR_ROLE)) {
             insideConfig = Constants.PATH_CLIENT_CONFIG_JAR;
             outsideConfig = Constants.PATH_OUTPUT_CLIENT_CONFIG;
         } else {
@@ -308,11 +299,10 @@ public class Utils {
         List<String> lines;
         if (path != null && Files.exists(path)) {
             lines = Files.readAllLines(path);
-        }
-        else {
+        } else {
             lines = new ArrayList<String>();
             BufferedReader configBR = new BufferedReader(new InputStreamReader(ConfigController.class.getResourceAsStream(insideConfig)));
-            while(configBR.ready()) {
+            while (configBR.ready()) {
                 lines.add(configBR.readLine());
             }
         }

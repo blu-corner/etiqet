@@ -13,81 +13,6 @@ public class Order {
     private String sessionID;
     private String timeToBeRemoved;
 
-    public static class OrderBuilder{
-        private String clOrdID;
-        private String time;
-        private Double orderQty;
-        private Double price;
-        private String symbol;
-        private Character side;
-        private String clientID;
-        private String timeInForce;
-        private boolean removed;
-        private String sessionID;
-        private String timeToBeRemoved;
-
-        public OrderBuilder clOrdID(String clOrdID){
-            this.clOrdID = clOrdID;
-            return this;
-        }
-
-        public OrderBuilder time(String time){
-            this.time = time;
-            return this;
-        }
-
-        public OrderBuilder orderQty(Double orderQty){
-            this.orderQty = orderQty;
-            return this;
-        }
-
-        public OrderBuilder symbol(String symbol){
-            this.symbol = symbol;
-            return this;
-        }
-
-        public OrderBuilder side(Character side){
-            this.side = side;
-            return this;
-        }
-
-        public OrderBuilder price(Double price){
-            this.price = price;
-            return this;
-        }
-
-        public OrderBuilder clientID(String clientID){
-            this.clientID = clientID;
-            return this;
-        }
-
-        public OrderBuilder timeInForce(String timeInForce){
-            this.timeInForce = timeInForce;
-            return this;
-        }
-
-        public OrderBuilder removed(Boolean removed){
-            this.removed = removed;
-            return this;
-        }
-
-        public OrderBuilder sessionID(String sessionID){
-            this.sessionID = sessionID;
-            return this;
-        }
-
-        public OrderBuilder timeToBeRemoved(String timeToBeRemoved){
-            this.timeToBeRemoved = timeToBeRemoved;
-            return this;
-        }
-
-        public Order build(){
-            return new Order(this);
-        }
-
-
-    }
-
     public Order(OrderBuilder orderBuilder) {
         this.clOrdID = orderBuilder.clOrdID;
         this.time = orderBuilder.time;
@@ -102,7 +27,7 @@ public class Order {
         this.timeToBeRemoved = orderBuilder.timeToBeRemoved;
     }
 
-    public Order(){
+    public Order() {
         this.clOrdID = "";
         this.time = "";
         this.orderQty = 0d;
@@ -164,14 +89,13 @@ public class Order {
         this.timeInForce = timeInForce;
     }
 
-    public synchronized void setRemoved(boolean removed) {
-        this.removed = removed;
-    }
-
     public synchronized boolean isRemoved() {
         return removed;
     }
 
+    public synchronized void setRemoved(boolean removed) {
+        this.removed = removed;
+    }
 
     public String getSymbol() {
         return symbol;
@@ -220,5 +144,80 @@ public class Order {
             ", sessionID='" + sessionID + '\'' +
             ", timeToBeRemoved='" + timeToBeRemoved + '\'' +
             '}';
+    }
+
+    public static class OrderBuilder {
+        private String clOrdID;
+        private String time;
+        private Double orderQty;
+        private Double price;
+        private String symbol;
+        private Character side;
+        private String clientID;
+        private String timeInForce;
+        private boolean removed;
+        private String sessionID;
+        private String timeToBeRemoved;
+
+        public OrderBuilder clOrdID(String clOrdID) {
+            this.clOrdID = clOrdID;
+            return this;
+        }
+
+        public OrderBuilder time(String time) {
+            this.time = time;
+            return this;
+        }
+
+        public OrderBuilder orderQty(Double orderQty) {
+            this.orderQty = orderQty;
+            return this;
+        }
+
+        public OrderBuilder symbol(String symbol) {
+            this.symbol = symbol;
+            return this;
+        }
+
+        public OrderBuilder side(Character side) {
+            this.side = side;
+            return this;
+        }
+
+        public OrderBuilder price(Double price) {
+            this.price = price;
+            return this;
+        }
+
+        public OrderBuilder clientID(String clientID) {
+            this.clientID = clientID;
+            return this;
+        }
+
+        public OrderBuilder timeInForce(String timeInForce) {
+            this.timeInForce = timeInForce;
+            return this;
+        }
+
+        public OrderBuilder removed(Boolean removed) {
+            this.removed = removed;
+            return this;
+        }
+
+        public OrderBuilder sessionID(String sessionID) {
+            this.sessionID = sessionID;
+            return this;
+        }
+
+        public OrderBuilder timeToBeRemoved(String timeToBeRemoved) {
+            this.timeToBeRemoved = timeToBeRemoved;
+            return this;
+        }
+
+        public Order build() {
+            return new Order(this);
+        }
+
+
     }
 }

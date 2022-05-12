@@ -8,7 +8,7 @@ public class OrderXML {
     List<Order> sellOrders;
     List<Action> actions;
 
-    public OrderXML(){
+    public OrderXML() {
         this.buyOrders = new ArrayList<>();
         this.sellOrders = new ArrayList<>();
         this.actions = new ArrayList<>();
