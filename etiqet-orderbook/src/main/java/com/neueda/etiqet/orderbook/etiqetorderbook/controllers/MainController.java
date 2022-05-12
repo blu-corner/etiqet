@@ -28,6 +28,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
@@ -61,6 +62,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
@@ -236,6 +238,7 @@ public class MainController implements Initializable {
 
     }
 
+
     private List<Tag> fixDecoderToTag(String targetString) {
         targetString = removeOutInInfoFromFixString(targetString);
         String[] fields = targetString.split("\\|");
@@ -244,10 +247,12 @@ public class MainController implements Initializable {
         for (String field : fieldList) {
             String[] keyValue = field.split("=");
             Tag newTag = new Tag();
-            newTag.setKey(keyValue[0]);
-            newTag.setField(Constants.hmTagValue.get(Integer.valueOf(keyValue[0])));
-            newTag.setValue(keyValue[1]);
-            newTag.setMeaning(getAdditinalInfo(keyValue[0], keyValue[1]));
+            String key = keyValue[0];
+            String value = !key.equals("58") ? keyValue[1] : String.format("%s=%s", keyValue[1] ,keyValue[2]);
+            newTag.setKey(key);
+            newTag.setField(Constants.hmTagValue.get(Integer.valueOf(key)));
+            newTag.setValue(value);
+            newTag.setMeaning(getAdditinalInfo(key, value));
             tagList.add(newTag);
 
         }
@@ -815,11 +820,13 @@ public class MainController implements Initializable {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/fxml/fixdecoder.fxml"));
+            javafx.scene.image.Image icon = new Image("fix.png");
             Parent root = fxmlLoader.load();
             DecoderController decoderController = fxmlLoader.getController();
             decoderController.injectTags(tagList);
             Stage stage = new Stage();
             stage.setTitle(Constants.FIX_DECODER_TITLE);
+            stage.getIcons().add(icon);
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
@@ -833,12 +840,14 @@ public class MainController implements Initializable {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/fxml/initiatorConfigWindow.fxml"));
+            javafx.scene.image.Image icon = new Image("fix.png");
             Parent root = fxmlLoader.load();
             ConfigController configController = fxmlLoader.getController();
             configController.injectMainController(this);
             configController.injectRole(Constants.INITIATOR_ROLE);
             Stage stage = new Stage();
             stage.setTitle(Constants.INITIATOR_TITLE);
+            stage.getIcons().add(icon);
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
@@ -851,12 +860,14 @@ public class MainController implements Initializable {
     public void launchAcceptorConfigWindow(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
+            javafx.scene.image.Image icon = new Image("fix.png");
             fxmlLoader.setLocation(getClass().getResource("/fxml/acceptorConfigWindow.fxml"));
             Parent root = fxmlLoader.load();
             ConfigController configController = fxmlLoader.getController();
             configController.injectMainController(this);
             configController.injectRole(Constants.ACCEPTOR_ROLE);
             Stage stage = new Stage();
+            stage.getIcons().add(icon);
             stage.setTitle(Constants.ACCEPTOR_TITLE);
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
@@ -871,6 +882,7 @@ public class MainController implements Initializable {
     public void launchAdvancedRequest(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
+            javafx.scene.image.Image icon = new Image("fix.png");
             fxmlLoader.setLocation(getClass().getResource("/fxml/advancedRequest.fxml"));
             Parent root = fxmlLoader.load();
             AdvancedRequestController advancedRequestController = fxmlLoader.getController();
@@ -878,6 +890,7 @@ public class MainController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle(Constants.ADVANCED_REQUEST_TITLE);
             stage.setScene(new Scene(root));
+            stage.getIcons().add(icon);
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
             stage.show();
@@ -976,22 +989,6 @@ public class MainController implements Initializable {
         textFieldOrigOrderID.selectAll();
     }
 
-    public void launchTimePicker(ActionEvent actionEvent) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("/fxml/datepicker.fxml"));
-            Parent root = fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Picker");
-            stage.setScene(new Scene(root));
-            stage.setAlwaysOnTop(true);
-            stage.setResizable(false);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     public void launchTimePicker() {
         try {

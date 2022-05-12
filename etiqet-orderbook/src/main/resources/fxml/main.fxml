@@ -83,7 +83,6 @@
                                 <MenuItem fx:id="menuItemClearAll" mnemonicParsing="false" onAction="#cleanAll" text="Clear all" />
                             </items>
                         </Menu>
-                  <Menu fx:id="menuItemLaunchTimePicker" mnemonicParsing="false" onAction="#launchTimePicker" text="Launch TimePicker" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
