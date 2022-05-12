@@ -1,6 +1,7 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.utils;
 
 import com.neueda.etiqet.orderbook.etiqetorderbook.entity.Tag;
+import javafx.scene.image.Image;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +119,12 @@ public class Constants {
     public static final String SENT_ORIG_CL_ORD_I_DS = "Sent OrigClOrdIDs";
     public static final String DEFAULT_ORDERS_FILE = "orders.xml";
     public static final String[] SIDE = {"Buy (1)", "Sell (2)"};
+    public static final Image ICON = new Image("fix.png");
+    public static final String FXML_ACCEPTOR_CONFIG_WINDOW_FXML = "/fxml/acceptorConfigWindow.fxml";
+    public static final String FXML_ADVANCED_REQUEST_FXML = "/fxml/advancedRequest.fxml";
+    public static final String FXML_FIXDECODER_FXML = "/fxml/fixdecoder.fxml";
+    public static final String FXML_MAIN_FXML = "/fxml/main.fxml";
+    public static final String FXML_INITIATOR_CONFIG_WINDOW_FXML = "/fxml/initiatorConfigWindow.fxml";
 
     //hmTagValue
     static {

@@ -41,48 +41,40 @@ public class Initator implements Application {
 
     @Override
     public void onCreate(SessionID sessionID) {
-        //this.logTextArea.appendText(String.format("onCreate -> sessionID: %s\n", sessionID));
         this.logger.info("onCreate -> sessionID: {}", sessionID);
         this.sessionID = sessionID;
     }
 
     @Override
     public void onLogon(SessionID sessionID) {
-        //this.logTextArea.appendText(String.format("onLogon -> sessionID: %s\n", sessionID));
         this.logger.info("onLogon -> sessionID: {}", sessionID);
     }
 
     @Override
     public void onLogout(SessionID sessionID) {
-        //this.logTextArea.appendText(String.format("onLogout -> sessionID: %s\n", sessionID));
         this.logger.info("onLogout -> sessionID: {}", sessionID);
     }
 
     @Override
     public void toAdmin(Message message, SessionID sessionID) {
-//        message.setBoolean(ResetSeqNumFlag.FIELD, true);
-        //this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
         this.messageAnalizer(message, Constants.OUT);
     }
 
     @Override
     public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
-        //this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
         this.messageAnalizer(message, Constants.IN);
     }
 
     @Override
     public void toApp(Message message, SessionID sessionID) throws DoNotSend {
-        //this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
         this.messageAnalizer(message, Constants.OUT);
     }
 
     @Override
     public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
-        //this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
         this.messageAnalizer(message, Constants.IN);
     }

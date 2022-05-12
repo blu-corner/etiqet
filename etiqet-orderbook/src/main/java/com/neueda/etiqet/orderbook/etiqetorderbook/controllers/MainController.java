@@ -819,14 +819,13 @@ public class MainController implements Initializable {
     public void launchDecoderWindow(List<Tag> tagList) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("/fxml/fixdecoder.fxml"));
-            javafx.scene.image.Image icon = new Image("fix.png");
+            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_FIXDECODER_FXML));
             Parent root = fxmlLoader.load();
             DecoderController decoderController = fxmlLoader.getController();
             decoderController.injectTags(tagList);
             Stage stage = new Stage();
             stage.setTitle(Constants.FIX_DECODER_TITLE);
-            stage.getIcons().add(icon);
+            stage.getIcons().add(Constants.ICON);
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
@@ -839,15 +838,14 @@ public class MainController implements Initializable {
     public void launchInitiatorConfigWindow(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("/fxml/initiatorConfigWindow.fxml"));
-            javafx.scene.image.Image icon = new Image("fix.png");
+            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_INITIATOR_CONFIG_WINDOW_FXML));
             Parent root = fxmlLoader.load();
             ConfigController configController = fxmlLoader.getController();
             configController.injectMainController(this);
             configController.injectRole(Constants.INITIATOR_ROLE);
             Stage stage = new Stage();
             stage.setTitle(Constants.INITIATOR_TITLE);
-            stage.getIcons().add(icon);
+            stage.getIcons().add(Constants.ICON);
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
@@ -860,14 +858,13 @@ public class MainController implements Initializable {
     public void launchAcceptorConfigWindow(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            javafx.scene.image.Image icon = new Image("fix.png");
-            fxmlLoader.setLocation(getClass().getResource("/fxml/acceptorConfigWindow.fxml"));
+            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_ACCEPTOR_CONFIG_WINDOW_FXML));
             Parent root = fxmlLoader.load();
             ConfigController configController = fxmlLoader.getController();
             configController.injectMainController(this);
             configController.injectRole(Constants.ACCEPTOR_ROLE);
             Stage stage = new Stage();
-            stage.getIcons().add(icon);
+            stage.getIcons().add(Constants.ICON);
             stage.setTitle(Constants.ACCEPTOR_TITLE);
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
@@ -882,15 +879,14 @@ public class MainController implements Initializable {
     public void launchAdvancedRequest(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            javafx.scene.image.Image icon = new Image("fix.png");
-            fxmlLoader.setLocation(getClass().getResource("/fxml/advancedRequest.fxml"));
+            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_ADVANCED_REQUEST_FXML));
             Parent root = fxmlLoader.load();
             AdvancedRequestController advancedRequestController = fxmlLoader.getController();
             advancedRequestController.injectMainController(this);
             Stage stage = new Stage();
             stage.setTitle(Constants.ADVANCED_REQUEST_TITLE);
             stage.setScene(new Scene(root));
-            stage.getIcons().add(icon);
+            stage.getIcons().add(Constants.ICON);
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
             stage.show();
