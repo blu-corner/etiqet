@@ -28,7 +28,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
@@ -49,7 +48,6 @@ import quickfix.field.*;
 import quickfix.fix44.Logon;
 import quickfix.fix44.Logout;
 import quickfix.fix44.SequenceReset;
-
 import java.awt.*;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -62,7 +60,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Utils.getConfig;
@@ -127,6 +124,8 @@ public class MainController implements Initializable {
     private List<Order> sell;
     private boolean changed;
     private boolean useDefaultPort;
+
+    // Mandatory @FXML
     @FXML
     private Circle circleStartInitiator;
     @FXML
@@ -146,7 +145,6 @@ public class MainController implements Initializable {
     @FXML
     private TabPane mainTabPane;
 
-
     public String getConnectedPort() {
         return port;
     }
@@ -161,6 +159,18 @@ public class MainController implements Initializable {
 
     public SessionID getSessionId() {
         return this.sessionId;
+    }
+
+    public List<Order> getBuy() {
+        return buy;
+    }
+
+    public List<Order> getSell() {
+        return sell;
+    }
+
+    public void setUseDefaultPort(boolean useDefaultPort) {
+        this.useDefaultPort = useDefaultPort;
     }
 
     @Override
@@ -227,6 +237,9 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Decodes FIX message and shows decoder view
+     */
     private void showFixFields() {
         try {
             String targetString = listViewLog.getSelectionModel().getSelectedItem().toString();
@@ -235,10 +248,14 @@ public class MainController implements Initializable {
         } catch (Exception ex) {
             this.logger.warn("Exception showFixFields -> {}", ex.getLocalizedMessage());
         }
-
     }
 
-
+    /**
+     * Reads the clicked row and turns the fix message
+     * into a list a fix tags
+     * @param targetString
+     * @return
+     */
     private List<Tag> fixDecoderToTag(String targetString) {
         targetString = removeOutInInfoFromFixString(targetString);
         String[] fields = targetString.split("\\|");
@@ -259,6 +276,11 @@ public class MainController implements Initializable {
         return tagList;
     }
 
+    /**
+     * Removes [>>>IN>>>] and [>>>OUT>>>] from fix message
+     * @param targetString
+     * @return
+     */
     private String removeOutInInfoFromFixString(String targetString) {
         if (targetString.contains(Constants.OUT)) {
             targetString = targetString.replace(Constants.OUT + StringUtils.SPACE, "");
@@ -268,22 +290,31 @@ public class MainController implements Initializable {
         return targetString;
     }
 
-
+    /**
+     * TODO extends functinality of this method
+     * Add additional information in tableView in decoder
+     * @param tag
+     * @param value
+     * @return
+     */
     private String getAdditinalInfo(String tag, String value) {
         String additionalInfo = "";
+        //TODO add new tags
         switch (tag) {
             case Constants.MSG_TYPE:
                 additionalInfo = StringUtils.SPACE + Constants.hmMsgType.get(value);
                 break;
         }
-        return additionalInfo != null ? additionalInfo : "";
+        return additionalInfo;
     }
 
 
-    public void setUseDefaultPort(boolean useDefaultPort) {
-        this.useDefaultPort = useDefaultPort;
-    }
 
+    /**
+     * @deprecated
+     * @param directory
+     */
+    @Deprecated
     private void deleteDir(String directory) {
         try {
             Files.walk(Path.of(directory))
@@ -295,6 +326,11 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Start the application with Acceptor role
+     * Includes instantiation of List of multiple acceptors
+     * @param actionEvent
+     */
     public void startAcceptor(ActionEvent actionEvent) {
         try {
             String portsA = getConfig(Constants.ACCEPTOR_ROLE, Constants.ACC_ACCEPT_PORT);
@@ -322,6 +358,10 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Starts the application with Initiator role
+     * @param actionEvent
+     */
     public void startInitiator(ActionEvent actionEvent) {
         try {
             SessionSettings initiatorSettings = new SessionSettings();
@@ -369,6 +409,9 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Stop the application both acceptor and initiator
+     */
     public void stop() {
         try {
             if (socketInitiator != null) {
@@ -386,6 +429,12 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * When the application is closed, orders with
+     * timeInForce At The Close are canceled, removed
+     * from the orderbook and an Execution Report is sent
+     * to the client
+     */
     private void removeAtTheStopAndSendExecReport() {
         try {
             List<Order> buys = this.getBuy().stream().filter(buy -> buy.getTimeInForce().equals(Constants.TIME_IN_FORCE.AT_THE_CLOSE.getContent())).collect(Collectors.toList());
@@ -426,6 +475,9 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Called from stop method. Changes graphical aspects
+     */
     private void stopConfiguration() {
         try {
             this.circle.setFill(Color.RED);
@@ -453,7 +505,10 @@ public class MainController implements Initializable {
 
     }
 
-
+    /**
+     * Called at start Initiator. Sends a Logon object to the Acceptor
+     * @throws SessionNotFound
+     */
     private void sendLogonRequest() throws SessionNotFound {
         Logon logon = new Logon();
         Message.Header header = logon.getHeader();
@@ -464,6 +519,12 @@ public class MainController implements Initializable {
         logger.info("Logon message sent: {}", sent);
     }
 
+    /**
+     * TODO finish functionality
+     * @deprecated
+     * @throws SessionNotFound
+     */
+    @Deprecated
     private void sendSeqReset() throws SessionNotFound {
         SequenceReset sequenceReset = new SequenceReset();
 //        GapFillFlag gapFillFlag = new GapFillFlag();
@@ -485,13 +546,21 @@ public class MainController implements Initializable {
         logger.info("Sequence reset message sent: {}", sent);
     }
 
+    /**
+     * TODO finish functionality
+     * Sends logout to the acceptor
+     * @throws SessionNotFound
+     */
     private void sendLogoutRequest() throws SessionNotFound {
         Logout logout = new Logout();
         boolean sent = Session.sendToTarget(logout, this.sessionId);
         logger.info("Logout message sent: {}", sent);
     }
 
-
+    /**
+     * Returns ContextMenu used in ListView log
+     * @return
+     */
     private ContextMenu getLogContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem menuItemCopy = new MenuItem("Copy");
@@ -514,6 +583,11 @@ public class MainController implements Initializable {
         return contextMenu;
     }
 
+    /**
+     * Returns ContextMenu used by order TableView
+     * @param side
+     * @return
+     */
     private ContextMenu getOrderContextMenu(Constants.SIDE_ENUM side) {
         ContextMenu contextMenu = new ContextMenu();
         Menu menuCopy = new Menu("Copy");
@@ -545,6 +619,11 @@ public class MainController implements Initializable {
         return contextMenu;
     }
 
+    /**
+     * Shows new popup when a value is copied
+     * in order tableView
+     * @param message
+     */
     private void showCopiedPopUp(String message) {
         Label label = new Label(message);
         label.setStyle("-fx-background-radius: 6;" +
@@ -559,6 +638,10 @@ public class MainController implements Initializable {
         popup.setAutoHide(true);
     }
 
+    /**
+     * Shows alert if you try to cancel order from Acceptor
+     * @param side
+     */
     private void contextMenuCancelAction(Constants.SIDE_ENUM side) {
         Order selectedOrder;
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -596,58 +679,74 @@ public class MainController implements Initializable {
 
     }
 
-    public List<Order> getBuy() {
-        return buy;
-    }
-
-    public List<Order> getSell() {
-        return sell;
-    }
-
+    /**
+     * Add order side buy and sort buy tableView
+     * @param buy
+     */
     public void addBuy(Order buy) {
         this.buy.add(buy);
         reorderBookBuyTableView();
     }
 
+    /**
+     *Add order side sell and sort sell tableView
+     * @param sell
+     */
     public void addSell(Order sell) {
         this.sell.add(sell);
         reorderBookSellTableView();
     }
 
-    public void removeBuy(Order buy) {
-        this.buy.remove(buy);
-        reorderBookBuyTableView();
-    }
-
-    public void removeSell(Order sell) {
-        this.sell.remove(sell);
-        reorderBookSellTableView();
-    }
-
+    /**
+     * Returns sorted buy order list
+     * The greatest price first
+     * @return
+     */
     public List<Order> getOrderedBuy() {
         return this.getBuy().stream().sorted(Comparator.comparing(Order::getPrice, Comparator.reverseOrder())).collect(Collectors.toList());
     }
 
+    /**
+     * Returns sorted sell order list
+     * The lowest price first
+     * @return
+     */
     public List<Order> getOrderedSell() {
         return this.getSell().stream().sorted(Comparator.comparing(Order::getPrice)).collect(Collectors.toList());
     }
 
+    /**
+     * Returns sorted tableview action items
+     * @return
+     */
     public List<Action> getOrderedTrades() {
         return this.actionTableView.getItems().stream().sorted(Comparator.comparing(Action::getTime, Comparator.reverseOrder())).collect(Collectors.toList());
     }
 
+    /**
+     * Removes all items from the buy tableView object
+     * Then adds all sorted items
+     */
     public void reorderBookBuyTableView() {
         orderBookBuyTableView.getItems().clear();
         orderBookBuyTableView.getItems().addAll(this.getOrderedBuy());
         orderBookBuyTableView.getSelectionModel().clearAndSelect(0);
     }
 
+    /**
+     * Removes all items from the sell tableView object
+     * Then adds all sorted items
+     */
     public void reorderBookSellTableView() {
         orderBookSellTableView.getItems().clear();
         orderBookSellTableView.getItems().addAll(this.getOrderedSell());
         orderBookSellTableView.getSelectionModel().clearAndSelect(0);
     }
 
+    /**
+     * Removes all items from the action tableView object
+     * Then adds all sorted items
+     */
     public void reorderActionTableView() {
         List<Action> orderedTrades = getOrderedTrades();
         actionTableView.getItems().clear();
@@ -655,6 +754,10 @@ public class MainController implements Initializable {
         actionTableView.getSelectionModel().clearAndSelect(0);
     }
 
+    /**
+     * Sends new transaction to the Acceptor
+     * @param actionEvent
+     */
     public void sendOrder(ActionEvent actionEvent) {
         String textFieldOrderID = this.textFieldOrderID.getText();
         if (StringUtils.isEmpty(textFieldOrderID)) {
@@ -682,53 +785,100 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Clear all items in fix message log in initiator
+     * @param event
+     */
     public void clearMainLog(ActionEvent event) {
         this.listViewActions.getItems().clear();
     }
 
+    /**
+     * Clear all items in fix message in main log
+     * @param event
+     */
     public void clearGlobalLog(ActionEvent event) {
         this.listViewLog.getItems().clear();
     }
 
+    /**
+     * TODO check if necessary
+     * @deprecated
+     * @param actionEvent
+     */
     public void setRememberPort(ActionEvent actionEvent) {
         EventTarget target = actionEvent.getTarget();
         String targetString = target.toString();
         setUseDefaultPort(targetString.contains("selected"));
     }
 
+    /**
+     * Closes application
+     * @param actionEvent
+     */
     public void closeApplication(ActionEvent actionEvent) {
         stop();
         Platform.exit();
     }
 
+    /**
+     * Used from menuItem: removes only items in bid tableView
+     * @param actionEvent
+     */
     public void cleanBid(ActionEvent actionEvent) {
         this.getBuy().clear();
         orderBookBuyTableView.getItems().clear();
     }
 
+    /**
+     * Used from menuItem: removes only items in offer tableView
+     * @param actionEvent
+     */
     public void cleanOffer(ActionEvent actionEvent) {
         this.getSell().clear();
         orderBookSellTableView.getItems().clear();
     }
 
+    /**
+     * Used from menuItem: removes items in buy & sell tableView
+     * @param actionEvent
+     */
     public void cleanBidAndOffer(ActionEvent actionEvent) {
         cleanBid(actionEvent);
         cleanOffer(actionEvent);
     }
 
+    /**
+     * Used from menuItem: removes items in action tableView
+     * @param actionEvent
+     */
     public void cleanTrades(ActionEvent actionEvent) {
         this.actionTableView.getItems().clear();
     }
 
+    /**
+     * Used from menuItem: removes all items in all tableViews
+     * @param actionEvent
+     */
     public void cleanAll(ActionEvent actionEvent) {
         cleanBidAndOffer(actionEvent);
         cleanTrades(actionEvent);
     }
 
+    /**
+     * Used to auto generate next ClOrdID
+     * @param actionEvent
+     */
     public void setAutoGenValue(ActionEvent actionEvent) {
         this.textFieldOrderID.setText(RandomStringUtils.randomAlphanumeric(8));
     }
 
+    /**
+     * TODO finish functionality
+     * @deprecated
+     * @param actionEvent
+     */
+    @Deprecated
     public void resetSequenceNumber(ActionEvent actionEvent) {
         try {
             sendLogoutRequest();
@@ -741,6 +891,10 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Used in Help MenuItem: goes to FIX protocol web site
+     * @param actionEvent
+     */
     public void goToFixDoc(ActionEvent actionEvent) {
         String url = Constants.HELP_SITE;
         try {
@@ -764,6 +918,11 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Disables Initiator and Acceptor tabs so they can't be changed
+     * Forces Acceptor tab selection
+     * @param actionEvent
+     */
     public void startMultipleAcceptor(ActionEvent actionEvent) {
         this.tabInitiator.setDisable(true);
         this.tabAcceptor.setDisable(true);
@@ -771,6 +930,12 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Handles listening on range of multiple ports
+     * @param testRangeA
+     * @param testRangeB
+     * @return
+     */
     public boolean listenOnPorts(String testRangeA, String testRangeB) {
         try {
             Integer iTestRangeA = Integer.parseInt(testRangeA);
@@ -816,10 +981,14 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Launches fix decoder view
+     * @param tagList
+     */
     public void launchDecoderWindow(List<Tag> tagList) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_FIXDECODER_FXML));
+            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_FIXDECODER));
             Parent root = fxmlLoader.load();
             DecoderController decoderController = fxmlLoader.getController();
             decoderController.injectTags(tagList);
@@ -835,10 +1004,14 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Launches initiator configuration view
+     * @param actionEvent
+     */
     public void launchInitiatorConfigWindow(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_INITIATOR_CONFIG_WINDOW_FXML));
+            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_INITIATOR_CONFIG_WINDOW));
             Parent root = fxmlLoader.load();
             ConfigController configController = fxmlLoader.getController();
             configController.injectMainController(this);
@@ -855,10 +1028,14 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Launches acceptor configuration class
+     * @param actionEvent
+     */
     public void launchAcceptorConfigWindow(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_ACCEPTOR_CONFIG_WINDOW_FXML));
+            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_ACCEPTOR_CONFIG_WINDOW));
             Parent root = fxmlLoader.load();
             ConfigController configController = fxmlLoader.getController();
             configController.injectMainController(this);
@@ -875,11 +1052,14 @@ public class MainController implements Initializable {
         }
     }
 
-
+    /**
+     * Launch advanced request view
+     * @param actionEvent
+     */
     public void launchAdvancedRequest(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_ADVANCED_REQUEST_FXML));
+            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_ADVANCED_REQUEST));
             Parent root = fxmlLoader.load();
             AdvancedRequestController advancedRequestController = fxmlLoader.getController();
             advancedRequestController.injectMainController(this);
@@ -895,10 +1075,18 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Copies last sent ClOrdID to proper TextView
+     * @param actionEvent
+     */
     public void buttonCopyLast(ActionEvent actionEvent) {
         textFieldOrigOrderID.setText(textFieldOrderID.getText());
     }
 
+    /**
+     * Launches FileChooser to choose XML to import orders
+     * @param actionEvent
+     */
     public void actionMenuItemImport(ActionEvent actionEvent) {
         try {
             FileChooser fileChooser = new FileChooser();
@@ -913,6 +1101,10 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Import XML file with orders
+     * @param selectedFile
+     */
     private void importOrders(File selectedFile) {
         try {
             if (selectedFile != null) {
@@ -940,6 +1132,9 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Removes everything before importing XML file with orders
+     */
     private void clearAll() {
         this.orderBookSellTableView.getItems().clear();
         this.orderBookBuyTableView.getItems().clear();
@@ -948,6 +1143,11 @@ public class MainController implements Initializable {
         this.actionTableView.getItems().clear();
     }
 
+    /**
+     * Launches FileChooser to export XML file with orders
+     * in the current orderbook
+     * @param actionEvent
+     */
     public void actionMenuItemExport(ActionEvent actionEvent) {
         try {
             FileChooser fileChooser = new FileChooser();
@@ -961,6 +1161,11 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Export orders in current orderbook tables to XML file
+     * @param selectedFile
+     * @throws IOException
+     */
     private void exportOrders(File selectedFile) throws IOException {
         try {
             if (selectedFile != null) {
@@ -981,11 +1186,17 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Selects all content in the textField
+     * @param event
+     */
     public void selectAllField(MouseEvent event) {
         textFieldOrigOrderID.selectAll();
     }
 
-
+    /**
+     * Launches new Dialog object with DateTimePicker tool
+     */
     public void launchTimePicker() {
         try {
             final Dialog dialog = new Dialog();
@@ -1017,12 +1228,24 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Launches new Dialog object with DateTimePicker tool
+     * Reacts to action in timeInForce combo, work along with comboTimeInForceMouse
+     * to accomplish proper functionality
+     * @param actionEvent
+     */
     public void comboTimeInForceAction(ActionEvent actionEvent) {
         if (comboBoxTimeInForce.getValue().contains(Constants.TIME_IN_FORCE.GOOD_TILL_DATE.getContent())) {
             launchTimePicker();
         }
     }
 
+    /**
+     * Launches new Dialog object with DateTimePicker tool
+     * Reacts to action in timeInForce combo, work along with comboTimeInForceAction
+     * to accomplish proper functionality
+     * @param e
+     */
     public void comboTimeInForceMouse(MouseEvent e) {
         if (!comboBoxTimeInForce.isShowing()) {
             if (comboBoxTimeInForce.getValue().contains(Constants.TIME_IN_FORCE.GOOD_TILL_DATE.getContent())) {

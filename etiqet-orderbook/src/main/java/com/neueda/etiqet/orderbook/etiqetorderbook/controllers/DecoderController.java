@@ -10,20 +10,17 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * @author enol.cacheroramirez@version1.com
+ * FIX decoder view
+ * Launched from MainController
+ */
 public class DecoderController implements Initializable {
-
-    /*
-    *     private String key;
-    private String field;
-    private String value;
-    private String meaning;
-    * */
     public TableView<Tag> tableViewDecoder;
     public TableColumn<Tag, String> tableColumnKey;
     public TableColumn<Tag, String> tableColumnField;
     public TableColumn<Tag, String> tableColumnValue;
     public TableColumn<Tag, String> tableColumnMeaning;
-
 
     private List<Tag> tagList;
 

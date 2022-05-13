@@ -27,8 +27,6 @@ public class Constants {
     public static final String EXECUTION_REPORT = "8";
     public static final String NEW = "0000";
     public static final String NONE = "NONE";
-
-
     public static final String CONF_BEGIN_STRING = "BeginString";
     public static final String CONF_SENDER = "SenderCompID";
     public static final String CONF_TARGET = "TargetCompID";
@@ -48,7 +46,6 @@ public class Constants {
     public static final String INI_CONNECT_PORT = "SocketConnectPort";
     public static final String ACC_ACCEPT_PORT = "SocketAcceptPort";
     public static final String ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT = "PortRangeLimit";
-
     public static final String ACCEPTOR_PORT_DIALOG_TITLE = "ACCEPTOR PORT";
     public static final String ACCEPTOR_PORT_DIALOG_HEADER = "Introduce port to listen on";
     public static final String ACCEPTOR_PORT_DIALOG_TEXT = "Port:";
@@ -63,7 +60,6 @@ public class Constants {
     public static final String COMBO_NEW_ORDER = "New Order Single (D)";
     public static final String COMBO_CANCEL = "Order Cancel Request (F)";
     public static final String COMBO_REPLACE = "Order Cancel/Replace Request (G)";
-
     public static final String MSG_TYPE = "35";
     public static final String PORTS_RANGE_ERROR = "PORTS RANGE ERROR";
     public static final String BAD_PORTS_RANGE = "Bad ports range";
@@ -120,13 +116,12 @@ public class Constants {
     public static final String DEFAULT_ORDERS_FILE = "orders.xml";
     public static final String[] SIDE = {"Buy (1)", "Sell (2)"};
     public static final Image ICON = new Image("fix.png");
-    public static final String FXML_ACCEPTOR_CONFIG_WINDOW_FXML = "/fxml/acceptorConfigWindow.fxml";
-    public static final String FXML_ADVANCED_REQUEST_FXML = "/fxml/advancedRequest.fxml";
-    public static final String FXML_FIXDECODER_FXML = "/fxml/fixdecoder.fxml";
-    public static final String FXML_MAIN_FXML = "/fxml/main.fxml";
-    public static final String FXML_INITIATOR_CONFIG_WINDOW_FXML = "/fxml/initiatorConfigWindow.fxml";
+    public static final String FXML_ACCEPTOR_CONFIG_WINDOW = "/fxml/acceptorConfigWindow.fxml";
+    public static final String FXML_ADVANCED_REQUEST = "/fxml/advancedRequest.fxml";
+    public static final String FXML_FIXDECODER = "/fxml/fixdecoder.fxml";
+    public static final String FXML_MAIN = "/fxml/main.fxml";
+    public static final String FXML_INITIATOR_CONFIG_WINDOW = "/fxml/initiatorConfigWindow.fxml";
 
-    //hmTagValue
     static {
         hmTagValue = new HashMap<>();
         hmTagValue.put(1, "Account");
@@ -1267,7 +1262,6 @@ public class Constants {
             return this.content;
         }
     }
-
 
     public enum Type {
         PARTIAL_FILL,
