@@ -1,5 +1,9 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 
+/**
+ * Order sent by an Initiator
+ * Shown in tableView
+ */
 public class Order {
     private String clOrdID;
     private String time;

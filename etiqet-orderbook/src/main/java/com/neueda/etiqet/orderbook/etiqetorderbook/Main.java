@@ -8,11 +8,13 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Main class extending from javafx.Application
+ * Launches the main stage
+ */
 public class Main extends Application {
 
-
     public static void main(String[] args) {
-//        System.setProperty("prism.allowhidpi", "false");
         launch();
     }
 

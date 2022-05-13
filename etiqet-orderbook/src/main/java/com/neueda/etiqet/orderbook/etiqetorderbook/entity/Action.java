@@ -4,6 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import static com.neueda.etiqet.orderbook.etiqetorderbook.utils.Constants.Type;
 
+/**
+ * Shows row with data from buy and sell side orders match
+ * Also shows cancelled orders
+ */
 public class Action {
     public Type type;
     private String buyID;
@@ -17,24 +21,6 @@ public class Action {
     private Double sellSize;
     private Double leaveQty;
     private Double agreedPrice;
-
-
-/*    public Action(Type type, String buyID, String sellID, String buyClientID, String buyTimeInForce, String sellTimeInForce,
-                  String sellClientID, String time, Double buySize, Double sellSize, Double leaveQty, Double agreedPrice) {
-        this.type = type;
-        this.buyID = buyID;
-        this.buyClientID = buyClientID;
-        this.sellClientID = sellClientID;
-        this.timeInForceBuy = buyTimeInForce;
-        this.timeInForceSell = sellTimeInForce;
-        this.sellID = sellID;
-        this.time = time;
-        this.buySize = buySize;
-        this.sellSize = sellSize;
-        this.leaveQty = leaveQty;
-        this.agreedPrice = agreedPrice;
-    }*/
-
 
     public Action(ActionBuilder actionBuilder) {
         this();

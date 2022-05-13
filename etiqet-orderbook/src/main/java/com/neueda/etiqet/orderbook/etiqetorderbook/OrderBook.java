@@ -19,6 +19,10 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Thread dealing with several tasks related to the orderbook
+ * Interacts with Acceptor tableviews and handles life cycle of orders
+ */
 public class OrderBook implements Runnable {
 
     private final MainController mainController;
@@ -63,6 +67,9 @@ public class OrderBook implements Runnable {
         }
     }
 
+    /**
+     * If an order was canceled, a new action row is added in the action tableview
+     */
     private void addActions() {
         Acceptor acceptor = new Acceptor(this.mainController);
         for (Order order : this.mainController.getBuy().stream().filter(Order::isRemoved).collect(Collectors.toList())) {
@@ -96,6 +103,11 @@ public class OrderBook implements Runnable {
 
     }
 
+    /**
+     * Checks the order timeToBeRemoved field to determine if particular
+     * order should be canceled right now
+     * @param order
+     */
     private void removeIfTimeExpired(Order order) {
         LocalDate localDateNow = LocalDate.now();
         LocalTime localTimeNow = LocalTime.now();

@@ -3,6 +3,9 @@ package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Used to import/export XML file with orderbook data
+ */
 public class OrderXML {
     List<Order> buyOrders;
     List<Order> sellOrders;

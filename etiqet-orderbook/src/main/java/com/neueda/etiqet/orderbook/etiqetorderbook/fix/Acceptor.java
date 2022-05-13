@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Acceptor class implementing quickfix.Application interface
+ */
 public class Acceptor implements Application {
 
     private final MainController mainController;
@@ -34,6 +37,19 @@ public class Acceptor implements Application {
         this.mainController = mainController;
     }
 
+    /**
+     * Return a different ExecutionReport in function of
+     * received parameters
+     * @param execType
+     * @param clOrdID
+     * @param ordId
+     * @param execId
+     * @param symbol
+     * @param side
+     * @param price
+     * @param ordQty
+     * @return
+     */
     public static ExecutionReport generateExecReport(char execType, StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         ExecutionReport executionReport = new ExecutionReport();
 
@@ -103,56 +119,54 @@ public class Acceptor implements Application {
 
     @Override
     public void onCreate(SessionID sessionID) {
-        //this.logTextArea.appendText(String.format("onCreate -> sessionID: %s\n", sessionID));
         this.logger.info("onCreate -> sessionID: {}", sessionID);
     }
 
     @Override
     public void onLogon(SessionID sessionID) {
-        //this.logTextArea.appendText(String.format("onLogon -> sessionID: %s\n", sessionID));
         this.logger.info("onLogon -> sessionID: {}", sessionID);
     }
 
     @Override
     public void onLogout(SessionID sessionID) {
-        //this.logTextArea.appendText(String.format("onLogout -> sessionID: %s\n", sessionID));
         this.logger.info("onLogout -> sessionID: {}", sessionID);
     }
 
     @Override
     public void toAdmin(Message message, SessionID sessionID) {
-//        message.setBoolean(ResetSeqNumFlag.FIELD, true);
-        //this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
-        this.messageAnalizer(message, Constants.OUT);
+        this.addsMessageToLogView(message, Constants.OUT);
 
     }
 
     @Override
     public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
-        //this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromAdmin -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
-        this.messageAnalizer(message, Constants.IN);
+        this.addsMessageToLogView(message, Constants.IN);
 
     }
 
     @Override
     public void toApp(Message message, SessionID sessionID) throws DoNotSend {
-        //this.logTextArea.appendText(String.format("[>>>>OUT>>>]:toApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[>>>>OUT>>>]:toApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
-        this.messageAnalizer(message, Constants.OUT);
+        this.addsMessageToLogView(message, Constants.OUT);
 
     }
 
     @Override
     public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
-        //this.logTextArea.appendText(String.format("[>>>>IN>>>]:fromApp -> message: %s / sessionID: %s\n", Utils.replaceSOH(message), sessionID));
         this.logger.info("[<<<<<IN<<<]:fromApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
-        this.messageAnalizer(message, Constants.IN);
+        this.addsMessageToLogView(message, Constants.IN);
         this.onMessage(message, sessionID);
     }
 
-    public void messageAnalizer(Message message, String direction) {
+    /**
+     * Adds tags from the Message to log view
+     * Uses Task -> Platform.runLater to avoid thread issues
+     * @param message
+     * @param direction
+     */
+    public void addsMessageToLogView(Message message, String direction) {
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
@@ -165,6 +179,12 @@ public class Acceptor implements Application {
         task.run();
     }
 
+    /**
+     * Sends cancel execution report when you cancel order
+     * from the Acceptor itself
+     * @param order
+     * @param fixSession
+     */
     public void sendExecutionReportAfterCanceling(Order order, FixSession fixSession) {
         List<Message> reports = new ArrayList<>();
         String orderId = RandomStringUtils.randomAlphanumeric(5);
@@ -185,6 +205,13 @@ public class Acceptor implements Application {
         });
     }
 
+    /**
+     * Core functionality handler: manages all Messages
+     * @param message
+     * @param sessionID
+     * @throws FieldNotFound
+     * @throws IncorrectTagValue
+     */
     public void onMessage(Message message, SessionID sessionID) throws FieldNotFound, IncorrectTagValue {
         StringField msgType = message.getHeader().getField(new MsgType());
         StringField clOrdID = message.getField(new ClOrdID());
@@ -250,7 +277,6 @@ public class Acceptor implements Application {
                         reports.add(rejectOrder(CxlRejResponseTo.ORDER_CANCEL_REQUEST, CxlRejReason.UNKNOWN_ORDER, clOrdID.getValue()));
                     } else {
                         logger.info("################################ ORDER CANCEL REQUEST");
-                        //clOrdID, orderId, execId, symbol, side, price, ordQty
                         reports.add(generateExecReport(ExecType.PENDING_CANCEL, clOrdID, Constants.NEW, Constants.NEW, symbol, side, new DoubleField(0), new DoubleField(0)));
                         reports.add(generateExecReport(ExecType.CANCELED, clOrdID, orderId, execId, symbol, side, new DoubleField(0), new DoubleField(0)));
                         ExecutionReport tradeWhenCancelling = cancelOrder(origClOrdID, clOrdID, orderId, execId, symbol, side, null, null);
@@ -310,6 +336,14 @@ public class Acceptor implements Application {
         });
     }
 
+    /**
+     * Creates the time to be canceled of an order
+     * Every time an order is added to the orderbook, it will have an specific
+     * datetime to be removed, depending on its TimeInForce tag
+     * @param timeInForce
+     * @param expireDate
+     * @return
+     */
     private String getTimeToBeRemoved(char timeInForce, StringField expireDate) {
         String timeToBeRemoved = StringUtils.EMPTY;
         String[] endTimeSplit;
@@ -328,7 +362,7 @@ public class Acceptor implements Application {
             case TimeInForce.AT_THE_CLOSE:
             case TimeInForce.GOOD_THROUGH_CROSSING:
                 // If at the close, it will be canceled when the application is stopped
-                // Good through crossing is not considered
+                // TODO Good through crossing is not considered
                 break;
             case TimeInForce.AT_THE_OPENING:
                 endTime = Utils.getConfig(Constants.ACCEPTOR_ROLE, Constants.CONF_START_TIME);
@@ -348,6 +382,12 @@ public class Acceptor implements Application {
         return timeToBeRemoved;
     }
 
+    /**
+     * Checks if the order lists contains a specific ClOrdID
+     * @param side
+     * @param orderId
+     * @return
+     */
     private boolean containsOrder(CharField side, String orderId) {
         if (side.getValue() == (Side.BUY)) {
             return this.mainController.getBuy().stream().anyMatch(b -> b.getClOrdID().equals(orderId));
@@ -356,6 +396,11 @@ public class Acceptor implements Application {
         }
     }
 
+    /**
+     * Checks if the initiatior has sent a duplicated ClOrdID
+     * @param clOrdID
+     * @return
+     */
     private boolean duplicatedOrderId(StringField clOrdID) {
         return this.mainController.getBuy().stream().anyMatch(b -> b.getClOrdID().equals(clOrdID.getValue()))
             || this.mainController.getSell().stream().anyMatch(s -> s.getClOrdID().equals(clOrdID.getValue()))
@@ -363,6 +408,14 @@ public class Acceptor implements Application {
             || s.getSellID().equals(clOrdID.getValue()));
     }
 
+    /**
+     * Checks if the request needs to be rejected and sent a message
+     * to the initiator
+     * @param rejResponseTo
+     * @param cxlRejReason
+     * @param origClOrdID
+     * @return
+     */
     private Message rejectOrder(int rejResponseTo, int cxlRejReason, String origClOrdID) {
         String clOrdId = RandomStringUtils.randomAlphanumeric(5);
         OrderCancelReject orderCancelReject = new OrderCancelReject();
@@ -386,6 +439,11 @@ public class Acceptor implements Application {
         return orderCancelReject;
     }
 
+    /**
+     * Adds new order to order lists used along with tableviews
+     * @param side
+     * @param order
+     */
     private void addNewOrder(CharField side, Order order) {
         if (side.getValue() == (Side.BUY)) {
             this.mainController.addBuy(order);
@@ -395,6 +453,19 @@ public class Acceptor implements Application {
         this.mainController.setChanged(true);
     }
 
+    /**
+     * When a Cancel Request was sent, it looks for trade
+     * and returns Execution Reports
+     * @param origClOrdID
+     * @param clOrdID
+     * @param orderId
+     * @param execId
+     * @param symbol
+     * @param side
+     * @param size
+     * @param price
+     * @return
+     */
     public ExecutionReport cancelOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol, CharField side, DoubleField size, DoubleField price) {
         if (side.getValue() == (Side.BUY)) {
             if (origClOrdID == null) {
@@ -417,6 +488,20 @@ public class Acceptor implements Application {
         return lookForNewTrade(clOrdID, orderId, execId, symbol, side, size, price);
     }
 
+    /**
+     * When an Order Cancel/Replace Request was sent, it looks
+     * for trade matching and returns Execution Reports
+     * @param origClOrdID
+     * @param clOrdID
+     * @param orderId
+     * @param execId
+     * @param symbol
+     * @param side
+     * @param size
+     * @param priceOrder
+     * @param order
+     * @return
+     */
     private ExecutionReport replaceOrder(StringField origClOrdID, StringField clOrdID, String orderId, String execId, StringField symbol,
                                          CharField side, DoubleField size, DoubleField priceOrder, Order order) {
         if (side.getValue() == Side.BUY) {
@@ -439,6 +524,18 @@ public class Acceptor implements Application {
         return lookForNewTrade(clOrdID, orderId, execId, symbol, side, size, priceOrder);
     }
 
+    /**
+     * Checks two orders (buy and side) to see if their prices match
+     * If so, it looks for full fill or partial fill
+     * @param clOrdID
+     * @param ordId
+     * @param execId
+     * @param symbol
+     * @param side
+     * @param price
+     * @param ordQty
+     * @return
+     */
     private ExecutionReport lookForNewTrade(StringField clOrdID, String ordId, String execId, StringField symbol, CharField side, DoubleField price, DoubleField ordQty) {
         try {
             Order topBuy = this.mainController.getBuy().size() > 0 ? this.mainController.getOrderedBuy().get(0) : null;
@@ -454,27 +551,6 @@ public class Acceptor implements Application {
                         return handlePartialFill(clOrdID, ordId, execId, symbol, side, price, topBuy, topSell, topBuyClientID, topSellClientID);
                     }
                 }
-//                else if (areTimeInForceFOKorIOC(topBuy, topSell)) {
-////                    Action action = new Action(Constants.Type.CANCELED, topBuy.getClOrdID(), topSell.getClOrdID(), topBuyClientID,
-////                        topBuy.getTimeInForce(), topSell.getTimeInForce(), topSellClientID, Utils.getFormattedStringDate(), 0d, topSell.getOrderQty(), 0d, topSell.getPrice());
-//                    Action action = new Action.ActionBuilder()
-//                        .type(Constants.Type.CANCELED)
-//                        .buyID(topBuy.getClOrdID())
-//                        .sellID(topSell.getClOrdID())
-//                        .buyClientID(topBuyClientID)
-//                        .sellClientID(topSellClientID)
-//                        .timeInForceBuy(topBuy.getTimeInForce())
-//                        .timeInForceSell(topSell.getTimeInForce())
-//                        .time(Utils.getFormattedStringDate())
-//                        .sellSize(topSell.getOrderQty())
-//                        .agreedPrice(topSell.getPrice())
-//                        .build();
-//
-//                    addAction(topBuy, topSell, action);
-//                    topBuy.setRemoved(true);
-//                    topSell.setRemoved(true);
-//                    return generateExecReport(ExecType.CANCELED, clOrdID, ordId, execId, symbol, side, price, new DoubleField(0));
-//                }
             } else {
                 if (topBuy != null && isTimeInForceFOKorIOC(topBuy)) {
                     Action action = new Action.ActionBuilder()
@@ -515,6 +591,21 @@ public class Acceptor implements Application {
         return null;
     }
 
+    /**
+     * Acts every time the price of both sell and buy orders matches,
+     * but not the qty
+     * @param clOrdID
+     * @param ordId
+     * @param execId
+     * @param symbol
+     * @param side
+     * @param price
+     * @param topBuy
+     * @param topSell
+     * @param topBuyClientID
+     * @param topSellClientID
+     * @return
+     */
     private ExecutionReport handlePartialFill(StringField clOrdID, String ordId, String execId, StringField symbol, CharField side,
                                               DoubleField price, Order topBuy, Order topSell, String topBuyClientID, String topSellClientID) {
         logger.info("################################ TRADE PARTIAL FILL");
@@ -604,6 +695,12 @@ public class Acceptor implements Application {
         return generateExecReport(ExecType.PARTIAL_FILL, clOrdID, ordId, execId, symbol, side, price, new DoubleField(leaveQty.intValue()));
     }
 
+    /**
+     * Adds action object to tableView
+     * @param topBuy
+     * @param topSell
+     * @param action
+     */
     public void addAction(Order topBuy, Order topSell, Action action) {
         this.mainController.actionTableView.getItems().add(action);
         this.mainController.reorderActionTableView();
@@ -612,24 +709,63 @@ public class Acceptor implements Application {
         this.mainController.reorderBookSellTableView();
     }
 
+    /**
+     * @deprecated
+     * @param buy
+     * @param sell
+     * @return
+     */
+    @Deprecated
     private boolean areTimeInForceFOKorIOC(Order buy, Order sell) {
         return isTimeInForceFOK(buy) || isTimeInForceFOK(sell) || isTimeInForceIOC(buy) || isTimeInForceIOC(sell);
     }
 
+    /**
+     * Checks if the TimeInForce of an order is Fill or Kill
+     * @param order
+     * @return
+     */
     private boolean isTimeInForceFOK(Order order) {
         if (order == null || order.getTimeInForce() == null) return false;
         return order.getTimeInForce().equals(Constants.TIME_IN_FORCE.getContent(TimeInForce.FILL_OR_KILL));
     }
 
+    /**
+     * Checks if the TimeInForce of an order is Immediate or Cancel
+     * @param order
+     * @return
+     */
     private boolean isTimeInForceIOC(Order order) {
         if (order == null || order.getTimeInForce() == null) return false;
         return order.getTimeInForce().equals(Constants.TIME_IN_FORCE.getContent(TimeInForce.IMMEDIATE_OR_CANCEL));
     }
 
+    /**
+     * Checks if the TimeInForce of an order is Fill or Kill
+     * or Immediate or Cancel
+     * @param order
+     * @return
+     */
     private boolean isTimeInForceFOKorIOC(Order order) {
         return isTimeInForceFOK(order) || isTimeInForceIOC(order);
     }
 
+    /**
+     * Acts every time the price of both sell and buy orders matches,
+     * as well as their qty
+     * @param clOrdID
+     * @param ordId
+     * @param execId
+     * @param symbol
+     * @param side
+     * @param price
+     * @param ordQty
+     * @param topBuy
+     * @param topSell
+     * @param topBuyClientID
+     * @param topSellClientID
+     * @return
+     */
     private ExecutionReport handleFullFill(StringField clOrdID, String ordId, String execId, StringField symbol, CharField side,
                                            DoubleField price, DoubleField ordQty, Order topBuy, Order topSell, String topBuyClientID, String topSellClientID) {
         logger.info("################################ TRADE FILL");
@@ -660,10 +796,12 @@ public class Acceptor implements Application {
         return generateExecReport(ExecType.FILL, clOrdID, ordId, execId, symbol, side, ordQty, price);
     }
 
-    private String getClientID(Order topBuy) {
-        return topBuy.getClientID();
-    }
 
+    /**
+     * Logs current state of the orderbook
+     * @param buy
+     * @param sell
+     */
     private void printTrade(Order buy, Order sell) {
         System.out.print("\n\n");
         Constants.orderBook.info("=================================================================================");

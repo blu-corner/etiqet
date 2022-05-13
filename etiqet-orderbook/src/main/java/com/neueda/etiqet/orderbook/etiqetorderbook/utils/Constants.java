@@ -121,6 +121,13 @@ public class Constants {
     public static final String FXML_FIXDECODER = "/fxml/fixdecoder.fxml";
     public static final String FXML_MAIN = "/fxml/main.fxml";
     public static final String FXML_INITIATOR_CONFIG_WINDOW = "/fxml/initiatorConfigWindow.fxml";
+    public static final String DEFAULT_FIX_VERSION = "FIX.4.4";
+    public static final String DEFAULT_SERVER_COMP_ID = "SERVER";
+    public static final String DEFAULT_TARGET_COMP_ID = "CLIENT";
+    public static final String DEFAULT_CONF_FILE_STORE_PATH = "stores/acceptor/store";
+    public static final String DEFAULT_CONF_FILE_LOG_PATH = "logs/acceptor/log";
+    public static final String DEFAULT_CONF_DATA_DIC = "spec/FIX44.xml";
+    public static final String DEFAULT_CONF_TIME = "00:00:00";
 
     static {
         hmTagValue = new HashMap<>();

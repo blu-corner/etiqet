@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.Message;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,9 +29,19 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Multiple methods shared by different classes
+ * TODO: divide into several classes by functionality
+ */
 public class Utils {
 
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
     static DecimalFormat integerFormat = new DecimalFormat("#");
+    static DecimalFormat decimalFormat = new DecimalFormat("#.0###");
+
+    /**
+     * TextField validation utility
+     */
     private static final TextFormatter<Object> integerTextFormatter = new TextFormatter<>(change -> {
         if (change.getControlNewText().isEmpty()) {
             return change;
@@ -46,7 +55,9 @@ public class Utils {
             return change;
         }
     });
-    static DecimalFormat decimalFormat = new DecimalFormat("#.0###");
+    /**
+     * TextField validation utility
+     */
     private static final TextFormatter<Object> decimalTextFormatter = new TextFormatter<>(change -> {
         if (change.getControlNewText().isEmpty()) {
             return change;
@@ -60,17 +71,33 @@ public class Utils {
             return change;
         }
     });
-    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
+    /**
+     * In FIX message replaces SOH with vertical bar
+     * @param message
+     * @return
+     */
     public static String replaceSOH(Message message) {
         String content = message.toString();
         return content.replace(Constants.SOH, Constants.VERTICAL_BAR);
     }
 
+    /**
+     * In FIX message replaces vertical bar with SOH
+     * @param message
+     * @return
+     */
     public static String replaceVerticalBar(String message) {
         return message.replace(Constants.VERTICAL_BAR, Constants.SOH) + Constants.SOH;
     }
 
+    /**
+     * @deprecated
+     * Checks if the String can be parsed to number without exception
+     * @param value
+     * @return
+     */
+    @Deprecated
     public static boolean isNumber(String value) {
         try {
             return StringUtils.isNumeric(value);
@@ -79,6 +106,11 @@ public class Utils {
         }
     }
 
+    /**
+     * Checks if a particular port is being used
+     * @param port
+     * @return
+     */
     public static boolean availablePort(int port) {
         ServerSocket socket = null;
         DatagramSocket datagramSocket = null;
@@ -104,12 +136,23 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Returns the Stage from an ActionEvent
+     * @param actionEvent
+     * @return
+     */
     public static Stage getStage(ActionEvent actionEvent) {
         final Node source = (Node) actionEvent.getSource();
         final Stage stage = (Stage) source.getScene().getWindow();
         return stage;
     }
 
+    /**
+     * Gets configuraton from cfg files
+     * @param role
+     * @param field
+     * @return
+     */
     public static String getConfig(String role, String field) {
         try {
             List<String> lines;
@@ -124,6 +167,12 @@ public class Utils {
         return StringUtils.EMPTY;
     }
 
+    /**
+     * Logic related to configuration reading
+     * @param lines
+     * @param field
+     * @return
+     */
     private static String getValueFromConfig(List<String> lines, String field) {
         String value = StringUtils.EMPTY;
         if (field.equals(Constants.CONF_DATA_DIC)) {
@@ -142,6 +191,12 @@ public class Utils {
         return value;
     }
 
+    /**
+     * Shared by multiple comboboxes to get default values
+     * @param role
+     * @param field
+     * @return
+     */
     public static int getComboConfigValue(String role, String field) {
         String value = getConfig(role, field);
         if (StringUtils.isEmpty(value)) return -1;
@@ -153,6 +208,11 @@ public class Utils {
         }
     }
 
+    /**
+     * Uses Constant.hmTagValue gets the key from the value
+     * @param value
+     * @return
+     */
     public static String getKeyFromValue(String value) {
         Optional<Integer> key = Constants.hmTagValue.entrySet()
             .stream()
@@ -167,6 +227,11 @@ public class Utils {
         }
     }
 
+    /**
+     * List of Tag objects -> String message
+     * @param tags
+     * @return
+     */
     public static String fixEncoder(List<Tag> tags) {
         StringBuilder encodedFix = new StringBuilder();
         String beginStringTag = tags.stream().filter(t -> t.getKey().equals(Constants.KEY_BEGIN_STRING)).findFirst().get().getValue();
@@ -188,6 +253,11 @@ public class Utils {
         return encodedFix.toString();
     }
 
+    /**
+     * FIX BodyLenght generator
+     * @param tags
+     * @return
+     */
     public static int bodyLenghtCalculator(List<Tag> tags) {
         int acum = 0;
         for (Tag tag : tags) {
@@ -199,6 +269,11 @@ public class Utils {
         return acum;
     }
 
+    /**
+     * FIX Checksum generator
+     * @param fixMessage
+     * @return
+     */
     public static String checksumCalculator(String fixMessage) {
         int acum = 0, checksum = 0;
         String replaced = fixMessage.replace(Constants.VERTICAL_BAR, Constants.SOH);
@@ -211,16 +286,28 @@ public class Utils {
 
     }
 
+    /**
+     * Numeric textfield control: integer values
+     * @param textField
+     */
     public static void configureTextFieldToAcceptOnlyIntegerValues(TextField textField) {
         if (textField != null)
             textField.setTextFormatter(integerTextFormatter);
     }
 
+    /**
+     * Numeric textfield control: decimal values
+     * @param textField
+     */
     public static void configureTextFieldToAcceptOnlyDecimalValues(TextField textField) {
         if (textField != null)
             textField.setTextFormatter(decimalTextFormatter);
     }
 
+    /**
+     * Current Date
+     * @return
+     */
     public static Date getFormattedDate() {
         String pattern = "yyyyMMdd-HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -233,6 +320,11 @@ public class Utils {
         return date;
     }
 
+    /**
+     * String -> Date
+     * @param stringDate
+     * @return
+     */
     public static Date getFormattedDate(String stringDate) {
         String pattern = "yyyyMMdd-HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -245,6 +337,10 @@ public class Utils {
         return null;
     }
 
+    /**
+     * Current formatted datetime string
+     * @return
+     */
     public static String getFormattedStringDate() {
         String pattern = "yyyyMMdd-HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -252,6 +348,11 @@ public class Utils {
         return date;
     }
 
+    /**
+     * Date -> String formatted date
+     * @param date
+     * @return
+     */
     public static String getFormattedStringDate(Date date) {
         String pattern = "yyyyMMdd-HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -259,6 +360,11 @@ public class Utils {
         return rdate;
     }
 
+    /**
+     * Format datetime string
+     * @param stringDate
+     * @return
+     */
     public static String getFormattedStringDate(String stringDate) {
         String pattern = "yyyyMMdd-HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -271,6 +377,11 @@ public class Utils {
         return null;
     }
 
+    /**
+     * LocalDateTime -> String date time
+     * @param localDateTime
+     * @return
+     */
     public static String getFormattedDateFromLocalDateTime(LocalDateTime localDateTime) {
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         String pattern = "yyyyMMdd-HH:mm:ss";
@@ -278,6 +389,11 @@ public class Utils {
         return simpleDateFormat.format(date);
     }
 
+    /**
+     * LocalDateTime -> String only time
+     * @param localDateTime
+     * @return
+     */
     public static String getFormattedTimeFromLocalTime(LocalDateTime localDateTime) {
         Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
         String pattern = "HH:mm:ss";
@@ -285,7 +401,12 @@ public class Utils {
         return simpleDateFormat.format(date);
     }
 
-
+    /**
+     * Reads .cfg files
+     * @param role
+     * @return
+     * @throws IOException
+     */
     public static List<String> readConfigFile(String role) throws IOException {
         String insideConfig, outsideConfig;
         if (role.equals(Constants.INITIATOR_ROLE)) {

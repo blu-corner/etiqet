@@ -9,6 +9,10 @@ import quickfix.field.BeginString;
 import quickfix.field.SenderCompID;
 import quickfix.field.TargetCompID;
 
+/**
+ * Used by Acceptor class to handle multiple quickfix acceptor creation
+ * Contains multiple properties related to every acceptor
+ */
 public class FixSession {
     private final MainController mainController;
     private Logger logger = LoggerFactory.getLogger(FixSession.class);
@@ -66,23 +70,28 @@ public class FixSession {
         this.socketAcceptor = socketAcceptor;
     }
 
+    /**
+     * TODO check if it is better to read default values from cfg file
+     * Start acceptor, sets default values
+     * @param port
+     */
     public void start(Integer port) {
         this.port = port;
         SessionSettings sessionSettings = new SessionSettings();
         sessionID = new SessionID(
-            new BeginString("FIX.4.4"),
-            new SenderCompID("SERVER"),
-            new TargetCompID("CLIENT" + port));
+            new BeginString(Constants.DEFAULT_FIX_VERSION),
+            new SenderCompID(Constants.DEFAULT_SERVER_COMP_ID),
+            new TargetCompID(Constants.DEFAULT_TARGET_COMP_ID + port));
         Dictionary dictionary = new Dictionary();
-        dictionary.setString(Constants.CONF_CONNECTION_TYPE, "acceptor");
+        dictionary.setString(Constants.CONF_CONNECTION_TYPE, Constants.ACCEPTOR_ROLE.toLowerCase());
         dictionary.setString(Constants.ACC_ACCEPT_PORT, String.valueOf(port));
-        dictionary.setString(Constants.CONF_FILE_STORE_PATH, "stores/acceptor/store" + port);
-        dictionary.setString(Constants.CONF_FILE_LOG_PATH, "logs/acceptor/log" + port);
-        dictionary.setString(Constants.CONF_DATA_DIC, "spec/FIX44.xml");
-        dictionary.setString(Constants.CONF_START_TIME, "00:00:00");
-        dictionary.setString(Constants.CONF_END_TIME, "00:00:00");
-        dictionary.setString(Constants.CONF_USE_DATA_DIC, "Y");
-        dictionary.setString(Constants.CONF_RESET_ON_LOGON, "Y");
+        dictionary.setString(Constants.CONF_FILE_STORE_PATH, Constants.DEFAULT_CONF_FILE_STORE_PATH + port);
+        dictionary.setString(Constants.CONF_FILE_LOG_PATH, Constants.DEFAULT_CONF_FILE_LOG_PATH + port);
+        dictionary.setString(Constants.CONF_DATA_DIC, Constants.DEFAULT_CONF_DATA_DIC);
+        dictionary.setString(Constants.CONF_START_TIME, Constants.DEFAULT_CONF_TIME);
+        dictionary.setString(Constants.CONF_END_TIME, Constants.DEFAULT_CONF_TIME);
+        dictionary.setString(Constants.CONF_USE_DATA_DIC, Constants.Y);
+        dictionary.setString(Constants.CONF_RESET_ON_LOGON, Constants.N);
         try {
             sessionSettings.set(sessionID, dictionary);
             MessageStoreFactory messageStoreFactory = new FileStoreFactory(sessionSettings);
@@ -98,12 +107,14 @@ public class FixSession {
         }
     }
 
-
+    /**
+     * Stops current acceptor
+     */
     public void stop() {
         try {
             this.socketAcceptor.stop();
         } catch (Exception e) {
-
+            this.logger.warn("Exception in FixSession::stop -> {}", e.getLocalizedMessage());
         }
     }
 

@@ -16,6 +16,9 @@ import quickfix.fix44.NewOrderSingle;
 import quickfix.fix44.OrderCancelReplaceRequest;
 import quickfix.fix44.OrderCancelRequest;
 
+/**
+ * Initiator class: implement quickfix Application interface
+ */
 public class Initator implements Application {
 
     public static String size;
@@ -58,28 +61,33 @@ public class Initator implements Application {
     @Override
     public void toAdmin(Message message, SessionID sessionID) {
         this.logger.info("[>>>>OUT>>>]:toAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
-        this.messageAnalizer(message, Constants.OUT);
+        this.addsMessageToLogView(message, Constants.OUT);
     }
 
     @Override
     public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
         this.logger.info("[<<<<<IN<<<]:fromAdmin -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
-        this.messageAnalizer(message, Constants.IN);
+        this.addsMessageToLogView(message, Constants.IN);
     }
 
     @Override
     public void toApp(Message message, SessionID sessionID) throws DoNotSend {
         this.logger.info("[>>>>OUT>>>]:toApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
-        this.messageAnalizer(message, Constants.OUT);
+        this.addsMessageToLogView(message, Constants.OUT);
     }
 
     @Override
     public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
         this.logger.info("[<<<<<IN<<<]:fromApp -> message: {} / sessionID: {}", Utils.replaceSOH(message), sessionID);
-        this.messageAnalizer(message, Constants.IN);
+        this.addsMessageToLogView(message, Constants.IN);
     }
 
-    public void messageAnalizer(Message message, String direction) {
+    /**
+     * Analyzes and adds message to Log view
+     * @param message
+     * @param direction
+     */
+    public void addsMessageToLogView(Message message, String direction) {
         try {
             IntField msgSeqNum = message.getHeader().getField(new MsgSeqNum());
             String strMsgSeqNum = "[" + msgSeqNum + "]";
@@ -115,6 +123,12 @@ public class Initator implements Application {
 
     }
 
+    /**
+     * Gets text for msgTypeDescription
+     * @param message
+     * @return
+     * @throws FieldNotFound
+     */
     private String getText(Message message) throws FieldNotFound {
         try {
             StringField text = message.getField(new Text());
@@ -125,6 +139,15 @@ public class Initator implements Application {
 
     }
 
+    /**
+     * Sends New Order Single Request to Acceptor
+     * @param size
+     * @param price
+     * @param orderId
+     * @param side
+     * @param comboTimeInForceValue
+     * @param expireDate
+     */
     public void sendNewOrderSingle(String size, String price, String orderId, char side, char comboTimeInForceValue, String expireDate) {
         NewOrderSingle newOrderSingle = new NewOrderSingle();
         newOrderSingle.set(new OrderQty(Double.parseDouble(size)));
@@ -147,6 +170,12 @@ public class Initator implements Application {
         }
     }
 
+    /**
+     *  Sends Order Cancel Request to Acceptor
+     * @param orderOd
+     * @param origOrderOd
+     * @param side
+     */
     public void sendOrderCancelRequest(String orderOd, String origOrderOd, char side) {
         OrderCancelRequest orderCancelRequest = new OrderCancelRequest();
         orderCancelRequest.set(new Side(side));
@@ -162,6 +191,14 @@ public class Initator implements Application {
 
     }
 
+    /**
+     * Sends Order Cancel/Replace Request to Acceptor
+     * @param size
+     * @param price
+     * @param orderOd
+     * @param origOrderOd
+     * @param side
+     */
     public void sendOrderCancelReplaceRequest(String size, String price, String orderOd, String origOrderOd, char side) {
         OrderCancelReplaceRequest orderCancelReplaceRequest = new OrderCancelReplaceRequest();
         orderCancelReplaceRequest.set(new Side(side));

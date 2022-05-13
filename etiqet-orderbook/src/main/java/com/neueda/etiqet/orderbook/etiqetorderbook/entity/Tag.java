@@ -1,6 +1,8 @@
 package com.neueda.etiqet.orderbook.etiqetorderbook.entity;
 
-
+/**
+ * Tag used to encode/decode FIX messages
+ */
 public class Tag {
     private String key;
     private String field;
