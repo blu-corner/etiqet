@@ -153,8 +153,8 @@ public class ConfigController implements Initializable {
         tagList.add(new Tag(Constants.ACC_SOCKET_ACCEPT_PORT_RANGE_LIMIT, acceptorToPort.getText()));
         tagList.add(new Tag(Constants.CONF_FILE_STORE_PATH, acceptorStorePath.getText()));
         tagList.add(new Tag(Constants.CONF_FILE_LOG_PATH, acceptorLogPath.getText()));
-        tagList.add(new Tag(Constants.CONF_START_TIME, acceptorStartTime.getLocalTime().toString()));
-        tagList.add(new Tag(Constants.CONF_END_TIME, acceptorEndTime.getLocalTime().toString()));
+        tagList.add(new Tag(Constants.CONF_START_TIME, acceptorStartTime.getLocalTime().toString() + ":00"));
+        tagList.add(new Tag(Constants.CONF_END_TIME, acceptorEndTime.getLocalTime().toString() + ":00"));
         tagList.add(new Tag(Constants.CONF_USE_DATA_DIC, acceptorUseDataDic.getSelectionModel().getSelectedItem()));
         tagList.add(new Tag(Constants.CONF_HEART_BT_INT, acceptorHeartBeat.getText()));
         tagList.add(new Tag(Constants.CONF_RESET_ON_LOGON, acceptorResetOnLogon.getSelectionModel().getSelectedItem()));
@@ -186,8 +186,8 @@ public class ConfigController implements Initializable {
         tagList.add(new Tag(Constants.INI_CONNECT_PORT, initiatorConnectPort.getText()));
         tagList.add(new Tag(Constants.CONF_FILE_STORE_PATH, initiatorStorePath.getText()));
         tagList.add(new Tag(Constants.CONF_FILE_LOG_PATH, initiatorLogPath.getText()));
-        tagList.add(new Tag(Constants.CONF_START_TIME, initiatorStartTime.getLocalTime().toString()));
-        tagList.add(new Tag(Constants.CONF_END_TIME, initiatorEndTime.getLocalTime().toString()));
+        tagList.add(new Tag(Constants.CONF_START_TIME, initiatorStartTime.getLocalTime().toString()+ ":00"));
+        tagList.add(new Tag(Constants.CONF_END_TIME, initiatorEndTime.getLocalTime().toString() + ":00"));
         tagList.add(new Tag(Constants.CONF_USE_DATA_DIC, initiatorUseDataDic.getSelectionModel().getSelectedItem()));
         tagList.add(new Tag(Constants.CONF_HEART_BT_INT, initiatorHeartBeat.getText()));
         tagList.add(new Tag(Constants.CONF_RESET_ON_LOGON, initiatorResetOnLogon.getSelectionModel().getSelectedItem()));
