@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="305.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.OrderDetailsController">
+   <children>
+      <TableView fx:id="tableViewDetails" layoutX="7.0" layoutY="8.0" prefHeight="290.0" prefWidth="505.0">
+        <columns>
+          <TableColumn fx:id="columnField" prefWidth="250.0" text="Field" />
+          <TableColumn fx:id="columnValue" minWidth="0.0" prefWidth="250.0" text="Value" />
+        </columns>
+      </TableView>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</AnchorPane>

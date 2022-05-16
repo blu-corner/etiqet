@@ -30,6 +30,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -48,6 +49,7 @@ import quickfix.field.*;
 import quickfix.fix44.Logon;
 import quickfix.fix44.Logout;
 import quickfix.fix44.SequenceReset;
+
 import java.awt.*;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -116,6 +118,16 @@ public class MainController implements Initializable {
     public Label labelClock;
     public TextField textFieldExpireDate;
     public List<FixSession> fixSessions;
+    public MenuItem menuItemQuit;
+    public MenuItem menuItemStop;
+    public MenuItem quitApplication;
+    public MenuItem menuItemAcceptorConfiguration;
+    public MenuItem menuItemInitiatorConfiguration;
+    public Menu menuFile;
+    public Menu menuSession;
+    public Menu menuConf;
+    public Menu menuOptions;
+    public Menu menuHelp;
     Logger logger = LoggerFactory.getLogger(MainController.class);
     private SocketInitiator socketInitiator;
     private SessionID sessionId;
@@ -235,6 +247,18 @@ public class MainController implements Initializable {
         comboBoxTimeInForce.getItems().addAll(Constants.TIME_IN_FORCE.getContents());
         comboBoxTimeInForce.getSelectionModel().select(0);
 
+        configureAccelerators();
+
+
+    }
+
+    private void configureAccelerators() {
+        menuItemStop.setAccelerator(KeyCombination.keyCombination("shortcut+W"));
+        startAcceptor.setAccelerator(KeyCombination.keyCombination("shortcut+A"));
+        startInitiator.setAccelerator(KeyCombination.keyCombination("shortcut+I"));
+        menuItemAcceptorConfiguration.setAccelerator(KeyCombination.keyCombination("alt+A"));
+        menuItemInitiatorConfiguration.setAccelerator(KeyCombination.keyCombination("alt+I"));
+        quitApplication.setAccelerator(KeyCombination.keyCombination("shortcut+Q"));
     }
 
     /**
@@ -253,6 +277,7 @@ public class MainController implements Initializable {
     /**
      * Reads the clicked row and turns the fix message
      * into a list a fix tags
+     *
      * @param targetString
      * @return
      */
@@ -265,7 +290,7 @@ public class MainController implements Initializable {
             String[] keyValue = field.split("=");
             Tag newTag = new Tag();
             String key = keyValue[0];
-            String value = !key.equals("58") ? keyValue[1] : String.format("%s=%s", keyValue[1] ,keyValue[2]);
+            String value = !key.equals("58") ? keyValue[1] : String.format("%s=%s", keyValue[1], keyValue[2]);
             newTag.setKey(key);
             newTag.setField(Constants.hmTagValue.get(Integer.valueOf(key)));
             newTag.setValue(value);
@@ -278,6 +303,7 @@ public class MainController implements Initializable {
 
     /**
      * Removes [>>>IN>>>] and [>>>OUT>>>] from fix message
+     *
      * @param targetString
      * @return
      */
@@ -293,6 +319,7 @@ public class MainController implements Initializable {
     /**
      * TODO extends functinality of this method
      * Add additional information in tableView in decoder
+     *
      * @param tag
      * @param value
      * @return
@@ -309,10 +336,9 @@ public class MainController implements Initializable {
     }
 
 
-
     /**
-     * @deprecated
      * @param directory
+     * @deprecated
      */
     @Deprecated
     private void deleteDir(String directory) {
@@ -329,6 +355,7 @@ public class MainController implements Initializable {
     /**
      * Start the application with Acceptor role
      * Includes instantiation of List of multiple acceptors
+     *
      * @param actionEvent
      */
     public void startAcceptor(ActionEvent actionEvent) {
@@ -360,6 +387,7 @@ public class MainController implements Initializable {
 
     /**
      * Starts the application with Initiator role
+     *
      * @param actionEvent
      */
     public void startInitiator(ActionEvent actionEvent) {
@@ -507,6 +535,7 @@ public class MainController implements Initializable {
 
     /**
      * Called at start Initiator. Sends a Logon object to the Acceptor
+     *
      * @throws SessionNotFound
      */
     private void sendLogonRequest() throws SessionNotFound {
@@ -521,8 +550,9 @@ public class MainController implements Initializable {
 
     /**
      * TODO finish functionality
-     * @deprecated
+     *
      * @throws SessionNotFound
+     * @deprecated
      */
     @Deprecated
     private void sendSeqReset() throws SessionNotFound {
@@ -549,6 +579,7 @@ public class MainController implements Initializable {
     /**
      * TODO finish functionality
      * Sends logout to the acceptor
+     *
      * @throws SessionNotFound
      */
     private void sendLogoutRequest() throws SessionNotFound {
@@ -559,6 +590,7 @@ public class MainController implements Initializable {
 
     /**
      * Returns ContextMenu used in ListView log
+     *
      * @return
      */
     private ContextMenu getLogContextMenu() {
@@ -577,7 +609,7 @@ public class MainController implements Initializable {
             String row = removeOutInInfoFromFixString(listViewLog.getSelectionModel().getSelectedItem().toString());
             content.putString(row);
             clipboard.setContent(content);
-            showCopiedPopUp("Row copied");
+            showPopUp("Row copied");
         });
 
         return contextMenu;
@@ -585,6 +617,7 @@ public class MainController implements Initializable {
 
     /**
      * Returns ContextMenu used by order TableView
+     *
      * @param side
      * @return
      */
@@ -593,38 +626,80 @@ public class MainController implements Initializable {
         Menu menuCopy = new Menu("Copy");
         MenuItem menuItemCopyOrderID = new MenuItem("ClOrdID");
         MenuItem menuItemCancel = new MenuItem("Cancel Order");
+        MenuItem menuItemDetails = new MenuItem("Details");
+
 
         menuCopy.getItems().add(menuItemCopyOrderID);
         contextMenu.getItems().add(menuCopy);
         contextMenu.getItems().add(menuItemCancel);
+        contextMenu.getItems().add(menuItemDetails);
 
         menuItemCancel.setOnAction((event) -> contextMenuCancelAction(side));
+        menuItemCopyOrderID.setOnAction(e -> contextMenuCopyAction(side));
+        menuItemDetails.setOnAction(e -> contextMenuDetailsAction(side));
 
-        menuItemCopyOrderID.setOnAction(e -> {
-            Order selectedOrder;
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
-            if (side.equals(Constants.SIDE_ENUM.BUY)) {
-                selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
-            } else {
-                selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
-            }
-            content.putString(selectedOrder.getClOrdID());
-
-            showCopiedPopUp("ClOrdID Copied");
-
-            clipboard.setContent(content);
-        });
 
         return contextMenu;
     }
 
     /**
+     * Show order details when clicked on context menu
+     *
+     * @param side
+     */
+    private void contextMenuDetailsAction(Constants.SIDE_ENUM side) {
+        Order order;
+        if (side.equals(Constants.SIDE_ENUM.BUY)){
+            order = orderBookBuyTableView.getSelectionModel().getSelectedItem();
+        }else{
+            order = orderBookSellTableView.getSelectionModel().getSelectedItem();
+        }
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource(Constants.FXML_DETAILS));
+            Parent root = fxmlLoader.load();
+            OrderDetailsController orderDetailsController = fxmlLoader.getController();
+            orderDetailsController.injectOrder(order);
+            Stage stage = new Stage();
+            stage.setTitle(Constants.FIX_DETAILS_TITLE);
+            stage.getIcons().add(Constants.ICON);
+            stage.setScene(new Scene(root));
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Copies value when clicked on context menu
+     *
+     * @param side
+     */
+    private void contextMenuCopyAction(Constants.SIDE_ENUM side) {
+        Order selectedOrder;
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        final ClipboardContent content = new ClipboardContent();
+        if (side.equals(Constants.SIDE_ENUM.BUY)) {
+            selectedOrder = orderBookBuyTableView.getSelectionModel().getSelectedItem();
+        } else {
+            selectedOrder = orderBookSellTableView.getSelectionModel().getSelectedItem();
+        }
+        content.putString(selectedOrder.getClOrdID());
+
+        showPopUp("ClOrdID Copied");
+
+        clipboard.setContent(content);
+    }
+
+    /**
      * Shows new popup when a value is copied
      * in order tableView
+     *
      * @param message
      */
-    private void showCopiedPopUp(String message) {
+    private void showPopUp(String message) {
         Label label = new Label(message);
         label.setStyle("-fx-background-radius: 6;" +
             "-fx-background-color: rgb(45, 45, 50), rgb(60, 60, 65);" +
@@ -640,6 +715,7 @@ public class MainController implements Initializable {
 
     /**
      * Shows alert if you try to cancel order from Acceptor
+     *
      * @param side
      */
     private void contextMenuCancelAction(Constants.SIDE_ENUM side) {
@@ -681,6 +757,7 @@ public class MainController implements Initializable {
 
     /**
      * Add order side buy and sort buy tableView
+     *
      * @param buy
      */
     public void addBuy(Order buy) {
@@ -689,7 +766,8 @@ public class MainController implements Initializable {
     }
 
     /**
-     *Add order side sell and sort sell tableView
+     * Add order side sell and sort sell tableView
+     *
      * @param sell
      */
     public void addSell(Order sell) {
@@ -700,6 +778,7 @@ public class MainController implements Initializable {
     /**
      * Returns sorted buy order list
      * The greatest price first
+     *
      * @return
      */
     public List<Order> getOrderedBuy() {
@@ -709,6 +788,7 @@ public class MainController implements Initializable {
     /**
      * Returns sorted sell order list
      * The lowest price first
+     *
      * @return
      */
     public List<Order> getOrderedSell() {
@@ -717,6 +797,7 @@ public class MainController implements Initializable {
 
     /**
      * Returns sorted tableview action items
+     *
      * @return
      */
     public List<Action> getOrderedTrades() {
@@ -756,6 +837,7 @@ public class MainController implements Initializable {
 
     /**
      * Sends new transaction to the Acceptor
+     *
      * @param actionEvent
      */
     public void sendOrder(ActionEvent actionEvent) {
@@ -787,6 +869,7 @@ public class MainController implements Initializable {
 
     /**
      * Clear all items in fix message log in initiator
+     *
      * @param event
      */
     public void clearMainLog(ActionEvent event) {
@@ -795,6 +878,7 @@ public class MainController implements Initializable {
 
     /**
      * Clear all items in fix message in main log
+     *
      * @param event
      */
     public void clearGlobalLog(ActionEvent event) {
@@ -803,8 +887,9 @@ public class MainController implements Initializable {
 
     /**
      * TODO check if necessary
-     * @deprecated
+     *
      * @param actionEvent
+     * @deprecated
      */
     public void setRememberPort(ActionEvent actionEvent) {
         EventTarget target = actionEvent.getTarget();
@@ -814,6 +899,7 @@ public class MainController implements Initializable {
 
     /**
      * Closes application
+     *
      * @param actionEvent
      */
     public void closeApplication(ActionEvent actionEvent) {
@@ -823,6 +909,7 @@ public class MainController implements Initializable {
 
     /**
      * Used from menuItem: removes only items in bid tableView
+     *
      * @param actionEvent
      */
     public void cleanBid(ActionEvent actionEvent) {
@@ -832,6 +919,7 @@ public class MainController implements Initializable {
 
     /**
      * Used from menuItem: removes only items in offer tableView
+     *
      * @param actionEvent
      */
     public void cleanOffer(ActionEvent actionEvent) {
@@ -841,6 +929,7 @@ public class MainController implements Initializable {
 
     /**
      * Used from menuItem: removes items in buy & sell tableView
+     *
      * @param actionEvent
      */
     public void cleanBidAndOffer(ActionEvent actionEvent) {
@@ -850,6 +939,7 @@ public class MainController implements Initializable {
 
     /**
      * Used from menuItem: removes items in action tableView
+     *
      * @param actionEvent
      */
     public void cleanTrades(ActionEvent actionEvent) {
@@ -858,6 +948,7 @@ public class MainController implements Initializable {
 
     /**
      * Used from menuItem: removes all items in all tableViews
+     *
      * @param actionEvent
      */
     public void cleanAll(ActionEvent actionEvent) {
@@ -867,6 +958,7 @@ public class MainController implements Initializable {
 
     /**
      * Used to auto generate next ClOrdID
+     *
      * @param actionEvent
      */
     public void setAutoGenValue(ActionEvent actionEvent) {
@@ -875,8 +967,9 @@ public class MainController implements Initializable {
 
     /**
      * TODO finish functionality
-     * @deprecated
+     *
      * @param actionEvent
+     * @deprecated
      */
     @Deprecated
     public void resetSequenceNumber(ActionEvent actionEvent) {
@@ -893,6 +986,7 @@ public class MainController implements Initializable {
 
     /**
      * Used in Help MenuItem: goes to FIX protocol web site
+     *
      * @param actionEvent
      */
     public void goToFixDoc(ActionEvent actionEvent) {
@@ -921,6 +1015,7 @@ public class MainController implements Initializable {
     /**
      * Disables Initiator and Acceptor tabs so they can't be changed
      * Forces Acceptor tab selection
+     *
      * @param actionEvent
      */
     public void startMultipleAcceptor(ActionEvent actionEvent) {
@@ -932,6 +1027,7 @@ public class MainController implements Initializable {
 
     /**
      * Handles listening on range of multiple ports
+     *
      * @param testRangeA
      * @param testRangeB
      * @return
@@ -983,6 +1079,7 @@ public class MainController implements Initializable {
 
     /**
      * Launches fix decoder view
+     *
      * @param tagList
      */
     public void launchDecoderWindow(List<Tag> tagList) {
@@ -1006,6 +1103,7 @@ public class MainController implements Initializable {
 
     /**
      * Launches initiator configuration view
+     *
      * @param actionEvent
      */
     public void launchInitiatorConfigWindow(ActionEvent actionEvent) {
@@ -1030,6 +1128,7 @@ public class MainController implements Initializable {
 
     /**
      * Launches acceptor configuration class
+     *
      * @param actionEvent
      */
     public void launchAcceptorConfigWindow(ActionEvent actionEvent) {
@@ -1054,6 +1153,7 @@ public class MainController implements Initializable {
 
     /**
      * Launch advanced request view
+     *
      * @param actionEvent
      */
     public void launchAdvancedRequest(ActionEvent actionEvent) {
@@ -1077,6 +1177,7 @@ public class MainController implements Initializable {
 
     /**
      * Copies last sent ClOrdID to proper TextView
+     *
      * @param actionEvent
      */
     public void buttonCopyLast(ActionEvent actionEvent) {
@@ -1085,6 +1186,7 @@ public class MainController implements Initializable {
 
     /**
      * Launches FileChooser to choose XML to import orders
+     *
      * @param actionEvent
      */
     public void actionMenuItemImport(ActionEvent actionEvent) {
@@ -1103,6 +1205,7 @@ public class MainController implements Initializable {
 
     /**
      * Import XML file with orders
+     *
      * @param selectedFile
      */
     private void importOrders(File selectedFile) {
@@ -1146,6 +1249,7 @@ public class MainController implements Initializable {
     /**
      * Launches FileChooser to export XML file with orders
      * in the current orderbook
+     *
      * @param actionEvent
      */
     public void actionMenuItemExport(ActionEvent actionEvent) {
@@ -1163,6 +1267,7 @@ public class MainController implements Initializable {
 
     /**
      * Export orders in current orderbook tables to XML file
+     *
      * @param selectedFile
      * @throws IOException
      */
@@ -1188,6 +1293,7 @@ public class MainController implements Initializable {
 
     /**
      * Selects all content in the textField
+     *
      * @param event
      */
     public void selectAllField(MouseEvent event) {
@@ -1232,6 +1338,7 @@ public class MainController implements Initializable {
      * Launches new Dialog object with DateTimePicker tool
      * Reacts to action in timeInForce combo, work along with comboTimeInForceMouse
      * to accomplish proper functionality
+     *
      * @param actionEvent
      */
     public void comboTimeInForceAction(ActionEvent actionEvent) {
@@ -1244,6 +1351,7 @@ public class MainController implements Initializable {
      * Launches new Dialog object with DateTimePicker tool
      * Reacts to action in timeInForce combo, work along with comboTimeInForceAction
      * to accomplish proper functionality
+     *
      * @param e
      */
     public void comboTimeInForceMouse(MouseEvent e) {

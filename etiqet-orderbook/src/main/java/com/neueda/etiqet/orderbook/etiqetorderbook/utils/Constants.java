@@ -70,6 +70,7 @@ public class Constants {
     public static final List<String> Y_N = Arrays.asList("Y", "N");
     public static final List<String> TIME_IN_FORCE_VALUES = Arrays.asList("Day (0)", "Good Till Cancel (1)", "At the opening (2)", "Immediate Or Cancel (3)", "Fill or Kill (4)", "At the close (7)");
     public static final String FIX_DECODER_TITLE = "FIX Decoder";
+    public static final String FIX_DETAILS_TITLE = "Order Details";
     public static final String FIX_4_0 = "FIX.4.0";
     public static final String FIX_4_1 = "FIX.4.1";
     public static final String FIX_4_2 = "FIX.4.2";
@@ -119,6 +120,7 @@ public class Constants {
     public static final String FXML_ACCEPTOR_CONFIG_WINDOW = "/fxml/acceptorConfigWindow.fxml";
     public static final String FXML_ADVANCED_REQUEST = "/fxml/advancedRequest.fxml";
     public static final String FXML_FIXDECODER = "/fxml/fixdecoder.fxml";
+    public static final String FXML_DETAILS = "/fxml/orderdetails.fxml";
     public static final String FXML_MAIN = "/fxml/main.fxml";
     public static final String FXML_INITIATOR_CONFIG_WINDOW = "/fxml/initiatorConfigWindow.fxml";
     public static final String DEFAULT_FIX_VERSION = "FIX.4.4";

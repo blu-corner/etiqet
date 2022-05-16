@@ -32,14 +32,14 @@
     <children>
         <MenuBar fx:id="menuBarGeneral" prefWidth="755.0">
             <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="File" fx:id="menuFile">
                     <items>
                   <MenuItem fx:id="menuItemImport" mnemonicParsing="false" onAction="#actionMenuItemImport" text="Import orders" />
                   <MenuItem fx:id="menuItemExport" mnemonicParsing="false" onAction="#actionMenuItemExport" text="Export orders" />
-                        <MenuItem fx:id="buttonCloseApplication" mnemonicParsing="false" onAction="#closeApplication" text="Close" />
+                        <MenuItem fx:id="quitApplication" mnemonicParsing="false" onAction="#closeApplication" text="Quit" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Session">
+                <Menu mnemonicParsing="false" text="Session" fx:id="menuSession">
                     <items>
                         <Menu mnemonicParsing="false" text="Role">
                             <items>
@@ -55,7 +55,7 @@
                                 </MenuItem>
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="Configuration">
+                        <Menu mnemonicParsing="false" text="Configuration" fx:id="menuConf">
                             <items>
                                 <MenuItem fx:id="menuItemAcceptorConfiguration" mnemonicParsing="false" onAction="#launchAcceptorConfigWindow" text="Acceptor configuration" />
                                 <MenuItem fx:id="menuItemInitiatorConfiguration" mnemonicParsing="false" onAction="#launchInitiatorConfigWindow" text="Initiator configuration" />
@@ -64,7 +64,7 @@
                         </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="menuItemReset" mnemonicParsing="false" onAction="#resetSequenceNumber" text="Reset" />
-                        <MenuItem mnemonicParsing="false" onAction="#stop" text="Stop" />
+                        <MenuItem fx:id="menuItemStop" mnemonicParsing="false" onAction="#stop" text="Stop" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false">
@@ -72,7 +72,7 @@
                         <Circle fx:id="circle" fill="#ff2d1f" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
                     </graphic>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Options">
+                <Menu mnemonicParsing="false" text="Options" fx:id="menuOptions">
                     <items>
                         <Menu mnemonicParsing="false" text="Clear">
                             <items>
@@ -85,7 +85,7 @@
                         </Menu>
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Help">
+                <Menu mnemonicParsing="false" text="Help" fx:id="menuHelp">
                     <items>
                         <MenuItem fx:id="menuItemFixDoc" mnemonicParsing="false" onAction="#goToFixDoc" text="FIX documentation" />
                     </items>
