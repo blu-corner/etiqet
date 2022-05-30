@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="521.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.DecoderController">
+   <children>
+      <TableView fx:id="tableViewDecoder" prefHeight="620.0" prefWidth="521.0">
+        <columns>
+          <TableColumn fx:id="tableColumnKey" prefWidth="75.0" text="Key" />
+          <TableColumn fx:id="tableColumnField" prefWidth="126.0" text="Field" />
+            <TableColumn fx:id="tableColumnValue" prefWidth="179.0" text="Value" />
+            <TableColumn fx:id="tableColumnMeaning" prefWidth="140.0" text="Meaning" />
+        </columns>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </TableView>
+   </children>
+</AnchorPane>

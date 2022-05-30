@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.AdvancedRequestController">
+   <children>
+      <ComboBox fx:id="comboFieldTags" layoutX="579.0" layoutY="14.0" onAction="#actionComboFieldTag" onMouseClicked="#setFocusedAllText" prefHeight="25.0" prefWidth="276.0" />
+      <Label layoutX="537.0" layoutY="18.0" prefHeight="17.0" prefWidth="27.0" text="Field" />
+      <TableView fx:id="tableViewTags" layoutX="27.0" layoutY="16.0" prefHeight="485.0" prefWidth="484.0">
+        <columns>
+          <TableColumn fx:id="tableColumnKey" prefWidth="60.0" text="Tag" />
+            <TableColumn fx:id="tableColumnField" prefWidth="197.0" text="Field" />
+          <TableColumn fx:id="tableColumnValue" minWidth="0.0" prefWidth="226.0" text="Value" />
+        </columns>
+      </TableView>
+      <Button fx:id="arButtonAdd" layoutX="577.0" layoutY="153.0" mnemonicParsing="false" onAction="#arButtonAdd" prefHeight="25.0" prefWidth="70.0" text="ADD" />
+      <Button fx:id="arButtonRemove" layoutX="783.0" layoutY="153.0" mnemonicParsing="false" onAction="#arButtonRemove" prefWidth="70.0" text="REMOVE" />
+      <Button fx:id="arButtonCancel" layoutX="682.0" layoutY="476.0" mnemonicParsing="false" onAction="#arButtonCancel" prefHeight="25.0" prefWidth="70.0" text="CANCEL" />
+      <Button fx:id="arButtonSend" layoutX="784.0" layoutY="476.0" mnemonicParsing="false" onAction="#arButtonSend" prefHeight="25.0" prefWidth="70.0" text="SEND" />
+      <Label layoutX="537.0" layoutY="109.0" prefHeight="17.0" prefWidth="36.0" text="Value" />
+      <TextField fx:id="arTextFieldValue" layoutX="577.0" layoutY="105.0" prefHeight="25.0" prefWidth="276.0" />
+      <TextArea fx:id="textAreaFix" layoutX="25.0" layoutY="533.0" prefHeight="68.0" prefWidth="729.0" />
+      <Button fx:id="arButtonClear" layoutX="681.0" layoutY="153.0" mnemonicParsing="false" onAction="#arButtonClear" prefHeight="25.0" prefWidth="70.0" text="CLEAR" />
+      <Button fx:id="arButtonUpdate" layoutX="784.0" layoutY="576.0" mnemonicParsing="false" onAction="#arButtonUpdate" prefHeight="25.0" prefWidth="70.0" text="UPDATE" />
+      <ComboBox fx:id="comboKeyTags" layoutX="579.0" layoutY="58.0" onAction="#actionComboKeysTag" onMouseClicked="#setFocusedAllText" prefHeight="25.0" prefWidth="276.0" />
+      <Label layoutX="539.0" layoutY="62.0" prefHeight="17.0" prefWidth="36.0" text="Key" />
+      <ComboBox fx:id="comboStoredOrigID" layoutX="680.0" layoutY="268.0" onAction="#actionComboStoredOrigID" onMouseClicked="#actionComboMouseStoredOrigID" prefHeight="25.0" prefWidth="173.0" />
+      <Button fx:id="arButtonAutoGenerateNewOrdID" layoutX="681.0" layoutY="213.0" mnemonicParsing="false" onAction="#setAutoGenValue" prefHeight="25.0" prefWidth="173.0" text="Auto-generate new ClOrdID" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import jfxtras.scene.control.LocalTimePicker?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="577.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.neueda.etiqet.orderbook.etiqetorderbook.controllers.ConfigController">
+   <children>
+      <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="407.0" prefWidth="585.0">
+         <children>
+            <VBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="399.0" prefWidth="131.0" spacing="30.0">
+               <children>
+                  <Label text="BeginString" />
+                  <Label text="Sender" />
+                  <Label text="Target" />
+                  <Label text="DataDictionary" />
+                  <Label text="SocketConnectHost" />
+                  <Label text="SocketConnectPort" />
+                  <Label text="FileStorePath" />
+                  <Label text="FileLogPath" />
+               </children>
+               <padding>
+                  <Insets left="10.0" top="20.0" />
+               </padding>
+            </VBox>
+            <VBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="376.0" prefWidth="134.0" spacing="22.0">
+               <children>
+                  <TextField fx:id="initiatorBeginString" />
+                  <TextField fx:id="initiatorSender" text="SERVER" />
+                  <TextField fx:id="initiatorTarget" text="CLIENT" />
+                  <ComboBox fx:id="initiatorDataDictionary" prefWidth="150.0" />
+                  <TextField fx:id="initiatorConnectHost" />
+                  <TextField fx:id="initiatorConnectPort" />
+                  <TextField fx:id="initiatorStorePath" />
+                  <TextField fx:id="initiatorLogPath" />
+               </children>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </VBox>
+            <VBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="470.0" prefWidth="131.0" spacing="30.0">
+               <children>
+                  <Label text="StartTime" />
+                  <Label text="EndTime" />
+                  <Label text="UseDataDictionary" />
+                  <Label text="HeartBtInt" />
+                  <Label text="ResetOnLogon" />
+                  <Label text="ResetOnLogout" />
+                  <Label text="ResetOnDisconnect" />
+               </children>
+               <padding>
+                  <Insets left="10.0" top="20.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </VBox>
+            <VBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="470.0" prefWidth="134.0" spacing="22.0">
+               <children>
+                  <LocalTimePicker fx:id="initiatorStartTime" prefHeight="9.0" prefWidth="134.0" />
+                  <LocalTimePicker fx:id="initiatorEndTime"/>
+<!--                  <TextField fx:id="initiatorStartTime" text="00:00:00" />-->
+<!--                  <TextField fx:id="initiatorEndTime" text="00:00:00" />-->
+                  <ComboBox fx:id="initiatorUseDataDic" prefWidth="150.0" />
+                  <TextField fx:id="initiatorHeartBeat" text="30" />
+                  <ComboBox fx:id="initiatorResetOnLogon" prefWidth="150.0" />
+                  <ComboBox fx:id="initiatorResetOnLogout" prefWidth="150.0" />
+                  <ComboBox fx:id="initiatorResetOnDisconnect" prefWidth="134.0" />
+                  <HBox prefHeight="41.0" prefWidth="134.0" spacing="10.0">
+                     <children>
+                        <Button contentDisplay="RIGHT" mnemonicParsing="false" onAction="#closeInitiatorConfig" prefHeight="25.0" prefWidth="75.0" text="CANCEL" />
+                        <Button contentDisplay="RIGHT" mnemonicParsing="false" onAction="#saveInitiatorConfig" prefHeight="25.0" prefWidth="77.0" text="SAVE" />
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets top="6.0" />
+               </padding>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
