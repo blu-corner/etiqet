@@ -1,3 +1,5 @@
+# PROJECT MOVED TO [Version1 Org/etiqet](https://github.com/Version1/etiqet). THIS REPOSITORY WILL NO LONGER BE MAINTAINED.
+
 [![Build Status](https://travis-ci.org/blu-corner/etiqet.svg?branch=master)](https://travis-ci.org/blu-corner/etiqet)
 [![Latest Version @ Cloudsmith](https://api-prd.cloudsmith.io/badges/version/neueda/etiqet/maven/etiqet-core/latest/x/?render=true)](https://cloudsmith.io/~neueda/repos/etiqet/packages/detail/maven/etiqet-core/latest/)
 
