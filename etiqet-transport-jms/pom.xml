@@ -11,7 +11,7 @@
     <artifactId>etiqet-transport-jms</artifactId>
     <properties>
         <jms.version>2.0.1</jms.version>
-        <activemq.version>5.15.9</activemq.version>
+        <activemq.version>5.15.16</activemq.version>
     </properties>
 
     <dependencies>
